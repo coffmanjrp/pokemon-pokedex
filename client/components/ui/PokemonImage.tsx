@@ -5,10 +5,17 @@ import { Pokemon } from '@/types/pokemon';
 
 interface PokemonImageProps {
   pokemon: Pokemon;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
+  priority?: boolean;
 }
 
-export function PokemonImage({ pokemon, className = "relative w-32 h-32 group-hover:scale-110 transition-transform duration-300" }: PokemonImageProps) {
+export function PokemonImage({ 
+  pokemon, 
+  size = 'md', 
+  className,
+  priority = false 
+}: PokemonImageProps) {
   const getImageUrl = () => {
     return (
       pokemon.sprites.other?.officialArtwork?.frontDefault ||
@@ -18,15 +25,47 @@ export function PokemonImage({ pokemon, className = "relative w-32 h-32 group-ho
     );
   };
 
+  const getSizeClasses = () => {
+    switch (size) {
+      case 'sm':
+        return 'w-16 h-16';
+      case 'md':
+        return 'w-32 h-32';
+      case 'lg':
+        return 'w-48 h-48';
+      case 'xl':
+        return 'w-64 h-64';
+      default:
+        return 'w-32 h-32';
+    }
+  };
+
+  const getSizes = () => {
+    switch (size) {
+      case 'sm':
+        return '64px';
+      case 'md':
+        return '128px';
+      case 'lg':
+        return '192px';
+      case 'xl':
+        return '256px';
+      default:
+        return '128px';
+    }
+  };
+
+  const defaultClassName = `relative ${getSizeClasses()} group-hover:scale-110 transition-transform duration-300`;
+
   return (
-    <div className={className}>
+    <div className={className || defaultClassName}>
       <Image
         src={getImageUrl()}
         alt={pokemon.name}
         fill
         className="object-contain drop-shadow-lg"
-        sizes="(max-width: 768px) 128px, 128px"
-        priority={false}
+        sizes={getSizes()}
+        priority={priority}
       />
     </div>
   );

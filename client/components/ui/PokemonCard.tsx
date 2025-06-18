@@ -4,7 +4,6 @@ import { Pokemon, POKEMON_TYPE_COLORS, PokemonTypeName } from '@/types/pokemon';
 import { cn } from '@/lib/utils';
 import { PokemonImage } from './PokemonImage';
 import { PokemonTypes } from './PokemonTypes';
-import { PokemonStats } from './PokemonStats';
 import { StatBar } from './StatBar';
 import { Badge } from './Badge';
 
@@ -78,8 +77,17 @@ export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
         {/* Types */}
         <PokemonTypes types={pokemon.types} />
 
-        {/* Stats Preview */}
-        <PokemonStats pokemon={pokemon} />
+        {/* Basic Info */}
+        <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 mb-3">
+          <div className="flex justify-between">
+            <span>Height:</span>
+            <span className="font-semibold">{(pokemon.height / 10).toFixed(1)}m</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Weight:</span>
+            <span className="font-semibold">{(pokemon.weight / 10).toFixed(1)}kg</span>
+          </div>
+        </div>
 
         {/* HP Stat Bar */}
         {pokemon.stats.length > 0 && (
