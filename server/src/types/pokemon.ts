@@ -9,7 +9,7 @@ export interface Pokemon {
   stats: PokemonStat[];
   abilities: PokemonAbility[];
   moves: PokemonMove[];
-  species?: PokemonSpecies;
+  species?: PokemonSpecies | null;
   gameIndices: GameIndex[];
 }
 
@@ -122,7 +122,7 @@ export interface PokemonSpecies {
   flavorTextEntries: FlavorTextEntry[];
   genera: Genus[];
   generation: Generation;
-  evolutionChain?: EvolutionChain;
+  evolutionChain?: EvolutionChain | undefined;
 }
 
 export interface FlavorTextEntry {

@@ -153,7 +153,7 @@ class PokemonService {
         evolutionChain: speciesData.evolution_chain ? {
           id: this.extractIdFromUrl(speciesData.evolution_chain.url),
           url: speciesData.evolution_chain.url,
-        } : null,
+        } : undefined,
       } : null,
     };
   }

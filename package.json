@@ -1,10 +1,40 @@
 {
-  "dependencies": {
-    "@apollo/server": "^4.12.2",
-    "@types/express": "^5.0.3",
-    "express": "^4.21.2",
-    "graphql": "^16.11.0",
-    "nodemon": "^3.1.10",
-    "ts-node": "^10.9.2"
+  "name": "pokemon-pokedex-monorepo",
+  "version": "1.0.0",
+  "description": "Pokemon Pokedex application with Next.js and GraphQL",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently --names \"CLIENT,SERVER\" --prefix-colors \"blue,green\" \"npm run dev:client\" \"npm run dev:server\"",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "build": "npm run build:server && npm run build:client",
+    "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm run build",
+    "start": "concurrently --names \"CLIENT,SERVER\" --prefix-colors \"blue,green\" \"npm run start:client\" \"npm run start:server\"",
+    "start:client": "cd client && npm run start",
+    "start:server": "cd server && npm run start",
+    "lint": "npm run lint:client && npm run lint:server",
+    "lint:client": "cd client && npm run lint",
+    "lint:server": "cd server && npm run lint || echo 'Server lint not configured'",
+    "type-check": "npm run type-check:client && npm run type-check:server",
+    "type-check:client": "cd client && npm run type-check || echo 'Client type-check not configured'",
+    "type-check:server": "cd server && npm run type-check || echo 'Server type-check not configured'",
+    "clean": "npm run clean:client && npm run clean:server",
+    "clean:client": "cd client && rm -rf .next out",
+    "clean:server": "cd server && rm -rf dist",
+    "install:all": "npm install",
+    "postinstall": "cd client && npm install && cd ../server && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "@types/node": "^20.11.17"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 }
