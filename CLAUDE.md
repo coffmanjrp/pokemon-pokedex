@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout.
 
+**Current Status**: Highly functional application with comprehensive search/filter functionality, GraphQL backend, and responsive UI. Main areas for improvement: Pokemon detail pages, testing, and production readiness.
+
 ## Architecture
 
 ### Frontend (Next.js 15)
@@ -30,10 +32,10 @@ npm run start           # Start production server
 npm run lint            # Run ESLint
 npm run type-check      # Run TypeScript type checking
 
-# Backend development (when implemented)
-npm run server:dev      # Start GraphQL server in development
-npm run server:build    # Build GraphQL server
-npm run server:start    # Start production GraphQL server
+# Backend development (FULLY IMPLEMENTED)
+cd server && npm run dev      # Start GraphQL server in development
+cd server && npm run build    # Build GraphQL server  
+cd server && npm run start    # Start production GraphQL server
 ```
 
 ## Project Structure
@@ -57,12 +59,15 @@ pokemon-pokedex/
 │   │   └── store.ts             # Store configuration
 │   ├── types/                    # TypeScript type definitions
 │   └── lib/                      # Utility functions and configurations
-└── server/                       # GraphQL server (Apollo Server + Express)
+└── server/                       # GraphQL server (FULLY IMPLEMENTED - Apollo Server + Express)
     ├── src/
-    │   ├── schema/              # GraphQL schema definitions
-    │   ├── resolvers/           # GraphQL resolvers
-    │   └── datasources/         # Data source connectors (PokeAPI)
-    └── dist/                    # Compiled server code
+    │   ├── index.ts            # Server entry point with CORS and health check
+    │   ├── schema/             # Complete GraphQL schema definitions
+    │   ├── resolvers/          # Working resolvers with error handling
+    │   ├── services/           # Pokemon service with PokeAPI integration
+    │   └── types/              # TypeScript type definitions
+    ├── dist/                   # Compiled server code
+    └── .env.example           # Environment configuration template
 ```
 
 ## Key Features
@@ -153,8 +158,48 @@ const GENERATION_RANGES = {
 - "filters is not defined": Add filters selector to component (see above)
 - Loading state conflicts: Check that auto-loading and regular loading states are properly differentiated
 
+## Current Development Priorities
+
+### High Priority (Immediate)
+1. **Pokemon Detail Pages**: Individual Pokemon display with routing (TODO comment exists in page.tsx:23)
+2. **Test Suite Implementation**: Unit tests, integration tests, E2E tests (currently no tests exist)
+3. **Environment Configuration**: Create actual .env files from .env.example templates
+4. **Error Boundaries**: React error boundaries for graceful error handling
+
+### Medium Priority (Next Phase)
+5. **Dark Theme Completion**: Apply dark mode styles (infrastructure already exists)
+6. **Accessibility Features**: ARIA labels, keyboard navigation, screen reader support
+7. **SEO Optimization**: Metadata, Open Graph tags, structured data
+8. **Server Caching**: Redis or in-memory caching for PokeAPI requests
+
+### Low Priority (Future)
+9. **PWA Implementation**: Service worker, offline support, app manifest
+10. **Performance Analysis**: Bundle optimization and monitoring
+
+## Implementation Status
+
+### ✅ Fully Implemented
+- **GraphQL Backend**: Complete Apollo Server with cursor-based pagination
+- **Advanced Filtering**: Search, type filters, generation filters with auto-loading
+- **State Management**: Redux Toolkit with proper error handling
+- **Responsive UI**: Complete component library with Ruby/Sapphire theming
+- **Infinite Scroll**: Optimized with Intersection Observer and debouncing
+- **Multi-language Support**: English/Japanese with proper translations
+- **Image Optimization**: Next.js Image with fallbacks and lazy loading
+
+### ⚠️ Partially Implemented
+- **Theme System**: Dark mode infrastructure exists but styles not applied
+- **Error Handling**: Basic error states exist but no error boundaries
+- **Performance**: Good optimization but no bundle analysis or monitoring
+
+### ❌ Missing
+- **Pokemon Detail Pages**: Navigation exists but pages not implemented
+- **Testing**: No test suite exists
+- **Production Config**: Environment files need to be created from examples
+
 ## External APIs
 
-- **PokeAPI**: Primary data source for Pokemon information
-- **GraphQL Server**: Custom wrapper for efficient data fetching and caching
+- **PokeAPI**: Primary data source for Pokemon information (v2 API)
+- **GraphQL Server**: Custom Apollo Server wrapper with efficient data fetching
+- **Cursor-Based Pagination**: Implemented for optimal performance
 - **Auto-Loading Logic**: Ensures complete generation datasets when filters are applied
