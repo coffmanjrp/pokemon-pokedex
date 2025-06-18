@@ -5,6 +5,9 @@ import { Pokemon } from '@/types/pokemon';
 import { PokemonImage } from '@/components/ui/PokemonImage';
 import { PokemonTypes } from '@/components/ui/PokemonTypes';
 import { PokemonStats } from '@/components/ui/PokemonStats';
+import { PokemonDescription } from '@/components/ui/PokemonDescription';
+import { PokemonMoves } from '@/components/ui/PokemonMoves';
+import { PokemonGameHistory } from '@/components/ui/PokemonGameHistory';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -126,6 +129,20 @@ export default function PokemonDetailClient({ pokemon }: PokemonDetailClientProp
           </div>
         </div>
 
+        {/* Description Section */}
+        {pokemon.species && (
+          <div className="bg-white rounded-lg shadow-md p-8 mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              {language === 'en' ? 'Pokédex Entry' : 'ポケモン図鑑'}
+            </h2>
+            <PokemonDescription
+              flavorTextEntries={pokemon.species.flavorTextEntries}
+              genera={pokemon.species.genera}
+              language={language}
+            />
+          </div>
+        )}
+
         {/* Stats Section */}
         <div className="bg-white rounded-lg shadow-md p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
@@ -133,6 +150,30 @@ export default function PokemonDetailClient({ pokemon }: PokemonDetailClientProp
           </h2>
           <PokemonStats stats={pokemon.stats} />
         </div>
+
+        {/* Moves Section */}
+        {pokemon.moves && pokemon.moves.length > 0 && (
+          <div className="bg-white rounded-lg shadow-md p-8 mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              {language === 'en' ? 'Moves' : '覚える技'}
+            </h2>
+            <PokemonMoves moves={pokemon.moves} language={language} />
+          </div>
+        )}
+
+        {/* Game History Section */}
+        {pokemon.gameIndices && pokemon.gameIndices.length > 0 && (
+          <div className="bg-white rounded-lg shadow-md p-8 mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              {language === 'en' ? 'Game History' : 'ゲーム出現履歴'}
+            </h2>
+            <PokemonGameHistory
+              gameIndices={pokemon.gameIndices}
+              generation={pokemon.species?.generation}
+              language={language}
+            />
+          </div>
+        )}
 
         {/* Sprites Gallery */}
         <div className="bg-white rounded-lg shadow-md p-8">
