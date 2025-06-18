@@ -8,10 +8,12 @@ import { usePokemonList } from '../hooks/usePokemonList';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { setSelectedPokemon } from '../store/slices/pokemonSlice';
 import { useEffect, useRef, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { Pokemon } from '@/types/pokemon';
 
 export default function Home() {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const { language } = useAppSelector((state) => state.ui);
   const { filters } = useAppSelector((state) => state.pokemon);
   const { pokemons, allPokemons, loading, error, hasNextPage, loadMore, isFiltering, isAutoLoading } = usePokemonList();
@@ -20,8 +22,7 @@ export default function Home() {
 
   const handlePokemonClick = (pokemon: Pokemon) => {
     dispatch(setSelectedPokemon(pokemon));
-    // TODO: Navigate to Pokemon detail page
-    console.log('Selected Pokemon:', pokemon);
+    router.push(`/pokemon/${pokemon.id}`);
   };
 
   // Infinite scroll implementation with debouncing
