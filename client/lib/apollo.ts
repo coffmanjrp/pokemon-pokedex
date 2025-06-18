@@ -8,18 +8,8 @@ export const apolloClient = new ApolloClient({
   link: httpLink,
   cache: new InMemoryCache({
     typePolicies: {
-      Query: {
-        fields: {
-          pokemons: {
-            keyArgs: [],
-            merge(existing = { edges: [], pageInfo: {} }, incoming) {
-              return {
-                ...incoming,
-                edges: [...existing.edges, ...incoming.edges],
-              };
-            },
-          },
-        },
+      Pokemon: {
+        keyFields: ['id'],
       },
     },
   }),

@@ -1,8 +1,12 @@
 'use client';
 
-import Image from 'next/image';
 import { Pokemon, POKEMON_TYPE_COLORS, PokemonTypeName } from '@/types/pokemon';
 import { cn } from '@/lib/utils';
+import { PokemonImage } from './PokemonImage';
+import { PokemonTypes } from './PokemonTypes';
+import { PokemonStats } from './PokemonStats';
+import { StatBar } from './StatBar';
+import { Badge } from './Badge';
 
 interface PokemonCardProps {
   pokemon: Pokemon;
@@ -24,15 +28,6 @@ export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
 
   const formatName = (name: string) => {
     return name.charAt(0).toUpperCase() + name.slice(1);
-  };
-
-  const getImageUrl = () => {
-    return (
-      pokemon.sprites.other?.officialArtwork?.frontDefault ||
-      pokemon.sprites.other?.home?.frontDefault ||
-      pokemon.sprites.frontDefault ||
-      '/placeholder-pokemon.png'
-    );
   };
 
   return (
@@ -60,26 +55,17 @@ export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
 
       {/* Pokemon ID */}
       <div className="absolute top-3 right-3 z-10">
-        <span
-          className="text-xs font-bold px-2 py-1 rounded-full text-white"
+        <Badge 
+          className="text-xs font-bold"
           style={{ backgroundColor: primaryColor }}
         >
           {formatPokemonId(pokemon.id)}
-        </span>
+        </Badge>
       </div>
 
       {/* Pokemon Image */}
       <div className="relative h-48 flex items-center justify-center p-4">
-        <div className="relative w-32 h-32 group-hover:scale-110 transition-transform duration-300">
-          <Image
-            src={getImageUrl()}
-            alt={pokemon.name}
-            fill
-            className="object-contain drop-shadow-lg"
-            sizes="(max-width: 768px) 128px, 128px"
-            priority={false}
-          />
-        </div>
+        <PokemonImage pokemon={pokemon} />
       </div>
 
       {/* Pokemon Info */}
@@ -90,52 +76,19 @@ export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
         </h3>
 
         {/* Types */}
-        <div className="flex gap-1 justify-center mb-3">
-          {pokemon.types.map((typeInfo) => {
-            const typeName = typeInfo.type.name as PokemonTypeName;
-            const typeColor = POKEMON_TYPE_COLORS[typeName] || '#68A090';
-
-            return (
-              <span
-                key={typeInfo.type.id}
-                className="px-3 py-1 rounded-full text-xs font-semibold text-white"
-                style={{ backgroundColor: typeColor }}
-              >
-                {formatName(typeInfo.type.name)}
-              </span>
-            );
-          })}
-        </div>
+        <PokemonTypes types={pokemon.types} />
 
         {/* Stats Preview */}
-        <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
-          <div className="flex justify-between">
-            <span>Height:</span>
-            <span className="font-semibold">{(pokemon.height / 10).toFixed(1)}m</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Weight:</span>
-            <span className="font-semibold">{(pokemon.weight / 10).toFixed(1)}kg</span>
-          </div>
-        </div>
+        <PokemonStats pokemon={pokemon} />
 
         {/* HP Stat Bar */}
         {pokemon.stats.length > 0 && (
-          <div className="mt-3">
-            <div className="flex justify-between text-xs text-gray-600 mb-1">
-              <span>HP</span>
-              <span className="font-semibold">{pokemon.stats[0].baseStat}</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className="h-2 rounded-full transition-all duration-500"
-                style={{
-                  backgroundColor: primaryColor,
-                  width: `${Math.min((pokemon.stats[0].baseStat / 150) * 100, 100)}%`,
-                }}
-              />
-            </div>
-          </div>
+          <StatBar
+            label="HP"
+            value={pokemon.stats[0].baseStat}
+            maxValue={150}
+            color={primaryColor}
+          />
         )}
       </div>
 

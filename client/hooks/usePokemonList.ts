@@ -4,7 +4,7 @@ import { useQuery } from '@apollo/client';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { setLoading, setError, setPokemons, addPokemons, setHasNextPage, setEndCursor } from '@/store/slices/pokemonSlice';
 import { GET_POKEMONS } from '@/graphql/queries';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface UsePokemonListOptions {
   limit?: number;
@@ -14,6 +14,7 @@ interface UsePokemonListOptions {
 export function usePokemonList({ limit = 20, autoFetch = true }: UsePokemonListOptions = {}) {
   const dispatch = useAppDispatch();
   const { pokemons, loading, error, hasNextPage, endCursor, filters } = useAppSelector((state) => state.pokemon);
+  const isLoadingMore = useRef(false);
 
   const { data, loading: queryLoading, error: queryError, fetchMore, refetch } = useQuery(
     GET_POKEMONS,
@@ -26,7 +27,9 @@ export function usePokemonList({ limit = 20, autoFetch = true }: UsePokemonListO
   );
 
   useEffect(() => {
-    dispatch(setLoading(queryLoading));
+    if (!isLoadingMore.current) {
+      dispatch(setLoading(queryLoading));
+    }
   }, [queryLoading, dispatch]);
 
   useEffect(() => {
@@ -38,7 +41,7 @@ export function usePokemonList({ limit = 20, autoFetch = true }: UsePokemonListO
   }, [queryError, dispatch]);
 
   useEffect(() => {
-    if (data?.pokemons) {
+    if (data?.pokemons && !isLoadingMore.current) {
       const { edges, pageInfo } = data.pokemons;
       const pokemonList = edges.map((edge: any) => edge.node);
       
@@ -49,15 +52,22 @@ export function usePokemonList({ limit = 20, autoFetch = true }: UsePokemonListO
   }, [data, dispatch]);
 
   const loadMore = async () => {
-    if (!hasNextPage || loading) return;
+    if (!hasNextPage || loading || isLoadingMore.current) {
+      console.log('loadMore blocked:', { hasNextPage, loading, isLoadingMore: isLoadingMore.current });
+      return;
+    }
 
     try {
+      isLoadingMore.current = true;
       dispatch(setLoading(true));
+      
+      const currentOffset = pokemons.length;
+      console.log('Loading more Pokemon. Current count:', currentOffset, 'Limit:', limit);
       
       const { data: moreData } = await fetchMore({
         variables: {
           limit,
-          offset: pokemons.length,
+          offset: currentOffset,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
           if (!fetchMoreResult) return prev;
@@ -75,14 +85,18 @@ export function usePokemonList({ limit = 20, autoFetch = true }: UsePokemonListO
         const { edges, pageInfo } = moreData.pokemons;
         const newPokemon = edges.map((edge: any) => edge.node);
         
+        console.log('Fetched', newPokemon.length, 'new Pokemon. HasNextPage:', pageInfo.hasNextPage);
+        
         dispatch(addPokemons(newPokemon));
         dispatch(setHasNextPage(pageInfo.hasNextPage));
         dispatch(setEndCursor(pageInfo.endCursor));
       }
     } catch (err) {
+      console.error('Failed to load more Pokemon:', err);
       dispatch(setError(err instanceof Error ? err.message : 'Failed to load more Pokemon'));
     } finally {
       dispatch(setLoading(false));
+      isLoadingMore.current = false;
     }
   };
 

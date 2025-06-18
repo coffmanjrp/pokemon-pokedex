@@ -22,12 +22,17 @@ export default function Home() {
     console.log('Selected Pokemon:', pokemon);
   };
 
-  // Infinite scroll implementation
+  // Infinite scroll implementation with debouncing
   const handleObserver = useCallback(
     (entries: IntersectionObserverEntry[]) => {
       const [target] = entries;
       if (target.isIntersecting && hasNextPage && !loading) {
-        loadMore();
+        // Small delay to prevent rapid firing
+        setTimeout(() => {
+          if (hasNextPage && !loading) {
+            loadMore();
+          }
+        }, 100);
       }
     },
     [hasNextPage, loading, loadMore]
@@ -38,7 +43,8 @@ export default function Home() {
     if (!element) return;
 
     const observer = new IntersectionObserver(handleObserver, {
-      threshold: 0.1,
+      threshold: 0.5, // Increased threshold to trigger less frequently
+      rootMargin: '100px', // Trigger 100px before reaching the element
     });
 
     observer.observe(element);
