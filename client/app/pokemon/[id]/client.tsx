@@ -6,6 +6,7 @@ import { PokemonImage } from '@/components/ui/PokemonImage';
 import { PokemonTypes } from '@/components/ui/PokemonTypes';
 import { PokemonStats } from '@/components/ui/PokemonStats';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface PokemonDetailClientProps {
   pokemon: Pokemon;
@@ -37,11 +38,11 @@ export default function PokemonDetailClient({ pokemon }: PokemonDetailClientProp
           <div className="flex flex-col lg:flex-row items-start gap-8">
             {/* Pokemon Image */}
             <div className="flex-shrink-0">
-              <div className="w-64 h-64 bg-gray-50 rounded-lg flex items-center justify-center">
+              <div className="w-64 h-64 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden">
                 <PokemonImage
                   pokemon={pokemon}
                   size="xl"
-                  className="w-full h-full object-contain"
+                  priority={true}
                 />
               </div>
             </div>
@@ -148,11 +149,15 @@ export default function PokemonDetailClient({ pokemon }: PokemonDetailClientProp
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {pokemon.sprites.other?.officialArtwork?.frontDefault && (
                   <div className="bg-gray-50 rounded-lg p-6 text-center">
-                    <img 
-                      src={pokemon.sprites.other.officialArtwork.frontDefault} 
-                      alt={`${pokemon.name} official artwork`}
-                      className="w-48 h-48 mx-auto mb-4 object-contain"
-                    />
+                    <div className="relative w-48 h-48 mx-auto mb-4">
+                      <Image 
+                        src={pokemon.sprites.other.officialArtwork.frontDefault} 
+                        alt={`${pokemon.name} official artwork`}
+                        fill
+                        className="object-contain"
+                        sizes="192px"
+                      />
+                    </div>
                     <div className="text-sm text-gray-600">
                       {language === 'en' ? 'Official Artwork' : '公式アートワーク'}
                     </div>
@@ -160,11 +165,15 @@ export default function PokemonDetailClient({ pokemon }: PokemonDetailClientProp
                 )}
                 {pokemon.sprites.other?.officialArtwork?.frontShiny && (
                   <div className="bg-gray-50 rounded-lg p-6 text-center">
-                    <img 
-                      src={pokemon.sprites.other.officialArtwork.frontShiny} 
-                      alt={`${pokemon.name} shiny official artwork`}
-                      className="w-48 h-48 mx-auto mb-4 object-contain"
-                    />
+                    <div className="relative w-48 h-48 mx-auto mb-4">
+                      <Image 
+                        src={pokemon.sprites.other.officialArtwork.frontShiny} 
+                        alt={`${pokemon.name} shiny official artwork`}
+                        fill
+                        className="object-contain"
+                        sizes="192px"
+                      />
+                    </div>
                     <div className="text-sm text-gray-600">
                       {language === 'en' ? 'Shiny Official Artwork' : '色違い公式アートワーク'}
                     </div>
@@ -182,11 +191,15 @@ export default function PokemonDetailClient({ pokemon }: PokemonDetailClientProp
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {pokemon.sprites.frontDefault && (
                 <div className="bg-gray-50 rounded-lg p-4 text-center">
-                  <img 
-                    src={pokemon.sprites.frontDefault} 
-                    alt={`${pokemon.name} front`}
-                    className="w-24 h-24 mx-auto mb-2"
-                  />
+                  <div className="relative w-24 h-24 mx-auto mb-2">
+                    <Image 
+                      src={pokemon.sprites.frontDefault} 
+                      alt={`${pokemon.name} front`}
+                      fill
+                      className="object-contain"
+                      sizes="96px"
+                    />
+                  </div>
                   <div className="text-sm text-gray-600">
                     {language === 'en' ? 'Front' : '正面'}
                   </div>
@@ -194,11 +207,15 @@ export default function PokemonDetailClient({ pokemon }: PokemonDetailClientProp
               )}
               {pokemon.sprites.backDefault && (
                 <div className="bg-gray-50 rounded-lg p-4 text-center">
-                  <img 
-                    src={pokemon.sprites.backDefault} 
-                    alt={`${pokemon.name} back`}
-                    className="w-24 h-24 mx-auto mb-2"
-                  />
+                  <div className="relative w-24 h-24 mx-auto mb-2">
+                    <Image 
+                      src={pokemon.sprites.backDefault} 
+                      alt={`${pokemon.name} back`}
+                      fill
+                      className="object-contain"
+                      sizes="96px"
+                    />
+                  </div>
                   <div className="text-sm text-gray-600">
                     {language === 'en' ? 'Back' : '背面'}
                   </div>
@@ -206,11 +223,15 @@ export default function PokemonDetailClient({ pokemon }: PokemonDetailClientProp
               )}
               {pokemon.sprites.frontShiny && (
                 <div className="bg-gray-50 rounded-lg p-4 text-center">
-                  <img 
-                    src={pokemon.sprites.frontShiny} 
-                    alt={`${pokemon.name} shiny front`}
-                    className="w-24 h-24 mx-auto mb-2"
-                  />
+                  <div className="relative w-24 h-24 mx-auto mb-2">
+                    <Image 
+                      src={pokemon.sprites.frontShiny} 
+                      alt={`${pokemon.name} shiny front`}
+                      fill
+                      className="object-contain"
+                      sizes="96px"
+                    />
+                  </div>
                   <div className="text-sm text-gray-600">
                     {language === 'en' ? 'Shiny Front' : '色違い正面'}
                   </div>
@@ -218,11 +239,15 @@ export default function PokemonDetailClient({ pokemon }: PokemonDetailClientProp
               )}
               {pokemon.sprites.backShiny && (
                 <div className="bg-gray-50 rounded-lg p-4 text-center">
-                  <img 
-                    src={pokemon.sprites.backShiny} 
-                    alt={`${pokemon.name} shiny back`}
-                    className="w-24 h-24 mx-auto mb-2"
-                  />
+                  <div className="relative w-24 h-24 mx-auto mb-2">
+                    <Image 
+                      src={pokemon.sprites.backShiny} 
+                      alt={`${pokemon.name} shiny back`}
+                      fill
+                      className="object-contain"
+                      sizes="96px"
+                    />
+                  </div>
                   <div className="text-sm text-gray-600">
                     {language === 'en' ? 'Shiny Back' : '色違い背面'}
                   </div>
