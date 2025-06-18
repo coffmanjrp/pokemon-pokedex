@@ -114,6 +114,62 @@ export const GET_POKEMON = gql`
           url
         }
       }
+      moves {
+        move {
+          id
+          name
+          url
+        }
+        versionGroupDetails {
+          levelLearnedAt
+          moveLearnMethod {
+            name
+            url
+          }
+          versionGroup {
+            name
+            url
+          }
+        }
+      }
+      species {
+        id
+        name
+        flavorTextEntries {
+          flavorText
+          language {
+            name
+            url
+          }
+          version {
+            name
+            url
+          }
+        }
+        genera {
+          genus
+          language {
+            name
+            url
+          }
+        }
+        generation {
+          id
+          name
+          url
+        }
+        evolutionChain {
+          id
+          url
+        }
+      }
+      gameIndices {
+        gameIndex
+        version {
+          name
+          url
+        }
+      }
     }
   }
 `;

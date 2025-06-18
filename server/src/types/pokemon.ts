@@ -8,6 +8,9 @@ export interface Pokemon {
   sprites: PokemonSprites;
   stats: PokemonStat[];
   abilities: PokemonAbility[];
+  moves: PokemonMove[];
+  species?: PokemonSpecies;
+  gameIndices: GameIndex[];
 }
 
 export interface PokemonType {
@@ -84,4 +87,77 @@ export interface PageInfo {
   hasPreviousPage: boolean;
   startCursor: string | null;
   endCursor: string | null;
+}
+
+export interface PokemonMove {
+  move: Move;
+  versionGroupDetails: MoveVersionGroupDetail[];
+}
+
+export interface Move {
+  id: string;
+  name: string;
+  url: string;
+}
+
+export interface MoveVersionGroupDetail {
+  levelLearnedAt: number;
+  moveLearnMethod: MoveLearnMethod;
+  versionGroup: VersionGroup;
+}
+
+export interface MoveLearnMethod {
+  name: string;
+  url: string;
+}
+
+export interface VersionGroup {
+  name: string;
+  url: string;
+}
+
+export interface PokemonSpecies {
+  id: string;
+  name: string;
+  flavorTextEntries: FlavorTextEntry[];
+  genera: Genus[];
+  generation: Generation;
+  evolutionChain?: EvolutionChain;
+}
+
+export interface FlavorTextEntry {
+  flavorText: string;
+  language: Language;
+  version: Version;
+}
+
+export interface Genus {
+  genus: string;
+  language: Language;
+}
+
+export interface Language {
+  name: string;
+  url: string;
+}
+
+export interface Version {
+  name: string;
+  url: string;
+}
+
+export interface Generation {
+  id: string;
+  name: string;
+  url: string;
+}
+
+export interface EvolutionChain {
+  id: string;
+  url: string;
+}
+
+export interface GameIndex {
+  gameIndex: number;
+  version: Version;
 }

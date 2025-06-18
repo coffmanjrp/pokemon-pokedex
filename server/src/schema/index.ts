@@ -17,6 +17,9 @@ export const typeDefs = gql`
     sprites: PokemonSprites!
     stats: [PokemonStat!]!
     abilities: [PokemonAbility!]!
+    moves: [PokemonMove!]!
+    species: PokemonSpecies
+    gameIndices: [GameIndex!]!
   }
 
   type PokemonType {
@@ -93,5 +96,78 @@ export const typeDefs = gql`
     hasPreviousPage: Boolean!
     startCursor: String
     endCursor: String
+  }
+
+  type PokemonMove {
+    move: Move!
+    versionGroupDetails: [MoveVersionGroupDetail!]!
+  }
+
+  type Move {
+    id: ID!
+    name: String!
+    url: String!
+  }
+
+  type MoveVersionGroupDetail {
+    levelLearnedAt: Int!
+    moveLearnMethod: MoveLearnMethod!
+    versionGroup: VersionGroup!
+  }
+
+  type MoveLearnMethod {
+    name: String!
+    url: String!
+  }
+
+  type VersionGroup {
+    name: String!
+    url: String!
+  }
+
+  type PokemonSpecies {
+    id: ID!
+    name: String!
+    flavorTextEntries: [FlavorTextEntry!]!
+    genera: [Genus!]!
+    generation: Generation!
+    evolutionChain: EvolutionChain
+  }
+
+  type FlavorTextEntry {
+    flavorText: String!
+    language: Language!
+    version: Version!
+  }
+
+  type Genus {
+    genus: String!
+    language: Language!
+  }
+
+  type Language {
+    name: String!
+    url: String!
+  }
+
+  type Version {
+    name: String!
+    url: String!
+  }
+
+  type Generation {
+    id: ID!
+    name: String!
+    url: String!
+  }
+
+  type EvolutionChain {
+    id: ID!
+    url: String!
+  }
+
+  type GameIndex {
+    gameIndex: Int!
+    version: Version!
   }
 `;
