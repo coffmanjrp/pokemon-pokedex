@@ -13,7 +13,8 @@ import { Pokemon } from '@/types/pokemon';
 export default function Home() {
   const dispatch = useAppDispatch();
   const { language } = useAppSelector((state) => state.ui);
-  const { pokemons, allPokemons, loading, error, hasNextPage, loadMore, isFiltering } = usePokemonList();
+  const { filters } = useAppSelector((state) => state.pokemon);
+  const { pokemons, allPokemons, loading, error, hasNextPage, loadMore, isFiltering, isAutoLoading } = usePokemonList();
   
   const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -97,12 +98,35 @@ export default function Home() {
           totalCount={allPokemons.length}
         />
 
+        {/* Auto-loading indicator for filtering */}
+        {isAutoLoading && (
+          <div className="flex justify-center items-center py-8 mx-6">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 w-full max-w-md text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <div className="text-blue-800 font-medium">
+                {language === 'en' 
+                  ? `Loading Pokémon for Generation ${filters.generation}...`
+                  : `第${filters.generation}世代のポケモンを読み込み中...`
+                }
+              </div>
+              <div className="text-sm text-blue-600 mt-2">
+                {language === 'en' 
+                  ? 'This may take a moment for higher generations'
+                  : '高い世代の場合、時間がかかる場合があります'
+                }
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Pokemon Grid */}
-        <LoadingOverlay show={loading && pokemons.length === 0} message="Loading Pokémon...">
+        <LoadingOverlay show={loading && pokemons.length === 0 && !isAutoLoading} message="Loading Pokémon...">
           <PokemonGrid
             pokemons={pokemons}
             onPokemonClick={handlePokemonClick}
             loading={loading}
+            isFiltering={isFiltering}
+            isAutoLoading={isAutoLoading}
           />
         </LoadingOverlay>
 

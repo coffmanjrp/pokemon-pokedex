@@ -11,13 +11,17 @@ interface PokemonGridProps {
   onPokemonClick?: (pokemon: Pokemon) => void;
   className?: string;
   loading?: boolean;
+  isFiltering?: boolean;
+  isAutoLoading?: boolean;
 }
 
 export function PokemonGrid({ 
   pokemons, 
   onPokemonClick, 
   className,
-  loading = false 
+  loading = false,
+  isFiltering = false,
+  isAutoLoading = false
 }: PokemonGridProps) {
   if (loading && pokemons.length === 0) {
     return (
@@ -33,7 +37,7 @@ export function PokemonGrid({
     );
   }
 
-  if (pokemons.length === 0) {
+  if (pokemons.length === 0 && !isAutoLoading) {
     return (
       <EmptyState
         icon="🔍"
@@ -57,7 +61,7 @@ export function PokemonGrid({
         />
       ))}
       
-      {loading && (
+      {loading && !isFiltering && (
         <>
           {Array.from({ length: 10 }).map((_, index) => (
             <PokemonCardSkeleton key={`skeleton-${index}`} />
