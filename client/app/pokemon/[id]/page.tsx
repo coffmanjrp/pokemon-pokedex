@@ -17,12 +17,13 @@ export async function generateStaticParams() {
 }
 
 // Generate metadata for each Pokemon page
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   try {
+    const { id } = await params;
     const client = getClient();
     const { data } = await client.query({
       query: GET_POKEMON,
-      variables: { id: params.id },
+      variables: { id },
     });
 
     const pokemon: Pokemon = data?.pokemon;
@@ -66,12 +67,13 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 }
 
 // Server Component for SSG
-export default async function PokemonDetailPage({ params }: { params: { id: string } }) {
+export default async function PokemonDetailPage({ params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const client = getClient();
     const { data } = await client.query({
       query: GET_POKEMON,
-      variables: { id: params.id },
+      variables: { id },
     });
 
     const pokemon: Pokemon = data?.pokemon;

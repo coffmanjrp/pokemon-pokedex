@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/client';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { setLoading, setError, setPokemons, addPokemons, setHasNextPage, setEndCursor } from '@/store/slices/pokemonSlice';
 import { GET_POKEMONS } from '@/graphql/queries';
+import { Pokemon } from '@/types/pokemon';
 import { useEffect, useRef, useState } from 'react';
 
 interface UsePokemonListOptions {
@@ -227,7 +228,7 @@ export function usePokemonList({ limit = 20, autoFetch = true }: UsePokemonListO
   });
 
   // Check if we have active filters
-  const hasActiveFilters = filters.search || filters.types.length > 0 || filters.generation !== null;
+  const hasActiveFilters: boolean = Boolean(filters.search || filters.types.length > 0 || filters.generation !== null);
   
   // Debug logging for filtering
   useEffect(() => {

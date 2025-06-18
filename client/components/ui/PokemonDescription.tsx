@@ -80,7 +80,7 @@ export function PokemonDescription({ flavorTextEntries, genera, language }: Poke
       {description && (
         <div className="bg-gray-50 rounded-lg p-6">
           <blockquote className="text-gray-700 leading-relaxed italic">
-            "{description.flavorText.replace(/\f/g, ' ').replace(/\n/g, ' ')}"
+            &ldquo;{description.flavorText.replace(/\f/g, ' ').replace(/\n/g, ' ')}&rdquo;
           </blockquote>
           <footer className="mt-3 text-sm text-gray-500">
             — {description.version.name.charAt(0).toUpperCase() + description.version.name.slice(1)}
@@ -104,7 +104,7 @@ export function PokemonDescription({ flavorTextEntries, genera, language }: Poke
               .map((entry, index) => (
                 <div key={index} className="bg-white border border-gray-200 rounded-lg p-4">
                   <p className="text-gray-700 text-sm leading-relaxed">
-                    "{entry.flavorText.replace(/\f/g, ' ').replace(/\n/g, ' ')}"
+                    &ldquo;{entry.flavorText.replace(/\f/g, ' ').replace(/\n/g, ' ')}&rdquo;
                   </p>
                   <div className="mt-2 text-xs text-gray-500">
                     {entry.version.name.charAt(0).toUpperCase() + entry.version.name.slice(1)} 
