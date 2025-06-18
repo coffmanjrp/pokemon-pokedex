@@ -133,25 +133,47 @@ export function usePokemonList({ limit = 20, autoFetch = true }: UsePokemonListO
       }
     }
 
-    // Generation filter (basic implementation - assumes Gen 1 is Pokemon 1-151)
+    // Generation filter with comprehensive ranges
     if (filters.generation !== null) {
       const pokemonId = parseInt(pokemon.id);
-      if (filters.generation === 1 && (pokemonId < 1 || pokemonId > 151)) {
+      const generationRanges = {
+        1: { min: 1, max: 151 },      // Kanto
+        2: { min: 152, max: 251 },    // Johto
+        3: { min: 252, max: 386 },    // Hoenn
+        4: { min: 387, max: 493 },    // Sinnoh
+        5: { min: 494, max: 649 },    // Unova
+        6: { min: 650, max: 721 },    // Kalos
+        7: { min: 722, max: 809 },    // Alola
+        8: { min: 810, max: 905 },    // Galar
+        9: { min: 906, max: 9999 },   // Paldea (open-ended)
+      };
+      
+      const range = generationRanges[filters.generation as keyof typeof generationRanges];
+      if (range && (pokemonId < range.min || pokemonId > range.max)) {
         return false;
       }
-      // Add more generation logic as needed
     }
 
     return true;
   });
 
+  // Check if we have active filters
+  const hasActiveFilters = filters.search || filters.types.length > 0 || filters.generation !== null;
+  
+  // When filtering, disable infinite scroll and show loading only for initial load
+  const shouldShowLoading = hasActiveFilters ? (loading && pokemons.length === 0) : loading;
+  const shouldShowHasNextPage = hasActiveFilters ? false : hasNextPage;
+
   return {
     pokemons: filteredPokemons,
     allPokemons: pokemons,
-    loading,
+    loading: shouldShowLoading,
     error,
-    hasNextPage,
+    hasNextPage: shouldShowHasNextPage,
     loadMore,
     refresh,
+    isFiltering: hasActiveFilters,
+    originalCount: pokemons.length,
+    filteredCount: filteredPokemons.length,
   };
 }

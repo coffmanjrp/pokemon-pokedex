@@ -3,6 +3,7 @@
 import { Header } from '../components/layout/Header';
 import { PokemonGrid } from '../components/ui/PokemonGrid';
 import { LoadingOverlay } from '../components/ui/LoadingSpinner';
+import { FilterSummary } from '../components/ui/FilterSummary';
 import { usePokemonList } from '../hooks/usePokemonList';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { setSelectedPokemon } from '../store/slices/pokemonSlice';
@@ -12,7 +13,7 @@ import { Pokemon } from '@/types/pokemon';
 export default function Home() {
   const dispatch = useAppDispatch();
   const { language } = useAppSelector((state) => state.ui);
-  const { pokemons, loading, error, hasNextPage, loadMore } = usePokemonList();
+  const { pokemons, allPokemons, loading, error, hasNextPage, loadMore, isFiltering } = usePokemonList();
   
   const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -90,6 +91,12 @@ export default function Home() {
           </p>
         </div>
 
+        {/* Filter Summary */}
+        <FilterSummary 
+          resultCount={pokemons.length}
+          totalCount={allPokemons.length}
+        />
+
         {/* Pokemon Grid */}
         <LoadingOverlay show={loading && pokemons.length === 0} message="Loading Pokémon...">
           <PokemonGrid
@@ -114,7 +121,7 @@ export default function Home() {
         )}
 
         {/* End Message */}
-        {!hasNextPage && pokemons.length > 0 && (
+        {!hasNextPage && pokemons.length > 0 && !isFiltering && (
           <div className="text-center py-8 text-gray-500">
             <div className="text-4xl mb-2">🎉</div>
             <p>
