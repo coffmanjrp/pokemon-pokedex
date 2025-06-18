@@ -4,7 +4,7 @@ import { useQuery } from '@apollo/client';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { setLoading, setError, setPokemons, addPokemons, setHasNextPage, setEndCursor } from '@/store/slices/pokemonSlice';
 import { GET_POKEMONS } from '@/graphql/queries';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface UsePokemonListOptions {
   limit?: number;
@@ -15,6 +15,7 @@ export function usePokemonList({ limit = 20, autoFetch = true }: UsePokemonListO
   const dispatch = useAppDispatch();
   const { pokemons, loading, error, hasNextPage, endCursor, filters } = useAppSelector((state) => state.pokemon);
   const isLoadingMore = useRef(false);
+  const [isAutoLoading, setIsAutoLoading] = useState(false);
 
   const { data, loading: queryLoading, error: queryError, fetchMore, refetch } = useQuery(
     GET_POKEMONS,
@@ -50,6 +51,65 @@ export function usePokemonList({ limit = 20, autoFetch = true }: UsePokemonListO
       dispatch(setEndCursor(pageInfo.endCursor));
     }
   }, [data, dispatch]);
+
+  // Auto-load more Pokemon when generation filters are applied
+  useEffect(() => {
+    const hasGenerationFilter = filters.generation !== null;
+    
+    const autoLoadMore = async () => {
+      if (!hasGenerationFilter) {
+        setIsAutoLoading(false);
+        return;
+      }
+      
+      // For generation filters, determine how many Pokemon we need
+      const generationRanges = {
+        1: 151,   // Kanto
+        2: 251,   // Through Johto
+        3: 386,   // Through Hoenn
+        4: 493,   // Through Sinnoh
+        5: 649,   // Through Unova
+        6: 721,   // Through Kalos
+        7: 809,   // Through Alola
+        8: 905,   // Through Galar
+        9: 1000,  // Through Paldea (approximate)
+      };
+      const targetCount = generationRanges[filters.generation as keyof typeof generationRanges] || 1000;
+      
+      setIsAutoLoading(true);
+      
+      // Load more Pokemon if we don't have enough for the current generation
+      let attempts = 0;
+      const maxAttempts = 10; // Increase attempts for higher generations
+      let currentPokemonCount = pokemons.length;
+      
+      while (currentPokemonCount < targetCount && hasNextPage && attempts < maxAttempts) {
+        attempts++;
+        console.log(`Auto-loading attempt ${attempts} for generation ${filters.generation}. Current: ${currentPokemonCount}, Target: ${targetCount}`);
+        
+        if (!isLoadingMore.current && !loading) {
+          await loadMore();
+          // Wait for state to update
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          // Re-check the current count from Redux state
+          currentPokemonCount = pokemons.length;
+          console.log(`After loading: ${currentPokemonCount} Pokemon available`);
+        } else {
+          // Wait if already loading
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }
+      
+      setIsAutoLoading(false);
+      console.log(`Auto-loading completed for generation ${filters.generation}. Final count: ${currentPokemonCount}`);
+    };
+    
+    if (hasGenerationFilter) {
+      autoLoadMore();
+    } else {
+      setIsAutoLoading(false);
+    }
+  }, [filters.generation, pokemons.length]);
 
   const loadMore = async () => {
     if (!hasNextPage || loading || isLoadingMore.current) {
@@ -111,8 +171,17 @@ export function usePokemonList({ limit = 20, autoFetch = true }: UsePokemonListO
     }
   };
 
-  // Filter pokemons based on current filters
-  const filteredPokemons = pokemons.filter((pokemon) => {
+  // Remove duplicates from pokemons array before filtering
+  const uniquePokemons = pokemons.reduce((acc: Pokemon[], current) => {
+    const exists = acc.find(pokemon => pokemon.id === current.id);
+    if (!exists) {
+      acc.push(current);
+    }
+    return acc;
+  }, []);
+
+  // Filter pokemons based on current filters (client-side filtering)
+  const filteredPokemons = uniquePokemons.filter((pokemon) => {
     // Search filter
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
@@ -133,25 +202,69 @@ export function usePokemonList({ limit = 20, autoFetch = true }: UsePokemonListO
       }
     }
 
-    // Generation filter (basic implementation - assumes Gen 1 is Pokemon 1-151)
+    // Generation filter with comprehensive ranges
     if (filters.generation !== null) {
       const pokemonId = parseInt(pokemon.id);
-      if (filters.generation === 1 && (pokemonId < 1 || pokemonId > 151)) {
+      const generationRanges = {
+        1: { min: 1, max: 151 },      // Kanto
+        2: { min: 152, max: 251 },    // Johto
+        3: { min: 252, max: 386 },    // Hoenn
+        4: { min: 387, max: 493 },    // Sinnoh
+        5: { min: 494, max: 649 },    // Unova
+        6: { min: 650, max: 721 },    // Kalos
+        7: { min: 722, max: 809 },    // Alola
+        8: { min: 810, max: 905 },    // Galar
+        9: { min: 906, max: 9999 },   // Paldea (open-ended)
+      };
+      
+      const range = generationRanges[filters.generation as keyof typeof generationRanges];
+      if (range && (pokemonId < range.min || pokemonId > range.max)) {
         return false;
       }
-      // Add more generation logic as needed
     }
 
     return true;
   });
 
+  // Check if we have active filters
+  const hasActiveFilters = filters.search || filters.types.length > 0 || filters.generation !== null;
+  
+  // Debug logging for filtering
+  useEffect(() => {
+    console.log(`Filtering state: Unique Pokemon: ${uniquePokemons.length}, Filtered: ${filteredPokemons.length}, Generation: ${filters.generation}`);
+    if (filters.generation !== null) {
+      const genPokemons = uniquePokemons.filter(p => {
+        const id = parseInt(p.id);
+        const ranges = {
+          2: { min: 152, max: 251 }
+        };
+        const range = ranges[filters.generation as keyof typeof ranges];
+        return range ? (id >= range.min && id <= range.max) : false;
+      });
+      console.log(`Generation ${filters.generation} Pokemon found: ${genPokemons.length}`, genPokemons.map(p => `#${p.id} ${p.name}`));
+    }
+  }, [uniquePokemons.length, filteredPokemons.length, filters.generation]);
+  
+  // When filtering, show loading during auto-load or when we have no filtered results yet
+  // This prevents showing loading skeleton cards for unfiltered results
+  const shouldShowLoading = hasActiveFilters 
+    ? (isAutoLoading || (loading && filteredPokemons.length === 0))
+    : loading;
+  
+  // Disable infinite scroll when filtering to prevent loading irrelevant Pokemon
+  const shouldShowHasNextPage = hasActiveFilters ? false : hasNextPage;
+
   return {
     pokemons: filteredPokemons,
-    allPokemons: pokemons,
-    loading,
+    allPokemons: uniquePokemons,
+    loading: shouldShowLoading,
     error,
-    hasNextPage,
+    hasNextPage: shouldShowHasNextPage,
     loadMore,
     refresh,
+    isFiltering: hasActiveFilters,
+    originalCount: uniquePokemons.length,
+    filteredCount: filteredPokemons.length,
+    isAutoLoading,
   };
 }

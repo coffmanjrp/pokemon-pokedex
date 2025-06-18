@@ -43,7 +43,12 @@ const pokemonSlice = createSlice({
       state.pokemons = action.payload;
     },
     addPokemons: (state, action: PayloadAction<Pokemon[]>) => {
-      state.pokemons.push(...action.payload);
+      // Filter out duplicates based on Pokemon ID
+      const existingIds = new Set(state.pokemons.map(p => p.id));
+      const newPokemons = action.payload.filter(pokemon => !existingIds.has(pokemon.id));
+      console.log(`Adding ${newPokemons.length} new Pokemon (filtered from ${action.payload.length}). Total before: ${state.pokemons.length}`);
+      state.pokemons.push(...newPokemons);
+      console.log(`Total after: ${state.pokemons.length}`);
     },
     setSelectedPokemon: (state, action: PayloadAction<Pokemon | null>) => {
       state.selectedPokemon = action.payload;

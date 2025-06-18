@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { setLanguage, toggleTheme } from '@/store/slices/uiSlice';
+import { setLanguage, toggleTheme, setFilterModalOpen } from '@/store/slices/uiSlice';
 import { setSearchFilter } from '@/store/slices/pokemonSlice';
 import { Logo } from './Logo';
 import { SearchBar } from './SearchBar';
 import { LanguageToggle } from './LanguageToggle';
 import { ThemeToggle } from './ThemeToggle';
 import { FilterButton } from './FilterButton';
+import { FilterModal } from '../ui/FilterModal';
 
 export function Header() {
   const dispatch = useAppDispatch();
@@ -28,7 +29,13 @@ export function Header() {
     dispatch(toggleTheme());
   };
 
+  const handleFilterClick = () => {
+    dispatch(setFilterModalOpen(true));
+  };
+
   return (
+    <>
+      <FilterModal />
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -56,10 +63,11 @@ export function Header() {
               onToggle={handleThemeToggle}
             />
 
-            <FilterButton />
+            <FilterButton onClick={handleFilterClick} />
           </div>
         </div>
       </div>
     </header>
+    </>
   );
 }

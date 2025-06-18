@@ -1,5 +1,6 @@
 'use client';
 
+import { useAppSelector } from '@/store/hooks';
 import { cn } from '@/lib/utils';
 
 interface FilterButtonProps {
@@ -9,13 +10,19 @@ interface FilterButtonProps {
 }
 
 export function FilterButton({ onClick, className, children }: FilterButtonProps) {
+  const { filters } = useAppSelector((state) => state.pokemon);
+  
+  const activeFilterCount = filters.types.length + (filters.generation !== null ? 1 : 0);
+  const hasActiveFilters = activeFilterCount > 0;
+
   return (
     <button
       onClick={onClick}
       className={cn(
-        'px-4 py-2 bg-blue-600 text-white rounded-lg',
+        'relative px-4 py-2 bg-blue-600 text-white rounded-lg',
         'hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500',
         'transition-colors duration-200 font-medium',
+        hasActiveFilters && 'bg-blue-700',
         className
       )}
     >
@@ -28,6 +35,13 @@ export function FilterButton({ onClick, className, children }: FilterButtonProps
         />
       </svg>
       {children || 'Filter'}
+      
+      {/* Active Filter Badge */}
+      {hasActiveFilters && (
+        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+          {activeFilterCount}
+        </span>
+      )}
     </button>
   );
 }
