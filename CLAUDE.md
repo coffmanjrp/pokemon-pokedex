@@ -560,6 +560,71 @@ app/[lang]/              # Dynamic language routing
   - Implement type effectiveness calculation
   - Add Normal/Shiny sprite switching capability
 
+### Hero Section Redesign Implementation (June 2025)
+- **Complete Layout Transformation**: Implemented 2-column horizontal layout matching reference design
+- **Left Column (60%)**:
+  - Large Pokemon image display (384x384px) with proper scaling
+  - Prepared space for navigation arrows (to be implemented)
+  - Centered positioning for optimal visual impact
+- **Right Column (40%)**:
+  - Unified information panel with clean white background and rounded corners
+  - Pokemon name and ID prominently displayed in header
+  - Type badges integrated below name
+  - Structured sections: Weaknesses (placeholder), Story, Versions, basic info grid, Stats
+- **Information Panel Sections**:
+  - **Header**: Pokemon name with ID, type badges
+  - **Weaknesses**: Placeholder for type effectiveness (to be implemented)
+  - **Story**: Pokemon description text with improved typography
+  - **Versions**: Normal/Shiny toggle buttons (styled, functionality pending)
+  - **Basic Info Grid**: Height, Category, Gender, Weight, Abilities in 3-column layout
+  - **Stats**: Compact stat bars with reference design colors (red/green scheme)
+- **Visual Design Improvements**:
+  - Full-screen layout with gray background matching reference
+  - Clean white information panel with subtle shadows
+  - Improved typography hierarchy and spacing
+  - Color-coded stat bars with consistent scaling (max 150 for reference)
+- **Technical Implementation**:
+  - Responsive grid system (5-column layout: 3+2)
+  - Updated page structure removing old container constraints
+  - Preserved existing component functionality while changing layout
+  - Maintained multilingual support throughout redesigned interface
+
+### Enhanced Right-Side Information Panel (June 2025)
+- **Type Effectiveness Implementation**: Added comprehensive weakness calculation system
+  - Created type effectiveness chart covering all 18 Pokemon types
+  - `getPokemonWeaknesses()` function calculates weaknesses from Pokemon's type combination
+  - Visual weakness badges with official Pokemon type colors
+  - Multilingual weakness display (English/Japanese type names)
+  - Hover effects and proper color-coded indicators
+- **Normal/Shiny Version Toggle**: Implemented functional sprite switching
+  - `getPokemonSpriteUrl()` function for dynamic sprite URL generation
+  - React state management for Normal/Shiny toggle
+  - Visual button states with color-coded active/inactive styling
+  - Smooth image transitions with opacity effects
+  - Fallback chain: Official Artwork → HOME sprites → default sprites → placeholder
+- **Enhanced Abilities Display**: Improved ability information presentation
+  - Support for multiple abilities (up to 2 displayed)
+  - Hidden ability detection and special styling
+  - Multilingual ability names using existing translation system
+  - Visual indicators for hidden abilities with yellow accent
+- **CSS Type Color System**: Added comprehensive type color support
+  - CSS custom properties for all 18 Pokemon types in globals.css
+  - `getTypeColorFromName()` utility function for consistent color application
+  - Type badge hover effects and transitions
+  - Proper color accessibility and contrast ratios
+- **Technical Enhancements**:
+  - Extended pokemonUtils.ts with type effectiveness calculations
+  - React useState for shiny toggle state management
+  - Next.js Image optimization for sprite display
+  - Maintained existing component architecture while adding functionality
+  - Preserved multilingual support across all new features
+- **User Experience Improvements**:
+  - Interactive type weakness visualization
+  - Functional Normal/Shiny sprite comparison
+  - Enhanced ability information with hidden ability indicators
+  - Smooth transitions and hover effects throughout interface
+  - Consistent visual hierarchy and spacing
+
 ## Recent Major Updates
 
 ### App Router i18n Migration (December 2024)

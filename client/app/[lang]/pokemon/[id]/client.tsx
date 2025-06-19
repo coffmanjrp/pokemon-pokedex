@@ -8,7 +8,6 @@ import { PokemonBasicInfo } from '@/components/ui/PokemonBasicInfo';
 import { PokemonDetailTabs } from '@/components/ui/PokemonDetailTabs';
 import { PokemonSpritesGallery } from '@/components/ui/PokemonSpritesGallery';
 import { PokemonDetailHeader } from '@/components/ui/PokemonDetailHeader';
-import { PokemonDetailSection } from '@/components/ui/PokemonDetailSection';
 import { PokemonEvolutionChain } from '@/components/ui/PokemonEvolutionChain';
 
 interface PokemonDetailClientProps {
@@ -45,18 +44,25 @@ export default function PokemonDetailClient({ pokemon, dictionary, lang }: Pokem
     <>
       <PokemonDetailHeader language={lang} />
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <PokemonBasicInfo pokemon={pokemon} language={lang} />
+      {/* New Layout - Full Screen */}
+      <PokemonBasicInfo pokemon={pokemon} language={lang} />
 
+      {/* Bottom Sections */}
+      <div className="max-w-7xl mx-auto px-8 pb-8">
         {/* Evolution Chain Section */}
         {pokemon.species?.evolutionChain?.chain && (
-          <PokemonDetailSection title={dictionary.ui.pokemonDetails.evolutionChain}>
-            <PokemonEvolutionChain 
-              evolutionChain={pokemon.species.evolutionChain.chain} 
-              dictionary={dictionary}
-              lang={lang}
-            />
-          </PokemonDetailSection>
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              {dictionary.ui.pokemonDetails.evolutionChain}
+            </h2>
+            <div className="bg-white rounded-2xl p-6 shadow-lg">
+              <PokemonEvolutionChain 
+                evolutionChain={pokemon.species.evolutionChain.chain} 
+                dictionary={dictionary}
+                lang={lang}
+              />
+            </div>
+          </div>
         )}
 
         {/* Tabbed Content: Description, Moves, Game History */}
@@ -66,7 +72,9 @@ export default function PokemonDetailClient({ pokemon, dictionary, lang }: Pokem
           language={lang} 
         />
 
-        <PokemonSpritesGallery pokemon={pokemon} language={lang} />
+        <div className="mt-8">
+          <PokemonSpritesGallery pokemon={pokemon} language={lang} />
+        </div>
       </div>
     </>
   );

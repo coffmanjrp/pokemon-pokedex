@@ -398,3 +398,68 @@ export function getTypeBackgroundGradient(pokemon: Pokemon): string {
   
   return `linear-gradient(135deg, ${colorWithAlpha1} 0%, ${colorWithAlpha2} 50%, #f9fafb 100%)`;
 }
+
+/**
+ * Type effectiveness chart - each type's weaknesses (what they take super effective damage from)
+ */
+const TYPE_EFFECTIVENESS: Record<string, string[]> = {
+  normal: ['fighting'],
+  fire: ['water', 'ground', 'rock'],
+  water: ['electric', 'grass'],
+  electric: ['ground'],
+  grass: ['fire', 'ice', 'poison', 'flying', 'bug'],
+  ice: ['fire', 'fighting', 'rock', 'steel'],
+  fighting: ['flying', 'psychic', 'fairy'],
+  poison: ['ground', 'psychic'],
+  ground: ['water', 'grass', 'ice'],
+  flying: ['electric', 'ice', 'rock'],
+  psychic: ['bug', 'ghost', 'dark'],
+  bug: ['fire', 'flying', 'rock'],
+  rock: ['water', 'grass', 'fighting', 'ground', 'steel'],
+  ghost: ['ghost', 'dark'],
+  dragon: ['ice', 'dragon', 'fairy'],
+  dark: ['fighting', 'bug', 'fairy'],
+  steel: ['fire', 'fighting', 'ground'],
+  fairy: ['poison', 'steel']
+};
+
+/**
+ * Get Pokemon's type weaknesses (types that deal super effective damage)
+ */
+export function getPokemonWeaknesses(pokemon: Pokemon): string[] {
+  if (!pokemon.types || pokemon.types.length === 0) {
+    return [];
+  }
+
+  // Get all weaknesses from Pokemon's types
+  const allWeaknesses = pokemon.types.flatMap(typeSlot => 
+    TYPE_EFFECTIVENESS[typeSlot.type.name.toLowerCase()] || []
+  );
+
+  // Remove duplicates and return unique weaknesses
+  return [...new Set(allWeaknesses)];
+}
+
+/**
+ * Get sprite URL for normal or shiny version
+ */
+export function getPokemonSpriteUrl(pokemon: Pokemon, isShiny: boolean = false): string {
+  if (isShiny) {
+    return (
+      pokemon.sprites.other?.officialArtwork?.frontShiny ||
+      pokemon.sprites.other?.home?.frontShiny ||
+      pokemon.sprites.frontShiny ||
+      pokemon.sprites.other?.officialArtwork?.frontDefault ||
+      pokemon.sprites.other?.home?.frontDefault ||
+      pokemon.sprites.frontDefault ||
+      '/placeholder-pokemon.png'
+    );
+  }
+  
+  return (
+    pokemon.sprites.other?.officialArtwork?.frontDefault ||
+    pokemon.sprites.other?.home?.frontDefault ||
+    pokemon.sprites.frontDefault ||
+    '/placeholder-pokemon.png'
+  );
+}

@@ -1,9 +1,20 @@
 'use client';
 
+import { useState } from 'react';
 import { Pokemon } from '@/types/pokemon';
-import { getPokemonName, getAbilityName, getPokemonDescription, getPokemonGenus, getStatName } from '@/lib/pokemonUtils';
-import { PokemonImage } from './PokemonImage';
+import { 
+  getPokemonName, 
+  getAbilityName, 
+  getPokemonDescription, 
+  getPokemonGenus, 
+  getStatName,
+  getPokemonWeaknesses,
+  getPokemonSpriteUrl,
+  getTypeName,
+  getTypeColorFromName
+} from '@/lib/pokemonUtils';
 import { PokemonTypes } from './PokemonTypes';
+import Image from 'next/image';
 
 interface PokemonBasicInfoProps {
   pokemon: Pokemon;
@@ -11,179 +22,225 @@ interface PokemonBasicInfoProps {
 }
 
 export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
+  const [isShiny, setIsShiny] = useState(false);
+  
   const displayName = getPokemonName(pokemon, language);
   const description = getPokemonDescription(pokemon, language);
   const genus = getPokemonGenus(pokemon, language);
+  const weaknesses = getPokemonWeaknesses(pokemon);
 
-  // Type colors for stat bars
+  // Type colors for stat bars (matching reference design colors)
   const typeColors: Record<string, string> = {
-    hp: 'bg-red-500',
-    attack: 'bg-orange-500',
-    defense: 'bg-blue-500',
-    'special-attack': 'bg-purple-500',
-    'special-defense': 'bg-green-500',
-    speed: 'bg-yellow-500',
+    hp: 'bg-red-400',
+    attack: 'bg-green-400', 
+    defense: 'bg-red-300',
+    'special-attack': 'bg-green-400',
+    'special-defense': 'bg-green-400', 
+    speed: 'bg-red-300',
   };
 
-  const maxBaseStat = pokemon.stats ? Math.max(...pokemon.stats.map(stat => stat.baseStat)) : 100;
+  const maxBaseStat = 150; // Fixed max for consistent bar scaling
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-8 mb-8">
-      <div className="flex flex-col xl:flex-row items-start gap-8">
-        {/* Pokemon Image */}
-        <div className="flex-shrink-0">
-          <div className="w-64 h-64 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden">
-            <PokemonImage
-              pokemon={pokemon}
-              size="xl"
-              priority={true}
-            />
+    <div className="min-h-screen bg-gray-50">
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 p-8">
+        {/* Left Side - Pokemon Image (3/5 columns) */}
+        <div className="lg:col-span-3 flex items-center justify-center relative">
+          <div className="relative">
+            {/* Navigation arrows will be added later */}
+            <div className="w-96 h-96 flex items-center justify-center relative">
+              <div className="relative w-full h-full">
+                <Image
+                  src={getPokemonSpriteUrl(pokemon, isShiny)}
+                  alt={`${displayName} ${isShiny ? '(Shiny)' : ''}`}
+                  fill
+                  className="object-contain drop-shadow-lg transition-opacity duration-300"
+                  sizes="384px"
+                  priority={true}
+                />
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Pokemon Info */}
-        <div className="flex-1 min-w-0">
+        {/* Right Side - Information Panel (2/5 columns) */}
+        <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-lg">
           {/* Header */}
           <div className="mb-6">
-            <div className="flex items-center gap-4 mb-2">
-              <span className="text-sm font-medium text-gray-500">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              {language === 'ja' ? displayName : displayName.charAt(0).toUpperCase() + displayName.slice(1)}
+              <span className="text-xl text-gray-500 ml-2">
                 #{pokemon.id.toString().padStart(3, '0')}
               </span>
-              {genus && (
-                <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                  {genus}
-                </span>
-              )}
-            </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              {language === 'ja' ? displayName : displayName.charAt(0).toUpperCase() + displayName.slice(1)}
             </h1>
-            <PokemonTypes types={pokemon.types} size="lg" />
+            <div className="mb-4">
+              <PokemonTypes types={pokemon.types} size="md" />
+            </div>
           </div>
 
-          {/* Latest Description */}
+          {/* Weaknesses Section */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">
+              {language === 'en' ? 'Weaknesses' : '弱点'}
+            </h3>
+            {weaknesses.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {weaknesses.map((weaknessType) => (
+                  <span
+                    key={weaknessType}
+                    className="px-3 py-1 rounded-full text-xs font-medium text-white transition-transform hover:scale-105"
+                    style={{
+                      backgroundColor: getTypeColorFromName(weaknessType),
+                    }}
+                  >
+                    {getTypeName(weaknessType, language)}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <div className="text-sm text-gray-500">
+                {language === 'en' ? 'No major weaknesses' : '特に弱点なし'}
+              </div>
+            )}
+          </div>
+
+          {/* Story Section */}
           {description && (
             <div className="mb-6">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <blockquote className="text-gray-700 leading-relaxed italic text-sm">
-                  &ldquo;{description}&rdquo;
-                </blockquote>
-              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                {language === 'en' ? 'Story' : 'ストーリー'}
+              </h3>
+              <p className="text-gray-700 text-sm leading-relaxed">
+                {description}
+              </p>
             </div>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left Column: Physical Stats & Abilities */}
-            <div className="space-y-6">
-              {/* Physical Stats */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  {language === 'en' ? 'Physical Stats' : '基本情報'}
-                </h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="text-sm text-gray-600 mb-1">
-                      {language === 'en' ? 'Height' : '高さ'}
-                    </div>
-                    <div className="text-xl font-semibold">
-                      {(pokemon.height / 10).toFixed(1)} m
-                    </div>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="text-sm text-gray-600 mb-1">
-                      {language === 'en' ? 'Weight' : '重さ'}
-                    </div>
-                    <div className="text-xl font-semibold">
-                      {(pokemon.weight / 10).toFixed(1)} kg
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Abilities */}
-              {pokemon.abilities && pokemon.abilities.length > 0 && (
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                    {language === 'en' ? 'Abilities' : '特性'}
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {pokemon.abilities.map((pokemonAbility, index) => (
-                      <span
-                        key={index}
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          pokemonAbility.isHidden 
-                            ? 'bg-purple-100 text-purple-800' 
-                            : 'bg-blue-100 text-blue-800'
-                        }`}
-                      >
-                        {getAbilityName(pokemonAbility.ability.name, language)}
-                        {pokemonAbility.isHidden && (
-                          <span className="ml-1 text-xs">
-                            ({language === 'en' ? 'Hidden' : '隠れ特性'})
-                          </span>
-                        )}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+          {/* Versions Section - Normal/Shiny Toggle */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">
+              {language === 'en' ? 'Versions' : 'バージョン'}
+            </h3>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setIsShiny(false)}
+                className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
+                  !isShiny
+                    ? 'bg-blue-100 text-blue-800 border-blue-200'
+                    : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                {language === 'en' ? 'Normal' : 'ノーマル'}
+              </button>
+              <button
+                onClick={() => setIsShiny(true)}
+                className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
+                  isShiny
+                    ? 'bg-yellow-100 text-yellow-800 border-yellow-200'
+                    : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                {language === 'en' ? 'Shiny' : 'シャイニー'}
+              </button>
             </div>
+          </div>
 
-            {/* Right Column: Battle Stats */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                {language === 'en' ? 'Base Stats' : '種族値'}
-              </h3>
-              {pokemon.stats && pokemon.stats.length > 0 ? (
-                <div className="space-y-3">
-                  {pokemon.stats.map((pokemonStat, index) => {
-                    const statName = pokemonStat.stat.name;
-                    const percentage = (pokemonStat.baseStat / maxBaseStat) * 100;
-                    
-                    return (
-                      <div key={index} className="flex items-center gap-3">
-                        <div className="w-20 text-sm font-medium text-gray-700 text-right">
-                          {getStatName(statName, language)}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <div className="flex-1 bg-gray-200 rounded-full h-2">
-                              <div
-                                className={`h-2 rounded-full transition-all duration-500 ${
-                                  typeColors[statName] || 'bg-gray-400'
-                                }`}
-                                style={{ width: `${percentage}%` }}
-                              />
-                            </div>
-                            <span className="text-sm font-semibold text-gray-800 w-10 text-right">
-                              {pokemonStat.baseStat}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+          {/* Basic Info Grid */}
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="text-center">
+              <div className="text-xs text-gray-500 mb-1">
+                {language === 'en' ? 'Height' : '高さ'}
+              </div>
+              <div className="text-sm font-semibold">
+                {(pokemon.height / 10).toFixed(1)}m
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-xs text-gray-500 mb-1">
+                {language === 'en' ? 'Category' : '分類'}
+              </div>
+              <div className="text-sm font-semibold">
+                {genus || (language === 'en' ? 'Lizard' : 'とかげ')}
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-xs text-gray-500 mb-1">
+                {language === 'en' ? 'Gender' : '性別'}
+              </div>
+              <div className="text-sm font-semibold">
+                ♂ ♀
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-xs text-gray-500 mb-1">
+                {language === 'en' ? 'Weight' : '重さ'}
+              </div>
+              <div className="text-sm font-semibold">
+                {(pokemon.weight / 10).toFixed(1)}kg
+              </div>
+            </div>
+            <div className="text-center col-span-2">
+              <div className="text-xs text-gray-500 mb-1">
+                {language === 'en' ? 'Abilities' : '特性'}
+              </div>
+              <div className="text-sm font-semibold flex flex-col gap-1">
+                {pokemon.abilities && pokemon.abilities.length > 0 ? (
+                  pokemon.abilities.slice(0, 2).map((abilitySlot, index) => (
+                    <span key={index} className={abilitySlot.isHidden ? 'text-yellow-600' : ''}>
+                      {getAbilityName(abilitySlot.ability.name, language)}
+                      {abilitySlot.isHidden && (
+                        <span className="text-xs text-yellow-500 ml-1">
+                          ({language === 'en' ? 'Hidden' : '隠れ特性'})
+                        </span>
+                      )}
+                    </span>
+                  ))
+                ) : (
+                  '-'
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Stats Section */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              {language === 'en' ? 'Stats' : 'ステータス'}
+            </h3>
+            {pokemon.stats && pokemon.stats.length > 0 ? (
+              <div className="space-y-3">
+                {pokemon.stats.map((pokemonStat, index) => {
+                  const statName = pokemonStat.stat.name;
+                  const percentage = (pokemonStat.baseStat / maxBaseStat) * 100;
                   
-                  {/* Total stats */}
-                  <div className="pt-3 border-t border-gray-200">
-                    <div className="flex items-center gap-3">
-                      <div className="w-20 text-sm font-bold text-gray-900 text-right">
-                        {language === 'en' ? 'Total' : '合計'}
+                  return (
+                    <div key={index} className="flex items-center gap-3">
+                      <div className="w-16 text-xs text-gray-600">
+                        {getStatName(statName, language)}
+                      </div>
+                      <div className="text-sm font-semibold w-8 text-right">
+                        {pokemonStat.baseStat}
                       </div>
                       <div className="flex-1">
-                        <span className="text-lg font-bold text-gray-900">
-                          {pokemon.stats.reduce((total, stat) => total + stat.baseStat, 0)}
-                        </span>
+                        <div className="bg-gray-200 rounded-full h-1.5">
+                          <div
+                            className={`h-1.5 rounded-full transition-all duration-500 ${
+                              typeColors[statName] || 'bg-gray-400'
+                            }`}
+                            style={{ width: `${Math.min(percentage, 100)}%` }}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-gray-500 text-center py-4 text-sm">
-                  {language === 'en' ? 'No stats available' : 'ステータスがありません'}
-                </div>
-              )}
-            </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-gray-500 text-center py-4 text-sm">
+                {language === 'en' ? 'No stats available' : 'ステータスがありません'}
+              </div>
+            )}
           </div>
         </div>
       </div>
