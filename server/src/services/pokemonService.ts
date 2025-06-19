@@ -102,24 +102,7 @@ class PokemonService {
           url: abilityInfo.ability.url,
         },
       })),
-      moves: data.moves.map((moveInfo: any) => ({
-        move: {
-          id: this.extractIdFromUrl(moveInfo.move.url),
-          name: moveInfo.move.name,
-          url: moveInfo.move.url,
-        },
-        versionGroupDetails: moveInfo.version_group_details.map((detail: any) => ({
-          levelLearnedAt: detail.level_learned_at,
-          moveLearnMethod: {
-            name: detail.move_learn_method.name,
-            url: detail.move_learn_method.url,
-          },
-          versionGroup: {
-            name: detail.version_group.name,
-            url: detail.version_group.url,
-          },
-        })),
-      })),
+      moves: await this.transformMoves(data.moves),
       gameIndices: data.game_indices.map((gameIndex: any) => ({
         gameIndex: gameIndex.game_index,
         version: {
@@ -339,6 +322,98 @@ class PokemonService {
 
   private isGigantamax(formName: string): boolean {
     return formName.includes('gmax');
+  }
+
+  private async transformMoves(movesData: any[]): Promise<any[]> {
+    const movePromises = movesData.map(async (moveInfo: any) => {
+      try {
+        // Fetch detailed move data from PokeAPI
+        const moveDetailUrl = moveInfo.move.url.replace('https://pokeapi.co/api/v2', '');
+        const moveDetails = await this.fetchFromPokeAPI(moveDetailUrl);
+
+        return {
+          move: {
+            id: this.extractIdFromUrl(moveInfo.move.url),
+            name: moveInfo.move.name,
+            url: moveInfo.move.url,
+            type: {
+              id: this.extractIdFromUrl(moveDetails.type.url),
+              name: moveDetails.type.name,
+              url: moveDetails.type.url,
+            },
+            damageClass: {
+              id: this.extractIdFromUrl(moveDetails.damage_class.url),
+              name: moveDetails.damage_class.name,
+              names: moveDetails.damage_class.names || [],
+            },
+            power: moveDetails.power,
+            accuracy: moveDetails.accuracy,
+            pp: moveDetails.pp,
+            priority: moveDetails.priority || 0,
+            target: {
+              id: this.extractIdFromUrl(moveDetails.target.url),
+              name: moveDetails.target.name,
+              names: moveDetails.target.names || [],
+            },
+            effectChance: moveDetails.effect_chance,
+            flavorTextEntries: (moveDetails.flavor_text_entries || []).map((entry: any) => ({
+              flavorText: entry.flavor_text || null,
+              language: {
+                name: entry.language.name,
+                url: entry.language.url,
+              },
+              versionGroup: {
+                name: entry.version_group.name,
+                url: entry.version_group.url,
+              },
+            })),
+          },
+          versionGroupDetails: moveInfo.version_group_details.map((detail: any) => ({
+            levelLearnedAt: detail.level_learned_at,
+            moveLearnMethod: {
+              name: detail.move_learn_method.name,
+              url: detail.move_learn_method.url,
+            },
+            versionGroup: {
+              name: detail.version_group.name,
+              url: detail.version_group.url,
+            },
+          })),
+        };
+      } catch (error) {
+        console.error(`Error fetching move details for ${moveInfo.move.name}:`, error);
+        // Return basic move data if detailed fetch fails
+        return {
+          move: {
+            id: this.extractIdFromUrl(moveInfo.move.url),
+            name: moveInfo.move.name,
+            url: moveInfo.move.url,
+            type: { id: '0', name: 'unknown', url: '' },
+            damageClass: { id: '0', name: 'unknown', names: [] },
+            power: null,
+            accuracy: null,
+            pp: null,
+            priority: 0,
+            target: { id: '0', name: 'unknown', names: [] },
+            effectChance: null,
+            flavorTextEntries: [],
+          },
+          versionGroupDetails: moveInfo.version_group_details.map((detail: any) => ({
+            levelLearnedAt: detail.level_learned_at,
+            moveLearnMethod: {
+              name: detail.move_learn_method.name,
+              url: detail.move_learn_method.url,
+            },
+            versionGroup: {
+              name: detail.version_group.name,
+              url: detail.version_group.url,
+            },
+          })),
+        };
+      }
+    });
+
+    return await Promise.all(movePromises);
   }
 
   private extractIdFromUrl(url: string): string {

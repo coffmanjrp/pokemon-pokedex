@@ -109,6 +109,43 @@ export const typeDefs = gql`
     id: ID!
     name: String!
     url: String!
+    type: Type!
+    damageClass: MoveDamageClass!
+    power: Int
+    accuracy: Int
+    pp: Int
+    priority: Int
+    target: MoveTarget!
+    effectChance: Int
+    flavorTextEntries: [MoveFlavorTextEntry!]!
+  }
+
+  type MoveDamageClass {
+    id: ID!
+    name: String!
+    names: [MoveDamageClassName!]!
+  }
+
+  type MoveDamageClassName {
+    name: String!
+    language: Language!
+  }
+
+  type MoveTarget {
+    id: ID!
+    name: String!
+    names: [MoveTargetName!]!
+  }
+
+  type MoveTargetName {
+    name: String!
+    language: Language!
+  }
+
+  type MoveFlavorTextEntry {
+    flavorText: String
+    language: Language!
+    versionGroup: VersionGroup!
   }
 
   type MoveVersionGroupDetail {

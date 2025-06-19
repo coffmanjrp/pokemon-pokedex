@@ -98,6 +98,43 @@ export interface Move {
   id: string;
   name: string;
   url: string;
+  type: Type;
+  damageClass: MoveDamageClass;
+  power?: number;
+  accuracy?: number;
+  pp?: number;
+  priority: number;
+  target: MoveTarget;
+  effectChance?: number;
+  flavorTextEntries: MoveFlavorTextEntry[];
+}
+
+export interface MoveDamageClass {
+  id: string;
+  name: string;
+  names: MoveDamageClassName[];
+}
+
+export interface MoveDamageClassName {
+  name: string;
+  language: Language;
+}
+
+export interface MoveTarget {
+  id: string;
+  name: string;
+  names: MoveTargetName[];
+}
+
+export interface MoveTargetName {
+  name: string;
+  language: Language;
+}
+
+export interface MoveFlavorTextEntry {
+  flavorText?: string;
+  language: Language;
+  versionGroup: VersionGroup;
 }
 
 export interface MoveVersionGroupDetail {
