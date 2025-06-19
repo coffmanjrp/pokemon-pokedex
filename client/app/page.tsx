@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { Header } from '../components/layout/Header';
 import { PokemonGrid } from '../components/ui/PokemonGrid';
 import { LoadingOverlay } from '../components/ui/LoadingSpinner';
@@ -80,11 +81,16 @@ export default function Home() {
       <main className="max-w-7xl mx-auto">
         {/* Hero Section */}
         <div className="text-center py-12 px-4">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-red-500 via-yellow-500 to-blue-500 bg-clip-text text-transparent">
-              {language === 'en' ? 'Pokédex' : 'ポケモン図鑑'}
-            </span>
-          </h1>
+          <div className="flex justify-center mb-4">
+            <Image
+              src="/logo.png"
+              alt={language === 'en' ? 'Pokédex' : 'ポケモン図鑑'}
+              width={300}
+              height={112}
+              priority
+              className="h-auto w-auto max-w-xs md:max-w-md"
+            />
+          </div>
           <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
             {language === 'en' 
               ? 'Discover and explore the wonderful world of Pokémon. Search, filter, and learn about your favorite creatures!'
