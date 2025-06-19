@@ -228,6 +228,7 @@ app/[lang]/              # Dynamic language routing
 - ✅ Complete UI text (search, filters, navigation, etc.)
 - ✅ Height/Weight units and labels
 - ✅ Stats and technical information
+- ✅ Navigation consistency (back buttons, error pages, detail page links)
 
 ## Common Issues & Solutions
 
@@ -241,6 +242,11 @@ app/[lang]/              # Dynamic language routing
 ### Runtime Errors
 - "filters is not defined": Add filters selector to component (see above)
 - Loading state conflicts: Check that auto-loading and regular loading states are properly differentiated
+
+### Language Navigation Issues
+- **Problem**: Navigation links not preserving language context (e.g., detail page back button going to `/en/` instead of `/ja/`)
+- **Solution**: Use `href="{/${language}/}"` instead of `href="/"` in all navigation components
+- **Implementation**: Extract current language using `usePathname()` and `getLocaleFromPathname()` for client components
 
 ## Current Development Priorities
 
@@ -276,6 +282,7 @@ app/[lang]/              # Dynamic language routing
   - PokeAPI-integrated Japanese Pokemon names, types, abilities, and moves
   - 308 static pages generated (151 Pokemon × 2 languages)
   - SEO-optimized with proper hreflang and language-specific metadata
+  - Language-consistent navigation preserves user's language choice across all pages
 - **Image Optimization**: Next.js Image with fallbacks, lazy loading, and size variants
 - **Rich Data Display**: Moves, Pokedex entries, game history, and comprehensive stats
 - **SEO Optimization**: Meta tags, Open Graph, Twitter Cards for all Pokemon pages
@@ -317,6 +324,7 @@ app/[lang]/              # Dynamic language routing
   - Automatic language detection from browser Accept-Language headers
   - Middleware redirects for seamless user experience
 - **SEO Optimization**: Language-specific metadata, proper hreflang attributes, and crawlable URLs
+- **Language-Aware Navigation**: All navigation links preserve language context (detail pages, error pages, back buttons)
 
 ### Pokemon Detail Pages Implementation (December 2024)
 - **SSG Implementation**: Static Site Generation for first 151 Pokemon with ISR support
