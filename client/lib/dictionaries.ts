@@ -84,6 +84,8 @@ export interface Dictionary {
     description: string
     pokemonTitle: string
     pokemonDescription: string
+    pokemonDescriptionShort: string
+    pokemonKeywords: string
   }
 }
 

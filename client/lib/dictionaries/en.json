@@ -87,7 +87,9 @@
   "meta": {
     "title": "Pokédex - Discover the World of Pokémon",
     "description": "Discover and explore the wonderful world of Pokémon. Search, filter, and learn about your favorite creatures!",
-    "pokemonTitle": "{{name}} - Pokémon Details",
-    "pokemonDescription": "Learn about {{name}}, a {{type}} type Pokémon. View stats, moves, abilities and more detailed information."
+    "pokemonTitle": "{{name}} (#{{id}}) - {{type}} Pokémon | Pokédex",
+    "pokemonDescription": "{{name}} is a {{type}} type Pokémon with {{hp}} HP, {{attack}} Attack, and {{defense}} Defense. {{description}}",
+    "pokemonDescriptionShort": "{{name}} - {{type}} type Pokémon from Generation {{generation}}. Height: {{height}}m, Weight: {{weight}}kg.",
+    "pokemonKeywords": "{{name}}, Pokemon, {{type}}, Generation {{generation}}, stats, moves, abilities, evolution"
   }
 }

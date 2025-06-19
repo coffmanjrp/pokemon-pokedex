@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useAppSelector, useAppDispatch } from '@/store/hooks';
+import { useAppDispatch } from '@/store/hooks';
 import { setLanguage, setFilterModalOpen } from '@/store/slices/uiSlice';
 import { setSearchFilter } from '@/store/slices/pokemonSlice';
 import { useRouter, usePathname } from 'next/navigation';
