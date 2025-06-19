@@ -170,6 +170,34 @@ export const typeDefs = gql`
   type EvolutionChain {
     id: ID!
     url: String!
+    chain: EvolutionDetail!
+  }
+
+  type EvolutionDetail {
+    id: ID!
+    name: String!
+    sprites: PokemonSprites!
+    types: [PokemonType!]!
+    evolutionDetails: [EvolutionTrigger!]
+    evolvesTo: [EvolutionDetail!]!
+  }
+
+  type EvolutionTrigger {
+    minLevel: Int
+    item: NamedResource
+    trigger: NamedResource!
+    timeOfDay: String
+    location: NamedResource
+    knownMove: NamedResource
+    minHappiness: Int
+    minBeauty: Int
+    minAffection: Int
+    needsOverworldRain: Boolean
+    partySpecies: NamedResource
+    partyType: NamedResource
+    relativePhysicalStats: Int
+    tradeSpecies: NamedResource
+    turnUpsideDown: Boolean
   }
 
   type GameIndex {

@@ -46,6 +46,7 @@ export interface Dictionary {
       description: string
       gameHistory: string
       sprites: string
+      evolutionChain: string
     }
     stats: {
       hp: string

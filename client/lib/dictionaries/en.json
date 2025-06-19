@@ -42,7 +42,8 @@
       "moves": "Moves",
       "description": "Description",
       "gameHistory": "Game History",
-      "sprites": "Sprites & Artwork"
+      "sprites": "Sprites & Artwork",
+      "evolutionChain": "Evolution Chain"
     },
     "stats": {
       "hp": "HP",

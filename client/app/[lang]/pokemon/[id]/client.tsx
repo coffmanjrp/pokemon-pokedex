@@ -10,6 +10,7 @@ import { PokemonGameHistory } from '@/components/ui/PokemonGameHistory';
 import { PokemonSpritesGallery } from '@/components/ui/PokemonSpritesGallery';
 import { PokemonDetailHeader } from '@/components/ui/PokemonDetailHeader';
 import { PokemonDetailSection } from '@/components/ui/PokemonDetailSection';
+import { PokemonEvolutionChain } from '@/components/ui/PokemonEvolutionChain';
 
 interface PokemonDetailClientProps {
   pokemon: Pokemon;
@@ -39,6 +40,17 @@ export default function PokemonDetailClient({ pokemon, dictionary, lang }: Pokem
         <PokemonDetailSection title={dictionary.ui.pokemonDetails.stats}>
           <PokemonStats stats={pokemon.stats} />
         </PokemonDetailSection>
+
+        {/* Evolution Chain Section */}
+        {pokemon.species?.evolutionChain?.chain && (
+          <PokemonDetailSection title={dictionary.ui.pokemonDetails.evolutionChain}>
+            <PokemonEvolutionChain 
+              evolutionChain={pokemon.species.evolutionChain.chain} 
+              dictionary={dictionary}
+              lang={lang}
+            />
+          </PokemonDetailSection>
+        )}
 
         {/* Moves Section */}
         {pokemon.moves && pokemon.moves.length > 0 && (

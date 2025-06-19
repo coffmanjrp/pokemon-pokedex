@@ -20,7 +20,7 @@ class PokemonService {
       this.fetchFromPokeAPI(`/pokemon-species/${id}`).catch(() => null), // Species data may not exist for all Pokemon
     ]);
     
-    return this.transformPokemonData(pokemonData, speciesData);
+    return await this.transformPokemonData(pokemonData, speciesData);
   }
 
   async getPokemons(limit: number, offset: number): Promise<PokemonConnection> {
@@ -31,7 +31,7 @@ class PokemonService {
         this.fetchFromPokeAPI(`/pokemon/${pokemon.name}`),
         this.fetchFromPokeAPI(`/pokemon-species/${pokemon.name}`).catch(() => null), // Fetch species for multilingual support
       ]);
-      return this.transformPokemonData(pokemonData, speciesData);
+      return await this.transformPokemonData(pokemonData, speciesData);
     });
 
     const pokemons = await Promise.all(pokemonPromises);
@@ -53,7 +53,7 @@ class PokemonService {
     };
   }
 
-  private transformPokemonData(data: any, speciesData: any = null): Pokemon {
+  private async transformPokemonData(data: any, speciesData: any = null): Promise<Pokemon> {
     return {
       id: data.id.toString(),
       name: data.name,
@@ -160,11 +160,108 @@ class PokemonService {
           name: speciesData.generation.name,
           url: speciesData.generation.url,
         },
-        evolutionChain: speciesData.evolution_chain ? {
-          id: this.extractIdFromUrl(speciesData.evolution_chain.url),
-          url: speciesData.evolution_chain.url,
-        } : undefined,
+        evolutionChain: speciesData.evolution_chain ? 
+          await this.getEvolutionChain(speciesData.evolution_chain.url) : undefined,
       } : null,
+    };
+  }
+
+  private async getEvolutionChain(evolutionChainUrl: string) {
+    try {
+      const evolutionData = await this.fetchFromPokeAPI(evolutionChainUrl.replace(POKEAPI_BASE_URL, ''));
+      
+      return {
+        id: this.extractIdFromUrl(evolutionChainUrl),
+        url: evolutionChainUrl,
+        chain: await this.transformEvolutionChainData(evolutionData.chain),
+      };
+    } catch (error) {
+      console.error('Error fetching evolution chain:', error);
+      return undefined;
+    }
+  }
+
+  private async transformEvolutionChainData(chainData: any): Promise<any> {
+    const pokemonData = await this.fetchFromPokeAPI(`/pokemon/${chainData.species.name}`);
+    
+    const evolvesToPromises = chainData.evolves_to.map((evolution: any) => 
+      this.transformEvolutionChainData(evolution)
+    );
+    const evolvesTo = await Promise.all(evolvesToPromises);
+
+    return {
+      id: this.extractIdFromUrl(chainData.species.url),
+      name: chainData.species.name,
+      sprites: {
+        frontDefault: pokemonData.sprites.front_default,
+        frontShiny: pokemonData.sprites.front_shiny,
+        backDefault: pokemonData.sprites.back_default,
+        backShiny: pokemonData.sprites.back_shiny,
+        other: pokemonData.sprites.other ? {
+          officialArtwork: pokemonData.sprites.other['official-artwork'] ? {
+            frontDefault: pokemonData.sprites.other['official-artwork'].front_default,
+            frontShiny: pokemonData.sprites.other['official-artwork'].front_shiny,
+          } : undefined,
+          home: pokemonData.sprites.other.home ? {
+            frontDefault: pokemonData.sprites.other.home.front_default,
+            frontShiny: pokemonData.sprites.other.home.front_shiny,
+          } : undefined,
+        } : undefined,
+      },
+      types: pokemonData.types.map((type: any) => ({
+        slot: type.slot,
+        type: {
+          id: this.extractIdFromUrl(type.type.url),
+          name: type.type.name,
+          url: type.type.url,
+        },
+      })),
+      evolutionDetails: chainData.evolution_details.map((detail: any) => ({
+        minLevel: detail.min_level,
+        item: detail.item ? {
+          id: this.extractIdFromUrl(detail.item.url),
+          name: detail.item.name,
+          url: detail.item.url,
+        } : undefined,
+        trigger: {
+          id: this.extractIdFromUrl(detail.trigger.url),
+          name: detail.trigger.name,
+          url: detail.trigger.url,
+        },
+        timeOfDay: detail.time_of_day || undefined,
+        location: detail.location ? {
+          id: this.extractIdFromUrl(detail.location.url),
+          name: detail.location.name,
+          url: detail.location.url,
+        } : undefined,
+        knownMove: detail.known_move ? {
+          id: this.extractIdFromUrl(detail.known_move.url),
+          name: detail.known_move.name,
+          url: detail.known_move.url,
+        } : undefined,
+        minHappiness: detail.min_happiness,
+        minBeauty: detail.min_beauty,
+        minAffection: detail.min_affection,
+        needsOverworldRain: detail.needs_overworld_rain,
+        partySpecies: detail.party_species ? {
+          id: this.extractIdFromUrl(detail.party_species.url),
+          name: detail.party_species.name,
+          url: detail.party_species.url,
+        } : undefined,
+        partyType: detail.party_type ? {
+          id: this.extractIdFromUrl(detail.party_type.url),
+          name: detail.party_type.name,
+          url: detail.party_type.url,
+        } : undefined,
+        relativePhysicalStats: detail.relative_physical_stats,
+        tradeSpecies: detail.trade_species ? {
+          id: this.extractIdFromUrl(detail.trade_species.url),
+          name: detail.trade_species.name,
+          url: detail.trade_species.url,
+        } : undefined,
+        turnUpsideDown: detail.turn_upside_down,
+      })),
+      evolvesTo,
     };
   }
 

@@ -179,6 +179,221 @@ export const GET_POKEMON = gql`
         evolutionChain {
           id
           url
+          chain {
+            id
+            name
+            sprites {
+              frontDefault
+              other {
+                officialArtwork {
+                  frontDefault
+                }
+              }
+            }
+            types {
+              slot
+              type {
+                id
+                name
+                url
+              }
+            }
+            evolutionDetails {
+              minLevel
+              item {
+                id
+                name
+                url
+              }
+              trigger {
+                id
+                name
+                url
+              }
+              timeOfDay
+              location {
+                id
+                name
+                url
+              }
+              knownMove {
+                id
+                name
+                url
+              }
+              minHappiness
+              minBeauty
+              minAffection
+              needsOverworldRain
+              partySpecies {
+                id
+                name
+                url
+              }
+              partyType {
+                id
+                name
+                url
+              }
+              relativePhysicalStats
+              tradeSpecies {
+                id
+                name
+                url
+              }
+              turnUpsideDown
+            }
+            evolvesTo {
+              id
+              name
+              sprites {
+                frontDefault
+                other {
+                  officialArtwork {
+                    frontDefault
+                  }
+                }
+              }
+              types {
+                slot
+                type {
+                  id
+                  name
+                  url
+                }
+              }
+              evolutionDetails {
+                minLevel
+                item {
+                  id
+                  name
+                  url
+                }
+                trigger {
+                  id
+                  name
+                  url
+                }
+                timeOfDay
+                location {
+                  id
+                  name
+                  url
+                }
+                knownMove {
+                  id
+                  name
+                  url
+                }
+                minHappiness
+                minBeauty
+                minAffection
+                needsOverworldRain
+                partySpecies {
+                  id
+                  name
+                  url
+                }
+                partyType {
+                  id
+                  name
+                  url
+                }
+                relativePhysicalStats
+                tradeSpecies {
+                  id
+                  name
+                  url
+                }
+                turnUpsideDown
+              }
+              evolvesTo {
+                id
+                name
+                sprites {
+                  frontDefault
+                  other {
+                    officialArtwork {
+                      frontDefault
+                    }
+                  }
+                }
+                types {
+                  slot
+                  type {
+                    id
+                    name
+                    url
+                  }
+                }
+                evolutionDetails {
+                  minLevel
+                  item {
+                    id
+                    name
+                    url
+                  }
+                  trigger {
+                    id
+                    name
+                    url
+                  }
+                  timeOfDay
+                  location {
+                    id
+                    name
+                    url
+                  }
+                  knownMove {
+                    id
+                    name
+                    url
+                  }
+                  minHappiness
+                  minBeauty
+                  minAffection
+                  needsOverworldRain
+                  partySpecies {
+                    id
+                    name
+                    url
+                  }
+                  partyType {
+                    id
+                    name
+                    url
+                  }
+                  relativePhysicalStats
+                  tradeSpecies {
+                    id
+                    name
+                    url
+                  }
+                  turnUpsideDown
+                }
+                evolvesTo {
+                  id
+                  name
+                  sprites {
+                    frontDefault
+                    other {
+                      officialArtwork {
+                        frontDefault
+                      }
+                    }
+                  }
+                  types {
+                    slot
+                    type {
+                      id
+                      name
+                      url
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
       gameIndices {

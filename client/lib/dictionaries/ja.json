@@ -42,7 +42,8 @@
       "moves": "わざ",
       "description": "説明",
       "gameHistory": "ゲーム履歴",
-      "sprites": "スプライト・アートワーク"
+      "sprites": "スプライト・アートワーク",
+      "evolutionChain": "進化系統"
     },
     "stats": {
       "hp": "HP",

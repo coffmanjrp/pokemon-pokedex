@@ -161,6 +161,40 @@ export interface Generation {
 export interface EvolutionChain {
   id: string;
   url: string;
+  chain: EvolutionDetail;
+}
+
+export interface EvolutionDetail {
+  id: string;
+  name: string;
+  sprites: PokemonSprites;
+  types: PokemonType[];
+  evolutionDetails: EvolutionTrigger[];
+  evolvesTo: EvolutionDetail[];
+}
+
+export interface EvolutionTrigger {
+  minLevel?: number;
+  item?: NamedResource;
+  trigger: NamedResource;
+  timeOfDay?: string;
+  location?: NamedResource;
+  knownMove?: NamedResource;
+  minHappiness?: number;
+  minBeauty?: number;
+  minAffection?: number;
+  needsOverworldRain?: boolean;
+  partySpecies?: NamedResource;
+  partyType?: NamedResource;
+  relativePhysicalStats?: number;
+  tradeSpecies?: NamedResource;
+  turnUpsideDown?: boolean;
+}
+
+export interface NamedResource {
+  id: string;
+  name: string;
+  url: string;
 }
 
 export interface GameIndex {
