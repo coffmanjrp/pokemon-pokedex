@@ -124,6 +124,31 @@ export interface PokemonSpecies {
   genera: Genus[];
   generation: Generation;
   evolutionChain?: EvolutionChain | undefined;
+  varieties?: PokemonVariety[];
+}
+
+export interface PokemonVariety {
+  isDefault: boolean;
+  pokemon: NamedResource;
+}
+
+export interface PokemonForm {
+  id: string;
+  name: string;
+  formName?: string;
+  formNames?: FormName[];
+  formOrder: number;
+  isDefault: boolean;
+  isBattleOnly: boolean;
+  isMega: boolean;
+  sprites: PokemonSprites;
+  types: PokemonType[];
+  versionGroup?: VersionGroup;
+}
+
+export interface FormName {
+  name: string;
+  language: Language;
 }
 
 export interface SpeciesName {
@@ -171,6 +196,18 @@ export interface EvolutionDetail {
   types: PokemonType[];
   evolutionDetails: EvolutionTrigger[];
   evolvesTo: EvolutionDetail[];
+  forms?: FormVariant[];
+}
+
+export interface FormVariant {
+  id: string;
+  name: string;
+  formName?: string;
+  sprites: PokemonSprites;
+  types: PokemonType[];
+  isRegionalVariant?: boolean;
+  isMegaEvolution?: boolean;
+  isDynamax?: boolean;
 }
 
 export interface EvolutionTrigger {

@@ -5,6 +5,8 @@ export const typeDefs = gql`
     hello: String
     pokemon(id: ID!): Pokemon
     pokemons(limit: Int, offset: Int): PokemonConnection
+    pokemonForms(speciesId: ID!): [PokemonForm!]!
+    pokemonForm(id: ID!): PokemonForm
   }
 
   type Pokemon {
@@ -133,6 +135,31 @@ export const typeDefs = gql`
     genera: [Genus!]!
     generation: Generation!
     evolutionChain: EvolutionChain
+    varieties: [PokemonVariety!]!
+  }
+
+  type PokemonVariety {
+    isDefault: Boolean!
+    pokemon: NamedResource!
+  }
+
+  type PokemonForm {
+    id: ID!
+    name: String!
+    formName: String
+    formNames: [FormName!]!
+    formOrder: Int!
+    isDefault: Boolean!
+    isBattleOnly: Boolean!
+    isMega: Boolean!
+    sprites: PokemonSprites!
+    types: [PokemonType!]!
+    versionGroup: VersionGroup
+  }
+
+  type FormName {
+    name: String!
+    language: Language!
   }
 
   type SpeciesName {
@@ -186,6 +213,18 @@ export const typeDefs = gql`
     types: [PokemonType!]!
     evolutionDetails: [EvolutionTrigger!]
     evolvesTo: [EvolutionDetail!]!
+    forms: [FormVariant!]!
+  }
+
+  type FormVariant {
+    id: ID!
+    name: String!
+    formName: String
+    sprites: PokemonSprites!
+    types: [PokemonType!]!
+    isRegionalVariant: Boolean!
+    isMegaEvolution: Boolean!
+    isDynamax: Boolean!
   }
 
   type EvolutionTrigger {

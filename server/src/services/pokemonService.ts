@@ -183,11 +183,15 @@ class PokemonService {
 
   private async transformEvolutionChainData(chainData: any): Promise<any> {
     const pokemonData = await this.fetchFromPokeAPI(`/pokemon/${chainData.species.name}`);
+    const speciesData = await this.fetchFromPokeAPI(`/pokemon-species/${chainData.species.name}`);
     
     const evolvesToPromises = chainData.evolves_to.map((evolution: any) => 
       this.transformEvolutionChainData(evolution)
     );
     const evolvesTo = await Promise.all(evolvesToPromises);
+
+    // Fetch form variations for this Pokemon
+    const forms = await this.fetchPokemonForms(speciesData);
 
     return {
       id: this.extractIdFromUrl(chainData.species.url),
@@ -262,7 +266,79 @@ class PokemonService {
         turnUpsideDown: detail.turn_upside_down,
       })),
       evolvesTo,
+      forms,
     };
+  }
+
+  private async fetchPokemonForms(speciesData: any): Promise<any[]> {
+    try {
+      if (!speciesData.varieties || speciesData.varieties.length <= 1) {
+        return [];
+      }
+
+      const forms = [];
+      for (const variety of speciesData.varieties) {
+        if (!variety.is_default) {
+          const variantData = await this.fetchFromPokeAPI(variety.pokemon.url.replace('https://pokeapi.co/api/v2', ''));
+          
+          const formName = variantData.name.replace(`${speciesData.name}-`, '');
+          const isRegionalVariant = this.isRegionalVariant(formName);
+          const isMegaEvolution = this.isMegaEvolution(formName);
+          const isDynamax = this.isGigantamax(formName);
+
+          forms.push({
+            id: variantData.id.toString(),
+            name: variantData.name,
+            formName,
+            sprites: {
+              frontDefault: variantData.sprites.front_default,
+              frontShiny: variantData.sprites.front_shiny,
+              backDefault: variantData.sprites.back_default,
+              backShiny: variantData.sprites.back_shiny,
+              other: variantData.sprites.other ? {
+                officialArtwork: variantData.sprites.other['official-artwork'] ? {
+                  frontDefault: variantData.sprites.other['official-artwork'].front_default,
+                  frontShiny: variantData.sprites.other['official-artwork'].front_shiny,
+                } : undefined,
+                home: variantData.sprites.other.home ? {
+                  frontDefault: variantData.sprites.other.home.front_default,
+                  frontShiny: variantData.sprites.other.home.front_shiny,
+                } : undefined,
+              } : undefined,
+            },
+            types: variantData.types.map((type: any) => ({
+              slot: type.slot,
+              type: {
+                id: this.extractIdFromUrl(type.type.url),
+                name: type.type.name,
+                url: type.type.url,
+              },
+            })),
+            isRegionalVariant,
+            isMegaEvolution,
+            isDynamax,
+          });
+        }
+      }
+
+      return forms;
+    } catch (error) {
+      console.error('Error fetching Pokemon forms:', error);
+      return [];
+    }
+  }
+
+  private isRegionalVariant(formName: string): boolean {
+    const regionalForms = ['alolan', 'galarian', 'hisuian', 'paldean'];
+    return regionalForms.some(form => formName.includes(form));
+  }
+
+  private isMegaEvolution(formName: string): boolean {
+    return formName.includes('mega');
+  }
+
+  private isGigantamax(formName: string): boolean {
+    return formName.includes('gmax');
   }
 
   private extractIdFromUrl(url: string): string {
