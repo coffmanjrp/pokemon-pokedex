@@ -167,6 +167,12 @@ export const typeDefs = gql`
     url: String!
   }
 
+  type NamedResource {
+    id: ID!
+    name: String!
+    url: String!
+  }
+
   type EvolutionChain {
     id: ID!
     url: String!
