@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { setLanguage, toggleTheme, setFilterModalOpen } from '@/store/slices/uiSlice';
 import { setSearchFilter } from '@/store/slices/pokemonSlice';
+import { useRouter, usePathname } from 'next/navigation';
+import { Locale, generateAlternateLanguageUrl } from '@/lib/dictionaries';
 import { Logo } from './Logo';
 import { SearchBar } from './SearchBar';
 import { LanguageToggle } from './LanguageToggle';
@@ -11,9 +13,15 @@ import { ThemeToggle } from './ThemeToggle';
 import { FilterButton } from './FilterButton';
 import { FilterModal } from '../ui/FilterModal';
 
-export function Header() {
+interface HeaderProps {
+  lang: Locale;
+}
+
+export function Header({ lang }: HeaderProps) {
   const dispatch = useAppDispatch();
-  const { language, theme } = useAppSelector((state) => state.ui);
+  const router = useRouter();
+  const pathname = usePathname();
+  const { theme } = useAppSelector((state) => state.ui);
   const [searchValue, setSearchValue] = useState('');
 
   const handleSearchChange = (value: string) => {
@@ -22,7 +30,16 @@ export function Header() {
   };
 
   const handleLanguageToggle = () => {
-    dispatch(setLanguage(language === 'en' ? 'ja' : 'en'));
+    const newLang = lang === 'en' ? 'ja' : 'en';
+    const newUrl = generateAlternateLanguageUrl(pathname, newLang);
+    
+    console.log('Language toggle:', { currentLang: lang, newLang, pathname, newUrl });
+    
+    // Update Redux state
+    dispatch(setLanguage(newLang));
+    
+    // Navigate to new URL
+    router.push(newUrl);
   };
 
   const handleThemeToggle = () => {
@@ -35,7 +52,7 @@ export function Header() {
 
   return (
     <>
-      <FilterModal />
+      <FilterModal lang={lang} />
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -54,7 +71,7 @@ export function Header() {
           {/* Controls */}
           <div className="flex items-center space-x-4">
             <LanguageToggle
-              language={language}
+              language={lang}
               onToggle={handleLanguageToggle}
             />
 
@@ -63,7 +80,7 @@ export function Header() {
               onToggle={handleThemeToggle}
             />
 
-            <FilterButton onClick={handleFilterClick} />
+            <FilterButton onClick={handleFilterClick} lang={lang} />
           </div>
         </div>
       </div>

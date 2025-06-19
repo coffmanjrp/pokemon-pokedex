@@ -128,10 +128,16 @@ export const typeDefs = gql`
   type PokemonSpecies {
     id: ID!
     name: String!
+    names: [SpeciesName!]!
     flavorTextEntries: [FlavorTextEntry!]!
     genera: [Genus!]!
     generation: Generation!
     evolutionChain: EvolutionChain
+  }
+
+  type SpeciesName {
+    name: String!
+    language: Language!
   }
 
   type FlavorTextEntry {

@@ -1,7 +1,7 @@
 'use client';
 
-import { useAppSelector } from '@/store/hooks';
 import { Pokemon } from '@/types/pokemon';
+import { Dictionary, Locale } from '@/lib/dictionaries';
 import { PokemonBasicInfo } from '@/components/ui/PokemonBasicInfo';
 import { PokemonStats } from '@/components/ui/PokemonStats';
 import { PokemonDescription } from '@/components/ui/PokemonDescription';
@@ -13,54 +13,53 @@ import { PokemonDetailSection } from '@/components/ui/PokemonDetailSection';
 
 interface PokemonDetailClientProps {
   pokemon: Pokemon;
+  dictionary: Dictionary;
+  lang: Locale;
 }
 
-export default function PokemonDetailClient({ pokemon }: PokemonDetailClientProps) {
-  const { language } = useAppSelector((state) => state.ui);
-
+export default function PokemonDetailClient({ pokemon, dictionary, lang }: PokemonDetailClientProps) {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <PokemonDetailHeader language={language} />
+    <>
+      <PokemonDetailHeader language={lang} />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <PokemonBasicInfo pokemon={pokemon} language={language} />
+        <PokemonBasicInfo pokemon={pokemon} language={lang} />
 
         {/* Description Section */}
         {pokemon.species && (
-          <PokemonDetailSection title={language === 'en' ? 'Pokédex Entry' : 'ポケモン図鑑'}>
+          <PokemonDetailSection title={dictionary.ui.pokemonDetails.description}>
             <PokemonDescription
-              flavorTextEntries={pokemon.species.flavorTextEntries}
-              genera={pokemon.species.genera}
-              language={language}
+              pokemon={pokemon}
+              language={lang}
             />
           </PokemonDetailSection>
         )}
 
         {/* Stats Section */}
-        <PokemonDetailSection title={language === 'en' ? 'Base Stats' : '基礎ステータス'}>
+        <PokemonDetailSection title={dictionary.ui.pokemonDetails.stats}>
           <PokemonStats stats={pokemon.stats} />
         </PokemonDetailSection>
 
         {/* Moves Section */}
         {pokemon.moves && pokemon.moves.length > 0 && (
-          <PokemonDetailSection title={language === 'en' ? 'Moves' : '覚える技'}>
-            <PokemonMoves moves={pokemon.moves} language={language} />
+          <PokemonDetailSection title={dictionary.ui.pokemonDetails.moves}>
+            <PokemonMoves moves={pokemon.moves} language={lang} />
           </PokemonDetailSection>
         )}
 
         {/* Game History Section */}
         {pokemon.gameIndices && pokemon.gameIndices.length > 0 && (
-          <PokemonDetailSection title={language === 'en' ? 'Game History' : 'ゲーム出現履歴'}>
+          <PokemonDetailSection title={dictionary.ui.pokemonDetails.gameHistory}>
             <PokemonGameHistory
               gameIndices={pokemon.gameIndices}
               generation={pokemon.species?.generation}
-              language={language}
+              language={lang}
             />
           </PokemonDetailSection>
         )}
 
-        <PokemonSpritesGallery pokemon={pokemon} language={language} />
+        <PokemonSpritesGallery pokemon={pokemon} language={lang} />
       </div>
-    </div>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { Pokemon } from '@/types/pokemon';
+import { getPokemonName, getAbilityName } from '@/lib/pokemonUtils';
 import { PokemonImage } from './PokemonImage';
 import { PokemonTypes } from './PokemonTypes';
 
@@ -10,6 +11,7 @@ interface PokemonBasicInfoProps {
 }
 
 export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
+  const displayName = getPokemonName(pokemon, language);
   return (
     <div className="bg-white rounded-lg shadow-md p-8 mb-8">
       <div className="flex flex-col lg:flex-row items-start gap-8">
@@ -32,8 +34,8 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
                 #{pokemon.id.toString().padStart(3, '0')}
               </span>
             </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4 capitalize">
-              {pokemon.name}
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              {language === 'ja' ? displayName : displayName.charAt(0).toUpperCase() + displayName.slice(1)}
             </h1>
             <PokemonTypes types={pokemon.types} size="lg" />
           </div>
@@ -88,7 +90,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
                         : 'bg-blue-100 text-blue-800'
                     }`}
                   >
-                    {pokemonAbility.ability.name}
+                    {getAbilityName(pokemonAbility.ability.name, language)}
                     {pokemonAbility.isHidden && (
                       <span className="ml-1 text-xs">
                         ({language === 'en' ? 'Hidden' : '隠れ特性'})

@@ -5,6 +5,7 @@ import { PokemonCard } from './PokemonCard';
 import { PokemonCardSkeleton } from './PokemonCardSkeleton';
 import { EmptyState } from './EmptyState';
 import { cn } from '@/lib/utils';
+import { useAppSelector } from '@/store/hooks';
 
 interface PokemonGridProps {
   pokemons: Pokemon[];
@@ -23,6 +24,7 @@ export function PokemonGrid({
   isFiltering = false,
   isAutoLoading = false
 }: PokemonGridProps) {
+  const { language } = useAppSelector((state) => state.ui);
   if (loading && pokemons.length === 0) {
     return (
       <div className={cn(
@@ -41,8 +43,11 @@ export function PokemonGrid({
     return (
       <EmptyState
         icon="🔍"
-        title="No Pokémon found"
-        description="Try adjusting your search or filter criteria to find the Pokémon you're looking for."
+        title={language === 'en' ? "No Pokémon found" : "ポケモンが見つかりません"}
+        description={language === 'en' 
+          ? "Try adjusting your search or filter criteria to find the Pokémon you're looking for."
+          : "検索条件やフィルターを調整してください。"
+        }
       />
     );
   }

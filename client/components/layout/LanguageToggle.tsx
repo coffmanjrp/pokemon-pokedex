@@ -1,10 +1,10 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import type { Language } from '@/store/slices/uiSlice';
+import { Locale } from '@/lib/dictionaries';
 
 interface LanguageToggleProps {
-  language: Language;
+  language: Locale;
   onToggle: () => void;
   className?: string;
 }

@@ -1,0 +1,92 @@
+{
+  "ui": {
+    "search": {
+      "placeholder": "Search Pokémon by name or ID...",
+      "noResults": "No Pokémon found",
+      "noResultsDescription": "Try adjusting your search terms or filters"
+    },
+    "filters": {
+      "title": "Filters",
+      "type": "Type",
+      "generation": "Generation",
+      "clear": "Clear All",
+      "apply": "Apply Filters",
+      "showingResults": "Showing {{count}} results",
+      "totalPokemon": "Total: {{total}} Pokémon"
+    },
+    "navigation": {
+      "home": "Home",
+      "back": "Back",
+      "next": "Next",
+      "previous": "Previous"
+    },
+    "loading": {
+      "loadingPokemon": "Loading Pokémon...",
+      "loadingMore": "Loading more Pokémon...",
+      "loadingGeneration": "Loading Pokémon for Generation {{generation}}...",
+      "loadingDetails": "Loading Pokémon details..."
+    },
+    "error": {
+      "title": "Error loading Pokémon",
+      "tryAgain": "Try Again",
+      "pokemonNotFound": "Pokémon not found",
+      "goHome": "Go Home"
+    },
+    "pokemonDetails": {
+      "height": "Height",
+      "weight": "Weight",
+      "baseExperience": "Base Experience",
+      "abilities": "Abilities",
+      "stats": "Stats",
+      "types": "Types",
+      "moves": "Moves",
+      "description": "Description",
+      "gameHistory": "Game History",
+      "sprites": "Sprites & Artwork"
+    },
+    "stats": {
+      "hp": "HP",
+      "attack": "Attack",
+      "defense": "Defense",
+      "specialAttack": "Sp. Attack",
+      "specialDefense": "Sp. Defense",
+      "speed": "Speed",
+      "total": "Total"
+    },
+    "moves": {
+      "levelUp": "Level Up",
+      "machine": "TM/TR",
+      "egg": "Egg Moves",
+      "tutor": "Move Tutor",
+      "level": "Level {{level}}",
+      "learnedAt": "Learned at level {{level}}"
+    },
+    "generations": {
+      "1": "Kanto",
+      "2": "Johto", 
+      "3": "Hoenn",
+      "4": "Sinnoh",
+      "5": "Unova",
+      "6": "Kalos",
+      "7": "Alola",
+      "8": "Galar",
+      "9": "Paldea"
+    },
+    "theme": {
+      "light": "Light",
+      "dark": "Dark",
+      "toggle": "Toggle theme"
+    },
+    "language": {
+      "english": "English",
+      "japanese": "Japanese",
+      "toggle": "Toggle language"
+    }
+  },
+  "meta": {
+    "title": "Pokédex - Discover the World of Pokémon",
+    "description": "Discover and explore the wonderful world of Pokémon. Search, filter, and learn about your favorite creatures!",
+    "pokemonTitle": "{{name}} - Pokémon Details",
+    "pokemonDescription": "Learn about {{name}}, a {{type}} type Pokémon. View stats, moves, abilities and more detailed information."
+  }
+}

@@ -1,6 +1,7 @@
 'use client';
 
 import { GameIndex, Generation } from '@/types/pokemon';
+import { getGenerationName } from '@/lib/pokemonUtils';
 
 interface PokemonGameHistoryProps {
   gameIndices?: GameIndex[];
@@ -110,7 +111,7 @@ export function PokemonGameHistory({ gameIndices, generation, language }: Pokemo
             {language === 'en' ? 'Origin Generation' : '初出世代'}
           </h4>
           <p className="text-blue-800">
-            {generation.name.charAt(0).toUpperCase() + generation.name.slice(1)}
+            {getGenerationName(generation.name, language)}
           </p>
         </div>
       )}
