@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout.
+Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages, SSG implementation, advanced search/filter functionality, and production-ready build. Main areas for future enhancement: testing coverage, environment configuration, and error boundaries.
+**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages, SSG implementation, advanced search/filter functionality, complete English/Japanese multilingual support, and production-ready build. Main areas for future enhancement: testing coverage, environment configuration, and error boundaries.
 
 ## Architecture
 
@@ -16,6 +16,7 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 - **Styling**: TailwindCSS with Ruby/Sapphire game-inspired design
 - **State Management**: Redux Toolkit
 - **GraphQL Client**: Apollo Client
+- **Internationalization**: Next.js i18n with comprehensive English/Japanese support
 
 ### Backend (GraphQL Server)
 - **Server**: Apollo Server with Express
@@ -82,7 +83,7 @@ pokemon-pokedex/
   - Auto-loading mechanism for generation filters to ensure complete results
 - **Infinite Scroll**: Intersection Observer with debouncing and smart loading
 - **State Management**: Redux Toolkit with client-side filtering and deduplication
-- **Bilingual Support**: English/Japanese UI with proper translations
+- **Comprehensive Multilingual Support**: Complete English/Japanese implementation including Pokemon names, types, abilities, moves, and UI text
 - **Responsive Design**: Desktop-first with mobile and tablet optimizations
 
 ### Search & Filter Implementation
@@ -145,6 +146,39 @@ const GENERATION_RANGES = {
 };
 ```
 
+### Multilingual System Architecture
+
+The application implements comprehensive bilingual support (English/Japanese) through a dual-approach translation system:
+
+#### Translation Layers
+1. **UI Text Translation**: Next.js i18n with JSON translation files for interface elements
+2. **Pokemon Data Translation**: Direct PokeAPI integration for authentic Japanese Pokemon content
+
+#### Key Translation Components
+- **Pokemon Names**: Extracted from PokeAPI species data (`species.names` field)
+- **Types**: 18 Pokemon types with official Japanese names
+- **Abilities**: 50+ common Pokemon abilities with proper translations
+- **Game Versions**: Complete translation mapping for all Pokemon games
+- **Moves**: Individual move names translated via formatting utilities
+- **Generation Names**: Proper Japanese generation formatting (第X世代)
+
+#### Implementation Files
+- `/client/lib/pokemonUtils.ts`: Centralized translation utilities and mapping objects
+- `/client/public/locales/`: English and Japanese UI translation files
+- `/client/next.config.ts`: i18n configuration for locale switching
+- Server components updated to fetch species data for Japanese name support
+
+#### Translation Coverage
+- ✅ Pokemon names (via PokeAPI species data)
+- ✅ All Pokemon types with official translations
+- ✅ 50+ Pokemon abilities
+- ✅ All Pokemon game versions
+- ✅ Move names with formatting
+- ✅ Generation names and regions
+- ✅ Complete UI text (search, filters, navigation, etc.)
+- ✅ Height/Weight units and labels
+- ✅ Stats and technical information
+
 ## Common Issues & Solutions
 
 ### Filter State Access
@@ -185,7 +219,11 @@ const GENERATION_RANGES = {
 - **State Management**: Redux Toolkit with proper error handling and deduplication
 - **Responsive UI**: Complete component library with Ruby/Sapphire theming
 - **Infinite Scroll**: Optimized with Intersection Observer and debouncing
-- **Multi-language Support**: English/Japanese with proper translations throughout
+- **Comprehensive Multilingual Support**: Complete English/Japanese implementation with:
+  - PokeAPI-integrated Japanese Pokemon names, types, abilities, and moves
+  - UI translations with Next.js i18n
+  - 50+ ability translations and comprehensive game version translations
+  - Language-aware component rendering and fallback logic
 - **Image Optimization**: Next.js Image with fallbacks, lazy loading, and size variants
 - **Rich Data Display**: Moves, Pokedex entries, game history, and comprehensive stats
 - **SEO Optimization**: Meta tags, Open Graph, Twitter Cards for all Pokemon pages
@@ -209,6 +247,21 @@ const GENERATION_RANGES = {
 - **Auto-Loading Logic**: Ensures complete generation datasets when filters are applied
 
 ## Recent Major Updates
+
+### Multilingual Support Implementation (December 2024)
+- **Complete English/Japanese Support**: Full bilingual interface with proper language switching
+- **PokeAPI Integration**: Leverages PokeAPI's Japanese species data endpoints for authentic Pokemon names and descriptions
+- **Comprehensive Translation System**:
+  - UI text translations via Next.js i18n configuration
+  - Pokemon names, types, abilities, moves, and game versions in Japanese
+  - 50+ Pokemon abilities with Japanese translations
+  - All Pokemon game versions with proper Japanese names
+  - Generation names with Japanese formatting and region names
+- **Translation Architecture**:
+  - Centralized utility functions in `pokemonUtils.ts`
+  - Fallback logic for untranslated content
+  - Server-side species data fetching for Japanese names in card views
+  - Language-aware component rendering throughout the application
 
 ### Pokemon Detail Pages Implementation (December 2024)
 - **SSG Implementation**: Static Site Generation for first 151 Pokemon with ISR support
