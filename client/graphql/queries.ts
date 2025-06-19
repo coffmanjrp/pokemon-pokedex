@@ -243,6 +243,30 @@ export const GET_POKEMON = gql`
               }
               turnUpsideDown
             }
+            forms {
+              id
+              name
+              formName
+              sprites {
+                frontDefault
+                other {
+                  officialArtwork {
+                    frontDefault
+                  }
+                }
+              }
+              types {
+                slot
+                type {
+                  id
+                  name
+                  url
+                }
+              }
+              isRegionalVariant
+              isMegaEvolution
+              isDynamax
+            }
             evolvesTo {
               id
               name
@@ -307,6 +331,30 @@ export const GET_POKEMON = gql`
                 }
                 turnUpsideDown
               }
+              forms {
+                id
+                name
+                formName
+                sprites {
+                  frontDefault
+                  other {
+                    officialArtwork {
+                      frontDefault
+                    }
+                  }
+                }
+                types {
+                  slot
+                  type {
+                    id
+                    name
+                    url
+                  }
+                }
+                isRegionalVariant
+                isMegaEvolution
+                isDynamax
+              }
               evolvesTo {
                 id
                 name
@@ -326,54 +374,10 @@ export const GET_POKEMON = gql`
                     url
                   }
                 }
-                evolutionDetails {
-                  minLevel
-                  item {
-                    id
-                    name
-                    url
-                  }
-                  trigger {
-                    id
-                    name
-                    url
-                  }
-                  timeOfDay
-                  location {
-                    id
-                    name
-                    url
-                  }
-                  knownMove {
-                    id
-                    name
-                    url
-                  }
-                  minHappiness
-                  minBeauty
-                  minAffection
-                  needsOverworldRain
-                  partySpecies {
-                    id
-                    name
-                    url
-                  }
-                  partyType {
-                    id
-                    name
-                    url
-                  }
-                  relativePhysicalStats
-                  tradeSpecies {
-                    id
-                    name
-                    url
-                  }
-                  turnUpsideDown
-                }
-                evolvesTo {
+                forms {
                   id
                   name
+                  formName
                   sprites {
                     frontDefault
                     other {
@@ -390,6 +394,9 @@ export const GET_POKEMON = gql`
                       url
                     }
                   }
+                  isRegionalVariant
+                  isMegaEvolution
+                  isDynamax
                 }
               }
             }

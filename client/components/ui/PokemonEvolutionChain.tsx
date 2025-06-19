@@ -3,9 +3,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import React from 'react';
-import { EvolutionDetail, PokemonTypeSlot, EvolutionTrigger } from '@/types/pokemon';
+import { EvolutionDetail, PokemonTypeSlot, EvolutionTrigger, FormVariant } from '@/types/pokemon';
 import { Dictionary, Locale } from '@/lib/dictionaries';
 import { getTypeName } from '@/lib/pokemonUtils';
+import { getFormDisplayName } from '@/lib/formUtils';
 import { POKEMON_TYPE_COLORS } from '@/types/pokemon';
 
 interface PokemonEvolutionChainProps {
@@ -19,9 +20,10 @@ export function PokemonEvolutionChain({ evolutionChain, dictionary, lang }: Poke
     const chain: React.ReactElement[] = [];
     
     const addEvolutionStage = (currentEvolution: EvolutionDetail, isFirst: boolean = false) => {
-      const pokemonName = currentEvolution.name;
-      const pokemonId = currentEvolution.id;
-      const imageUrl = currentEvolution.sprites.other?.officialArtwork?.frontDefault || currentEvolution.sprites.frontDefault;
+      if (!currentEvolution) return;
+      const pokemonName = currentEvolution.name || 'Unknown';
+      const pokemonId = currentEvolution.id || '0';
+      const imageUrl = currentEvolution.sprites?.other?.officialArtwork?.frontDefault || currentEvolution.sprites?.frontDefault;
 
       // Add evolution arrow if not the first Pokemon
       if (!isFirst) {
@@ -29,7 +31,7 @@ export function PokemonEvolutionChain({ evolutionChain, dictionary, lang }: Poke
           <div key={`arrow-${currentEvolution.id}`} className="flex flex-col items-center mx-4">
             <div className="w-0 h-0 border-l-8 border-r-8 border-b-12 border-l-transparent border-r-transparent border-b-blue-500 rotate-90 mb-2"></div>
             <div className="bg-blue-100 px-3 py-2 rounded-lg text-sm text-blue-800 font-medium text-center whitespace-nowrap">
-              {currentEvolution.evolutionDetails[0] ? 
+              {currentEvolution.evolutionDetails && currentEvolution.evolutionDetails.length > 0 ? 
                 renderEvolutionCondition(currentEvolution.evolutionDetails[0], lang) : 
                 (lang === 'en' ? 'Unknown' : '不明')
               }
@@ -68,7 +70,7 @@ export function PokemonEvolutionChain({ evolutionChain, dictionary, lang }: Poke
               
               {/* Types */}
               <div className="flex gap-1 mt-2 justify-center">
-                {currentEvolution.types.map((typeInfo: PokemonTypeSlot) => (
+                {currentEvolution.types && currentEvolution.types.map((typeInfo: PokemonTypeSlot) => (
                   <span
                     key={typeInfo.type.name}
                     className="px-2 py-1 rounded-full text-xs font-medium text-white"
@@ -80,11 +82,83 @@ export function PokemonEvolutionChain({ evolutionChain, dictionary, lang }: Poke
               </div>
             </div>
           </Link>
+
+          {/* Form Variations */}
+          {currentEvolution.forms && Array.isArray(currentEvolution.forms) && currentEvolution.forms.length > 0 && (
+            <div className="mt-4 space-y-2">
+              <div className="text-xs text-gray-600 font-medium text-center">
+                {lang === 'en' ? 'Forms' : 'すがた'}
+              </div>
+              <div className="flex flex-wrap gap-2 justify-center max-w-xs">
+                {currentEvolution.forms.map((form: FormVariant) => (
+                  <Link
+                    key={form.id}
+                    href={`/${lang}/pokemon/${form.id}`}
+                    className="group flex flex-col items-center p-2 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 hover:border-blue-300"
+                  >
+                    {/* Form Image */}
+                    <div className="relative w-12 h-12 mb-1">
+                      {form.sprites.other?.officialArtwork?.frontDefault || form.sprites.frontDefault ? (
+                        <Image
+                          src={form.sprites.other?.officialArtwork?.frontDefault || form.sprites.frontDefault || ''}
+                          alt={getFormDisplayName(pokemonName, form.formName, lang)}
+                          fill
+                          className="object-contain group-hover:scale-110 transition-transform duration-200"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
+                          <span className="text-gray-400 text-xs">?</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Form Info */}
+                    <div className="text-center">
+                      <p className="text-xs text-gray-700 font-medium truncate max-w-20">
+                        {getFormDisplayName(pokemonName, form.formName, lang)}
+                      </p>
+                      
+                      {/* Form Category Badge */}
+                      <div className="mt-1">
+                        {form.isRegionalVariant && (
+                          <span className="px-1 py-0.5 bg-green-100 text-green-800 text-xs rounded">
+                            {lang === 'en' ? 'Regional' : '地方'}
+                          </span>
+                        )}
+                        {form.isMegaEvolution && (
+                          <span className="px-1 py-0.5 bg-purple-100 text-purple-800 text-xs rounded">
+                            {lang === 'en' ? 'Mega' : 'メガ'}
+                          </span>
+                        )}
+                        {form.isDynamax && (
+                          <span className="px-1 py-0.5 bg-red-100 text-red-800 text-xs rounded">
+                            {lang === 'en' ? 'G-Max' : 'キョダイ'}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Form Types */}
+                      <div className="flex gap-1 mt-1 justify-center">
+                        {form.types && form.types.slice(0, 2).map((typeInfo: PokemonTypeSlot) => (
+                          <span
+                            key={typeInfo.type.name}
+                            className="w-3 h-3 rounded-full border border-white"
+                            style={{ backgroundColor: POKEMON_TYPE_COLORS[typeInfo.type.name as keyof typeof POKEMON_TYPE_COLORS] }}
+                            title={getTypeName(typeInfo.type.name, lang)}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       );
 
       // Process evolutions (only first evolution to keep linear chain)
-      if (currentEvolution.evolvesTo.length > 0) {
+      if (currentEvolution.evolvesTo && Array.isArray(currentEvolution.evolvesTo) && currentEvolution.evolvesTo.length > 0) {
         addEvolutionStage(currentEvolution.evolvesTo[0], false);
       }
     };
