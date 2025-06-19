@@ -29,12 +29,19 @@ export interface PokemonSprites {
   frontShiny?: string;
   backDefault?: string;
   backShiny?: string;
+  frontFemale?: string;
+  frontShinyFemale?: string;
+  backFemale?: string;
+  backShinyFemale?: string;
   other?: OtherSprites;
+  versions?: VersionSprites;
 }
 
 export interface OtherSprites {
   officialArtwork?: OfficialArtwork;
   home?: HomeSprites;
+  dreamWorld?: DreamWorldSprites;
+  showdown?: ShowdownSprites;
 }
 
 export interface OfficialArtwork {
@@ -45,6 +52,228 @@ export interface OfficialArtwork {
 export interface HomeSprites {
   frontDefault?: string;
   frontShiny?: string;
+  frontFemale?: string;
+  frontShinyFemale?: string;
+}
+
+export interface DreamWorldSprites {
+  frontDefault?: string;
+  frontFemale?: string;
+}
+
+export interface ShowdownSprites {
+  frontDefault?: string;
+  frontShiny?: string;
+  backDefault?: string;
+  backShiny?: string;
+  frontFemale?: string;
+  frontShinyFemale?: string;
+  backFemale?: string;
+  backShinyFemale?: string;
+}
+
+export interface VersionSprites {
+  generationI?: GenerationISprites;
+  generationII?: GenerationIISprites;
+  generationIII?: GenerationIIISprites;
+  generationIV?: GenerationIVSprites;
+  generationV?: GenerationVSprites;
+  generationVI?: GenerationVISprites;
+  generationVII?: GenerationVIISprites;
+  generationVIII?: GenerationVIIISprites;
+}
+
+export interface GenerationISprites {
+  redBlue?: RedBlueSprites;
+  yellow?: YellowSprites;
+}
+
+export interface RedBlueSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontGray?: string;
+  backGray?: string;
+  frontTransparent?: string;
+  backTransparent?: string;
+}
+
+export interface YellowSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontGray?: string;
+  backGray?: string;
+  frontTransparent?: string;
+  backTransparent?: string;
+}
+
+export interface GenerationIISprites {
+  crystal?: CrystalSprites;
+  gold?: GoldSprites;
+  silver?: SilverSprites;
+}
+
+export interface CrystalSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+  frontTransparent?: string;
+  backTransparent?: string;
+  frontShinyTransparent?: string;
+  backShinyTransparent?: string;
+}
+
+export interface GoldSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+  frontTransparent?: string;
+  backTransparent?: string;
+  frontShinyTransparent?: string;
+  backShinyTransparent?: string;
+}
+
+export interface SilverSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+  frontTransparent?: string;
+  backTransparent?: string;
+  frontShinyTransparent?: string;
+  backShinyTransparent?: string;
+}
+
+export interface GenerationIIISprites {
+  emerald?: EmeraldSprites;
+  fireredLeafgreen?: FireredLeafgreenSprites;
+  rubySapphire?: RubySapphireSprites;
+}
+
+export interface EmeraldSprites {
+  frontDefault?: string;
+  frontShiny?: string;
+}
+
+export interface FireredLeafgreenSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+}
+
+export interface RubySapphireSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+}
+
+export interface GenerationIVSprites {
+  diamondPearl?: DiamondPearlSprites;
+  heartgoldSoulsilver?: HeartgoldSoulsilverSprites;
+  platinum?: PlatinumSprites;
+}
+
+export interface DiamondPearlSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+  frontFemale?: string;
+  backFemale?: string;
+  frontShinyFemale?: string;
+  backShinyFemale?: string;
+}
+
+export interface HeartgoldSoulsilverSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+  frontFemale?: string;
+  backFemale?: string;
+  frontShinyFemale?: string;
+  backShinyFemale?: string;
+}
+
+export interface PlatinumSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+  frontFemale?: string;
+  backFemale?: string;
+  frontShinyFemale?: string;
+  backShinyFemale?: string;
+}
+
+export interface GenerationVSprites {
+  blackWhite?: BlackWhiteSprites;
+}
+
+export interface BlackWhiteSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+  frontFemale?: string;
+  backFemale?: string;
+  frontShinyFemale?: string;
+  backShinyFemale?: string;
+  animated?: AnimatedSprites;
+}
+
+export interface AnimatedSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+  frontFemale?: string;
+  backFemale?: string;
+  frontShinyFemale?: string;
+  backShinyFemale?: string;
+}
+
+export interface GenerationVISprites {
+  omegarubyAlphasapphire?: OmegarubyAlphasapphireSprites;
+  xy?: XYSprites;
+}
+
+export interface OmegarubyAlphasapphireSprites {
+  frontDefault?: string;
+  frontShiny?: string;
+  frontFemale?: string;
+  frontShinyFemale?: string;
+}
+
+export interface XYSprites {
+  frontDefault?: string;
+  frontShiny?: string;
+  frontFemale?: string;
+  frontShinyFemale?: string;
+}
+
+export interface GenerationVIISprites {
+  icons?: IconSprites;
+  ultraSunUltraMoon?: UltraSunUltraMoonSprites;
+}
+
+export interface IconSprites {
+  frontDefault?: string;
+  frontFemale?: string;
+}
+
+export interface UltraSunUltraMoonSprites {
+  frontDefault?: string;
+  frontShiny?: string;
+  frontFemale?: string;
+  frontShinyFemale?: string;
+}
+
+export interface GenerationVIIISprites {
+  icons?: IconSprites;
 }
 
 export interface PokemonStat {
