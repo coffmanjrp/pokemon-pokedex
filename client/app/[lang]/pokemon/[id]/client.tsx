@@ -5,9 +5,7 @@ import { Pokemon } from '@/types/pokemon';
 import { Dictionary, Locale } from '@/lib/dictionaries';
 import { getTypeBackgroundGradient } from '@/lib/pokemonUtils';
 import { PokemonBasicInfo } from '@/components/ui/PokemonBasicInfo';
-import { PokemonDescription } from '@/components/ui/PokemonDescription';
-import { PokemonMoves } from '@/components/ui/PokemonMoves';
-import { PokemonGameHistory } from '@/components/ui/PokemonGameHistory';
+import { PokemonDetailTabs } from '@/components/ui/PokemonDetailTabs';
 import { PokemonSpritesGallery } from '@/components/ui/PokemonSpritesGallery';
 import { PokemonDetailHeader } from '@/components/ui/PokemonDetailHeader';
 import { PokemonDetailSection } from '@/components/ui/PokemonDetailSection';
@@ -50,16 +48,6 @@ export default function PokemonDetailClient({ pokemon, dictionary, lang }: Pokem
       <div className="max-w-7xl mx-auto px-4 py-8">
         <PokemonBasicInfo pokemon={pokemon} language={lang} />
 
-        {/* Detailed Descriptions Section */}
-        {pokemon.species?.flavorTextEntries && pokemon.species.flavorTextEntries.length > 0 && (
-          <PokemonDetailSection title={dictionary.ui.pokemonDetails.description}>
-            <PokemonDescription
-              pokemon={pokemon}
-              language={lang}
-            />
-          </PokemonDetailSection>
-        )}
-
         {/* Evolution Chain Section */}
         {pokemon.species?.evolutionChain?.chain && (
           <PokemonDetailSection title={dictionary.ui.pokemonDetails.evolutionChain}>
@@ -71,23 +59,12 @@ export default function PokemonDetailClient({ pokemon, dictionary, lang }: Pokem
           </PokemonDetailSection>
         )}
 
-        {/* Moves Section */}
-        {pokemon.moves && pokemon.moves.length > 0 && (
-          <PokemonDetailSection title={dictionary.ui.pokemonDetails.moves}>
-            <PokemonMoves moves={pokemon.moves} language={lang} />
-          </PokemonDetailSection>
-        )}
-
-        {/* Game History Section */}
-        {pokemon.gameIndices && pokemon.gameIndices.length > 0 && (
-          <PokemonDetailSection title={dictionary.ui.pokemonDetails.gameHistory}>
-            <PokemonGameHistory
-              gameIndices={pokemon.gameIndices}
-              generation={pokemon.species?.generation}
-              language={lang}
-            />
-          </PokemonDetailSection>
-        )}
+        {/* Tabbed Content: Description, Moves, Game History */}
+        <PokemonDetailTabs 
+          pokemon={pokemon} 
+          dictionary={dictionary} 
+          language={lang} 
+        />
 
         <PokemonSpritesGallery pokemon={pokemon} language={lang} />
       </div>
