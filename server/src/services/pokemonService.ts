@@ -127,6 +127,13 @@ class PokemonService {
       species: speciesData ? {
         id: speciesData.id.toString(),
         name: speciesData.name,
+        names: speciesData.names.map((nameEntry: any) => ({
+          name: nameEntry.name,
+          language: {
+            name: nameEntry.language.name,
+            url: nameEntry.language.url,
+          },
+        })),
         flavorTextEntries: speciesData.flavor_text_entries.map((entry: any) => ({
           flavorText: entry.flavor_text,
           language: {
