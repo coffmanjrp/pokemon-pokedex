@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages, SSG implementation, advanced search/filter functionality, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. Main areas for future enhancement: testing coverage, environment configuration, and error boundaries.
+**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including enhanced evolution chains with form variants, SSG implementation, advanced search/filter functionality, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. Recently enhanced with Pokemon form variation support including regional variants, Mega Evolution, and Gigantamax forms in evolution chains. Main areas for future enhancement: testing coverage, environment configuration, and error boundaries.
 
 ## Architecture
 
@@ -65,7 +65,8 @@ pokemon-pokedex/
 │   │   │   └── ja.json           # Japanese translations
 │   │   ├── dictionaries.ts       # Type definitions and utilities
 │   │   ├── get-dictionary.ts     # Server-only dictionary loader
-│   │   └── pokemonUtils.ts       # Pokemon data translation utilities
+│   │   ├── pokemonUtils.ts       # Pokemon data translation utilities
+│   │   └── formUtils.ts          # Pokemon form variation utilities and translations
 │   ├── hooks/                    # Custom React hooks
 │   ├── store/                    # Redux Toolkit configuration
 │   └── types/                    # TypeScript type definitions
@@ -99,6 +100,12 @@ pokemon-pokedex/
   - Pokemon data translations (names, types, abilities, moves, game versions)
   - URL-based language switching (/en/, /ja/) with proper SEO
 - **Responsive Design**: Desktop-first with mobile and tablet optimizations
+- **Evolution Chain with Form Variants**: Visual evolution trees including:
+  - Regional variants (Alolan, Galarian, Hisuian, Paldean forms)
+  - Mega Evolution (Mega, Mega X, Mega Y)
+  - Gigantamax forms (G-Max variants)
+  - Horizontal scrollable layout with form categorization
+  - Clickable navigation to form-specific Pokemon pages
 
 ### Search & Filter Implementation
 - **Client-Side Filtering**: All filtering happens after data is loaded for instant results
@@ -251,20 +258,28 @@ app/[lang]/              # Dynamic language routing
 ## Current Development Priorities
 
 ### High Priority (Immediate)
-1. **Pokemon Detail Pages**: Individual Pokemon display with routing (TODO comment exists in page.tsx:23)
-2. **Test Suite Implementation**: Unit tests, integration tests, E2E tests (currently no tests exist)
-3. **Environment Configuration**: Create actual .env files from .env.example templates
-4. **Error Boundaries**: React error boundaries for graceful error handling
+1. **Pokemon Breeding Information**: Egg groups, breeding compatibility, egg moves, hatching steps
+2. **Pokemon Location/Habitat Information**: Game location data, encounter rates, habitat descriptions
+3. **Test Suite Implementation**: Unit tests, integration tests, E2E tests (currently no tests exist)
+4. **Environment Configuration**: Create actual .env files from .env.example templates
+5. **Error Boundaries**: React error boundaries for graceful error handling
 
 ### Medium Priority (Next Phase)
-5. **Dark Theme Completion**: Apply dark mode styles (infrastructure already exists)
-6. **Accessibility Features**: ARIA labels, keyboard navigation, screen reader support
-7. **SEO Optimization**: Metadata, Open Graph tags, structured data
-8. **Server Caching**: Redis or in-memory caching for PokeAPI requests
+6. **Pokemon Comparison Feature**: Side-by-side stat comparison between Pokemon
+7. **Pokemon Cry/Sound Playback**: Audio playback functionality for Pokemon cries
+8. **Type Effectiveness Calculator**: Weakness/resistance calculator with damage multipliers
+9. **Pokemon Size Comparison**: Visual size comparison with human scale
+10. **Dark Theme Completion**: Apply dark mode styles (infrastructure already exists)
+11. **Accessibility Features**: ARIA labels, keyboard navigation, screen reader support
+12. **SEO Optimization**: Metadata, Open Graph tags, structured data
+13. **Server Caching**: Redis or in-memory caching for PokeAPI requests
 
 ### Low Priority (Future)
-9. **PWA Implementation**: Service worker, offline support, app manifest
-10. **Performance Analysis**: Bundle optimization and monitoring
+14. **Pokemon Encounter Data**: Encounter rates and location data from games
+15. **Pokemon Team Builder**: Team composition and strategy tools
+16. **Shiny Variant Display**: Toggle for shiny Pokemon variants
+17. **PWA Implementation**: Service worker, offline support, app manifest
+18. **Performance Analysis**: Bundle optimization and monitoring
 
 ## Implementation Status
 
@@ -287,6 +302,13 @@ app/[lang]/              # Dynamic language routing
 - **Rich Data Display**: Moves, Pokedex entries, game history, and comprehensive stats
 - **SEO Optimization**: Meta tags, Open Graph, Twitter Cards for all Pokemon pages
 - **Component Architecture**: Modular, maintainable components with clear separation of concerns
+- **Pokemon Form Variations**: Complete support for Pokemon form variants including:
+  - Regional variants (Alolan, Galarian, Hisuian, Paldean) with proper categorization
+  - Mega Evolution forms (Mega, Mega X, Mega Y) with visual indicators
+  - Gigantamax forms (G-Max) with distinct styling
+  - 40+ form translations for English/Japanese localization
+  - Enhanced evolution chains with form display and navigation
+  - Type-safe form detection and classification
 
 ### ⚠️ Partially Implemented
 - **Theme System**: Dark mode infrastructure exists but styles not applied
@@ -304,6 +326,30 @@ app/[lang]/              # Dynamic language routing
 - **GraphQL Server**: Custom Apollo Server wrapper with efficient data fetching
 - **Cursor-Based Pagination**: Implemented for optimal performance
 - **Auto-Loading Logic**: Ensures complete generation datasets when filters are applied
+
+### Pokemon Form Variations Implementation (January 2025)
+- **Complete Form Support**: Added comprehensive Pokemon form variation support to evolution chains
+- **Backend Enhancements**:
+  - Extended GraphQL schema with PokemonForm, PokemonVariety, and FormVariant types
+  - Enhanced Pokemon service to fetch and classify form variations from PokeAPI
+  - Added form detection helpers for regional variants, Mega Evolution, and Gigantamax
+  - Integrated form data into evolution chain transformations
+- **Frontend Features**:
+  - Created formUtils.ts with 40+ form translations (English/Japanese)
+  - Enhanced PokemonEvolutionChain component with form variant display
+  - Added compact form cards with images, types, and category badges
+  - Implemented clickable navigation between base and variant forms
+  - Added horizontal scrollable layout for complex evolution trees
+- **Form Categories Supported**:
+  - Regional variants: Alolan, Galarian, Hisuian, Paldean forms
+  - Mega Evolution: Mega, Mega X, Mega Y variants
+  - Gigantamax: G-Max forms with distinct styling
+  - Special forms: Primal, Origin, Therian, and other unique variants
+- **User Experience**:
+  - Visual form indicators with color-coded badges
+  - Multilingual form names and categories
+  - Type visualization for each form
+  - Seamless navigation between forms and base Pokemon
 
 ## Recent Major Updates
 
@@ -342,6 +388,9 @@ app/[lang]/              # Dynamic language routing
   - Added moves, species, flavor text entries, and game indices
   - Enhanced PokeAPI integration with species data fetching
   - Comprehensive type definitions for all Pokemon data
+  - Extended evolution chain schema with form variant support
+  - Added Pokemon form types (PokemonForm, PokemonVariety, FormVariant)
+  - Form categorization with regional, mega, and gigantamax detection
 
 ### Build Status
 - ✅ **Production Build**: Successfully compiles with Next.js 15 App Router
@@ -362,3 +411,12 @@ app/[lang]/              # Dynamic language routing
 - **PokemonGameHistory**: Game appearance tracking across all generations
 - **PokemonStats**: Enhanced statistics with visual progress indicators
 - **PokemonImage**: Optimized image component with size variants and fallbacks
+- **PokemonEvolutionChain**: Enhanced evolution tree component with form variant support:
+  - Horizontal scrollable layout for complex evolution chains
+  - Form variation display with compact cards below each evolution stage
+  - Regional variant indicators (Alolan, Galarian, Hisuian, Paldean)
+  - Mega Evolution badges (Mega, Mega X, Mega Y)
+  - Gigantamax form indicators (G-Max)
+  - Clickable navigation to form-specific Pokemon pages
+  - Multilingual form names and category labels
+  - Type visualization for each form variant
