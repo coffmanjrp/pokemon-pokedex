@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including enhanced evolution chains with form variants, SSG implementation, advanced search/filter functionality, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. Recently enhanced with Pokemon form variation support including regional variants, Mega Evolution, and Gigantamax forms in evolution chains. Main areas for future enhancement: testing coverage, environment configuration, and error boundaries.
+**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including enhanced evolution chains with form variants, enhanced move data display with detailed statistics, SSG implementation, advanced search/filter functionality, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. Recently enhanced with Pokemon form variation support and comprehensive move statistics display (Generation 9 compatible). Main areas for future enhancement: testing coverage, environment configuration, and error boundaries.
 
 ## Architecture
 
@@ -351,6 +351,33 @@ app/[lang]/              # Dynamic language routing
   - Type visualization for each form
   - Seamless navigation between forms and base Pokemon
 
+### Move Data Enhancement Implementation (June 2025)
+- **Comprehensive Move Statistics**: Enhanced move display with Generation 9 compatible data
+- **Backend Enhancements**:
+  - Extended GraphQL schema with detailed move properties (type, damageClass, power, accuracy, pp)
+  - Enhanced Pokemon service to fetch comprehensive move data from PokeAPI
+  - Updated type definitions for both server and client with detailed move statistics
+  - Fixed nullable flavor text handling for improved data reliability
+- **Frontend Enhancements**:
+  - Redesigned PokemonMoves component with enhanced 5-column grid layout
+  - Added move type visualization with official Pokemon type colors
+  - Implemented damage class categorization with bilingual support
+  - Removed version group information for cleaner, focused display
+  - Added responsive design optimized for both desktop and mobile viewing
+- **Move Statistics Displayed**:
+  - Move name and learning level (for level-up moves)
+  - Type with color-coded badges using official Pokemon type colors
+  - Damage class: Physical (物理), Special (特殊), Status (変化)
+  - Power rating (Generation 9 compatible)
+  - Accuracy percentage
+  - PP (Power Points) available
+- **User Experience Improvements**:
+  - Simplified interface focused on core move statistics
+  - Maintained tabbed organization by learn method
+  - Enhanced visual hierarchy with improved spacing and typography
+  - Bilingual damage class labels for international users
+  - Responsive grid layout adapting to screen size
+
 ## Recent Major Updates
 
 ### App Router i18n Migration (December 2024)
@@ -407,7 +434,13 @@ app/[lang]/              # Dynamic language routing
 - **PokemonDetailSection**: Reusable section wrapper for consistent styling across detail pages
 - **PokemonSpritesGallery**: Complete sprites and artwork display with official artwork and game sprites
 - **PokemonDescription**: Multi-language Pokedex entries with expandable sections
-- **PokemonMoves**: Advanced move display with filtering and categorization
+- **PokemonMoves**: Enhanced move display with comprehensive statistics including:
+  - Move type visualization with official Pokemon type colors
+  - Damage class categorization (Physical, Special, Status) in both languages
+  - Generation 9 compatible move statistics (power, accuracy, PP)
+  - Tabbed interface for different learn methods (Level-up, TM/TR, Egg, Tutor)
+  - Responsive grid layout optimized for both desktop and mobile
+  - Removed version group information for cleaner display
 - **PokemonGameHistory**: Game appearance tracking across all generations
 - **PokemonStats**: Enhanced statistics with visual progress indicators
 - **PokemonImage**: Optimized image component with size variants and fallbacks

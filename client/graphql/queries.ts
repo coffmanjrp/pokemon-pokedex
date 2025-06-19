@@ -130,6 +130,38 @@ export const GET_POKEMON = gql`
           id
           name
           url
+          type {
+            id
+            name
+            url
+          }
+          damageClass {
+            id
+            name
+            names {
+              name
+              language {
+                name
+                url
+              }
+            }
+          }
+          power
+          accuracy
+          pp
+          priority
+          target {
+            id
+            name
+            names {
+              name
+              language {
+                name
+                url
+              }
+            }
+          }
+          effectChance
         }
         versionGroupDetails {
           levelLearnedAt
