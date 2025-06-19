@@ -357,3 +357,22 @@ export function generateTypeBackgroundStyle(pokemon: Pokemon): React.CSSProperti
     minHeight: '100vh',
   };
 }
+
+/**
+ * Generate full-page background overlay style for Pokemon detail pages
+ */
+export function generateFullPageBackgroundStyle(pokemon: Pokemon): React.CSSProperties {
+  const primaryColor = getPrimaryTypeColor(pokemon);
+  
+  // Create a full-page background overlay that covers margin/padding areas
+  return {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: `linear-gradient(135deg, ${primaryColor}15 0%, ${primaryColor}08 50%, #f9fafb 100%)`,
+    zIndex: -1,
+    pointerEvents: 'none',
+  };
+}

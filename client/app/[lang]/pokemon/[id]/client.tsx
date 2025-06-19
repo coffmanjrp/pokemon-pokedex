@@ -2,7 +2,7 @@
 
 import { Pokemon } from '@/types/pokemon';
 import { Dictionary, Locale } from '@/lib/dictionaries';
-import { generateTypeBackgroundStyle } from '@/lib/pokemonUtils';
+import { generateFullPageBackgroundStyle } from '@/lib/pokemonUtils';
 import { PokemonBasicInfo } from '@/components/ui/PokemonBasicInfo';
 import { PokemonStats } from '@/components/ui/PokemonStats';
 import { PokemonDescription } from '@/components/ui/PokemonDescription';
@@ -20,10 +20,13 @@ interface PokemonDetailClientProps {
 }
 
 export default function PokemonDetailClient({ pokemon, dictionary, lang }: PokemonDetailClientProps) {
-  const backgroundStyle = generateTypeBackgroundStyle(pokemon);
+  const fullPageBackgroundStyle = generateFullPageBackgroundStyle(pokemon);
 
   return (
-    <div style={backgroundStyle}>
+    <>
+      {/* Full-page background overlay */}
+      <div style={fullPageBackgroundStyle} />
+      
       <PokemonDetailHeader language={lang} />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -75,6 +78,6 @@ export default function PokemonDetailClient({ pokemon, dictionary, lang }: Pokem
 
         <PokemonSpritesGallery pokemon={pokemon} language={lang} />
       </div>
-    </div>
+    </>
   );
 }

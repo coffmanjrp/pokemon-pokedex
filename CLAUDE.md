@@ -409,7 +409,8 @@ app/[lang]/              # Dynamic language routing
   - Responsive design that works across all screen sizes
 - **Technical Implementation**:
   - Type-safe color mapping with fallback to Normal type color
-  - React inline styles for dynamic background application
+  - Fixed-position overlay background to cover entire viewport including margins/padding
+  - React inline styles for dynamic background application with z-index management
   - Preserves existing component architecture and styling
   - Compatible with existing card designs and text contrast requirements
 - **User Experience Improvements**:
@@ -488,9 +489,10 @@ app/[lang]/              # Dynamic language routing
   - Removed version group information for cleaner display
 - **Type Background Styling**: Dynamic page theming based on Pokemon primary type:
   - Subtle gradient backgrounds using official Pokemon type colors
+  - Fixed-position overlay covers entire viewport including layout margins/padding
   - Maintains text readability with proper opacity levels (15% to 8%)
   - Fallback to Normal type color for edge cases
-  - Full-page application via PokemonDetailClient wrapper
+  - Full-page application via PokemonDetailClient wrapper with z-index management
 - **PokemonGameHistory**: Game appearance tracking across all generations
 - **PokemonStats**: Enhanced statistics with visual progress indicators
 - **PokemonImage**: Optimized image component with size variants and fallbacks
