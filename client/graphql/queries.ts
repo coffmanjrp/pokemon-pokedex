@@ -135,6 +135,13 @@ export const GET_POKEMON = gql`
       species {
         id
         name
+        names {
+          name
+          language {
+            name
+            url
+          }
+        }
         flavorTextEntries {
           flavorText
           language {

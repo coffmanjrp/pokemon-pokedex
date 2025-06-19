@@ -125,10 +125,16 @@ export interface VersionGroup {
 export interface PokemonSpecies {
   id: string;
   name: string;
+  names: SpeciesName[];
   flavorTextEntries: FlavorTextEntry[];
   genera: Genus[];
   generation: Generation;
   evolutionChain?: EvolutionChain;
+}
+
+export interface SpeciesName {
+  name: string;
+  language: Language;
 }
 
 export interface FlavorTextEntry {

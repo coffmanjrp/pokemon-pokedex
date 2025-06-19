@@ -1,6 +1,8 @@
 'use client';
 
 import { PokemonStat } from '@/types/pokemon';
+import { getStatName } from '@/lib/pokemonUtils';
+import { useAppSelector } from '@/store/hooks';
 
 interface PokemonStatsProps {
   stats: PokemonStat[];
@@ -17,25 +19,15 @@ const typeColors: Record<string, string> = {
 };
 
 export function PokemonStats({ stats }: PokemonStatsProps) {
+  const { language } = useAppSelector((state) => state.ui);
+  
   if (!stats || stats.length === 0) {
     return (
       <div className="text-gray-500 text-center py-4">
-        No stats available
+        {language === 'en' ? 'No stats available' : 'ステータスがありません'}
       </div>
     );
   }
-
-  const getStatDisplayName = (statName: string) => {
-    const nameMap: Record<string, string> = {
-      hp: 'HP',
-      attack: 'Attack',
-      defense: 'Defense',
-      'special-attack': 'Sp. Attack',
-      'special-defense': 'Sp. Defense',
-      speed: 'Speed',
-    };
-    return nameMap[statName] || statName;
-  };
 
   const maxBaseStat = Math.max(...stats.map(stat => stat.baseStat));
 
@@ -48,7 +40,7 @@ export function PokemonStats({ stats }: PokemonStatsProps) {
         return (
           <div key={index} className="flex items-center gap-4">
             <div className="w-24 text-sm font-medium text-gray-700">
-              {getStatDisplayName(statName)}
+              {getStatName(statName, language)}
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2">
@@ -73,7 +65,7 @@ export function PokemonStats({ stats }: PokemonStatsProps) {
       <div className="pt-4 border-t border-gray-200">
         <div className="flex items-center gap-4">
           <div className="w-24 text-sm font-bold text-gray-900">
-            Total
+            {language === 'en' ? 'Total' : '合計'}
           </div>
           <div className="flex-1">
             <span className="text-lg font-bold text-gray-900">

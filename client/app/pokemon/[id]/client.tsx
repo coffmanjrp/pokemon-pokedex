@@ -29,8 +29,7 @@ export default function PokemonDetailClient({ pokemon }: PokemonDetailClientProp
         {pokemon.species && (
           <PokemonDetailSection title={language === 'en' ? 'Pokédex Entry' : 'ポケモン図鑑'}>
             <PokemonDescription
-              flavorTextEntries={pokemon.species.flavorTextEntries}
-              genera={pokemon.species.genera}
+              pokemon={pokemon}
               language={language}
             />
           </PokemonDetailSection>

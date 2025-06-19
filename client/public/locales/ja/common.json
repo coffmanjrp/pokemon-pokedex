@@ -1,0 +1,92 @@
+{
+  "ui": {
+    "search": {
+      "placeholder": "ポケモンの名前やIDで検索...",
+      "noResults": "ポケモンが見つかりません",
+      "noResultsDescription": "検索条件やフィルターを調整してください"
+    },
+    "filters": {
+      "title": "フィルター",
+      "type": "タイプ",
+      "generation": "世代",
+      "clear": "すべてクリア",
+      "apply": "フィルターを適用",
+      "showingResults": "{{count}}件の結果を表示",
+      "totalPokemon": "合計: {{total}}匹のポケモン"
+    },
+    "navigation": {
+      "home": "ホーム",
+      "back": "戻る",
+      "next": "次へ",
+      "previous": "前へ"
+    },
+    "loading": {
+      "loadingPokemon": "ポケモンを読み込み中...",
+      "loadingMore": "もっとポケモンを読み込み中...",
+      "loadingGeneration": "第{{generation}}世代のポケモンを読み込み中...",
+      "loadingDetails": "ポケモンの詳細を読み込み中..."
+    },
+    "error": {
+      "title": "ポケモンの読み込みエラー",
+      "tryAgain": "もう一度試す",
+      "pokemonNotFound": "ポケモンが見つかりません",
+      "goHome": "ホームに戻る"
+    },
+    "pokemonDetails": {
+      "height": "高さ",
+      "weight": "重さ",
+      "baseExperience": "基礎経験値",
+      "abilities": "特性",
+      "stats": "ステータス",
+      "types": "タイプ",
+      "moves": "わざ",
+      "description": "説明",
+      "gameHistory": "ゲーム履歴",
+      "sprites": "スプライト・アートワーク"
+    },
+    "stats": {
+      "hp": "HP",
+      "attack": "こうげき",
+      "defense": "ぼうぎょ",
+      "specialAttack": "とくこう",
+      "specialDefense": "とくぼう",
+      "speed": "すばやさ",
+      "total": "合計"
+    },
+    "moves": {
+      "levelUp": "レベルアップ",
+      "machine": "わざマシン",
+      "egg": "タマゴわざ",
+      "tutor": "おしえわざ",
+      "level": "レベル{{level}}",
+      "learnedAt": "レベル{{level}}で習得"
+    },
+    "generations": {
+      "1": "カントー",
+      "2": "ジョウト",
+      "3": "ホウエン", 
+      "4": "シンオウ",
+      "5": "イッシュ",
+      "6": "カロス",
+      "7": "アローラ",
+      "8": "ガラル",
+      "9": "パルデア"
+    },
+    "theme": {
+      "light": "ライト",
+      "dark": "ダーク",
+      "toggle": "テーマの切り替え"
+    },
+    "language": {
+      "english": "English",
+      "japanese": "日本語",
+      "toggle": "言語の切り替え"
+    }
+  },
+  "meta": {
+    "title": "ポケモン図鑑 - ポケモンの世界を発見しよう",
+    "description": "ポケモンの素晴らしい世界を発見し、探検しましょう。お気に入りのポケモンを検索、フィルタリング、学習しましょう！",
+    "pokemonTitle": "{{name}} - ポケモン詳細",
+    "pokemonDescription": "{{type}}タイプのポケモン「{{name}}」について学ぼう。ステータス、わざ、特性などの詳細情報を確認できます。"
+  }
+}

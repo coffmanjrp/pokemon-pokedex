@@ -1,6 +1,8 @@
 'use client';
 
 import { Pokemon, POKEMON_TYPE_COLORS, PokemonTypeName } from '@/types/pokemon';
+import { getTypeName } from '@/lib/pokemonUtils';
+import { useAppSelector } from '@/store/hooks';
 import { Badge } from './Badge';
 
 interface PokemonTypesProps {
@@ -10,6 +12,8 @@ interface PokemonTypesProps {
 }
 
 export function PokemonTypes({ types, size = 'md', className }: PokemonTypesProps) {
+  const { language } = useAppSelector((state) => state.ui);
+  
   const formatName = (name: string) => {
     return name.charAt(0).toUpperCase() + name.slice(1);
   };
@@ -32,6 +36,7 @@ export function PokemonTypes({ types, size = 'md', className }: PokemonTypesProp
       {types.map((typeInfo) => {
         const typeName = typeInfo.type.name as PokemonTypeName;
         const typeColor = POKEMON_TYPE_COLORS[typeName] || '#68A090';
+        const displayName = getTypeName(typeInfo.type.name, language);
 
         return (
           <Badge
@@ -39,7 +44,7 @@ export function PokemonTypes({ types, size = 'md', className }: PokemonTypesProp
             style={{ backgroundColor: typeColor }}
             className={size === 'lg' ? 'px-3 py-1 text-sm' : ''}
           >
-            {formatName(typeInfo.type.name)}
+            {displayName}
           </Badge>
         );
       })}

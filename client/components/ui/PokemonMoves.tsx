@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { PokemonMove } from '@/types/pokemon';
+import { getMoveLearnMethodName, formatMoveName } from '@/lib/pokemonUtils';
 
 interface PokemonMovesProps {
   moves?: PokemonMove[];
@@ -76,22 +77,6 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
     );
   };
 
-  const formatMoveName = (name: string) => {
-    return name.split('-').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-  };
-
-  const formatLearnMethod = (method: string) => {
-    const methodMap: Record<string, { en: string; ja: string }> = {
-      'level-up': { en: 'Level Up', ja: 'レベルアップ' },
-      'machine': { en: 'TM/TR', ja: 'わざマシン' },
-      'egg': { en: 'Egg Move', ja: 'タマゴ技' },
-      'tutor': { en: 'Move Tutor', ja: '技教え' },
-      'other': { en: 'Other', ja: 'その他' }
-    };
-    return methodMap[method]?.[language] || method;
-  };
 
   const methodTabs: LearnMethod[] = ['level-up', 'machine', 'egg', 'tutor'];
   const availableMethods = methodTabs.filter(method => movesByMethod[method]?.length > 0);
@@ -113,7 +98,7 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              {formatLearnMethod(method)}
+              {getMoveLearnMethodName(method, language)}
               <span className="ml-2 bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
                 {movesByMethod[method]?.length || 0}
               </span>
@@ -189,8 +174,8 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
       ) : (
         <div className="text-center py-8 text-gray-500">
           {language === 'en' 
-            ? `No ${formatLearnMethod(selectedMethod).toLowerCase()} moves found`
-            : `${formatLearnMethod(selectedMethod)}の技は見つかりませんでした`
+            ? `No ${getMoveLearnMethodName(selectedMethod, language).toLowerCase()} moves found`
+            : `${getMoveLearnMethodName(selectedMethod, language)}の技は見つかりませんでした`
           }
         </div>
       )}

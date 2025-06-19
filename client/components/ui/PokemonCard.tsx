@@ -2,6 +2,8 @@
 
 import { Pokemon, POKEMON_TYPE_COLORS, PokemonTypeName } from '@/types/pokemon';
 import { cn } from '@/lib/utils';
+import { getPokemonName } from '@/lib/pokemonUtils';
+import { useAppSelector } from '@/store/hooks';
 import { PokemonImage } from './PokemonImage';
 import { PokemonTypes } from './PokemonTypes';
 import { StatBar } from './StatBar';
@@ -14,6 +16,7 @@ interface PokemonCardProps {
 }
 
 export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
+  const { language } = useAppSelector((state) => state.ui);
   const primaryType = pokemon.types[0]?.type.name as PokemonTypeName;
   const primaryColor = POKEMON_TYPE_COLORS[primaryType] || '#68A090';
 
@@ -28,6 +31,8 @@ export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
   const formatName = (name: string) => {
     return name.charAt(0).toUpperCase() + name.slice(1);
   };
+
+  const displayName = getPokemonName(pokemon, language);
 
   return (
     <div
@@ -71,7 +76,7 @@ export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
       <div className="p-4 pt-0">
         {/* Name */}
         <h3 className="text-lg font-bold text-gray-800 mb-2 text-center">
-          {formatName(pokemon.name)}
+          {language === 'ja' ? displayName : formatName(displayName)}
         </h3>
 
         {/* Types */}
