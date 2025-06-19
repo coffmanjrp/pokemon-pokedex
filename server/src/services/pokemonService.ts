@@ -27,8 +27,11 @@ class PokemonService {
     const listData = await this.fetchFromPokeAPI(`/pokemon?limit=${limit}&offset=${offset}`);
     
     const pokemonPromises = listData.results.map(async (pokemon: any) => {
-      const pokemonData = await this.fetchFromPokeAPI(`/pokemon/${pokemon.name}`);
-      return this.transformPokemonData(pokemonData, null); // Don't fetch species for list view for performance
+      const [pokemonData, speciesData] = await Promise.all([
+        this.fetchFromPokeAPI(`/pokemon/${pokemon.name}`),
+        this.fetchFromPokeAPI(`/pokemon-species/${pokemon.name}`).catch(() => null), // Fetch species for multilingual support
+      ]);
+      return this.transformPokemonData(pokemonData, speciesData);
     });
 
     const pokemons = await Promise.all(pokemonPromises);
