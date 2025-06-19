@@ -625,6 +625,27 @@ app/[lang]/              # Dynamic language routing
   - Smooth transitions and hover effects throughout interface
   - Consistent visual hierarchy and spacing
 
+### Background Color Adjustment (June 2025)
+- **Removed Full-Page Type Background**: Eliminated global type-based background gradient for cleaner design
+  - Removed DOM manipulation and useEffect background styling in PokemonDetailClient
+  - Restored clean gray background (bg-gray-50) for overall page layout
+  - Cleaned up unused imports and background gradient utilities
+- **Added Localized Pokemon Image Background**: Implemented subtle type-colored aura around Pokemon illustration
+  - Multiple layered circular background elements with type-based coloring
+  - Graduated opacity levels (20% outer blur, 10% inner circle) for subtle effect
+  - Blur and scale effects to create soft, glowing aura behind Pokemon image
+  - Z-index layering to ensure Pokemon image displays above background effects
+- **Technical Implementation**:
+  - `getPrimaryTypeColor()` function for consistent type color application
+  - CSS positioning with absolute layers and transform effects
+  - Maintained responsive design and proper image optimization
+  - Clean separation of global layout and localized effects
+- **Visual Design Improvements**:
+  - Focused attention on Pokemon illustration with subtle type-themed backdrop
+  - Maintained readability and clean design aesthetic
+  - Reduced visual noise while preserving type identity
+  - Better visual hierarchy with concentrated color effects
+
 ## Recent Major Updates
 
 ### App Router i18n Migration (December 2024)

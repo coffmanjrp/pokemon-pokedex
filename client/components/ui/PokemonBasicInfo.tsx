@@ -11,7 +11,8 @@ import {
   getPokemonWeaknesses,
   getPokemonSpriteUrl,
   getTypeName,
-  getTypeColorFromName
+  getTypeColorFromName,
+  getPrimaryTypeColor
 } from '@/lib/pokemonUtils';
 import { PokemonTypes } from './PokemonTypes';
 import Image from 'next/image';
@@ -28,6 +29,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
   const description = getPokemonDescription(pokemon, language);
   const genus = getPokemonGenus(pokemon, language);
   const weaknesses = getPokemonWeaknesses(pokemon);
+  const primaryTypeColor = getPrimaryTypeColor(pokemon);
 
   // Type colors for stat bars (matching reference design colors)
   const typeColors: Record<string, string> = {
@@ -50,7 +52,20 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
           <div className="relative">
             {/* Navigation arrows will be added later */}
             <div className="w-96 h-96 flex items-center justify-center relative">
-              <div className="relative w-full h-full">
+              {/* Background circle with type color */}
+              <div 
+                className="absolute inset-0 rounded-full opacity-20 blur-3xl transform scale-150"
+                style={{
+                  backgroundColor: primaryTypeColor,
+                }}
+              />
+              <div 
+                className="absolute inset-4 rounded-full opacity-10"
+                style={{
+                  backgroundColor: primaryTypeColor,
+                }}
+              />
+              <div className="relative w-full h-full z-10">
                 <Image
                   src={getPokemonSpriteUrl(pokemon, isShiny)}
                   alt={`${displayName} ${isShiny ? '(Shiny)' : ''}`}
