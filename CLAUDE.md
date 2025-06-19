@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages, SSG implementation, advanced search/filter functionality, complete English/Japanese multilingual support, and production-ready build. Main areas for future enhancement: testing coverage, environment configuration, and error boundaries.
+**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages, SSG implementation, advanced search/filter functionality, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. Main areas for future enhancement: testing coverage, environment configuration, and error boundaries.
 
 ## Architecture
 
@@ -16,7 +16,7 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 - **Styling**: TailwindCSS with Ruby/Sapphire game-inspired design
 - **State Management**: Redux Toolkit
 - **GraphQL Client**: Apollo Client
-- **Internationalization**: App Router i18n with middleware-based language detection
+- **Internationalization**: Native App Router i18n with middleware-based language detection and server-side dictionary loading
 
 ### Backend (GraphQL Server)
 - **Server**: Apollo Server with Express
@@ -44,22 +44,31 @@ cd server && npm run start    # Start production GraphQL server
 ```
 pokemon-pokedex/
 ├── client/                          # Frontend Next.js application
-│   ├── app/                        # App Router pages and layouts
-│   │   ├── page.tsx               # Main Pokemon grid page
+│   ├── app/                        # App Router with i18n structure
+│   │   ├── [lang]/                # Language-based routing
+│   │   │   ├── page.tsx           # Main Pokemon grid page (client wrapper)
+│   │   │   ├── client.tsx         # Client-side Pokemon list logic
+│   │   │   ├── layout.tsx         # Language-aware layout
+│   │   │   └── pokemon/[id]/      # Pokemon detail pages
+│   │   │       ├── page.tsx       # Server component with metadata
+│   │   │       ├── client.tsx     # Client-side detail logic
+│   │   │       └── not-found.tsx  # 404 page for missing Pokemon
 │   │   └── layout.tsx             # Root layout with providers
-│   ├── components/                # React components
-│   │   ├── layout/                # Layout components (Header, etc.)
+│   ├── middleware.ts               # Language detection and routing
+│   ├── components/                # React components (fully multilingual)
+│   │   ├── layout/                # Header, Footer, navigation components
 │   │   ├── pokemon/              # Pokemon-specific components
-│   │   └── ui/                   # Reusable UI components (PokemonGrid, etc.)
+│   │   └── ui/                   # Reusable UI components with i18n
+│   ├── lib/                      # Utility functions and configurations
+│   │   ├── dictionaries/         # Translation files
+│   │   │   ├── en.json           # English translations
+│   │   │   └── ja.json           # Japanese translations
+│   │   ├── dictionaries.ts       # Type definitions and utilities
+│   │   ├── get-dictionary.ts     # Server-only dictionary loader
+│   │   └── pokemonUtils.ts       # Pokemon data translation utilities
 │   ├── hooks/                    # Custom React hooks
-│   │   └── usePokemonList.ts     # Pokemon data fetching and filtering
 │   ├── store/                    # Redux Toolkit configuration
-│   │   ├── slices/              # Redux slices
-│   │   │   ├── pokemonSlice.ts  # Pokemon data and filtering state
-│   │   │   └── uiSlice.ts       # UI state (language, modals, etc.)
-│   │   └── store.ts             # Store configuration
-│   ├── types/                    # TypeScript type definitions
-│   └── lib/                      # Utility functions and configurations
+│   └── types/                    # TypeScript type definitions
 └── server/                       # GraphQL server (FULLY IMPLEMENTED - Apollo Server + Express)
     ├── src/
     │   ├── index.ts            # Server entry point with CORS and health check
@@ -83,7 +92,12 @@ pokemon-pokedex/
   - Auto-loading mechanism for generation filters to ensure complete results
 - **Infinite Scroll**: Intersection Observer with debouncing and smart loading
 - **State Management**: Redux Toolkit with client-side filtering and deduplication
-- **Comprehensive Multilingual Support**: Complete English/Japanese implementation including Pokemon names, types, abilities, moves, and UI text
+- **Native App Router i18n**: Complete English/Japanese support with middleware-based routing
+  - Language detection from browser headers with automatic redirection
+  - Server-side dictionary loading for optimal performance
+  - Complete filter system multilingual support (FilterModal, TypeFilter, GenerationFilter)
+  - Pokemon data translations (names, types, abilities, moves, game versions)
+  - URL-based language switching (/en/, /ja/) with proper SEO
 - **Responsive Design**: Desktop-first with mobile and tablet optimizations
 
 ### Search & Filter Implementation
@@ -146,28 +160,63 @@ const GENERATION_RANGES = {
 };
 ```
 
-### Multilingual System Architecture
+### App Router i18n Architecture
 
-The application implements comprehensive bilingual support (English/Japanese) through a dual-approach translation system:
+The application implements native Next.js 15 App Router i18n with comprehensive bilingual support (English/Japanese):
 
-#### Translation Layers
-1. **UI Text Translation**: App Router middleware-based i18n with JSON translation files for interface elements
-2. **Pokemon Data Translation**: Direct PokeAPI integration for authentic Japanese Pokemon content
+#### Core i18n Components
 
-#### Key Translation Components
-- **Pokemon Names**: Extracted from PokeAPI species data (`species.names` field)
-- **Types**: 18 Pokemon types with official Japanese names
-- **Abilities**: 50+ common Pokemon abilities with proper translations
-- **Game Versions**: Complete translation mapping for all Pokemon games
-- **Moves**: Individual move names translated via formatting utilities
-- **Generation Names**: Proper Japanese generation formatting (第X世代)
+**1. Middleware-Based Language Detection**
+```typescript
+// middleware.ts - Automatic language detection and routing
+export function middleware(request: NextRequest) {
+  // Detects language from Accept-Language header
+  // Redirects to appropriate /en/ or /ja/ route
+}
+```
+
+**2. Server-Side Dictionary Loading**
+```typescript
+// lib/get-dictionary.ts - Type-safe server-only translations
+export const getDictionary = async (locale: Locale): Promise<Dictionary> => {
+  return dictionaries[locale]?.() ?? dictionaries.en()
+}
+```
+
+**3. Language-Based Routing Structure**
+```
+app/[lang]/              # Dynamic language routing
+├── page.tsx            # Server component with dictionary loading
+├── layout.tsx          # Language-aware layout
+└── pokemon/[id]/       # Nested dynamic routes
+```
+
+#### Translation Architecture
+
+**UI Text Translation**
+- Server-side dictionary loading with `getDictionary(locale)`
+- Type-safe `Dictionary` interface for all UI elements
+- JSON translation files in `lib/dictionaries/en.json` and `ja.json`
+- Filter system completely multilingual (FilterModal, TypeFilter, GenerationFilter)
+
+**Pokemon Data Translation**
+- Direct PokeAPI integration for authentic Japanese Pokemon content
+- Centralized utility functions in `pokemonUtils.ts`
+- Support for names, types, abilities, moves, and game versions
+
+#### Filter System i18n Support
+- **FilterButton**: "Filter" / "フィルター" with active count badge
+- **FilterModal**: Complete UI translations (titles, buttons, labels)
+- **TypeFilter**: All 18 Pokemon types with Japanese names
+- **GenerationFilter**: Generation names (第1世代) and regions (カントー地方)
 
 #### Implementation Files
-- `/client/lib/pokemonUtils.ts`: Centralized translation utilities and mapping objects
-- `/client/lib/dictionaries/`: English and Japanese UI translation files
-- `/client/middleware.ts`: Language detection and routing middleware
-- `/client/app/[lang]/`: Nested page structure for language routing
-- Server components updated to fetch species data for Japanese name support
+- `/client/middleware.ts`: Language detection and automatic routing
+- `/client/lib/dictionaries.ts`: Type definitions and utility functions
+- `/client/lib/get-dictionary.ts`: Server-only dictionary loader with caching
+- `/client/lib/dictionaries/`: Translation files for UI text
+- `/client/lib/pokemonUtils.ts`: Pokemon data translation utilities
+- `/client/app/[lang]/`: Language-based page structure
 
 #### Translation Coverage
 - ✅ Pokemon names (via PokeAPI species data)
@@ -220,11 +269,13 @@ The application implements comprehensive bilingual support (English/Japanese) th
 - **State Management**: Redux Toolkit with proper error handling and deduplication
 - **Responsive UI**: Complete component library with Ruby/Sapphire theming
 - **Infinite Scroll**: Optimized with Intersection Observer and debouncing
-- **Comprehensive Multilingual Support**: Complete English/Japanese implementation with:
+- **Native App Router i18n**: Complete English/Japanese implementation with:
+  - Middleware-based language detection and automatic routing (/en/, /ja/)
+  - Server-side dictionary loading for optimal performance (no client bundles)
+  - Complete filter system multilingual support (FilterModal, TypeFilter, GenerationFilter)
   - PokeAPI-integrated Japanese Pokemon names, types, abilities, and moves
-  - UI translations with App Router middleware-based i18n
-  - 50+ ability translations and comprehensive game version translations
-  - Language-aware component rendering and fallback logic
+  - 308 static pages generated (151 Pokemon × 2 languages)
+  - SEO-optimized with proper hreflang and language-specific metadata
 - **Image Optimization**: Next.js Image with fallbacks, lazy loading, and size variants
 - **Rich Data Display**: Moves, Pokedex entries, game history, and comprehensive stats
 - **SEO Optimization**: Meta tags, Open Graph, Twitter Cards for all Pokemon pages
@@ -249,21 +300,23 @@ The application implements comprehensive bilingual support (English/Japanese) th
 
 ## Recent Major Updates
 
-### Multilingual Support Implementation (December 2024)
-- **Complete English/Japanese Support**: Full bilingual interface with proper language switching
-- **PokeAPI Integration**: Leverages PokeAPI's Japanese species data endpoints for authentic Pokemon names and descriptions
-- **Comprehensive Translation System**:
-  - UI text translations via App Router middleware-based i18n
-  - Pokemon names, types, abilities, moves, and game versions in Japanese
-  - 50+ Pokemon abilities with Japanese translations
-  - All Pokemon game versions with proper Japanese names
-  - Generation names with Japanese formatting and region names
-- **Translation Architecture**:
-  - Middleware-based language detection and routing
-  - Centralized utility functions in `pokemonUtils.ts`
-  - Fallback logic for untranslated content
-  - Server-side species data fetching for Japanese names in card views
-  - Language-aware component rendering throughout the application
+### App Router i18n Migration (December 2024)
+- **Migration from Pages Router**: Complete transition from next-i18next to native Next.js 15 App Router i18n
+- **Architecture Overhaul**: New `[lang]` directory structure with middleware-based language detection
+- **Performance Improvements**: 
+  - Removed 384 i18n dependencies (next-i18next, react-i18next, i18next)
+  - Server-side dictionary loading eliminates client-side translation bundles
+  - 308 static pages generated (151 Pokemon × 2 languages) via SSG
+- **Complete Filter System i18n**:
+  - FilterButton: "Filter" / "フィルター" with active count badges
+  - FilterModal: Full UI translation (titles, buttons, error messages)
+  - TypeFilter: All 18 Pokemon types with official Japanese names
+  - GenerationFilter: Generation names (第1世代) and regions (カントー地方)
+- **Enhanced Language Switching**:
+  - URL-based language switching with proper navigation (/en/ ↔ /ja/)
+  - Automatic language detection from browser Accept-Language headers
+  - Middleware redirects for seamless user experience
+- **SEO Optimization**: Language-specific metadata, proper hreflang attributes, and crawlable URLs
 
 ### Pokemon Detail Pages Implementation (December 2024)
 - **SSG Implementation**: Static Site Generation for first 151 Pokemon with ISR support
@@ -283,11 +336,13 @@ The application implements comprehensive bilingual support (English/Japanese) th
   - Comprehensive type definitions for all Pokemon data
 
 ### Build Status
-- ✅ **Production Build**: Successfully compiles with Next.js 15
-- ✅ **Static Generation**: 156 pages generated (151 Pokemon + base pages)
+- ✅ **Production Build**: Successfully compiles with Next.js 15 App Router
+- ✅ **Static Generation**: 308 pages generated (151 Pokemon × 2 languages + base pages)
+- ✅ **i18n Implementation**: Native App Router i18n with middleware routing
 - ✅ **Type Safety**: Full TypeScript coverage with no build errors
 - ✅ **ESLint Compliance**: All linting rules passed
-- ✅ **Bundle Optimization**: Efficient code splitting and chunking
+- ✅ **Bundle Optimization**: Server-side translations eliminate client-side i18n bundles
+- ✅ **Dependency Reduction**: Removed 384 i18n packages for better performance
 
 ### Component Architecture
 - **PokemonBasicInfo**: Pokemon hero section with core information (image, name, types, stats, abilities)
