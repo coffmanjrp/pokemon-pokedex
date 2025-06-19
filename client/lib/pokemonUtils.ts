@@ -313,8 +313,7 @@ export function getPrimaryTypeColor(pokemon: Pokemon): string {
   }
   
   const primaryType = pokemon.types[0].type.name;
-  return TYPE_TRANSLATIONS[primaryType.toLowerCase()] ? 
-    getTypeColorFromName(primaryType) : '#A8A878';
+  return getTypeColorFromName(primaryType);
 }
 
 /**
@@ -372,7 +371,30 @@ export function generateFullPageBackgroundStyle(pokemon: Pokemon): React.CSSProp
     right: 0,
     bottom: 0,
     background: `linear-gradient(135deg, ${primaryColor}15 0%, ${primaryColor}08 50%, #f9fafb 100%)`,
-    zIndex: -1,
+    zIndex: -10,
     pointerEvents: 'none',
   };
+}
+
+/**
+ * Convert hex color to rgba with opacity
+ */
+function hexToRgba(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+/**
+ * Get the background gradient as a CSS string for body styling
+ */
+export function getTypeBackgroundGradient(pokemon: Pokemon): string {
+  const primaryColor = getPrimaryTypeColor(pokemon);
+  
+  // Convert to rgba with proper opacity values
+  const colorWithAlpha1 = hexToRgba(primaryColor, 0.15); // 15% opacity
+  const colorWithAlpha2 = hexToRgba(primaryColor, 0.08); // 8% opacity
+  
+  return `linear-gradient(135deg, ${colorWithAlpha1} 0%, ${colorWithAlpha2} 50%, #f9fafb 100%)`;
 }

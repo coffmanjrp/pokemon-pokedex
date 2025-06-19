@@ -2,14 +2,13 @@
 
 import { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { setLanguage, toggleTheme, setFilterModalOpen } from '@/store/slices/uiSlice';
+import { setLanguage, setFilterModalOpen } from '@/store/slices/uiSlice';
 import { setSearchFilter } from '@/store/slices/pokemonSlice';
 import { useRouter, usePathname } from 'next/navigation';
 import { Locale, generateAlternateLanguageUrl } from '@/lib/dictionaries';
 import { Logo } from './Logo';
 import { SearchBar } from './SearchBar';
 import { LanguageToggle } from './LanguageToggle';
-import { ThemeToggle } from './ThemeToggle';
 import { FilterButton } from './FilterButton';
 import { FilterModal } from '../ui/FilterModal';
 
@@ -21,7 +20,6 @@ export function Header({ lang }: HeaderProps) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const pathname = usePathname();
-  const { theme } = useAppSelector((state) => state.ui);
   const [searchValue, setSearchValue] = useState('');
 
   // Check if we're on a Pokemon detail page
@@ -43,10 +41,6 @@ export function Header({ lang }: HeaderProps) {
     
     // Navigate to new URL
     router.push(newUrl);
-  };
-
-  const handleThemeToggle = () => {
-    dispatch(toggleTheme());
   };
 
   const handleFilterClick = () => {
@@ -78,11 +72,6 @@ export function Header({ lang }: HeaderProps) {
             <LanguageToggle
               language={lang}
               onToggle={handleLanguageToggle}
-            />
-
-            <ThemeToggle
-              theme={theme}
-              onToggle={handleThemeToggle}
             />
 
             {/* Filter Button - Hidden on Pokemon detail pages */}

@@ -269,17 +269,16 @@ app/[lang]/              # Dynamic language routing
 7. **Pokemon Cry/Sound Playback**: Audio playback functionality for Pokemon cries
 8. **Type Effectiveness Calculator**: Weakness/resistance calculator with damage multipliers
 9. **Pokemon Size Comparison**: Visual size comparison with human scale
-10. **Dark Theme Completion**: Apply dark mode styles (infrastructure already exists)
-11. **Accessibility Features**: ARIA labels, keyboard navigation, screen reader support
-12. **SEO Optimization**: Metadata, Open Graph tags, structured data
-13. **Server Caching**: Redis or in-memory caching for PokeAPI requests
+10. **Accessibility Features**: ARIA labels, keyboard navigation, screen reader support
+11. **SEO Optimization**: Metadata, Open Graph tags, structured data
+12. **Server Caching**: Redis or in-memory caching for PokeAPI requests
 
 ### Low Priority (Future)
-14. **Pokemon Encounter Data**: Encounter rates and location data from games
-15. **Pokemon Team Builder**: Team composition and strategy tools
-16. **Shiny Variant Display**: Toggle for shiny Pokemon variants
-17. **PWA Implementation**: Service worker, offline support, app manifest
-18. **Performance Analysis**: Bundle optimization and monitoring
+13. **Pokemon Encounter Data**: Encounter rates and location data from games
+14. **Pokemon Team Builder**: Team composition and strategy tools
+15. **Shiny Variant Display**: Toggle for shiny Pokemon variants
+16. **PWA Implementation**: Service worker, offline support, app manifest
+17. **Performance Analysis**: Bundle optimization and monitoring
 
 ## Implementation Status
 
@@ -311,7 +310,6 @@ app/[lang]/              # Dynamic language routing
   - Type-safe form detection and classification
 
 ### ⚠️ Partially Implemented
-- **Theme System**: Dark mode infrastructure exists but styles not applied
 - **Error Handling**: Basic error states exist but no error boundaries
 - **Performance**: Good optimization but no bundle analysis or monitoring
 
@@ -399,7 +397,7 @@ app/[lang]/              # Dynamic language routing
 - **Dynamic Background Colors**: Pokemon detail pages now reflect primary type colors
 - **Implementation Details**:
   - Created utility functions in `pokemonUtils.ts` for type color extraction and background generation
-  - Added `getPrimaryTypeColor()`, `getTypeColorFromName()`, and `generateTypeBackgroundStyle()` functions
+  - Added `getPrimaryTypeColor()`, `getTypeColorFromName()`, and `getTypeBackgroundGradient()` functions
   - Implemented subtle gradient backgrounds using primary type colors with proper opacity
   - Applied dynamic styling to `PokemonDetailClient` component for full-page theming
 - **Visual Design Features**:
@@ -409,8 +407,9 @@ app/[lang]/              # Dynamic language routing
   - Responsive design that works across all screen sizes
 - **Technical Implementation**:
   - Type-safe color mapping with fallback to Normal type color
-  - Fixed-position overlay background to cover entire viewport including margins/padding
-  - React inline styles for dynamic background application with z-index management
+  - DOM manipulation to replace layout container background (removes bg-gray-50, applies type gradient)
+  - React useEffect for lifecycle management with proper cleanup on unmount
+  - Fixed function call issue in `getPrimaryTypeColor()` to properly use `getTypeColorFromName()`
   - Preserves existing component architecture and styling
   - Compatible with existing card designs and text contrast requirements
 - **User Experience Improvements**:
@@ -418,6 +417,14 @@ app/[lang]/              # Dynamic language routing
   - Instant visual type recognition upon page load
   - Maintains usability and accessibility standards
   - Seamless integration with existing design system
+- **Bug Fixes**:
+  - ✅ Fixed type color function error where `getPrimaryTypeColor` was incorrectly checking `TYPE_TRANSLATIONS` instead of calling `getTypeColorFromName`
+  - ✅ Fixed CSS color format issue where hex colors with opacity suffixes weren't recognized by browsers
+  - ✅ Converted to proper RGBA format using `hexToRgba()` helper function for cross-browser compatibility
+  - ✅ Removed conflicting dark mode CSS that was overriding type-based backgrounds
+  - ✅ Eliminated entire dark mode system including UI components and Redux state
+  - ✅ Verified correct type colors are generated (e.g., water: rgba(104, 144, 240, 0.15), grass: rgba(120, 200, 80, 0.15))
+  - ✅ Removed debug console.log statements from production code
 
 ## Recent Major Updates
 
@@ -489,10 +496,10 @@ app/[lang]/              # Dynamic language routing
   - Removed version group information for cleaner display
 - **Type Background Styling**: Dynamic page theming based on Pokemon primary type:
   - Subtle gradient backgrounds using official Pokemon type colors
-  - Fixed-position overlay covers entire viewport including layout margins/padding
+  - DOM manipulation to replace layout container background covering entire viewport
   - Maintains text readability with proper opacity levels (15% to 8%)
   - Fallback to Normal type color for edge cases
-  - Full-page application via PokemonDetailClient wrapper with z-index management
+  - Full-page application via PokemonDetailClient with proper cleanup on navigation
 - **PokemonGameHistory**: Game appearance tracking across all generations
 - **PokemonStats**: Enhanced statistics with visual progress indicators
 - **PokemonImage**: Optimized image component with size variants and fallbacks

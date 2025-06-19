@@ -1,11 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export type Language = 'en' | 'ja';
-export type Theme = 'light' | 'dark';
 
 interface UIState {
   language: Language;
-  theme: Theme;
   isMenuOpen: boolean;
   isFilterModalOpen: boolean;
   isLoading: boolean;
@@ -19,7 +17,6 @@ interface UIState {
 
 const initialState: UIState = {
   language: 'en',
-  theme: 'light',
   isMenuOpen: false,
   isFilterModalOpen: false,
   isLoading: false,
@@ -32,12 +29,6 @@ const uiSlice = createSlice({
   reducers: {
     setLanguage: (state, action: PayloadAction<Language>) => {
       state.language = action.payload;
-    },
-    setTheme: (state, action: PayloadAction<Theme>) => {
-      state.theme = action.payload;
-    },
-    toggleTheme: (state) => {
-      state.theme = state.theme === 'light' ? 'dark' : 'light';
     },
     setMenuOpen: (state, action: PayloadAction<boolean>) => {
       state.isMenuOpen = action.payload;
@@ -75,8 +66,6 @@ const uiSlice = createSlice({
 
 export const {
   setLanguage,
-  setTheme,
-  toggleTheme,
   setMenuOpen,
   toggleMenu,
   setFilterModalOpen,

@@ -1,8 +1,9 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Pokemon } from '@/types/pokemon';
 import { Dictionary, Locale } from '@/lib/dictionaries';
-import { generateFullPageBackgroundStyle } from '@/lib/pokemonUtils';
+import { getTypeBackgroundGradient } from '@/lib/pokemonUtils';
 import { PokemonBasicInfo } from '@/components/ui/PokemonBasicInfo';
 import { PokemonStats } from '@/components/ui/PokemonStats';
 import { PokemonDescription } from '@/components/ui/PokemonDescription';
@@ -20,13 +21,31 @@ interface PokemonDetailClientProps {
 }
 
 export default function PokemonDetailClient({ pokemon, dictionary, lang }: PokemonDetailClientProps) {
-  const fullPageBackgroundStyle = generateFullPageBackgroundStyle(pokemon);
+  const backgroundGradient = getTypeBackgroundGradient(pokemon);
+
+  // Apply background to the parent container that includes layout margins/padding
+  useEffect(() => {
+    // Look for the layout container with min-h-screen class
+    const layoutContainer = document.querySelector('.min-h-screen') as HTMLElement;
+    
+    if (layoutContainer) {
+      // Store original classes and background
+      const originalClasses = layoutContainer.className;
+      
+      // Remove bg-gray-50 class and apply type background
+      layoutContainer.classList.remove('bg-gray-50');
+      layoutContainer.style.background = backgroundGradient;
+      
+      // Cleanup on unmount
+      return () => {
+        layoutContainer.className = originalClasses;
+        layoutContainer.style.background = '';
+      };
+    }
+  }, [backgroundGradient]);
 
   return (
     <>
-      {/* Full-page background overlay */}
-      <div style={fullPageBackgroundStyle} />
-      
       <PokemonDetailHeader language={lang} />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
