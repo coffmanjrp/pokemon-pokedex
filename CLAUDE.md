@@ -378,6 +378,23 @@ app/[lang]/              # Dynamic language routing
   - Bilingual damage class labels for international users
   - Responsive grid layout adapting to screen size
 
+### Header Navigation Enhancement (June 2025)
+- **Conditional Display Logic**: Enhanced Header component with context-aware visibility
+- **Implementation Details**:
+  - Added pathname detection to identify Pokemon detail pages (`/[lang]/pokemon/[id]`)
+  - Conditionally hide search bar and filter button on detail pages
+  - Maintain language toggle and theme toggle functionality across all pages
+  - Preserve responsive layout and visual consistency
+- **User Experience Improvements**:
+  - Cleaner detail page layout focused on Pokemon information
+  - Reduced cognitive load by removing irrelevant navigation elements
+  - Maintained essential navigation controls (language, theme)
+  - Consistent header height and spacing across page types
+- **Technical Implementation**:
+  - Path-based conditional rendering using Next.js usePathname hook
+  - Clean separation of navigation concerns per page type
+  - Maintained existing Redux state management for UI controls
+
 ## Recent Major Updates
 
 ### App Router i18n Migration (December 2024)
@@ -431,6 +448,11 @@ app/[lang]/              # Dynamic language routing
 ### Component Architecture
 - **PokemonBasicInfo**: Pokemon hero section with core information (image, name, types, stats, abilities)
 - **PokemonDetailHeader**: Navigation header with back button for detail pages
+- **Header**: Main application header with conditional display logic:
+  - Shows search bar and filter button on main Pokemon list pages
+  - Hides search bar and filter button on Pokemon detail pages
+  - Maintains language toggle and theme toggle on all pages
+  - Responsive layout that adapts to content visibility
 - **PokemonDetailSection**: Reusable section wrapper for consistent styling across detail pages
 - **PokemonSpritesGallery**: Complete sprites and artwork display with official artwork and game sprites
 - **PokemonDescription**: Multi-language Pokedex entries with expandable sections
