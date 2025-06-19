@@ -1,7 +1,7 @@
 'use client';
 
 import { Pokemon } from '@/types/pokemon';
-import { getPokemonName } from '@/lib/pokemonUtils';
+import { getPokemonName, getAbilityName } from '@/lib/pokemonUtils';
 import { PokemonImage } from './PokemonImage';
 import { PokemonTypes } from './PokemonTypes';
 
@@ -90,7 +90,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
                         : 'bg-blue-100 text-blue-800'
                     }`}
                   >
-                    {pokemonAbility.ability.name}
+                    {getAbilityName(pokemonAbility.ability.name, language)}
                     {pokemonAbility.isHidden && (
                       <span className="ml-1 text-xs">
                         ({language === 'en' ? 'Hidden' : '隠れ特性'})

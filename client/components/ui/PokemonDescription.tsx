@@ -1,7 +1,7 @@
 'use client';
 
 import { Pokemon } from '@/types/pokemon';
-import { getPokemonDescription, getPokemonGenus } from '@/lib/pokemonUtils';
+import { getPokemonDescription, getPokemonGenus, getVersionName } from '@/lib/pokemonUtils';
 
 interface PokemonDescriptionProps {
   pokemon: Pokemon;
@@ -59,7 +59,7 @@ export function PokemonDescription({ pokemon, language }: PokemonDescriptionProp
                     {entry.flavorText.replace(/\f/g, ' ').replace(/\n/g, ' ')}
                   </p>
                   <footer className="mt-2 text-xs text-gray-500">
-                    — {entry.version.name.charAt(0).toUpperCase() + entry.version.name.slice(1)}
+                    — {getVersionName(entry.version.name, language)}
                   </footer>
                 </div>
               ))}
