@@ -395,6 +395,29 @@ app/[lang]/              # Dynamic language routing
   - Clean separation of navigation concerns per page type
   - Maintained existing Redux state management for UI controls
 
+### Type-Based Background Styling (June 2025)
+- **Dynamic Background Colors**: Pokemon detail pages now reflect primary type colors
+- **Implementation Details**:
+  - Created utility functions in `pokemonUtils.ts` for type color extraction and background generation
+  - Added `getPrimaryTypeColor()`, `getTypeColorFromName()`, and `generateTypeBackgroundStyle()` functions
+  - Implemented subtle gradient backgrounds using primary type colors with proper opacity
+  - Applied dynamic styling to `PokemonDetailClient` component for full-page theming
+- **Visual Design Features**:
+  - Subtle 135-degree gradient from type color (15% opacity) to neutral background
+  - Maintains excellent text readability while providing visual type identification
+  - Consistent with official Pokemon type color palette
+  - Responsive design that works across all screen sizes
+- **Technical Implementation**:
+  - Type-safe color mapping with fallback to Normal type color
+  - React inline styles for dynamic background application
+  - Preserves existing component architecture and styling
+  - Compatible with existing card designs and text contrast requirements
+- **User Experience Improvements**:
+  - Enhanced visual immersion with type-themed pages
+  - Instant visual type recognition upon page load
+  - Maintains usability and accessibility standards
+  - Seamless integration with existing design system
+
 ## Recent Major Updates
 
 ### App Router i18n Migration (December 2024)
@@ -463,6 +486,11 @@ app/[lang]/              # Dynamic language routing
   - Tabbed interface for different learn methods (Level-up, TM/TR, Egg, Tutor)
   - Responsive grid layout optimized for both desktop and mobile
   - Removed version group information for cleaner display
+- **Type Background Styling**: Dynamic page theming based on Pokemon primary type:
+  - Subtle gradient backgrounds using official Pokemon type colors
+  - Maintains text readability with proper opacity levels (15% to 8%)
+  - Fallback to Normal type color for edge cases
+  - Full-page application via PokemonDetailClient wrapper
 - **PokemonGameHistory**: Game appearance tracking across all generations
 - **PokemonStats**: Enhanced statistics with visual progress indicators
 - **PokemonImage**: Optimized image component with size variants and fallbacks

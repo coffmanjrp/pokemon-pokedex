@@ -1,4 +1,5 @@
 import { Pokemon } from '@/types/pokemon';
+import React from 'react';
 
 /**
  * Get Pokemon name in the specified language
@@ -301,4 +302,58 @@ export function getGenerationName(generationName: string, language: 'en' | 'ja')
   } else {
     return `Generation ${number.toUpperCase()}`;
   }
+}
+
+/**
+ * Get Pokemon's primary type color for background styling
+ */
+export function getPrimaryTypeColor(pokemon: Pokemon): string {
+  if (!pokemon.types || pokemon.types.length === 0) {
+    return '#A8A878'; // Default to normal type color
+  }
+  
+  const primaryType = pokemon.types[0].type.name;
+  return TYPE_TRANSLATIONS[primaryType.toLowerCase()] ? 
+    getTypeColorFromName(primaryType) : '#A8A878';
+}
+
+/**
+ * Get type color by type name
+ */
+export function getTypeColorFromName(typeName: string): string {
+  const typeColorMap: Record<string, string> = {
+    normal: '#A8A878',
+    fire: '#F08030',
+    water: '#6890F0',
+    electric: '#F8D030',
+    grass: '#78C850',
+    ice: '#98D8D8',
+    fighting: '#C03028',
+    poison: '#A040A0',
+    ground: '#E0C068',
+    flying: '#A890F0',
+    psychic: '#F85888',
+    bug: '#A8B820',
+    rock: '#B8A038',
+    ghost: '#705898',
+    dragon: '#7038F8',
+    dark: '#705848',
+    steel: '#B8B8D0',
+    fairy: '#EE99AC',
+  };
+  
+  return typeColorMap[typeName.toLowerCase()] || '#A8A878';
+}
+
+/**
+ * Generate gradient background style based on Pokemon's primary type
+ */
+export function generateTypeBackgroundStyle(pokemon: Pokemon): React.CSSProperties {
+  const primaryColor = getPrimaryTypeColor(pokemon);
+  
+  // Create a subtle gradient with the type color
+  return {
+    background: `linear-gradient(135deg, ${primaryColor}15 0%, ${primaryColor}08 50%, #f9fafb 100%)`,
+    minHeight: '100vh',
+  };
 }
