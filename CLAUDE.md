@@ -649,14 +649,14 @@ app/[lang]/              # Dynamic language routing
 ### Top Navigation Tabs Implementation (June 2025)
 - **Reference Design Compliance**: Implemented fixed top navigation tabs matching reference design layout
   - Created `PokemonTopNavigationTabs` component with sticky header navigation
-  - Four main tabs: About, Moves, Episodes (placeholder), Cards (placeholder)
+  - Four main tabs: About, Moves, Description, Game History
   - Active tab highlighting with blue accent colors and background
-  - Disabled state styling for unavailable tabs (Episodes, Cards)
+  - Tab availability detection based on data presence for all tabs
 - **Complete Content Integration**: Reorganized all Pokemon detail content under tab structure
-  - **About Tab**: Contains hero section, evolution chain, descriptions, and sprites gallery
+  - **About Tab**: Contains hero section, evolution chain, and sprites gallery
   - **Moves Tab**: Full integration of existing PokemonMoves component with detailed statistics
-  - **Episodes Tab**: Placeholder for future anime episode information
-  - **Cards Tab**: Placeholder for future trading card game information
+  - **Description Tab**: Dedicated tab for Pokemon descriptions and flavor text entries
+  - **Game History Tab**: Complete game appearance history across all generations
 - **Improved Navigation Architecture**:
   - Sticky top navigation bar with z-index layering for persistent access
   - Tab availability detection based on data presence (e.g., moves tab only appears if Pokemon has moves)

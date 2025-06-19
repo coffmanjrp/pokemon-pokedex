@@ -4,10 +4,11 @@ import { useState } from 'react';
 import { Pokemon } from '@/types/pokemon';
 import { Dictionary, Locale } from '@/lib/dictionaries';
 import { PokemonBasicInfo } from './PokemonBasicInfo';
-import { PokemonDetailTabs } from './PokemonDetailTabs';
 import { PokemonSpritesGallery } from './PokemonSpritesGallery';
 import { PokemonEvolutionChain } from './PokemonEvolutionChain';
 import { PokemonMoves } from './PokemonMoves';
+import { PokemonDescription } from './PokemonDescription';
+import { PokemonGameHistory } from './PokemonGameHistory';
 
 interface PokemonTopNavigationTabsProps {
   pokemon: Pokemon;
@@ -15,7 +16,7 @@ interface PokemonTopNavigationTabsProps {
   lang: Locale;
 }
 
-type TopTabType = 'about' | 'moves' | 'episodes' | 'cards';
+type TopTabType = 'about' | 'moves' | 'description' | 'gameHistory';
 
 interface TopTabInfo {
   id: TopTabType;
@@ -39,14 +40,14 @@ export function PokemonTopNavigationTabs({ pokemon, dictionary, lang }: PokemonT
       available: !!(pokemon.moves && pokemon.moves.length > 0)
     },
     {
-      id: 'episodes',
-      label: lang === 'en' ? 'Episodes' : 'エピソード',
-      available: false // Placeholder for future implementation
+      id: 'description',
+      label: lang === 'en' ? 'Description' : '説明',
+      available: !!(pokemon.species?.flavorTextEntries && pokemon.species.flavorTextEntries.length > 0)
     },
     {
-      id: 'cards',
-      label: lang === 'en' ? 'Cards' : 'カード',
-      available: false // Placeholder for future implementation
+      id: 'gameHistory',
+      label: lang === 'en' ? 'Game History' : 'ゲーム履歴',
+      available: !!(pokemon.gameIndices && pokemon.gameIndices.length > 0)
     }
   ];
 
@@ -76,15 +77,6 @@ export function PokemonTopNavigationTabs({ pokemon, dictionary, lang }: PokemonT
               </div>
             )}
 
-            {/* Description and Game History Tabs */}
-            <div className="max-w-7xl mx-auto px-8">
-              <PokemonDetailTabs 
-                pokemon={pokemon} 
-                dictionary={dictionary} 
-                language={lang} 
-              />
-            </div>
-
             {/* Sprites Gallery */}
             <div className="max-w-7xl mx-auto px-8 pb-8">
               <PokemonSpritesGallery pokemon={pokemon} language={lang} />
@@ -107,28 +99,33 @@ export function PokemonTopNavigationTabs({ pokemon, dictionary, lang }: PokemonT
           </div>
         );
       
-      case 'episodes':
+      case 'description':
         return (
           <div className="max-w-7xl mx-auto px-8 py-8">
             <div className="bg-white rounded-lg shadow-md p-8">
-              <div className="text-center py-8 text-gray-500">
-                {lang === 'en' 
-                  ? 'Episode information coming soon...' 
-                  : 'エピソード情報は準備中です...'}
-              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                {lang === 'en' ? 'Description' : '説明'}
+              </h2>
+              <PokemonDescription
+                pokemon={pokemon}
+                language={lang}
+              />
             </div>
           </div>
         );
       
-      case 'cards':
+      case 'gameHistory':
         return (
           <div className="max-w-7xl mx-auto px-8 py-8">
             <div className="bg-white rounded-lg shadow-md p-8">
-              <div className="text-center py-8 text-gray-500">
-                {lang === 'en' 
-                  ? 'Trading card information coming soon...' 
-                  : 'トレーディングカード情報は準備中です...'}
-              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                {lang === 'en' ? 'Game History' : 'ゲーム履歴'}
+              </h2>
+              <PokemonGameHistory
+                gameIndices={pokemon.gameIndices}
+                generation={pokemon.species?.generation}
+                language={lang}
+              />
             </div>
           </div>
         );
