@@ -5,8 +5,6 @@ import { Pokemon } from '@/types/pokemon';
 import { Dictionary, Locale } from '@/lib/dictionaries';
 import { getTypeBackgroundGradient } from '@/lib/pokemonUtils';
 import { PokemonBasicInfo } from '@/components/ui/PokemonBasicInfo';
-import { PokemonStats } from '@/components/ui/PokemonStats';
-import { PokemonDescription } from '@/components/ui/PokemonDescription';
 import { PokemonMoves } from '@/components/ui/PokemonMoves';
 import { PokemonGameHistory } from '@/components/ui/PokemonGameHistory';
 import { PokemonSpritesGallery } from '@/components/ui/PokemonSpritesGallery';
@@ -50,21 +48,6 @@ export default function PokemonDetailClient({ pokemon, dictionary, lang }: Pokem
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <PokemonBasicInfo pokemon={pokemon} language={lang} />
-
-        {/* Description Section */}
-        {pokemon.species && (
-          <PokemonDetailSection title={dictionary.ui.pokemonDetails.description}>
-            <PokemonDescription
-              pokemon={pokemon}
-              language={lang}
-            />
-          </PokemonDetailSection>
-        )}
-
-        {/* Stats Section */}
-        <PokemonDetailSection title={dictionary.ui.pokemonDetails.stats}>
-          <PokemonStats stats={pokemon.stats} />
-        </PokemonDetailSection>
 
         {/* Evolution Chain Section */}
         {pokemon.species?.evolutionChain?.chain && (
