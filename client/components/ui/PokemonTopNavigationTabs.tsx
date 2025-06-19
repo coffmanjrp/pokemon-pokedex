@@ -59,14 +59,14 @@ export function PokemonTopNavigationTabs({ pokemon, dictionary, lang }: PokemonT
             {/* Pokemon Basic Info - Hero Section */}
             <PokemonBasicInfo pokemon={pokemon} language={lang} />
             
-            {/* Evolution Chain Section */}
+            {/* Evolution Chain Section - Between Hero and Sprites */}
             {pokemon.species?.evolutionChain?.chain && (
-              <div className="max-w-7xl mx-auto px-8">
+              <div className="max-w-7xl mx-auto px-8 py-8">
                 <div className="mb-8">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                    {dictionary.ui.pokemonDetails.evolutionChain}
+                    {lang === 'en' ? 'Evolution Chain' : '進化チェーン'}
                   </h2>
-                  <div className="bg-white rounded-2xl p-6 shadow-lg">
+                  <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
                     <PokemonEvolutionChain 
                       evolutionChain={pokemon.species.evolutionChain.chain} 
                       dictionary={dictionary}

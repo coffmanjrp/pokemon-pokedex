@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 import { EvolutionDetail, PokemonTypeSlot, EvolutionTrigger, FormVariant } from '@/types/pokemon';
 import { Dictionary, Locale } from '@/lib/dictionaries';
 import { getTypeName } from '@/lib/pokemonUtils';
@@ -16,6 +16,14 @@ interface PokemonEvolutionChainProps {
 }
 
 export function PokemonEvolutionChain({ evolutionChain, dictionary, lang }: PokemonEvolutionChainProps) {
+  const [expandedForms, setExpandedForms] = useState<{[key: string]: boolean}>({});
+  
+  const toggleForms = (pokemonId: string) => {
+    setExpandedForms(prev => ({
+      ...prev,
+      [pokemonId]: !prev[pokemonId]
+    }));
+  };
   const renderEvolutionChain = (evolution: EvolutionDetail): React.ReactElement[] => {
     const chain: React.ReactElement[] = [];
     
@@ -45,10 +53,10 @@ export function PokemonEvolutionChain({ evolutionChain, dictionary, lang }: Poke
         <div key={`pokemon-${currentEvolution.id}`} className="flex flex-col items-center">
           <Link
             href={`/${lang}/pokemon/${pokemonId}`}
-            className="group flex flex-col items-center p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 border-2 border-transparent hover:border-blue-300"
+            className="group flex flex-col items-center p-4 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 hover:border-blue-300 hover:bg-white"
           >
             {/* Pokemon Image */}
-            <div className="relative w-24 h-24 mb-3">
+            <div className="relative w-28 h-28 mb-3">
               {imageUrl ? (
                 <Image
                   src={imageUrl}
@@ -83,18 +91,25 @@ export function PokemonEvolutionChain({ evolutionChain, dictionary, lang }: Poke
             </div>
           </Link>
 
-          {/* Form Variations */}
+          {/* Form Variations - Collapsible */}
           {currentEvolution.forms && Array.isArray(currentEvolution.forms) && currentEvolution.forms.length > 0 && (
             <div className="mt-4 space-y-2">
-              <div className="text-xs text-gray-600 font-medium text-center">
-                {lang === 'en' ? 'Forms' : 'すがた'}
-              </div>
-              <div className="flex flex-wrap gap-2 justify-center max-w-xs">
-                {currentEvolution.forms.map((form: FormVariant) => (
+              <button
+                onClick={() => toggleForms(pokemonId)}
+                className="text-xs text-blue-600 hover:text-blue-800 font-medium text-center w-full py-1 px-2 rounded hover:bg-blue-50 transition-colors"
+              >
+                {expandedForms[pokemonId] 
+                  ? (lang === 'en' ? 'Hide Forms ▼' : 'すがたを隠す ▼')
+                  : (lang === 'en' ? `Show Forms (${currentEvolution.forms.length}) ▶` : `すがたを表示 (${currentEvolution.forms.length}) ▶`)
+                }
+              </button>
+              {expandedForms[pokemonId] && (
+                <div className="flex flex-wrap gap-2 justify-center max-w-xs">
+                  {currentEvolution.forms.map((form: FormVariant) => (
                   <Link
                     key={form.id}
                     href={`/${lang}/pokemon/${form.id}`}
-                    className="group flex flex-col items-center p-2 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 hover:border-blue-300"
+                    className="group flex flex-col items-center p-2 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 hover:border-blue-300"
                   >
                     {/* Form Image */}
                     <div className="relative w-12 h-12 mb-1">
@@ -150,8 +165,9 @@ export function PokemonEvolutionChain({ evolutionChain, dictionary, lang }: Poke
                       </div>
                     </div>
                   </Link>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
