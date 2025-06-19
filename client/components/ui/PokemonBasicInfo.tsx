@@ -61,7 +61,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
             <PokemonTypes types={pokemon.types} size="lg" />
           </div>
 
-          {/* Description */}
+          {/* Latest Description */}
           {description && (
             <div className="mb-6">
               <div className="bg-gray-50 rounded-lg p-4">
