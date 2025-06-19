@@ -1,4 +1,4 @@
-import { Pokemon, PokemonSpecies, SpeciesName, FlavorTextEntry } from '@/types/pokemon';
+import { Pokemon } from '@/types/pokemon';
 
 /**
  * Get Pokemon name in the specified language

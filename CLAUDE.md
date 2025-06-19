@@ -16,7 +16,7 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 - **Styling**: TailwindCSS with Ruby/Sapphire game-inspired design
 - **State Management**: Redux Toolkit
 - **GraphQL Client**: Apollo Client
-- **Internationalization**: Next.js i18n with comprehensive English/Japanese support
+- **Internationalization**: App Router i18n with middleware-based language detection
 
 ### Backend (GraphQL Server)
 - **Server**: Apollo Server with Express
@@ -151,7 +151,7 @@ const GENERATION_RANGES = {
 The application implements comprehensive bilingual support (English/Japanese) through a dual-approach translation system:
 
 #### Translation Layers
-1. **UI Text Translation**: Next.js i18n with JSON translation files for interface elements
+1. **UI Text Translation**: App Router middleware-based i18n with JSON translation files for interface elements
 2. **Pokemon Data Translation**: Direct PokeAPI integration for authentic Japanese Pokemon content
 
 #### Key Translation Components
@@ -164,8 +164,9 @@ The application implements comprehensive bilingual support (English/Japanese) th
 
 #### Implementation Files
 - `/client/lib/pokemonUtils.ts`: Centralized translation utilities and mapping objects
-- `/client/public/locales/`: English and Japanese UI translation files
-- `/client/next.config.ts`: i18n configuration for locale switching
+- `/client/lib/dictionaries/`: English and Japanese UI translation files
+- `/client/middleware.ts`: Language detection and routing middleware
+- `/client/app/[lang]/`: Nested page structure for language routing
 - Server components updated to fetch species data for Japanese name support
 
 #### Translation Coverage
@@ -221,7 +222,7 @@ The application implements comprehensive bilingual support (English/Japanese) th
 - **Infinite Scroll**: Optimized with Intersection Observer and debouncing
 - **Comprehensive Multilingual Support**: Complete English/Japanese implementation with:
   - PokeAPI-integrated Japanese Pokemon names, types, abilities, and moves
-  - UI translations with Next.js i18n
+  - UI translations with App Router middleware-based i18n
   - 50+ ability translations and comprehensive game version translations
   - Language-aware component rendering and fallback logic
 - **Image Optimization**: Next.js Image with fallbacks, lazy loading, and size variants
@@ -252,12 +253,13 @@ The application implements comprehensive bilingual support (English/Japanese) th
 - **Complete English/Japanese Support**: Full bilingual interface with proper language switching
 - **PokeAPI Integration**: Leverages PokeAPI's Japanese species data endpoints for authentic Pokemon names and descriptions
 - **Comprehensive Translation System**:
-  - UI text translations via Next.js i18n configuration
+  - UI text translations via App Router middleware-based i18n
   - Pokemon names, types, abilities, moves, and game versions in Japanese
   - 50+ Pokemon abilities with Japanese translations
   - All Pokemon game versions with proper Japanese names
   - Generation names with Japanese formatting and region names
 - **Translation Architecture**:
+  - Middleware-based language detection and routing
   - Centralized utility functions in `pokemonUtils.ts`
   - Fallback logic for untranslated content
   - Server-side species data fetching for Japanese names in card views

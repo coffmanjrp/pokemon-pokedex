@@ -13,10 +13,6 @@ interface PokemonTypesProps {
 
 export function PokemonTypes({ types, size = 'md', className }: PokemonTypesProps) {
   const { language } = useAppSelector((state) => state.ui);
-  
-  const formatName = (name: string) => {
-    return name.charAt(0).toUpperCase() + name.slice(1);
-  };
 
   const getSizeClass = () => {
     switch (size) {
