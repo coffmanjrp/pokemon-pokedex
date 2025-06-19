@@ -60,20 +60,6 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
             </div>
           </div>
 
-          {/* Base Experience */}
-          {pokemon.baseExperience && (
-            <div className="mb-6">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="text-sm text-gray-600 mb-1">
-                  {language === 'en' ? 'Base Experience' : '基礎経験値'}
-                </div>
-                <div className="text-xl font-semibold">
-                  {pokemon.baseExperience}
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Abilities */}
           {pokemon.abilities && pokemon.abilities.length > 0 && (
             <div className="mb-6">
