@@ -44,7 +44,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
   const maxBaseStat = 150; // Fixed max for consistent bar scaling
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50">
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 p-8">
         {/* Left Side - Pokemon Image (3/5 columns) */}
