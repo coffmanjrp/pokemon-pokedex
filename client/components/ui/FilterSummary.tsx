@@ -4,6 +4,7 @@ import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { clearFilters } from '@/store/slices/pokemonSlice';
 import { Badge } from './Badge';
 import { POKEMON_TYPE_COLORS, PokemonTypeName } from '@/types/pokemon';
+import { getTypeName } from '@/lib/pokemonUtils';
 
 interface FilterSummaryProps {
   resultCount: number;
@@ -24,10 +25,15 @@ export function FilterSummary({ resultCount, totalCount }: FilterSummaryProps) {
   };
 
   const getGenerationName = (gen: number) => {
-    const regions = {
+    const regionsEn = {
       1: 'Kanto', 2: 'Johto', 3: 'Hoenn', 4: 'Sinnoh', 5: 'Unova',
       6: 'Kalos', 7: 'Alola', 8: 'Galar', 9: 'Paldea'
     };
+    const regionsJa = {
+      1: 'カントー', 2: 'ジョウト', 3: 'ホウエン', 4: 'シンオウ', 5: 'イッシュ',
+      6: 'カロス', 7: 'アローラ', 8: 'ガラル', 9: 'パルデア'
+    };
+    const regions = language === 'en' ? regionsEn : regionsJa;
     return regions[gen as keyof typeof regions] || `Gen ${gen}`;
   };
 
@@ -65,6 +71,7 @@ export function FilterSummary({ resultCount, totalCount }: FilterSummaryProps) {
         {filters.types.map((type) => {
           const typeName = type.name as PokemonTypeName;
           const typeColor = POKEMON_TYPE_COLORS[typeName] || '#68A090';
+          const displayName = getTypeName(type.name, language);
           
           return (
             <Badge 
@@ -72,7 +79,7 @@ export function FilterSummary({ resultCount, totalCount }: FilterSummaryProps) {
               className="text-white text-xs"
               style={{ backgroundColor: typeColor }}
             >
-              {type.name.charAt(0).toUpperCase() + type.name.slice(1)}
+              {displayName}
             </Badge>
           );
         })}

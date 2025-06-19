@@ -1,20 +1,24 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useAppSelector } from '@/store/hooks';
 
 interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
-  placeholder?: string;
   className?: string;
 }
 
 export function SearchBar({ 
   value, 
   onChange, 
-  placeholder = "Search Pokémon...",
   className 
 }: SearchBarProps) {
+  const { language } = useAppSelector((state) => state.ui);
+  
+  const placeholder = language === 'en' 
+    ? "Search Pokémon by name or ID..." 
+    : "ポケモンの名前やIDで検索...";
   return (
     <div className={cn("relative", className)}>
       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
