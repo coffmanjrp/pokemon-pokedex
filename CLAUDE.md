@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including enhanced evolution chains with form variants, enhanced move data display with detailed statistics, SSG implementation, advanced search/filter functionality, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. Recently enhanced with Pokemon form variation support and comprehensive move statistics display (Generation 9 compatible). Main areas for future enhancement: testing coverage, environment configuration, and error boundaries.
+**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including completely redesigned Pokemon detail pages based on reference design, enhanced evolution chains with form variants, enhanced move data display with detailed statistics, SSG implementation, advanced search/filter functionality, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. Recently completed major detail page redesign with 2-column layout, type effectiveness system, mobile-responsive evolution chains, and streamlined navigation. Main areas for future enhancement: testing coverage, environment configuration, and error boundaries.
 
 ## Architecture
 
@@ -794,15 +794,48 @@ app/[lang]/              # Dynamic language routing
 - **Improved Navigation Layout**: Enhanced navigation arrow positioning
   - Pokemon numbers repositioned to the inner side (left of previous arrow, right of next arrow)
   - Horizontal layout for number and arrow combination for better visual balance
-  - Maintained Pokemon name display below the navigation controls
+  - Simplified navigation by removing Pokemon names, keeping only arrows and ID numbers
 - **Type Safety Improvements**: Enhanced TypeScript support for navigation
   - Updated function signatures to handle null values for boundary Pokemon
   - Conditional rendering with proper null checks for navigation arrows
-  - Improved getPokemonNameById function to handle null inputs gracefully
+  - Removed unnecessary getPokemonNameById function for cleaner codebase
 - **User Experience Enhancement**: More intuitive navigation behavior
   - Clear start and end points for Pokemon browsing experience
   - No unexpected loops from last to first Pokemon or vice versa
   - Consistent navigation pattern matching standard web navigation practices
+  - Minimalist design with only essential navigation elements (arrows + ID numbers)
+
+### Pokemon Detail Page Redesign Implementation (June 2025)
+- **Complete Reference Design Implementation**: Successfully redesigned Pokemon detail pages based on provided reference design
+- **Hero Section Transformation**: Implemented 2-column horizontal layout
+  - Left column (60%): Large Pokemon image with type-colored background aura
+  - Right column (40%): Consolidated information panel with clean white background
+  - Pokemon header moved to left side above image (name, ID, type badges)
+  - Type effectiveness (Weaknesses) calculation and display system
+  - Normal/Shiny sprite toggle with functional state management
+- **Enhanced Information Architecture**: Restructured content organization
+  - Unified right-side information panel with Story, Versions, basic info, Stats
+  - Stats total display prominently shown with blue accent styling
+  - Weaknesses section repositioned above Stats for better visual hierarchy
+  - Left-aligned type badges for improved design consistency
+- **Top Navigation Tabs System**: Implemented reference design navigation structure
+  - Initially implemented with Description/Game History tabs as requested
+  - Later consolidated into single About content for streamlined experience
+  - Content tabs moved to Sprites Gallery component for better organization
+- **Evolution Chain Enhancements**: Improved evolution display and mobile responsiveness
+  - Enhanced original design with better positioning between Hero Section and Sprites Gallery
+  - Mobile vertical layout implementation with properly oriented arrows
+  - Form variations with English Pokemon name capitalization in evolution chains
+- **Responsive Mobile Optimization**: Comprehensive mobile design improvements
+  - Vertical Evolution Chain layout on mobile with downward-pointing arrows
+  - Navigation arrow positioning and sizing optimization for mobile devices
+  - Content grid and padding adjustments for mobile touch interface
+  - Hidden navigation arrows on mobile screens for cleaner appearance
+- **Clean Design Implementation**: Applied consistent styling throughout interface
+  - Minimal header design with simplified "Pokedex" text and no background
+  - Enhanced shadow and border treatments using shadow-sm and border-gray-100
+  - Improved hover states and transition effects for better user interaction
+  - Systematic color scheme and visual hierarchy improvements
 
 ## Recent Major Updates
 
