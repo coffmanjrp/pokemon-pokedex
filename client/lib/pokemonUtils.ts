@@ -230,16 +230,40 @@ export const ABILITY_TRANSLATIONS: Record<string, { en: string; ja: string }> = 
 };
 
 /**
- * Get translated ability name
+ * Get ability name in the specified language
+ * Uses 3-tier fallback: GraphQL data (future), manual translations, formatted English name
  */
-export function getAbilityName(abilityName: string, language: 'en' | 'ja'): string {
-  const translation = ABILITY_TRANSLATIONS[abilityName.toLowerCase()];
+export function getAbilityName(ability: { name: string; names?: any[] } | string, language: 'en' | 'ja'): string {
+  // Handle string input for backward compatibility
+  if (typeof ability === 'string') {
+    ability = { name: ability };
+  }
+
+  // Tier 1: GraphQL API data (if available in future)
+  if (ability.names && ability.names.length > 0) {
+    const targetLanguage = language === 'ja' ? ['ja', 'ja-Hrkt'] : ['en'];
+    
+    for (const lang of targetLanguage) {
+      const languageName = ability.names.find(
+        (nameEntry: any) => nameEntry.language.name === lang
+      );
+      
+      if (languageName) {
+        return languageName.name;
+      }
+    }
+  }
+  
+  // Tier 2: Manual translation table for abilities not covered by API
+  const abilityName = ability.name.toLowerCase();
+  const translation = ABILITY_TRANSLATIONS[abilityName];
+  
   if (translation) {
     return translation[language];
   }
   
-  // Fallback: format the English name
-  return abilityName
+  // Tier 3: Final fallback to formatted English name
+  return ability.name
     .split('-')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
@@ -641,7 +665,8 @@ export const MOVE_TRANSLATIONS: Record<string, { en: string; ja: string }> = {
   'future-sight': { en: 'Future Sight', ja: 'みらいよち' },
   'rock-smash': { en: 'Rock Smash', ja: 'いわくだき' },
   'whirlpool': { en: 'Whirlpool', ja: 'うずしお' },
-  'beat-up': { en: 'Beat Up', ja: 'ふくろだたき' }
+  'beat-up': { en: 'Beat Up', ja: 'ふくろだたき' },
+  'stomp': { en: 'Stomp', ja: 'ふみつけ' }
 };
 
 /**

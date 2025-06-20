@@ -298,6 +298,12 @@ export interface Ability {
   id: string;
   name: string;
   url: string;
+  names?: AbilityName[];
+}
+
+export interface AbilityName {
+  name: string;
+  language: Language;
 }
 
 export interface PokemonConnection {

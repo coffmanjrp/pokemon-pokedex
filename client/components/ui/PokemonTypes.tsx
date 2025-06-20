@@ -9,10 +9,12 @@ interface PokemonTypesProps {
   types: Pokemon['types'];
   size?: 'sm' | 'md' | 'lg';
   className?: string;
+  language?: 'en' | 'ja';
 }
 
-export function PokemonTypes({ types, size = 'md', className }: PokemonTypesProps) {
-  const { language } = useAppSelector((state) => state.ui);
+export function PokemonTypes({ types, size = 'md', className, language: propLanguage }: PokemonTypesProps) {
+  const { language: storeLanguage } = useAppSelector((state) => state.ui);
+  const language = propLanguage || storeLanguage;
 
   const getSizeClass = () => {
     switch (size) {

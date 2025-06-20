@@ -80,7 +80,7 @@ export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
         </h3>
 
         {/* Types */}
-        <PokemonTypes types={pokemon.types} />
+        <PokemonTypes types={pokemon.types} language={language} />
 
         {/* Basic Info */}
         <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 mb-3">

@@ -112,7 +112,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
               </span>
             </h1>
             <div>
-              <PokemonTypes types={pokemon.types} size="lg" className="flex gap-2 justify-start mb-2" />
+              <PokemonTypes types={pokemon.types} size="lg" className="flex gap-2 justify-start mb-2" language={language} />
             </div>
           </div>
 
@@ -237,7 +237,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
                 {pokemon.abilities && pokemon.abilities.length > 0 ? (
                   pokemon.abilities.slice(0, 2).map((abilitySlot, index) => (
                     <span key={index} className={abilitySlot.isHidden ? 'text-yellow-600' : ''}>
-                      {getAbilityName(abilitySlot.ability.name, language)}
+                      {getAbilityName(abilitySlot.ability, language)}
                       {abilitySlot.isHidden && (
                         <span className="text-xs text-yellow-500 ml-1">
                           ({language === 'en' ? 'Hidden' : '隠れ特性'})
