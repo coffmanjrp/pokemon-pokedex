@@ -764,13 +764,31 @@ app/[lang]/              # Dynamic language routing
   - Bulbasaur → Ivysaur shows "Level 16" 
   - Ivysaur → Venusaur now correctly shows "Level 32" instead of "Unknown"
   - Complete evolution chain data available for all 3-stage Pokemon evolution lines
-  - Improved hover states with subtle border-blue-200 instead of harsh blue-300
-  - Consistent shadow-sm application for better visual hierarchy
+
+### Japanese Pokemon Names in Evolution Chains (June 2025)
+- **GraphQL Schema Enhancement**: Extended evolution chain queries to include species data for multilingual name support
+  - **Problem**: Evolution chains displayed English Pokemon names even in Japanese mode (e.g., "Chansey" instead of "ラッキー")
+  - **Root Cause**: EvolutionDetail objects only contained basic name field without multilingual species data
+  - **Solution**: Added species.names field to all evolution chain levels in GraphQL query
+- **Server-Side Integration**: Leveraged existing GraphQL server species data support
+  - **Query Extensions**: Added species field to 1st, 2nd, and 3rd evolution stages in GET_POKEMON query
+  - **Type Safety**: Extended EvolutionDetail TypeScript interface to include optional species field
+  - **Data Structure**: Utilizes same species.names structure as individual Pokemon details
+- **Component Enhancement**: Implemented intelligent name resolution for evolution chains
+  - **Function**: Added getEvolutionPokemonName() utility function in PokemonEvolutionChain component
+  - **Language Detection**: Supports 'ja' and 'ja-Hrkt' language codes for Japanese name lookup
+  - **Fallback Logic**: Gracefully falls back to capitalized English names when Japanese names unavailable
+  - **Consistent Integration**: Uses same name resolution pattern as main Pokemon detail displays
+- **Comprehensive Coverage**: All generations now display correct Japanese names in evolution chains
+  - **Generation 1**: フシギダネ → フシギソウ → フシギバナ (Bulbasaur → Ivysaur → Venusaur)
+  - **Generation 2**: ラッキー → ハピナス (Chansey → Blissey)
+  - **All Generations**: Proper Japanese names for Pokemon from all 9 generations
+  - **Evolution Items**: Japanese item names (かみなりのいし, ほのおのいし, etc.) combined with Japanese Pokemon names
 - **Technical Implementation**:
-  - Systematic replacement of shadow-md with shadow-sm across components
-  - Enhanced transition effects with duration-200 for smooth interactions
-  - Improved color consistency with gray-100 borders throughout
-  - Better visual balance with reduced padding and improved spacing
+  - **Data Source**: Pokemon names sourced directly from PokeAPI species data via GraphQL
+  - **No Hardcoding**: Eliminated need for client-side Pokemon name translation mappings
+  - **Performance**: Minimal additional data transfer due to existing species data infrastructure
+  - **Maintainability**: Automatic support for new Pokemon as they're added to PokeAPI database
 
 ### Responsive Design Mobile Optimization (June 2025)
 - **Mobile Navigation Adjustments**: Optimized page-side navigation for smaller screens
