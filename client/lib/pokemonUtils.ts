@@ -9,9 +9,9 @@ import React from 'react';
 function getFormTranslation(formName: string, language: 'en' | 'ja'): string | null {
   console.log(`[getFormTranslation] Looking for translation of "${formName}" in language "${language}"`);
   
-  // Check regional forms
+  // Check regional forms - try exact match first, then partial match
   for (const [key, translation] of Object.entries(REGIONAL_FORM_TRANSLATIONS)) {
-    if (formName.includes(key)) {
+    if (formName === key || formName.includes(key)) {
       console.log(`[getFormTranslation] Found regional form: ${key} -> ${translation[language]}`);
       return translation[language];
     }
@@ -19,7 +19,7 @@ function getFormTranslation(formName: string, language: 'en' | 'ja'): string | n
   
   // Check mega forms
   for (const [key, translation] of Object.entries(MEGA_FORM_TRANSLATIONS)) {
-    if (formName.includes(key)) {
+    if (formName === key || formName.includes(key)) {
       console.log(`[getFormTranslation] Found mega form: ${key} -> ${translation[language]}`);
       return translation[language];
     }
@@ -27,7 +27,7 @@ function getFormTranslation(formName: string, language: 'en' | 'ja'): string | n
   
   // Check gigantamax forms
   for (const [key, translation] of Object.entries(GIGANTAMAX_FORM_TRANSLATIONS)) {
-    if (formName.includes(key)) {
+    if (formName === key || formName.includes(key)) {
       console.log(`[getFormTranslation] Found gigantamax form: ${key} -> ${translation[language]}`);
       return translation[language];
     }
@@ -35,7 +35,7 @@ function getFormTranslation(formName: string, language: 'en' | 'ja'): string | n
   
   // Check special forms
   for (const [key, translation] of Object.entries(SPECIAL_FORM_TRANSLATIONS)) {
-    if (formName.includes(key)) {
+    if (formName === key || formName.includes(key)) {
       console.log(`[getFormTranslation] Found special form: ${key} -> ${translation[language]}`);
       return translation[language];
     }

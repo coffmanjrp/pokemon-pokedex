@@ -2,9 +2,13 @@ import { Locale } from '@/lib/dictionaries';
 
 // Regional form translations
 export const REGIONAL_FORM_TRANSLATIONS: Record<string, { en: string; ja: string }> = {
+  'alola': { en: 'Alolan', ja: 'アローラのすがた' },
   'alolan': { en: 'Alolan', ja: 'アローラのすがた' },
+  'galar': { en: 'Galarian', ja: 'ガラルのすがた' },
   'galarian': { en: 'Galarian', ja: 'ガラルのすがた' },
+  'hisui': { en: 'Hisuian', ja: 'ヒスイのすがた' },
   'hisuian': { en: 'Hisuian', ja: 'ヒスイのすがた' },
+  'paldea': { en: 'Paldean', ja: 'パルデアのすがた' },
   'paldean': { en: 'Paldean', ja: 'パルデアのすがた' },
 };
 
