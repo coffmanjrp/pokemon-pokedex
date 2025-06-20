@@ -129,13 +129,6 @@ export const GET_POKEMON = gql`
         move {
           id
           name
-          names {
-            name
-            language {
-              name
-              url
-            }
-          }
           url
           type {
             id
