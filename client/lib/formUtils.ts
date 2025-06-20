@@ -13,10 +13,11 @@ export const REGIONAL_FORM_TRANSLATIONS: Record<string, { en: string; ja: string
 };
 
 // Mega Evolution form translations
+// Note: Order matters! More specific forms (mega-x, mega-y) must come before general forms (mega)
 export const MEGA_FORM_TRANSLATIONS: Record<string, { en: string; ja: string }> = {
+  'mega-x': { en: 'Mega X', ja: 'X' },
+  'mega-y': { en: 'Mega Y', ja: 'Y' },
   'mega': { en: 'Mega', ja: 'メガ' },
-  'mega-x': { en: 'Mega X', ja: 'メガX' },
-  'mega-y': { en: 'Mega Y', ja: 'メガY' },
 };
 
 // Gigantamax form translations

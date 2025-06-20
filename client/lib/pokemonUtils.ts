@@ -1,5 +1,5 @@
 import { Pokemon, EvolutionDetail, Move } from '@/types/pokemon';
-import { getFormDisplayName, REGIONAL_FORM_TRANSLATIONS, MEGA_FORM_TRANSLATIONS, GIGANTAMAX_FORM_TRANSLATIONS, SPECIAL_FORM_TRANSLATIONS } from '@/lib/formUtils';
+import { getFormDisplayName, REGIONAL_FORM_TRANSLATIONS, MEGA_FORM_TRANSLATIONS, GIGANTAMAX_FORM_TRANSLATIONS, SPECIAL_FORM_TRANSLATIONS, isMegaEvolution } from '@/lib/formUtils';
 import React from 'react';
 
 /**
@@ -17,10 +17,17 @@ function getFormTranslation(formName: string, language: 'en' | 'ja'): string | n
     }
   }
   
-  // Check mega forms
+  // Check mega forms - exact match first
   for (const [key, translation] of Object.entries(MEGA_FORM_TRANSLATIONS)) {
-    if (formName === key || formName.includes(key)) {
-      console.log(`[getFormTranslation] Found mega form: ${key} -> ${translation[language]}`);
+    if (formName === key) {
+      console.log(`[getFormTranslation] Found exact mega form: ${key} -> ${translation[language]}`);
+      return translation[language];
+    }
+  }
+  // Check mega forms - partial match as fallback
+  for (const [key, translation] of Object.entries(MEGA_FORM_TRANSLATIONS)) {
+    if (formName.includes(key)) {
+      console.log(`[getFormTranslation] Found partial mega form: ${key} -> ${translation[language]}`);
       return translation[language];
     }
   }
@@ -46,6 +53,38 @@ function getFormTranslation(formName: string, language: 'en' | 'ja'): string | n
 }
 
 /**
+ * Get the base species ID for display purposes
+ * Returns the species ID instead of the variant ID for consistent numbering
+ */
+export function getPokemonDisplayId(pokemon: Pokemon): string {
+  // If this is a variant Pokemon and we have species data, use the species ID
+  if (pokemon.species?.id && pokemon.name.includes('-')) {
+    return pokemon.species.id;
+  }
+  
+  // For regular Pokemon, use the Pokemon ID
+  return pokemon.id;
+}
+
+/**
+ * Check if Pokemon is a variant form (has alternative form)
+ * Used to determine if navigation arrows should be hidden
+ */
+export function isPokemonVariant(pokemon: Pokemon): boolean {
+  return pokemon.name.includes('-');
+}
+
+/**
+ * Get previous/next Pokemon ID for navigation
+ * Returns null for boundaries (no previous for first, no next for last)
+ */
+export function getPrevNextPokemonId(currentId: number): { prevId: number | null; nextId: number | null } {
+  const prevId = currentId > 1 ? currentId - 1 : null; // No previous for first Pokemon
+  const nextId = currentId < 1025 ? currentId + 1 : null; // No next for last Pokemon
+  return { prevId, nextId };
+}
+
+/**
  * Get Pokemon name in the specified language
  * Falls back to English name if target language is not available
  */
@@ -68,9 +107,25 @@ export function getPokemonName(pokemon: Pokemon, language: 'en' | 'ja'): string 
         const formTranslation = getFormTranslation(formName, language);
         
         if (formTranslation) {
-          const result = `${japaneseName.name}（${formTranslation}）`;
-          console.log(`[getPokemonName] Japanese variant: ${pokemon.name} -> ${result}`);
-          return result;
+          // Special handling for Mega Evolution in Japanese
+          if (isMegaEvolution(formName)) {
+            // Special format for Mega Charizard and Mega Mewtwo X/Y forms
+            if ((baseName === 'charizard' || baseName === 'mewtwo') && (formName === 'mega-x' || formName === 'mega-y')) {
+              const result = `メガ${japaneseName.name}${formTranslation}`;
+              console.log(`[getPokemonName] Japanese Mega X/Y variant: ${pokemon.name} -> ${result}`);
+              return result;
+            } else {
+              // For other Mega forms: "メガポケモン名" format
+              const result = `${formTranslation}${japaneseName.name}`;
+              console.log(`[getPokemonName] Japanese Mega variant: ${pokemon.name} -> ${result}`);
+              return result;
+            }
+          } else {
+            // For other forms: "ポケモン名（フォーム名）" format
+            const result = `${japaneseName.name}（${formTranslation}）`;
+            console.log(`[getPokemonName] Japanese variant: ${pokemon.name} -> ${result}`);
+            return result;
+          }
         }
         
         return japaneseName.name;
@@ -118,9 +173,25 @@ export function getEvolutionPokemonName(evolutionDetail: EvolutionDetail, langua
         const formTranslation = getFormTranslation(formName, language);
         
         if (formTranslation) {
-          const result = `${japaneseName.name}（${formTranslation}）`;
-          console.log(`[getEvolutionPokemonName] Japanese variant: ${evolutionDetail.name} -> ${result}`);
-          return result;
+          // Special handling for Mega Evolution in Japanese
+          if (isMegaEvolution(formName)) {
+            // Special format for Mega Charizard and Mega Mewtwo X/Y forms
+            if ((baseName === 'charizard' || baseName === 'mewtwo') && (formName === 'mega-x' || formName === 'mega-y')) {
+              const result = `メガ${japaneseName.name}${formTranslation}`;
+              console.log(`[getEvolutionPokemonName] Japanese Mega X/Y variant: ${evolutionDetail.name} -> ${result}`);
+              return result;
+            } else {
+              // For other Mega forms: "メガポケモン名" format
+              const result = `${formTranslation}${japaneseName.name}`;
+              console.log(`[getEvolutionPokemonName] Japanese Mega variant: ${evolutionDetail.name} -> ${result}`);
+              return result;
+            }
+          } else {
+            // For other forms: "ポケモン名（フォーム名）" format
+            const result = `${japaneseName.name}（${formTranslation}）`;
+            console.log(`[getEvolutionPokemonName] Japanese variant: ${evolutionDetail.name} -> ${result}`);
+            return result;
+          }
         }
         
         return japaneseName.name;
@@ -343,7 +414,7 @@ export const ABILITY_TRANSLATIONS: Record<string, { en: string; ja: string }> = 
  * Get ability name in the specified language
  * Uses 3-tier fallback: GraphQL data (future), manual translations, formatted English name
  */
-export function getAbilityName(ability: { name: string; names?: any[] } | string, language: 'en' | 'ja'): string {
+export function getAbilityName(ability: { name: string; names?: { name: string; language: { name: string } }[] } | string, language: 'en' | 'ja'): string {
   // Handle string input for backward compatibility
   if (typeof ability === 'string') {
     ability = { name: ability };
@@ -355,7 +426,7 @@ export function getAbilityName(ability: { name: string; names?: any[] } | string
     
     for (const lang of targetLanguage) {
       const languageName = ability.names.find(
-        (nameEntry: any) => nameEntry.language.name === lang
+        (nameEntry) => nameEntry.language.name === lang
       );
       
       if (languageName) {

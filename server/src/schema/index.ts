@@ -80,6 +80,12 @@ export const typeDefs = gql`
     id: ID!
     name: String!
     url: String!
+    names: [AbilityName!]!
+  }
+
+  type AbilityName {
+    name: String!
+    language: Language!
   }
 
   type PokemonConnection {
@@ -109,6 +115,7 @@ export const typeDefs = gql`
     id: ID!
     name: String!
     url: String!
+    names: [MoveName!]!
     type: Type!
     damageClass: MoveDamageClass!
     power: Int
@@ -127,6 +134,11 @@ export const typeDefs = gql`
   }
 
   type MoveDamageClassName {
+    name: String!
+    language: Language!
+  }
+
+  type MoveName {
     name: String!
     language: Language!
   }
@@ -248,6 +260,7 @@ export const typeDefs = gql`
     name: String!
     sprites: PokemonSprites!
     types: [PokemonType!]!
+    species: PokemonSpecies
     evolutionDetails: [EvolutionTrigger!]
     evolvesTo: [EvolutionDetail!]!
     forms: [FormVariant!]!

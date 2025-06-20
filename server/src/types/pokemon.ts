@@ -69,6 +69,12 @@ export interface Ability {
   id: string;
   name: string;
   url: string;
+  names: AbilityName[];
+}
+
+export interface AbilityName {
+  name: string;
+  language: Language;
 }
 
 export interface PokemonConnection {
@@ -98,6 +104,7 @@ export interface Move {
   id: string;
   name: string;
   url: string;
+  names: MoveName[];
   type: Type;
   damageClass: MoveDamageClass;
   power?: number;
@@ -116,6 +123,11 @@ export interface MoveDamageClass {
 }
 
 export interface MoveDamageClassName {
+  name: string;
+  language: Language;
+}
+
+export interface MoveName {
   name: string;
   language: Language;
 }

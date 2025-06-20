@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including completely redesigned Pokemon detail pages based on reference design, enhanced evolution chains with form variants, enhanced move data display with detailed statistics, SSG implementation, advanced search/filter functionality, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. Recently completed major detail page redesign with 2-column layout, type effectiveness system, mobile-responsive evolution chains, and streamlined navigation. Main areas for future enhancement: testing coverage, environment configuration, and error boundaries.
+**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including completely redesigned Pokemon detail pages based on reference design, enhanced evolution chains with form variants, enhanced move data display with detailed statistics, SSG implementation, advanced search/filter functionality, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. Recently completed major detail page redesign with 2-column layout, type effectiveness system, mobile-responsive evolution chains, and streamlined navigation. **LATEST**: Enhanced multilingual data integration with comprehensive GraphQL-based ability name support, Japanese Pokemon names for all generations, Japanese move names via PokeAPI integration, evolution item translations, and refined Japanese UI text throughout detail pages. Implemented 3-tier fallback system for both moves and abilities ensuring reliable multilingual display. Main areas for future enhancement: testing coverage, environment configuration, and error boundaries.
 
 ## Architecture
 
@@ -226,16 +226,18 @@ app/[lang]/              # Dynamic language routing
 - `/client/app/[lang]/`: Language-based page structure
 
 #### Translation Coverage
-- ✅ Pokemon names (via PokeAPI species data)
+- ✅ Pokemon names (via GraphQL/PokeAPI species data for all generations)
 - ✅ All Pokemon types with official translations
 - ✅ 50+ Pokemon abilities
 - ✅ All Pokemon game versions
-- ✅ Move names with formatting
+- ✅ Move names via GraphQL integration with 3-tier fallback system
+- ✅ Evolution items (stones, trade items, etc.) with comprehensive translations
 - ✅ Generation names and regions
 - ✅ Complete UI text (search, filters, navigation, etc.)
 - ✅ Height/Weight units and labels
 - ✅ Stats and technical information
 - ✅ Navigation consistency (back buttons, error pages, detail page links)
+- ✅ Detail page text refinements (ストーリー→説明, ノーマル→通常, etc.)
 
 ## Common Issues & Solutions
 
@@ -293,7 +295,10 @@ app/[lang]/              # Dynamic language routing
   - Middleware-based language detection and automatic routing (/en/, /ja/)
   - Server-side dictionary loading for optimal performance (no client bundles)
   - Complete filter system multilingual support (FilterModal, TypeFilter, GenerationFilter)
-  - PokeAPI-integrated Japanese Pokemon names, types, abilities, and moves
+  - GraphQL-based multilingual data integration with PokeAPI
+  - Japanese Pokemon names for all generations via species data
+  - Japanese move names with 3-tier priority system (GraphQL → manual → English fallback)
+  - Evolution item translations and refined detail page Japanese text
   - 308 static pages generated (151 Pokemon × 2 languages)
   - SEO-optimized with proper hreflang and language-specific metadata
   - Language-consistent navigation preserves user's language choice across all pages
@@ -790,6 +795,38 @@ app/[lang]/              # Dynamic language routing
   - **Performance**: Minimal additional data transfer due to existing species data infrastructure
   - **Maintainability**: Automatic support for new Pokemon as they're added to PokeAPI database
 
+### GraphQL-Based Japanese Move Names Implementation (June 2025)
+- **Complete Server-Side Integration**: Extended GraphQL schema and service layer for multilingual move names
+  - **Problem**: Move names displayed in English only, requiring extensive manual translation maintenance
+  - **Root Cause**: GraphQL Move type lacked multilingual names field despite PokeAPI providing this data
+  - **Solution**: Added comprehensive GraphQL schema and service integration for move names
+- **GraphQL Schema Enhancement**: Added native multilingual move name support
+  - **Schema Extension**: Added `names: [MoveName!]!` field to Move type definition
+  - **Type Definition**: Created MoveName type with name and language fields
+  - **Pattern Consistency**: Follows existing multilingual patterns (MoveDamageClass.names, MoveTarget.names)
+- **Server-Side Service Integration**: Enhanced Pokemon service to fetch and transform move names
+  - **Data Source**: Leverages existing PokeAPI move details endpoint for comprehensive name data
+  - **Service Enhancement**: Updated transformMoves() method to map PokeAPI names array to GraphQL structure
+  - **TypeScript Integration**: Extended Move and MoveName interfaces in server types
+  - **Performance Optimization**: No additional API calls required (utilizes existing move detail fetching)
+- **Client-Side Integration**: Enhanced client to prioritize GraphQL data over manual translations
+  - **Query Extension**: Added names field to GraphQL move queries
+  - **Type Safety**: Updated client-side Move interface to include names array
+  - **Intelligent Resolution**: Enhanced getMoveName() function with 3-tier priority system:
+    1. GraphQL API data (ja, ja-Hrkt for Japanese; en for English)
+    2. Manual translation table fallback (150+ moves)
+    3. Formatted English name as final fallback
+- **Comprehensive Coverage**: Complete Japanese move name support for all generations
+  - **Scale**: Supports ~900 Pokemon moves vs 150 manual translations
+  - **Accuracy**: Official PokeAPI Japanese names ensure authenticity
+  - **Compatibility**: Maintains backward compatibility with existing manual translation table
+  - **Examples**: "tackle" → "たいあたり", "thunderbolt" → "10まんボルト", "flamethrower" → "かえんほうしゃ"
+- **Technical Implementation**:
+  - **Data Flow**: PokeAPI → GraphQL Service → Client Query → UI Display
+  - **Fallback Strategy**: Graceful degradation ensures no missing move names
+  - **Future-Proof**: Automatic support for new moves added to PokeAPI
+  - **Maintainability**: Eliminates need for extensive manual translation maintenance
+
 ### Responsive Design Mobile Optimization (June 2025)
 - **Mobile Navigation Adjustments**: Optimized page-side navigation for smaller screens
   - Navigation arrows positioned at left-2 md:left-4 and right-2 md:right-4 for mobile spacing
@@ -958,3 +995,90 @@ app/[lang]/              # Dynamic language routing
   - Clickable navigation to form-specific Pokemon pages
   - Multilingual form names and category labels
   - Type visualization for each form variant
+
+### GraphQL-Based Ability Multilingual Support Implementation (June 2025)
+- **Complete Server-Side Integration**: Extended GraphQL schema and service layer for multilingual ability names
+  - **Problem**: Ability names displayed in English only, requiring extensive manual translation maintenance
+  - **Root Cause**: GraphQL Ability type lacked multilingual names field despite PokeAPI providing this data
+  - **Solution**: Added comprehensive GraphQL schema and service integration for ability names
+- **GraphQL Schema Enhancement**: Added native multilingual ability name support
+  - **Schema Extension**: Added `names: [AbilityName!]!` field to Ability type definition
+  - **Type Definition**: Created AbilityName type with name and language fields
+  - **Pattern Consistency**: Follows existing multilingual patterns (MoveName, SpeciesName)
+- **Server-Side Service Integration**: Enhanced Pokemon service to fetch and transform ability names
+  - **Data Source**: Leverages existing PokeAPI ability details endpoint for comprehensive name data
+  - **Service Enhancement**: Added transformAbilities() method to map PokeAPI names array to GraphQL structure
+  - **TypeScript Integration**: Extended Ability and AbilityName interfaces in both server and client types
+  - **Performance Optimization**: No additional API calls required (utilizes existing ability detail fetching)
+- **Client-Side Integration**: Enhanced client to prioritize GraphQL data over manual translations
+  - **Query Extension**: Added names field to GraphQL ability queries for both list and detail views
+  - **Type Safety**: Updated client-side Ability interface to include optional names array
+  - **Component Integration**: Updated PokemonBasicInfo component to pass ability object instead of name string
+  - **Intelligent Resolution**: Enhanced getAbilityName() function with 3-tier priority system:
+    1. GraphQL API data (ja, ja-Hrkt for Japanese; en for English)
+    2. Manual translation table fallback (55+ abilities)
+    3. Formatted English name as final fallback
+- **Comprehensive Coverage**: Complete Japanese ability name support for all generations
+  - **Scale**: Supports ~300+ Pokemon abilities vs 55 manual translations
+  - **Accuracy**: Official PokeAPI Japanese names ensure authenticity
+  - **Compatibility**: Maintains backward compatibility with existing manual translation table
+  - **Examples**: "overgrow" → "しんりょく", "chlorophyll" → "ようりょくそ", "blaze" → "もうか"
+- **Technical Implementation**:
+  - **Data Flow**: PokeAPI → GraphQL Service → Client Query → UI Display
+  - **Fallback Strategy**: Graceful degradation ensures no missing ability names
+  - **Future-Proof**: Automatic support for new abilities added to PokeAPI
+  - **Maintainability**: Eliminates need for extensive manual translation maintenance
+- **Evolution Chain Enhancement**: Fixed stomp → ふみつけ translation for Pokemon #763 evolution requirements
+  - **Problem**: Evolution conditions showing "レベルアップ + stompを覚える" instead of proper Japanese
+  - **Solution**: Added stomp translation to MOVE_TRANSLATIONS table
+  - **Pattern**: Consistent with existing move-based evolution condition translations
+
+### Variant Pokemon Display Standardization (January 2025)
+- **Display ID Standardization**: Fixed variant Pokemon to show base species ID instead of variant ID
+  - **Problem**: Variant Pokemon displayed confusing IDs (e.g., Alolan Sandslash showing #10102 instead of #028)
+  - **Root Cause**: Direct use of Pokemon ID without considering species relationship
+  - **Solution**: Added getPokemonDisplayId() function using species.id for variants, Pokemon.id for regular Pokemon
+- **Navigation Arrow Management**: Hidden navigation arrows for variant Pokemon forms
+  - **Problem**: Navigation arrows on variant Pokemon caused confusing navigation between different forms
+  - **Implementation**: Added isPokemonVariant() function detecting variants by '-' in Pokemon names
+  - **Logic**: Conditional rendering with !isVariant checks for both previous and next navigation arrows
+- **Implementation Details**:
+  - **Functions Added**: getPokemonDisplayId(), isPokemonVariant(), getPrevNextPokemonId()
+  - **Type Safety**: Fixed TypeScript errors and added proper interface definitions
+  - **Data Preservation**: System IDs remain unchanged in backend, only display layer affected
+  - **Comprehensive Support**: Covers all variant types (Regional, Mega Evolution, Gigantamax)
+- **Technical Implementation**:
+  - **Display Logic**: Updated header display and footer info to use displayId instead of pokemon.id
+  - **Navigation Logic**: Added conditional rendering for navigation arrows based on variant status
+  - **Build Success**: All 309 static pages generated successfully with new logic
+- **User Experience Improvements**:
+  - **Consistent Numbering**: All variants show base species number for easier Pokemon identification
+  - **Clean Navigation**: No navigation arrows on variants prevents form confusion
+  - **Comprehensive Coverage**: Applied to Regional variants, Mega Evolution, and Gigantamax forms
+
+### Japanese Mega Evolution Naming Enhancement (January 2025)
+- **Mega Evolution Name Format Standardization**: Implemented proper Japanese naming conventions for Mega Evolution Pokemon
+  - **Problem**: Japanese Mega Evolution names displayed as "ポケモン名（メガ）" format instead of proper "メガポケモン名" format
+  - **Root Cause**: Uniform form translation logic applied to all variants without considering Japanese Mega Evolution conventions
+  - **Solution**: Added special handling for Mega Evolution forms in Japanese language display
+- **Special X/Y Form Handling**: Corrected Mega Charizard and Mega Mewtwo X/Y form naming
+  - **Problem**: Names displayed as "メガリザードンXメガ" due to form translation search order issues
+  - **Root Cause**: Form translation lookup matched "mega" before "mega-x"/"mega-y" due to includes() partial matching
+  - **Solution**: Reordered MEGA_FORM_TRANSLATIONS and implemented exact-match-first search logic
+- **Implementation Details**:
+  - **Translation Updates**: Modified MEGA_FORM_TRANSLATIONS to prioritize specific forms (mega-x, mega-y) over general forms (mega)
+  - **Search Logic Enhancement**: Implemented two-phase search (exact match first, then partial match fallback)
+  - **Special Naming Rules**: 
+    - **Mega Charizard/Mewtwo X/Y**: メガ + ポケモン名 + X/Y = メガリザードンX, メガミュウツーY
+    - **Other Mega Evolution**: メガ + ポケモン名 = メガフシギバナ
+    - **Other Forms**: ポケモン名（フォーム名） = サンドパン（アローラのすがた）
+- **Functions Enhanced**: Both getPokemonName() and getEvolutionPokemonName() updated with consistent logic
+- **Technical Implementation**:
+  - **Form Translation Order**: mega-x, mega-y placed before mega in translation object
+  - **Search Priority**: Exact string match before partial string matching
+  - **Conditional Logic**: Special handling for charizard/mewtwo with mega-x/mega-y forms
+  - **Debug Logging**: Enhanced logging for form translation debugging
+- **User Experience Improvements**:
+  - **Authentic Names**: Proper Japanese Mega Evolution naming matching official Pokemon standards
+  - **Consistent Application**: Applied across both detail pages and evolution chains
+  - **Clear Distinctions**: Different naming patterns for different form types maintain clarity

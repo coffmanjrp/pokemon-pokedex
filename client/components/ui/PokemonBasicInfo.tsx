@@ -12,7 +12,10 @@ import {
   getPokemonSpriteUrl,
   getTypeName,
   getTypeColorFromName,
-  getPrimaryTypeColor
+  getPrimaryTypeColor,
+  getPokemonDisplayId,
+  isPokemonVariant,
+  getPrevNextPokemonId
 } from '@/lib/pokemonUtils';
 import { PokemonTypes } from './PokemonTypes';
 import Image from 'next/image';
@@ -23,18 +26,12 @@ interface PokemonBasicInfoProps {
   language: 'en' | 'ja';
 }
 
-// Helper function to get previous/next Pokemon ID and basic info
-const getPrevNextPokemonId = (currentId: number): { prevId: number | null; nextId: number | null } => {
-  const prevId = currentId > 1 ? currentId - 1 : null; // No previous for first Pokemon
-  const nextId = currentId < 1025 ? currentId + 1 : null; // No next for last Pokemon
-  return { prevId, nextId };
-};
-
-
 export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
   const [isShiny, setIsShiny] = useState(false);
   
   const displayName = getPokemonName(pokemon, language);
+  const displayId = getPokemonDisplayId(pokemon);
+  const isVariant = isPokemonVariant(pokemon);
   const description = getPokemonDescription(pokemon, language);
   const genus = getPokemonGenus(pokemon, language);
   const weaknesses = getPokemonWeaknesses(pokemon);
@@ -56,7 +53,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
   return (
     <div className="bg-gray-50 relative">
       {/* Page-level Navigation - Previous Pokemon */}
-      {prevId && (
+      {!isVariant && prevId && (
         <Link
           href={`/${language}/pokemon/${prevId}`}
           className="hidden md:block fixed left-4 top-1/2 -translate-y-1/2 z-30 group hover:scale-110 transition-all duration-200"
@@ -78,7 +75,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
       )}
 
       {/* Page-level Navigation - Next Pokemon */}
-      {nextId && (
+      {!isVariant && nextId && (
         <Link
           href={`/${language}/pokemon/${nextId}`}
           className="hidden md:block fixed right-4 top-1/2 -translate-y-1/2 z-30 group hover:scale-110 transition-all duration-200"
@@ -108,7 +105,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
             <h1 className="text-4xl font-bold text-gray-900 mb-3">
               {displayName}
               <span className="text-2xl text-gray-500 ml-3">
-                #{pokemon.id.toString().padStart(3, '0')}
+                #{displayId.toString().padStart(3, '0')}
               </span>
             </h1>
             <div>
@@ -334,7 +331,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
           <div className="mt-6 pt-6 border-t border-gray-200">
             <div className="text-center">
               <span className="text-gray-400 text-xs">
-                #{pokemon.id.toString().padStart(3, '0')} / 1025
+                #{displayId.toString().padStart(3, '0')} / 1025
               </span>
             </div>
           </div>
