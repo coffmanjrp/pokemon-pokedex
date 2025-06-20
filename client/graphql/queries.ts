@@ -230,6 +230,17 @@ export const GET_POKEMON = gql`
                 url
               }
             }
+            species {
+              id
+              name
+              names {
+                name
+                language {
+                  name
+                  url
+                }
+              }
+            }
             evolutionDetails {
               minLevel
               item {
@@ -318,6 +329,17 @@ export const GET_POKEMON = gql`
                   url
                 }
               }
+              species {
+                id
+                name
+                names {
+                  name
+                  language {
+                    name
+                    url
+                  }
+                }
+              }
               evolutionDetails {
                 minLevel
                 item {
@@ -404,6 +426,17 @@ export const GET_POKEMON = gql`
                     id
                     name
                     url
+                  }
+                }
+                species {
+                  id
+                  name
+                  names {
+                    name
+                    language {
+                      name
+                      url
+                    }
                   }
                 }
                 evolutionDetails {

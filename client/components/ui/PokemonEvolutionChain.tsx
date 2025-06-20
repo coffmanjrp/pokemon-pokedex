@@ -5,7 +5,7 @@ import Image from 'next/image';
 import React from 'react';
 import { EvolutionDetail, PokemonTypeSlot, EvolutionTrigger, FormVariant } from '@/types/pokemon';
 import { Locale } from '@/lib/dictionaries';
-import { getTypeName } from '@/lib/pokemonUtils';
+import { getTypeName, getPokemonName } from '@/lib/pokemonUtils';
 import { getFormDisplayName } from '@/lib/formUtils';
 import { POKEMON_TYPE_COLORS } from '@/types/pokemon';
 
@@ -20,7 +20,22 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
     
     const addEvolutionStage = (currentEvolution: EvolutionDetail) => {
       if (!currentEvolution) return;
-      const pokemonName = currentEvolution.name || 'Unknown';
+      
+      // Get Pokemon name using species data if available, fallback to English name
+      const getEvolutionPokemonName = (evolution: EvolutionDetail, language: string): string => {
+        if (language === 'en' || !evolution.species?.names) {
+          return evolution.name.charAt(0).toUpperCase() + evolution.name.slice(1);
+        }
+
+        // Find Japanese name from species data
+        const japaneseName = evolution.species.names.find(
+          nameEntry => nameEntry.language.name === 'ja' || nameEntry.language.name === 'ja-Hrkt'
+        );
+
+        return japaneseName?.name || evolution.name.charAt(0).toUpperCase() + evolution.name.slice(1);
+      };
+      
+      const pokemonName = getEvolutionPokemonName(currentEvolution, lang);
       const pokemonId = currentEvolution.id || '0';
       const imageUrl = currentEvolution.sprites?.other?.officialArtwork?.frontDefault || currentEvolution.sprites?.frontDefault;
 
@@ -50,7 +65,7 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
             {/* Pokemon Info */}
             <div className="text-center">
               <p className="text-sm text-gray-500 font-medium">#{pokemonId.padStart(3, '0')}</p>
-              <p className="font-semibold text-gray-900">{pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1)}</p>
+              <p className="font-semibold text-gray-900">{pokemonName}</p>
               
               {/* Types */}
               <div className="flex gap-1 mt-2 justify-center">
