@@ -132,7 +132,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
               </span>
             </h1>
             <div>
-              <PokemonTypes types={pokemon.types} size="lg" />
+              <PokemonTypes types={pokemon.types} size="lg" className="flex gap-2 justify-start mb-4" />
             </div>
           </div>
 
