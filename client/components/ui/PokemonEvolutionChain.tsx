@@ -29,7 +29,7 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
         chain.push(
           <div key={`arrow-${currentEvolution.id}`} className="flex flex-col items-center mx-4">
             <div className="w-0 h-0 border-l-8 border-r-8 border-b-12 border-l-transparent border-r-transparent border-b-blue-500 rotate-90 mb-2"></div>
-            <div className="bg-blue-100 px-3 py-2 rounded-lg text-sm text-blue-800 font-medium text-center whitespace-nowrap">
+            <div className="bg-blue-50 px-3 py-2 rounded-lg text-sm text-blue-800 font-medium text-center whitespace-nowrap border border-blue-100 shadow-sm">
               {currentEvolution.evolutionDetails && currentEvolution.evolutionDetails.length > 0 ? 
                 renderEvolutionCondition(currentEvolution.evolutionDetails[0], lang) : 
                 (lang === 'en' ? 'Unknown' : '不明')
@@ -44,7 +44,7 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
         <div key={`pokemon-${currentEvolution.id}`} className="flex flex-col items-center">
           <Link
             href={`/${lang}/pokemon/${pokemonId}`}
-            className="group flex flex-col items-center p-4 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 hover:border-blue-300 hover:bg-white"
+            className="group flex flex-col items-center p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 hover:border-blue-200"
           >
             {/* Pokemon Image */}
             <div className="relative w-28 h-28 mb-3">
@@ -93,7 +93,7 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
                   <Link
                     key={form.id}
                     href={`/${lang}/pokemon/${form.id}`}
-                    className="group flex flex-col items-center p-2 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 hover:border-blue-300"
+                    className="group flex flex-col items-center p-2 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 hover:border-blue-200"
                   >
                     {/* Form Image */}
                     <div className="relative w-12 h-12 mb-1">

@@ -61,7 +61,7 @@ export function PokemonTopNavigationTabs({ pokemon, lang }: PokemonTopNavigation
             {/* Evolution Chain Section - Between Hero and Sprites */}
             {pokemon.species?.evolutionChain?.chain && (
               <div className="max-w-7xl mx-auto px-8 py-8">
-                <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                   <PokemonEvolutionChain 
                     evolutionChain={pokemon.species.evolutionChain.chain} 
                     lang={lang}
@@ -80,7 +80,7 @@ export function PokemonTopNavigationTabs({ pokemon, lang }: PokemonTopNavigation
       case 'moves':
         return (
           <div className="max-w-7xl mx-auto px-8 py-8">
-            <div className="bg-white rounded-lg shadow-md p-8">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
                 {lang === 'en' ? 'Moves' : 'わざ'}
               </h2>
@@ -95,7 +95,7 @@ export function PokemonTopNavigationTabs({ pokemon, lang }: PokemonTopNavigation
       case 'description':
         return (
           <div className="max-w-7xl mx-auto px-8 py-8">
-            <div className="bg-white rounded-lg shadow-md p-8">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
                 {lang === 'en' ? 'Description' : '説明'}
               </h2>
@@ -110,7 +110,7 @@ export function PokemonTopNavigationTabs({ pokemon, lang }: PokemonTopNavigation
       case 'gameHistory':
         return (
           <div className="max-w-7xl mx-auto px-8 py-8">
-            <div className="bg-white rounded-lg shadow-md p-8">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
                 {lang === 'en' ? 'Game History' : 'ゲーム履歴'}
               </h2>
@@ -131,7 +131,7 @@ export function PokemonTopNavigationTabs({ pokemon, lang }: PokemonTopNavigation
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top Navigation Tabs */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-20">
+      <div className="bg-white border-b border-gray-100 sticky top-0 z-20 shadow-sm">
         <div className="max-w-7xl mx-auto">
           <nav className="flex space-x-0" aria-label="Top Navigation">
             {topTabs.map((tab) => (
@@ -139,7 +139,7 @@ export function PokemonTopNavigationTabs({ pokemon, lang }: PokemonTopNavigation
                 key={tab.id}
                 onClick={() => setActiveTopTab(tab.id)}
                 disabled={!tab.available}
-                className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
+                className={`px-6 py-4 text-sm font-medium border-b-2 transition-all duration-200 ${
                   activeTopTab === tab.id
                     ? 'border-blue-500 text-blue-600 bg-blue-50'
                     : tab.available
