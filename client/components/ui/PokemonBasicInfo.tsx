@@ -23,11 +23,21 @@ interface PokemonBasicInfoProps {
   language: 'en' | 'ja';
 }
 
-// Helper function to get previous/next Pokemon ID
+// Helper function to get previous/next Pokemon ID and basic info
 const getPrevNextPokemonId = (currentId: number) => {
   const prevId = currentId > 1 ? currentId - 1 : 1025; // Loop to last Pokemon
   const nextId = currentId < 1025 ? currentId + 1 : 1; // Loop to first Pokemon
   return { prevId, nextId };
+};
+
+// Simple Pokemon name mapping for common Pokemon (for demo purposes)
+// In a real app, you'd fetch this data from your API
+const getPokemonNameById = (id: number): string => {
+  const commonNames: Record<number, string> = {
+    1: 'Bulbasaur', 2: 'Ivysaur', 3: 'Venusaur', 4: 'Charmander', 5: 'Charmeleon',
+    6: 'Charizard', 7: 'Squirtle', 8: 'Wartortle', 9: 'Blastoise', 10: 'Caterpie'
+  };
+  return commonNames[id] || `Pokemon #${id}`;
 };
 
 export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
@@ -53,9 +63,55 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
   const maxBaseStat = 150; // Fixed max for consistent bar scaling
 
   return (
-    <div className="bg-gray-50">
+    <div className="bg-gray-50 relative">
+      {/* Page-level Navigation - Previous Pokemon */}
+      <Link
+        href={`/${language}/pokemon/${prevId}`}
+        className="fixed left-4 top-1/2 -translate-y-1/2 z-30 group hover:scale-110 transition-all duration-200"
+      >
+        <div className="flex flex-col items-center gap-2">
+          <div className="text-xs text-gray-500 font-medium text-center">
+            #{prevId.toString().padStart(3, '0')}
+          </div>
+          <svg 
+            className="w-4 h-4 text-gray-400 group-hover:text-gray-700 transition-colors" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          <div className="text-xs text-gray-500 font-medium text-center max-w-16 truncate">
+            {getPokemonNameById(prevId)}
+          </div>
+        </div>
+      </Link>
+
+      {/* Page-level Navigation - Next Pokemon */}
+      <Link
+        href={`/${language}/pokemon/${nextId}`}
+        className="fixed right-4 top-1/2 -translate-y-1/2 z-30 group hover:scale-110 transition-all duration-200"
+      >
+        <div className="flex flex-col items-center gap-2">
+          <div className="text-xs text-gray-500 font-medium text-center">
+            #{nextId.toString().padStart(3, '0')}
+          </div>
+          <svg 
+            className="w-4 h-4 text-gray-400 group-hover:text-gray-700 transition-colors" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+          <div className="text-xs text-gray-500 font-medium text-center max-w-16 truncate">
+            {getPokemonNameById(nextId)}
+          </div>
+        </div>
+      </Link>
+
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 p-8">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 p-8 px-20">
         {/* Left Side - Pokemon Image (3/5 columns) */}
         <div className="lg:col-span-3 flex items-center justify-center relative">
           <div className="relative">
@@ -75,20 +131,6 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
                 }}
               />
               
-              {/* Previous Pokemon Navigation */}
-              <Link
-                href={`/${language}/pokemon/${prevId}`}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200 group"
-              >
-                <svg 
-                  className="w-6 h-6 text-gray-600 group-hover:text-gray-900 transition-colors" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </Link>
               
               {/* Pokemon Image */}
               <div className="relative w-full h-full z-10">
@@ -102,20 +144,6 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
                 />
               </div>
               
-              {/* Next Pokemon Navigation */}
-              <Link
-                href={`/${language}/pokemon/${nextId}`}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200 group"
-              >
-                <svg 
-                  className="w-6 h-6 text-gray-600 group-hover:text-gray-900 transition-colors" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
             </div>
           </div>
         </div>
@@ -299,32 +327,12 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
             )}
           </div>
 
-          {/* Navigation Info */}
+          {/* Pokemon Number Info */}
           <div className="mt-6 pt-6 border-t border-gray-200">
-            <div className="flex justify-between items-center text-sm">
-              <Link
-                href={`/${language}/pokemon/${prevId}`}
-                className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                <span>#{prevId.toString().padStart(3, '0')}</span>
-              </Link>
-              
+            <div className="text-center">
               <span className="text-gray-400 text-xs">
                 #{pokemon.id.toString().padStart(3, '0')} / 1025
               </span>
-              
-              <Link
-                href={`/${language}/pokemon/${nextId}`}
-                className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
-              >
-                <span>#{nextId.toString().padStart(3, '0')}</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
             </div>
           </div>
         </div>
