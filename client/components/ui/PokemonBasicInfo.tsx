@@ -41,14 +41,14 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
   const primaryTypeColor = getPrimaryTypeColor(pokemon);
   const { prevId, nextId } = getPrevNextPokemonId(parseInt(pokemon.id));
 
-  // Type colors for stat bars (matching reference design colors)
-  const typeColors: Record<string, string> = {
-    hp: 'bg-red-400',
-    attack: 'bg-green-400', 
-    defense: 'bg-red-300',
-    'special-attack': 'bg-green-400',
-    'special-defense': 'bg-green-400', 
-    speed: 'bg-red-300',
+  // Individual stat colors for better visual distinction
+  const statColors: Record<string, string> = {
+    hp: 'bg-red-500',           // HP: Red (health/life)
+    attack: 'bg-orange-500',    // Attack: Orange (physical power)
+    defense: 'bg-blue-500',     // Defense: Blue (protection/stability)
+    'special-attack': 'bg-purple-500',   // Sp. Attack: Purple (magical power)
+    'special-defense': 'bg-green-500',   // Sp. Defense: Green (resilience)
+    speed: 'bg-yellow-500',     // Speed: Yellow (lightning/quickness)
   };
 
   const maxBaseStat = 150; // Fixed max for consistent bar scaling
@@ -313,7 +313,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
                         <div className="bg-gray-200 rounded-full h-2">
                           <div
                             className={`h-2 rounded-full transition-all duration-500 shadow-sm ${
-                              typeColors[statName] || 'bg-gray-400'
+                              statColors[statName] || 'bg-gray-400'
                             }`}
                             style={{ width: `${Math.min(percentage, 100)}%` }}
                           />

@@ -8,14 +8,14 @@ interface PokemonStatsProps {
   stats: PokemonStat[];
 }
 
-// Type colors for visual variety
-const typeColors: Record<string, string> = {
-  hp: 'bg-red-100 text-red-800',
-  attack: 'bg-orange-100 text-orange-800',
-  defense: 'bg-blue-100 text-blue-800',
-  'special-attack': 'bg-purple-100 text-purple-800',
-  'special-defense': 'bg-green-100 text-green-800',
-  speed: 'bg-yellow-100 text-yellow-800',
+// Individual stat colors for better visual distinction
+const statColors: Record<string, string> = {
+  hp: 'bg-red-500',           // HP: Red (health/life)
+  attack: 'bg-orange-500',    // Attack: Orange (physical power)
+  defense: 'bg-blue-500',     // Defense: Blue (protection/stability)
+  'special-attack': 'bg-purple-500',   // Sp. Attack: Purple (magical power)
+  'special-defense': 'bg-green-500',   // Sp. Defense: Green (resilience)
+  speed: 'bg-yellow-500',     // Speed: Yellow (lightning/quickness)
 };
 
 export function PokemonStats({ stats }: PokemonStatsProps) {
@@ -47,7 +47,7 @@ export function PokemonStats({ stats }: PokemonStatsProps) {
                 <div className="flex-1 bg-gray-200 rounded-full h-2">
                   <div
                     className={`h-2 rounded-full transition-all duration-500 ${
-                      typeColors[statName] ? typeColors[statName].split(' ')[0] : 'bg-gray-400'
+                      statColors[statName] || 'bg-gray-400'
                     }`}
                     style={{ width: `${percentage}%` }}
                   />
