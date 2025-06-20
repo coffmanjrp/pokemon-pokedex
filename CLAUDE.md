@@ -419,6 +419,18 @@ app/[lang]/              # Dynamic language routing
   - Clean separation of navigation concerns per page type
   - Streamlined Redux state management for UI controls
 
+### Language State Synchronization Fix (June 2025)  
+- **Page Reload Language Issue**: Fixed Japanese language display reverting to English after page reload at `/ja` URLs
+- **Root Cause**: Redux store initializing with default English language state, not syncing with server-side language parameter
+- **Implementation Details**:
+  - Added language synchronization logic in `PokemonListClient` component
+  - Implemented `useEffect` hook to sync server `lang` prop with Redux store language state
+  - Ensures consistent language display between server-side routing and client-side state management
+- **User Experience Improvements**:
+  - Reliable Japanese language persistence across page reloads
+  - Consistent language state between initial page load and subsequent interactions
+  - Eliminated language state desynchronization issues in multilingual navigation
+
 ### Type-Based Background Styling (June 2025)
 - **Dynamic Background Colors**: Pokemon detail pages now reflect primary type colors
 - **Implementation Details**:

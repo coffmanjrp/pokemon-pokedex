@@ -7,6 +7,7 @@ import { FilterSummary } from '../../components/ui/FilterSummary';
 import { usePokemonList } from '../../hooks/usePokemonList';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setSelectedPokemon } from '../../store/slices/pokemonSlice';
+import { setLanguage } from '../../store/slices/uiSlice';
 import { useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Pokemon } from '@/types/pokemon';
@@ -21,9 +22,17 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { filters } = useAppSelector((state) => state.pokemon);
+  const { language: currentLanguage } = useAppSelector((state) => state.ui);
   const { pokemons, allPokemons, loading, error, hasNextPage, loadMore, isFiltering, isAutoLoading } = usePokemonList();
   
   const observerTarget = useRef<HTMLDivElement>(null);
+
+  // Sync language from server props to Redux store
+  useEffect(() => {
+    if (currentLanguage !== lang) {
+      dispatch(setLanguage(lang));
+    }
+  }, [lang, currentLanguage, dispatch]);
 
   const handlePokemonClick = (pokemon: Pokemon) => {
     dispatch(setSelectedPokemon(pokemon));
