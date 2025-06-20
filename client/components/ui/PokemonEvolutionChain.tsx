@@ -2,28 +2,19 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React from 'react';
 import { EvolutionDetail, PokemonTypeSlot, EvolutionTrigger, FormVariant } from '@/types/pokemon';
-import { Dictionary, Locale } from '@/lib/dictionaries';
+import { Locale } from '@/lib/dictionaries';
 import { getTypeName } from '@/lib/pokemonUtils';
 import { getFormDisplayName } from '@/lib/formUtils';
 import { POKEMON_TYPE_COLORS } from '@/types/pokemon';
 
 interface PokemonEvolutionChainProps {
   evolutionChain: EvolutionDetail;
-  dictionary: Dictionary;
   lang: Locale;
 }
 
-export function PokemonEvolutionChain({ evolutionChain, dictionary, lang }: PokemonEvolutionChainProps) {
-  const [expandedForms, setExpandedForms] = useState<{[key: string]: boolean}>({});
-  
-  const toggleForms = (pokemonId: string) => {
-    setExpandedForms(prev => ({
-      ...prev,
-      [pokemonId]: !prev[pokemonId]
-    }));
-  };
+export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolutionChainProps) {
   const renderEvolutionChain = (evolution: EvolutionDetail): React.ReactElement[] => {
     const chain: React.ReactElement[] = [];
     
@@ -91,21 +82,14 @@ export function PokemonEvolutionChain({ evolutionChain, dictionary, lang }: Poke
             </div>
           </Link>
 
-          {/* Form Variations - Collapsible */}
+          {/* Form Variations - Always Visible */}
           {currentEvolution.forms && Array.isArray(currentEvolution.forms) && currentEvolution.forms.length > 0 && (
             <div className="mt-4 space-y-2">
-              <button
-                onClick={() => toggleForms(pokemonId)}
-                className="text-xs text-blue-600 hover:text-blue-800 font-medium text-center w-full py-1 px-2 rounded hover:bg-blue-50 transition-colors"
-              >
-                {expandedForms[pokemonId] 
-                  ? (lang === 'en' ? 'Hide Forms ▼' : 'すがたを隠す ▼')
-                  : (lang === 'en' ? `Show Forms (${currentEvolution.forms.length}) ▶` : `すがたを表示 (${currentEvolution.forms.length}) ▶`)
-                }
-              </button>
-              {expandedForms[pokemonId] && (
-                <div className="flex flex-wrap gap-2 justify-center max-w-xs">
-                  {currentEvolution.forms.map((form: FormVariant) => (
+              <div className="text-xs text-gray-600 font-medium text-center">
+                {lang === 'en' ? 'Forms' : 'すがた'}
+              </div>
+              <div className="flex flex-wrap gap-2 justify-center max-w-xs">
+                {currentEvolution.forms.map((form: FormVariant) => (
                   <Link
                     key={form.id}
                     href={`/${lang}/pokemon/${form.id}`}
@@ -165,9 +149,8 @@ export function PokemonEvolutionChain({ evolutionChain, dictionary, lang }: Poke
                       </div>
                     </div>
                   </Link>
-                  ))}
-                </div>
-              )}
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -235,10 +218,10 @@ export function PokemonEvolutionChain({ evolutionChain, dictionary, lang }: Poke
   }
 
   return (
-    <div className="bg-gray-50 rounded-lg p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-6 text-center">
-        {dictionary.ui.pokemonDetails.evolutionChain}
-      </h3>
+    <div>
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+        {lang === 'en' ? 'Evolution Chain' : '進化チェーン'}
+      </h2>
       <div className="flex justify-center overflow-x-auto">
         <div className="flex items-center min-w-max px-4">
           {renderEvolutionChain(evolutionChain)}

@@ -161,10 +161,7 @@ export async function generateMetadata({ params }: { params: PokemonDetailPagePr
 export default async function PokemonDetailPage({ params }: { params: PokemonDetailPageProps['params'] }) {
   try {
     const { id, lang } = await params;
-    const [dictionary, client] = await Promise.all([
-      getDictionary(lang),
-      getClient()
-    ]);
+    const client = await getClient();
     
     const { data } = await client.query({
       query: GET_POKEMON,
@@ -177,7 +174,7 @@ export default async function PokemonDetailPage({ params }: { params: PokemonDet
       notFound();
     }
 
-    return <PokemonDetailClient pokemon={pokemon} dictionary={dictionary} lang={lang} />;
+    return <PokemonDetailClient pokemon={pokemon} lang={lang} />;
   } catch (error) {
     console.error('Error fetching Pokemon:', error);
     notFound();

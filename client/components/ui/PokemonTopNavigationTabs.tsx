@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Pokemon } from '@/types/pokemon';
-import { Dictionary, Locale } from '@/lib/dictionaries';
+import { Locale } from '@/lib/dictionaries';
 import { PokemonBasicInfo } from './PokemonBasicInfo';
 import { PokemonSpritesGallery } from './PokemonSpritesGallery';
 import { PokemonEvolutionChain } from './PokemonEvolutionChain';
@@ -12,7 +12,6 @@ import { PokemonGameHistory } from './PokemonGameHistory';
 
 interface PokemonTopNavigationTabsProps {
   pokemon: Pokemon;
-  dictionary: Dictionary;
   lang: Locale;
 }
 
@@ -24,7 +23,7 @@ interface TopTabInfo {
   available: boolean;
 }
 
-export function PokemonTopNavigationTabs({ pokemon, dictionary, lang }: PokemonTopNavigationTabsProps) {
+export function PokemonTopNavigationTabs({ pokemon, lang }: PokemonTopNavigationTabsProps) {
   const [activeTopTab, setActiveTopTab] = useState<TopTabType>('about');
 
   // Define top-level tabs
@@ -62,17 +61,11 @@ export function PokemonTopNavigationTabs({ pokemon, dictionary, lang }: PokemonT
             {/* Evolution Chain Section - Between Hero and Sprites */}
             {pokemon.species?.evolutionChain?.chain && (
               <div className="max-w-7xl mx-auto px-8 py-8">
-                <div className="mb-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                    {lang === 'en' ? 'Evolution Chain' : '進化チェーン'}
-                  </h2>
-                  <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
-                    <PokemonEvolutionChain 
-                      evolutionChain={pokemon.species.evolutionChain.chain} 
-                      dictionary={dictionary}
-                      lang={lang}
-                    />
-                  </div>
+                <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                  <PokemonEvolutionChain 
+                    evolutionChain={pokemon.species.evolutionChain.chain} 
+                    lang={lang}
+                  />
                 </div>
               </div>
             )}
