@@ -203,7 +203,7 @@ class PokemonService {
           url: type.type.url,
         },
       })),
-      evolutionDetails: chainData.evolution_details.map((detail: any) => ({
+      evolutionDetails: (chainData.evolution_details || []).map((detail: any) => ({
         minLevel: detail.min_level,
         item: detail.item ? {
           id: this.extractIdFromUrl(detail.item.url),

@@ -466,7 +466,7 @@ export interface EvolutionDetail {
   name: string;
   sprites: PokemonSprites;
   types: PokemonTypeSlot[];
-  evolutionDetails: EvolutionTrigger[];
+  evolutionDetails?: EvolutionTrigger[];
   evolvesTo: EvolutionDetail[];
   forms?: FormVariant[];
 }
