@@ -27,8 +27,8 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
       // Add evolution arrow if not the first Pokemon
       if (!isFirst) {
         chain.push(
-          <div key={`arrow-${currentEvolution.id}`} className="flex flex-col items-center mx-2 md:mx-4">
-            <div className="w-0 h-0 border-l-8 border-r-8 border-b-12 border-l-transparent border-r-transparent border-b-blue-500 rotate-90 mb-2"></div>
+          <div key={`arrow-${currentEvolution.id}`} className="flex flex-col md:flex-row items-center mx-2 md:mx-4">
+            <div className="w-0 h-0 border-l-8 border-r-8 border-b-12 border-l-transparent border-r-transparent border-b-blue-500 md:rotate-90 mb-2 md:mb-0 md:mr-2"></div>
             <div className="bg-blue-50 px-3 py-2 rounded-lg text-sm text-blue-800 font-medium text-center whitespace-nowrap border border-blue-100 shadow-sm">
               {currentEvolution.evolutionDetails && currentEvolution.evolutionDetails.length > 0 ? 
                 renderEvolutionCondition(currentEvolution.evolutionDetails[0], lang) : 
@@ -222,8 +222,9 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
         {lang === 'en' ? 'Evolution Chain' : '進化チェーン'}
       </h2>
-      <div className="flex justify-center overflow-x-auto">
-        <div className="flex items-center min-w-max px-2 md:px-4">
+      {/* Mobile: Vertical layout, Desktop: Horizontal layout */}
+      <div className="flex justify-center">
+        <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-0 px-2 md:px-4">
           {renderEvolutionChain(evolutionChain)}
         </div>
       </div>
