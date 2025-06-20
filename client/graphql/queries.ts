@@ -67,6 +67,13 @@ export const GET_POKEMONS = gql`
                 url
               }
             }
+            genera {
+              genus
+              language {
+                name
+                url
+              }
+            }
           }
         }
         cursor

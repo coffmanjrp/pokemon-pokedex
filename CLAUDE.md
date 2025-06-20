@@ -397,6 +397,23 @@ app/[lang]/              # Dynamic language routing
   - Reduced cognitive load by removing irrelevant navigation elements
   - Maintained essential navigation controls (language switching)
   - Consistent header height and spacing across page types
+
+### Card List Page Enhancements (June 2025)
+- **FilterButton Width Stabilization**: Fixed layout shifts when switching between languages
+- **Implementation Details**:
+  - Fixed FilterButton width to `w-36` (144px) to accommodate Japanese "フィルター" text
+  - Prevents text wrapping and layout shifts when switching between English and Japanese
+  - Maintains consistent button sizing across language contexts
+- **Pokemon Card Enhancements**:
+  - **Removed cluttered information**: Eliminated height, weight, and HP display from cards for cleaner appearance
+  - **Added type-based background**: Applied subtle 10% opacity primary type color background matching detail page styling
+  - **Added species classification**: Integrated Pokemon genus display (e.g., "たねポケモン", "しんかポケモン") with bold text styling
+  - **Enhanced GraphQL query**: Extended `GET_POKEMONS` query to include `species.genera` field for classification data
+- **User Experience Improvements**:
+  - Cleaner, less cluttered card design focused on essential information
+  - Consistent visual theming between list and detail views
+  - Enhanced information hierarchy with species classification
+  - Stable layout preventing jarring transitions during language switching
 - **Technical Implementation**:
   - Path-based conditional rendering using Next.js usePathname hook
   - Clean separation of navigation concerns per page type
