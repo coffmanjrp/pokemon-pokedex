@@ -60,31 +60,36 @@ export function getFormDisplayName(pokemonName: string, formName: string | undef
     return pokemonName;
   }
 
+  // Helper function to capitalize Pokemon name for English
+  const capitalizedPokemonName = language === 'en' ? 
+    pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1) : 
+    pokemonName;
+
   // Check for regional variants
   for (const [key, translation] of Object.entries(REGIONAL_FORM_TRANSLATIONS)) {
     if (formName.includes(key)) {
-      return `${translation[language]} ${pokemonName}`;
+      return `${translation[language]} ${capitalizedPokemonName}`;
     }
   }
 
   // Check for Mega Evolution
   for (const [key, translation] of Object.entries(MEGA_FORM_TRANSLATIONS)) {
     if (formName.includes(key)) {
-      return `${translation[language]} ${pokemonName}`;
+      return `${translation[language]} ${capitalizedPokemonName}`;
     }
   }
 
   // Check for Gigantamax
   for (const [key, translation] of Object.entries(GIGANTAMAX_FORM_TRANSLATIONS)) {
     if (formName.includes(key)) {
-      return `${translation[language]} ${pokemonName}`;
+      return `${translation[language]} ${capitalizedPokemonName}`;
     }
   }
 
   // Check for special forms
   for (const [key, translation] of Object.entries(SPECIAL_FORM_TRANSLATIONS)) {
     if (formName.includes(key)) {
-      return `${pokemonName} (${translation[language]})`;
+      return `${capitalizedPokemonName} (${translation[language]})`;
     }
   }
 
@@ -93,7 +98,7 @@ export function getFormDisplayName(pokemonName: string, formName: string | undef
     word.charAt(0).toUpperCase() + word.slice(1)
   ).join(' ');
   
-  return `${pokemonName} (${capitalizedForm})`;
+  return `${capitalizedPokemonName} (${capitalizedForm})`;
 }
 
 /**
