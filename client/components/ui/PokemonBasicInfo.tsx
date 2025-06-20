@@ -122,55 +122,57 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-8 p-4 md:p-8 px-4 md:px-16">
         {/* Left Side - Pokemon Image (3/5 columns) */}
-        <div className="lg:col-span-3 flex items-center justify-center relative">
-          <div className="relative">
-            {/* Pokemon Image with Navigation Arrows */}
-            <div className="w-72 h-72 md:w-96 md:h-96 flex items-center justify-center relative">
-              {/* Background circle with type color */}
-              <div 
-                className="absolute inset-0 rounded-full opacity-20 blur-3xl transform scale-150"
-                style={{
-                  backgroundColor: primaryTypeColor,
-                }}
-              />
-              <div 
-                className="absolute inset-4 rounded-full opacity-10"
-                style={{
-                  backgroundColor: primaryTypeColor,
-                }}
-              />
-              
-              
-              {/* Pokemon Image */}
-              <div className="relative w-full h-full z-10">
-                <Image
-                  src={getPokemonSpriteUrl(pokemon, isShiny)}
-                  alt={`${displayName} ${isShiny ? '(Shiny)' : ''}`}
-                  fill
-                  className="object-contain drop-shadow-lg transition-opacity duration-300"
-                  sizes="384px"
-                  priority={true}
+        <div className="lg:col-span-3 flex flex-col relative">
+          {/* Pokemon Header - Name, Number, Types */}
+          <div className="mb-6">
+            <h1 className="text-4xl font-bold text-gray-900 mb-3">
+              {language === 'ja' ? displayName : displayName.charAt(0).toUpperCase() + displayName.slice(1)}
+              <span className="text-2xl text-gray-500 ml-3">
+                #{pokemon.id.toString().padStart(3, '0')}
+              </span>
+            </h1>
+            <div>
+              <PokemonTypes types={pokemon.types} size="lg" />
+            </div>
+          </div>
+
+          {/* Pokemon Image Container */}
+          <div className="flex items-center justify-center flex-1">
+            <div className="relative">
+              {/* Pokemon Image with Navigation Arrows */}
+              <div className="w-72 h-72 md:w-96 md:h-96 flex items-center justify-center relative">
+                {/* Background circle with type color */}
+                <div 
+                  className="absolute inset-0 rounded-full opacity-20 blur-3xl transform scale-150"
+                  style={{
+                    backgroundColor: primaryTypeColor,
+                  }}
                 />
+                <div 
+                  className="absolute inset-4 rounded-full opacity-10"
+                  style={{
+                    backgroundColor: primaryTypeColor,
+                  }}
+                />
+                
+                {/* Pokemon Image */}
+                <div className="relative w-full h-full z-10">
+                  <Image
+                    src={getPokemonSpriteUrl(pokemon, isShiny)}
+                    alt={`${displayName} ${isShiny ? '(Shiny)' : ''}`}
+                    fill
+                    className="object-contain drop-shadow-lg transition-opacity duration-300"
+                    sizes="384px"
+                    priority={true}
+                  />
+                </div>
               </div>
-              
             </div>
           </div>
         </div>
 
         {/* Right Side - Information Panel (2/5 columns) */}
         <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          {/* Header */}
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {language === 'ja' ? displayName : displayName.charAt(0).toUpperCase() + displayName.slice(1)}
-              <span className="text-xl text-gray-500 ml-2">
-                #{pokemon.id.toString().padStart(3, '0')}
-              </span>
-            </h1>
-            <div className="mb-4">
-              <PokemonTypes types={pokemon.types} size="md" />
-            </div>
-          </div>
 
           {/* Weaknesses Section */}
           <div className="mb-6">
