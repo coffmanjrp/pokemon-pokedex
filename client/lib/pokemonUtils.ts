@@ -5,9 +5,21 @@ import React from 'react';
  * Get Pokemon name in the specified language
  * Falls back to English name if target language is not available
  */
+/**
+ * Format English Pokemon name properly
+ * Converts "sandshrew-alola" to "Sandshrew Alola"
+ */
+function formatEnglishPokemonName(name: string): string {
+  return name
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
 export function getPokemonName(pokemon: Pokemon, language: 'en' | 'ja'): string {
   if (language === 'en' || !pokemon.species?.names) {
-    return pokemon.name;
+    // Format English name properly (convert hyphens to spaces and capitalize)
+    return formatEnglishPokemonName(pokemon.name);
   }
 
   // Find Japanese name from species data
@@ -15,7 +27,7 @@ export function getPokemonName(pokemon: Pokemon, language: 'en' | 'ja'): string 
     nameEntry => nameEntry.language.name === 'ja' || nameEntry.language.name === 'ja-Hrkt'
   );
 
-  return japaneseName?.name || pokemon.name;
+  return japaneseName?.name || formatEnglishPokemonName(pokemon.name);
 }
 
 /**
@@ -24,7 +36,8 @@ export function getPokemonName(pokemon: Pokemon, language: 'en' | 'ja'): string 
  */
 export function getEvolutionPokemonName(evolutionDetail: EvolutionDetail, language: 'en' | 'ja'): string {
   if (language === 'en' || !evolutionDetail.species?.names) {
-    return evolutionDetail.name;
+    // Format English name properly (convert hyphens to spaces and capitalize)
+    return formatEnglishPokemonName(evolutionDetail.name);
   }
 
   // Find Japanese name from species data
@@ -32,7 +45,7 @@ export function getEvolutionPokemonName(evolutionDetail: EvolutionDetail, langua
     nameEntry => nameEntry.language.name === 'ja' || nameEntry.language.name === 'ja-Hrkt'
   );
 
-  return japaneseName?.name || evolutionDetail.name;
+  return japaneseName?.name || formatEnglishPokemonName(evolutionDetail.name);
 }
 
 /**

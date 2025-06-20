@@ -18,19 +18,6 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
   const renderEvolutionChain = (evolution: EvolutionDetail): React.ReactElement[] => {
     const chain: React.ReactElement[] = [];
     
-    // Get Pokemon name using species data if available, fallback to English name
-    const getEvolutionPokemonName = (evolution: EvolutionDetail, language: string): string => {
-      if (language === 'en' || !evolution.species?.names) {
-        return evolution.name.charAt(0).toUpperCase() + evolution.name.slice(1);
-      }
-
-      // Find Japanese name from species data
-      const japaneseName = evolution.species.names.find(
-        nameEntry => nameEntry.language.name === 'ja' || nameEntry.language.name === 'ja-Hrkt'
-      );
-
-      return japaneseName?.name || evolution.name.charAt(0).toUpperCase() + evolution.name.slice(1);
-    };
 
     const addEvolutionStage = (currentEvolution: EvolutionDetail) => {
       if (!currentEvolution) return;

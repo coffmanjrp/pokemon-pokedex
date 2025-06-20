@@ -106,7 +106,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
           {/* Pokemon Header - Name, Number, Types */}
           <div className="mb-3">
             <h1 className="text-4xl font-bold text-gray-900 mb-3">
-              {language === 'ja' ? displayName : displayName.charAt(0).toUpperCase() + displayName.slice(1)}
+              {displayName}
               <span className="text-2xl text-gray-500 ml-3">
                 #{pokemon.id.toString().padStart(3, '0')}
               </span>
