@@ -231,7 +231,7 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
   return (
     <div>
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        {lang === 'en' ? 'Evolution Chain' : '進化チェーン'}
+{lang === 'en' ? 'Evolution Chain' : '進化の流れ'}
       </h2>
       {/* Mobile: Vertical layout, Desktop: Horizontal layout */}
       <div className="flex justify-center">

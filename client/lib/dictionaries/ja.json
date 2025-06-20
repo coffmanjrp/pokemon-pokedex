@@ -43,7 +43,11 @@
       "description": "説明",
       "gameHistory": "ゲーム履歴",
       "sprites": "スプライト・アートワーク",
-      "evolutionChain": "進化系統"
+      "evolutionChain": "進化の流れ",
+      "story": "説明",
+      "versions": "バージョン",
+      "normal": "通常",
+      "shiny": "色違い"
     },
     "stats": {
       "hp": "HP",

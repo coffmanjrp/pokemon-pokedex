@@ -158,7 +158,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
           {description && (
             <div className="mb-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                {language === 'en' ? 'Story' : 'ストーリー'}
+                {language === 'en' ? 'Story' : '説明'}
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed bg-gray-50 p-3 rounded-lg">
                 {description}
@@ -180,7 +180,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
                     : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100 hover:shadow-sm'
                 }`}
               >
-                {language === 'en' ? 'Normal' : 'ノーマル'}
+                {language === 'en' ? 'Normal' : '通常'}
               </button>
               <button
                 onClick={() => setIsShiny(true)}
@@ -190,7 +190,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
                     : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100 hover:shadow-sm'
                 }`}
               >
-                {language === 'en' ? 'Shiny' : 'シャイニー'}
+                {language === 'en' ? 'Shiny' : '色違い'}
               </button>
             </div>
           </div>
