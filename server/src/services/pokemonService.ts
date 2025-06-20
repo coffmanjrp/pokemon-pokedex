@@ -15,10 +15,19 @@ class PokemonService {
   }
 
   async getPokemonById(id: string): Promise<Pokemon> {
-    const [pokemonData, speciesData] = await Promise.all([
-      this.fetchFromPokeAPI(`/pokemon/${id}`),
-      this.fetchFromPokeAPI(`/pokemon-species/${id}`).catch(() => null), // Species data may not exist for all Pokemon
-    ]);
+    const pokemonData = await this.fetchFromPokeAPI(`/pokemon/${id}`);
+    
+    // Get species data using the species URL from Pokemon data instead of Pokemon ID
+    // This handles variant Pokemon correctly (e.g., Alolan forms)
+    let speciesData = null;
+    if (pokemonData.species && pokemonData.species.url) {
+      try {
+        const speciesEndpoint = pokemonData.species.url.replace('https://pokeapi.co/api/v2', '');
+        speciesData = await this.fetchFromPokeAPI(speciesEndpoint);
+      } catch (error) {
+        console.warn(`Could not fetch species data for Pokemon ${id}:`, error);
+      }
+    }
     
     return await this.transformPokemonData(pokemonData, speciesData);
   }
@@ -27,10 +36,19 @@ class PokemonService {
     const listData = await this.fetchFromPokeAPI(`/pokemon?limit=${limit}&offset=${offset}`);
     
     const pokemonPromises = listData.results.map(async (pokemon: any) => {
-      const [pokemonData, speciesData] = await Promise.all([
-        this.fetchFromPokeAPI(`/pokemon/${pokemon.name}`),
-        this.fetchFromPokeAPI(`/pokemon-species/${pokemon.name}`).catch(() => null), // Fetch species for multilingual support
-      ]);
+      const pokemonData = await this.fetchFromPokeAPI(`/pokemon/${pokemon.name}`);
+      
+      // Get species data using the species URL from Pokemon data
+      let speciesData = null;
+      if (pokemonData.species && pokemonData.species.url) {
+        try {
+          const speciesEndpoint = pokemonData.species.url.replace('https://pokeapi.co/api/v2', '');
+          speciesData = await this.fetchFromPokeAPI(speciesEndpoint);
+        } catch (error) {
+          console.warn(`Could not fetch species data for Pokemon ${pokemon.name}:`, error);
+        }
+      }
+      
       return await this.transformPokemonData(pokemonData, speciesData);
     });
 
@@ -93,15 +111,7 @@ class PokemonService {
           url: statInfo.stat.url,
         },
       })),
-      abilities: data.abilities.map((abilityInfo: any) => ({
-        isHidden: abilityInfo.is_hidden,
-        slot: abilityInfo.slot,
-        ability: {
-          id: this.extractIdFromUrl(abilityInfo.ability.url),
-          name: abilityInfo.ability.name,
-          url: abilityInfo.ability.url,
-        },
-      })),
+      abilities: await this.transformAbilities(data.abilities),
       moves: await this.transformMoves(data.moves),
       gameIndices: data.game_indices.map((gameIndex: any) => ({
         gameIndex: gameIndex.game_index,
@@ -166,7 +176,26 @@ class PokemonService {
 
   private async transformEvolutionChainData(chainData: any): Promise<any> {
     const pokemonData = await this.fetchFromPokeAPI(`/pokemon/${chainData.species.name}`);
-    const speciesData = await this.fetchFromPokeAPI(`/pokemon-species/${chainData.species.name}`);
+    
+    // Get species data using the species URL from Pokemon data
+    let speciesData = null;
+    if (pokemonData.species && pokemonData.species.url) {
+      try {
+        const speciesEndpoint = pokemonData.species.url.replace('https://pokeapi.co/api/v2', '');
+        speciesData = await this.fetchFromPokeAPI(speciesEndpoint);
+      } catch (error) {
+        console.warn(`Could not fetch species data for Pokemon ${chainData.species.name}:`, error);
+        // Fallback to chainData species URL if available
+        if (chainData.species.url) {
+          try {
+            const fallbackEndpoint = chainData.species.url.replace('https://pokeapi.co/api/v2', '');
+            speciesData = await this.fetchFromPokeAPI(fallbackEndpoint);
+          } catch (fallbackError) {
+            console.warn(`Fallback species fetch also failed for ${chainData.species.name}:`, fallbackError);
+          }
+        }
+      }
+    }
     
     const evolvesToPromises = chainData.evolves_to.map((evolution: any) => 
       this.transformEvolutionChainData(evolution)
@@ -203,6 +232,49 @@ class PokemonService {
           url: type.type.url,
         },
       })),
+      species: {
+        id: speciesData.id.toString(),
+        name: speciesData.name,
+        names: speciesData.names.map((nameEntry: any) => ({
+          name: nameEntry.name,
+          language: {
+            name: nameEntry.language.name,
+            url: nameEntry.language.url,
+          },
+        })),
+        flavorTextEntries: speciesData.flavor_text_entries.map((entry: any) => ({
+          flavorText: entry.flavor_text,
+          language: {
+            name: entry.language.name,
+            url: entry.language.url,
+          },
+          version: {
+            name: entry.version.name,
+            url: entry.version.url,
+          },
+        })),
+        genera: speciesData.genera.map((genus: any) => ({
+          genus: genus.genus,
+          language: {
+            name: genus.language.name,
+            url: genus.language.url,
+          },
+        })),
+        generation: {
+          id: this.extractIdFromUrl(speciesData.generation.url),
+          name: speciesData.generation.name,
+          url: speciesData.generation.url,
+        },
+        evolutionChain: undefined, // Avoid circular reference
+        varieties: speciesData.varieties.map((variety: any) => ({
+          isDefault: variety.is_default,
+          pokemon: {
+            id: this.extractIdFromUrl(variety.pokemon.url),
+            name: variety.pokemon.name,
+            url: variety.pokemon.url,
+          },
+        })),
+      },
       evolutionDetails: (chainData.evolution_details || []).map((detail: any) => ({
         minLevel: detail.min_level,
         item: detail.item ? {
@@ -324,6 +396,48 @@ class PokemonService {
     return formName.includes('gmax');
   }
 
+  private async transformAbilities(abilitiesData: any[]): Promise<any[]> {
+    const abilityPromises = abilitiesData.map(async (abilityInfo: any) => {
+      try {
+        // Fetch detailed ability data from PokeAPI
+        const abilityDetailUrl = abilityInfo.ability.url.replace('https://pokeapi.co/api/v2', '');
+        const abilityDetails = await this.fetchFromPokeAPI(abilityDetailUrl);
+
+        return {
+          isHidden: abilityInfo.is_hidden,
+          slot: abilityInfo.slot,
+          ability: {
+            id: this.extractIdFromUrl(abilityInfo.ability.url),
+            name: abilityInfo.ability.name,
+            url: abilityInfo.ability.url,
+            names: (abilityDetails.names || []).map((nameEntry: any) => ({
+              name: nameEntry.name,
+              language: {
+                name: nameEntry.language.name,
+                url: nameEntry.language.url,
+              },
+            })),
+          },
+        };
+      } catch (error) {
+        console.error(`Error fetching ability details for ${abilityInfo.ability.name}:`, error);
+        // Return basic ability data if detailed fetch fails
+        return {
+          isHidden: abilityInfo.is_hidden,
+          slot: abilityInfo.slot,
+          ability: {
+            id: this.extractIdFromUrl(abilityInfo.ability.url),
+            name: abilityInfo.ability.name,
+            url: abilityInfo.ability.url,
+            names: [],
+          },
+        };
+      }
+    });
+
+    return await Promise.all(abilityPromises);
+  }
+
   private async transformMoves(movesData: any[]): Promise<any[]> {
     const movePromises = movesData.map(async (moveInfo: any) => {
       try {
@@ -336,6 +450,13 @@ class PokemonService {
             id: this.extractIdFromUrl(moveInfo.move.url),
             name: moveInfo.move.name,
             url: moveInfo.move.url,
+            names: (moveDetails.names || []).map((nameEntry: any) => ({
+              name: nameEntry.name,
+              language: {
+                name: nameEntry.language.name,
+                url: nameEntry.language.url,
+              },
+            })),
             type: {
               id: this.extractIdFromUrl(moveDetails.type.url),
               name: moveDetails.type.name,
