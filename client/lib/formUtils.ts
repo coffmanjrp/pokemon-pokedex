@@ -22,7 +22,7 @@ export const MEGA_FORM_TRANSLATIONS: Record<string, { en: string; ja: string }> 
 
 // Gigantamax form translations
 export const GIGANTAMAX_FORM_TRANSLATIONS: Record<string, { en: string; ja: string }> = {
-  'gmax': { en: 'Gigantamax', ja: 'キョダイマックス' },
+  'gmax': { en: 'Gigantamax', ja: 'キョダイマックスのすがた' },
 };
 
 // Special form translations
@@ -189,4 +189,60 @@ export function getFormPriority(formName: string | undefined): number {
   if (isMegaEvolution(formName)) return 2;
   if (isGigantamax(formName)) return 3;
   return 4;
+}
+
+/**
+ * Get short form badge name for Evolution Chain display
+ */
+export function getFormBadgeName(formName: string | undefined, language: 'en' | 'ja'): string | null {
+  if (!formName) return null;
+  
+  // Regional variants
+  if (formName.includes('alola')) return language === 'en' ? 'Alolan' : 'アローラ';
+  if (formName.includes('galar')) return language === 'en' ? 'Galarian' : 'ガラル';
+  if (formName.includes('hisui')) return language === 'en' ? 'Hisuian' : 'ヒスイ';
+  if (formName.includes('paldea')) return language === 'en' ? 'Paldean' : 'パルデア';
+  
+  // Mega Evolution
+  if (formName.includes('mega-x')) return language === 'en' ? 'Mega X' : 'メガX';
+  if (formName.includes('mega-y')) return language === 'en' ? 'Mega Y' : 'メガY';
+  if (formName.includes('mega')) return language === 'en' ? 'Mega' : 'メガ';
+  
+  // Gigantamax
+  if (formName.includes('gmax')) return language === 'en' ? 'G-Max' : 'キョダイ';
+  
+  // Primal
+  if (formName.includes('primal')) return language === 'en' ? 'Primal' : 'ゲンシ';
+  
+  return null;
+}
+
+/**
+ * Get badge color class for form type
+ */
+export function getFormBadgeColor(formName: string | undefined): string {
+  if (!formName) return 'bg-gray-100 text-gray-800';
+  
+  // Regional variants - green
+  if (formName.includes('alola') || formName.includes('galar') || 
+      formName.includes('hisui') || formName.includes('paldea')) {
+    return 'bg-green-100 text-green-800';
+  }
+  
+  // Mega Evolution - purple
+  if (formName.includes('mega')) {
+    return 'bg-purple-100 text-purple-800';
+  }
+  
+  // Gigantamax - red
+  if (formName.includes('gmax')) {
+    return 'bg-red-100 text-red-800';
+  }
+  
+  // Primal - blue
+  if (formName.includes('primal')) {
+    return 'bg-blue-100 text-blue-800';
+  }
+  
+  return 'bg-gray-100 text-gray-800';
 }

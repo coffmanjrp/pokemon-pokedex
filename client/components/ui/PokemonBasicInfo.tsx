@@ -15,7 +15,10 @@ import {
   getPrimaryTypeColor,
   getPokemonDisplayId,
   isPokemonVariant,
-  getPrevNextPokemonId
+  getPrevNextPokemonId,
+  shouldDisplayFormSeparately,
+  getPokemonBaseName,
+  getPokemonFormName
 } from '@/lib/pokemonUtils';
 import { PokemonTypes } from './PokemonTypes';
 import Image from 'next/image';
@@ -32,6 +35,9 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
   const displayName = getPokemonName(pokemon, language);
   const displayId = getPokemonDisplayId(pokemon);
   const isVariant = isPokemonVariant(pokemon);
+  const shouldSeparateForm = shouldDisplayFormSeparately(pokemon);
+  const baseName = shouldSeparateForm ? getPokemonBaseName(pokemon, language) : displayName;
+  const formName = shouldSeparateForm ? getPokemonFormName(pokemon, language) : null;
   const description = getPokemonDescription(pokemon, language);
   const genus = getPokemonGenus(pokemon, language);
   const weaknesses = getPokemonWeaknesses(pokemon);
@@ -100,14 +106,21 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-8 p-4 md:p-8 px-4 md:px-16">
         {/* Left Side - Pokemon Image (3/5 columns) */}
         <div className="lg:col-span-3 flex flex-col relative">
-          {/* Pokemon Header - Name, Number, Types */}
+          {/* Pokemon Header - Name, Number, Form, Types */}
           <div className="mb-3">
             <h1 className="text-4xl font-bold text-gray-900 mb-3">
-              {displayName}
+              {baseName}
               <span className="text-2xl text-gray-500 ml-3">
                 #{displayId.toString().padStart(3, '0')}
               </span>
             </h1>
+            {formName && (
+              <div className="mb-2">
+                <span className="text-2xl font-medium text-gray-600">
+                  {formName}
+                </span>
+              </div>
+            )}
             <div>
               <PokemonTypes types={pokemon.types} size="lg" className="flex gap-2 justify-start mb-2" language={language} />
             </div>

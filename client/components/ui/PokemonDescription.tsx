@@ -2,6 +2,7 @@
 
 import { Pokemon } from '@/types/pokemon';
 import { getPokemonDescription, getVersionName } from '@/lib/pokemonUtils';
+import { DataEmptyState } from './DataEmptyState';
 
 interface PokemonDescriptionProps {
   pokemon: Pokemon;
@@ -12,11 +13,7 @@ export function PokemonDescription({ pokemon, language }: PokemonDescriptionProp
   const description = getPokemonDescription(pokemon, language);
   
   if (!pokemon.species?.flavorTextEntries || pokemon.species.flavorTextEntries.length === 0) {
-    return (
-      <div className="text-gray-500 text-center py-4">
-        {language === 'en' ? 'No descriptions available' : '説明がありません'}
-      </div>
-    );
+    return <DataEmptyState type="descriptions" language={language} />;
   }
 
   // Filter entries for the current language
@@ -27,9 +24,11 @@ export function PokemonDescription({ pokemon, language }: PokemonDescriptionProp
 
   if (languageEntries.length === 0) {
     return (
-      <div className="text-gray-500 text-center py-4">
-        {language === 'en' ? 'No descriptions available in this language' : 'この言語での説明がありません'}
-      </div>
+      <DataEmptyState 
+        type="descriptions" 
+        language={language}
+        customMessage={language === 'en' ? 'No descriptions available in this language' : 'この言語での説明がありません'}
+      />
     );
   }
 

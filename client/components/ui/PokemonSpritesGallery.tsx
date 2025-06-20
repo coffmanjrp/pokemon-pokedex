@@ -5,6 +5,9 @@ import { Pokemon } from '@/types/pokemon';
 import { PokemonMoves } from './PokemonMoves';
 import { PokemonDescription } from './PokemonDescription';
 import { PokemonGameHistory } from './PokemonGameHistory';
+import { InfoCard } from './InfoCard';
+import { TabNavigation } from './TabNavigation';
+import { DataEmptyState } from './DataEmptyState';
 import Image from 'next/image';
 
 interface PokemonSpritesGalleryProps {
@@ -20,39 +23,42 @@ interface SpriteInfo {
 
 type ContentTabType = 'sprites' | 'description' | 'moves' | 'gameHistory';
 
-interface ContentTabInfo {
-  id: ContentTabType;
-  label: string;
-  available: boolean;
-}
 
 export function PokemonSpritesGallery({ pokemon, language }: PokemonSpritesGalleryProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('official');
   const [activeContentTab, setActiveContentTab] = useState<ContentTabType>('sprites');
 
   // Define content tabs
-  const contentTabs: ContentTabInfo[] = [
+  const contentTabs = [
     {
-      id: 'sprites',
-      label: language === 'en' ? 'Sprites & Artwork' : 'スプライト・アートワーク',
-      available: true
+      id: 'sprites' as ContentTabType,
+      label: language === 'en' ? 'Artwork' : 'アートワーク',
+      icon: '🖼️'
     },
     {
-      id: 'description',
+      id: 'description' as ContentTabType,
       label: language === 'en' ? 'Description' : '説明',
-      available: !!(pokemon.species?.flavorTextEntries && pokemon.species.flavorTextEntries.length > 0)
+      icon: '📖'
     },
     {
-      id: 'moves',
+      id: 'moves' as ContentTabType,
       label: language === 'en' ? 'Moves' : 'わざ',
-      available: !!(pokemon.moves && pokemon.moves.length > 0)
+      icon: '⚔️',
+      count: pokemon.moves ? pokemon.moves.length : 0
     },
     {
-      id: 'gameHistory',
+      id: 'gameHistory' as ContentTabType,
       label: language === 'en' ? 'Game History' : 'ゲーム履歴',
-      available: !!(pokemon.gameIndices && pokemon.gameIndices.length > 0)
+      icon: '🎮',
+      count: pokemon.gameIndices ? pokemon.gameIndices.length : 0
     }
-  ];
+  ].filter(tab => {
+    if (tab.id === 'sprites') return true;
+    if (tab.id === 'description') return !!(pokemon.species?.flavorTextEntries && pokemon.species.flavorTextEntries.length > 0);
+    if (tab.id === 'moves') return !!(pokemon.moves && pokemon.moves.length > 0);
+    if (tab.id === 'gameHistory') return !!(pokemon.gameIndices && pokemon.gameIndices.length > 0);
+    return false;
+  });
   
   // Helper function to create sprite info objects
   const createSpriteInfo = (url: string | undefined, labelEn: string, labelJa: string, category: string): SpriteInfo | null => {
@@ -379,12 +385,14 @@ export function PokemonSpritesGallery({ pokemon, language }: PokemonSpritesGalle
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 text-gray-500">
-                {language === 'en' 
+              <DataEmptyState 
+                type="sprites" 
+                language={language}
+                customMessage={language === 'en' 
                   ? 'No sprites available for this category' 
                   : 'このカテゴリーには利用可能なスプライトがありません'
                 }
-              </div>
+              />
             )}
           </div>
         );
@@ -420,31 +428,17 @@ export function PokemonSpritesGallery({ pokemon, language }: PokemonSpritesGalle
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      {/* Content Tabs */}
-      <div className="border-b border-gray-200 mb-6">
-        <nav className="flex space-x-0 overflow-x-auto" aria-label="Content Navigation">
-          {contentTabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveContentTab(tab.id)}
-              disabled={!tab.available}
-              className={`px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm font-medium border-b-2 transition-all duration-200 whitespace-nowrap ${
-                activeContentTab === tab.id
-                  ? 'border-blue-500 text-blue-600 bg-blue-50'
-                  : tab.available
-                  ? 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                  : 'border-transparent text-gray-300 cursor-not-allowed'
-              } ${!tab.available ? 'opacity-50' : ''}`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
-      </div>
+    <InfoCard size="lg" className="overflow-hidden">
+      <TabNavigation
+        tabs={contentTabs}
+        activeTab={activeContentTab}
+        onTabChange={setActiveContentTab}
+        variant="underline"
+        className="mb-6"
+      />
 
       {/* Tab Content */}
       {renderTabContent()}
-    </div>
+    </InfoCard>
   );
 }

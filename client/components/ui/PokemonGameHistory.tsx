@@ -2,6 +2,8 @@
 
 import { GameIndex, Generation } from '@/types/pokemon';
 import { getGenerationName } from '@/lib/pokemonUtils';
+import { VERSION_TRANSLATIONS } from '@/lib/data/versionTranslations';
+import { DataEmptyState } from './DataEmptyState';
 
 interface PokemonGameHistoryProps {
   gameIndices?: GameIndex[];
@@ -11,54 +13,13 @@ interface PokemonGameHistoryProps {
 
 export function PokemonGameHistory({ gameIndices, generation, language }: PokemonGameHistoryProps) {
   if (!gameIndices || gameIndices.length === 0) {
-    return (
-      <div className="text-gray-500 text-center py-4">
-        {language === 'en' ? 'No game appearance data available' : 'ゲーム出現データがありません'}
-      </div>
-    );
+    return <DataEmptyState type="games" language={language} />;
   }
 
   // Game version display names
   const getGameDisplayName = (version: string) => {
-    const gameNames: Record<string, { en: string; ja: string }> = {
-      'red': { en: 'Red', ja: '赤' },
-      'blue': { en: 'Blue', ja: '青' },
-      'yellow': { en: 'Yellow', ja: 'ピカチュウ' },
-      'gold': { en: 'Gold', ja: '金' },
-      'silver': { en: 'Silver', ja: '銀' },
-      'crystal': { en: 'Crystal', ja: 'クリスタル' },
-      'ruby': { en: 'Ruby', ja: 'ルビー' },
-      'sapphire': { en: 'Sapphire', ja: 'サファイア' },
-      'emerald': { en: 'Emerald', ja: 'エメラルド' },
-      'firered': { en: 'FireRed', ja: 'ファイアレッド' },
-      'leafgreen': { en: 'LeafGreen', ja: 'リーフグリーン' },
-      'diamond': { en: 'Diamond', ja: 'ダイヤモンド' },
-      'pearl': { en: 'Pearl', ja: 'パール' },
-      'platinum': { en: 'Platinum', ja: 'プラチナ' },
-      'heartgold': { en: 'HeartGold', ja: 'ハートゴールド' },
-      'soulsilver': { en: 'SoulSilver', ja: 'ソウルシルバー' },
-      'black': { en: 'Black', ja: 'ブラック' },
-      'white': { en: 'White', ja: 'ホワイト' },
-      'black-2': { en: 'Black 2', ja: 'ブラック2' },
-      'white-2': { en: 'White 2', ja: 'ホワイト2' },
-      'x': { en: 'X', ja: 'X' },
-      'y': { en: 'Y', ja: 'Y' },
-      'omega-ruby': { en: 'Omega Ruby', ja: 'オメガルビー' },
-      'alpha-sapphire': { en: 'Alpha Sapphire', ja: 'アルファサファイア' },
-      'sun': { en: 'Sun', ja: 'サン' },
-      'moon': { en: 'Moon', ja: 'ムーン' },
-      'ultra-sun': { en: 'Ultra Sun', ja: 'ウルトラサン' },
-      'ultra-moon': { en: 'Ultra Moon', ja: 'ウルトラムーン' },
-      'sword': { en: 'Sword', ja: 'ソード' },
-      'shield': { en: 'Shield', ja: 'シールド' },
-      'brilliant-diamond': { en: 'Brilliant Diamond', ja: 'ブリリアントダイヤモンド' },
-      'shining-pearl': { en: 'Shining Pearl', ja: 'シャイニングパール' },
-      'legends-arceus': { en: 'Legends: Arceus', ja: 'レジェンズアルセウス' },
-      'scarlet': { en: 'Scarlet', ja: 'スカーレット' },
-      'violet': { en: 'Violet', ja: 'バイオレット' },
-    };
-
-    return gameNames[version]?.[language] || version.charAt(0).toUpperCase() + version.slice(1);
+    const translation = VERSION_TRANSLATIONS[version];
+    return translation?.[language] || version.charAt(0).toUpperCase() + version.slice(1);
   };
 
   // Group games by generation/era

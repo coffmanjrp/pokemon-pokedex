@@ -1,5 +1,12 @@
 import { Pokemon, EvolutionDetail, Move } from '@/types/pokemon';
 import { getFormDisplayName, REGIONAL_FORM_TRANSLATIONS, MEGA_FORM_TRANSLATIONS, GIGANTAMAX_FORM_TRANSLATIONS, SPECIAL_FORM_TRANSLATIONS, isMegaEvolution } from '@/lib/formUtils';
+import { ABILITY_TRANSLATIONS } from '@/lib/data/abilityTranslations';
+import { VERSION_TRANSLATIONS } from '@/lib/data/versionTranslations';
+import { TYPE_EFFECTIVENESS } from '@/lib/data/typeEffectiveness';
+import { MOVE_TRANSLATIONS } from '@/lib/data/moveTranslations';
+import { MOVE_LEARN_METHOD_TRANSLATIONS } from '@/lib/data/moveLearnMethodTranslations';
+import { STAT_TRANSLATIONS } from '@/lib/data/statTranslations';
+import { TYPE_TRANSLATIONS } from '@/lib/data/typeTranslations';
 import React from 'react';
 
 /**
@@ -75,6 +82,71 @@ export function isPokemonVariant(pokemon: Pokemon): boolean {
 }
 
 /**
+ * Check if Pokemon is a Primal form (Kyogre/Groudon)
+ */
+export function isPrimalForm(formName: string): boolean {
+  return formName.includes('primal');
+}
+
+/**
+ * Check if Pokemon form should display form name between name and types
+ * Applies to regional variants and Gigantamax forms
+ */
+export function shouldDisplayFormSeparately(pokemon: Pokemon): boolean {
+  if (!pokemon.name.includes('-')) return false;
+  
+  const formName = pokemon.name.split('-').slice(1).join('-');
+  
+  // Check if it's a regional variant
+  const regionalForms = ['alola', 'alolan', 'galar', 'galarian', 'hisui', 'hisuian', 'paldea', 'paldean'];
+  if (regionalForms.some(region => formName.includes(region))) {
+    return true;
+  }
+  
+  // Check if it's Gigantamax
+  if (formName.includes('gmax')) {
+    return true;
+  }
+  
+  return false;
+}
+
+/**
+ * Get Pokemon base name without form for separate display
+ */
+export function getPokemonBaseName(pokemon: Pokemon, language: 'en' | 'ja'): string {
+  if (!shouldDisplayFormSeparately(pokemon)) {
+    return getPokemonName(pokemon, language);
+  }
+  
+  // For forms that should be displayed separately, return just the base name
+  if (language === 'ja' && pokemon.species?.names) {
+    const japaneseName = pokemon.species.names.find(
+      nameEntry => nameEntry.language.name === 'ja' || nameEntry.language.name === 'ja-Hrkt'
+    );
+    if (japaneseName?.name) {
+      return japaneseName.name;
+    }
+  }
+  
+  // For English or when Japanese name is not available
+  const baseName = pokemon.name.split('-')[0];
+  return baseName.charAt(0).toUpperCase() + baseName.slice(1);
+}
+
+/**
+ * Get Pokemon form name for separate display
+ */
+export function getPokemonFormName(pokemon: Pokemon, language: 'en' | 'ja'): string | null {
+  if (!shouldDisplayFormSeparately(pokemon)) {
+    return null;
+  }
+  
+  const formName = pokemon.name.split('-').slice(1).join('-');
+  return getFormTranslation(formName, language);
+}
+
+/**
  * Get previous/next Pokemon ID for navigation
  * Returns null for boundaries (no previous for first, no next for last)
  */
@@ -120,6 +192,11 @@ export function getPokemonName(pokemon: Pokemon, language: 'en' | 'ja'): string 
               console.log(`[getPokemonName] Japanese Mega variant: ${pokemon.name} -> ${result}`);
               return result;
             }
+          } else if (isPrimalForm(formName)) {
+            // Special handling for Primal forms: "ゲンシポケモン名" format
+            const result = `${formTranslation}${japaneseName.name}`;
+            console.log(`[getPokemonName] Japanese Primal variant: ${pokemon.name} -> ${result}`);
+            return result;
           } else {
             // For other forms: "ポケモン名（フォーム名）" format
             const result = `${japaneseName.name}（${formTranslation}）`;
@@ -186,6 +263,11 @@ export function getEvolutionPokemonName(evolutionDetail: EvolutionDetail, langua
               console.log(`[getEvolutionPokemonName] Japanese Mega variant: ${evolutionDetail.name} -> ${result}`);
               return result;
             }
+          } else if (isPrimalForm(formName)) {
+            // Special handling for Primal forms: "ゲンシポケモン名" format
+            const result = `${formTranslation}${japaneseName.name}`;
+            console.log(`[getEvolutionPokemonName] Japanese Primal variant: ${evolutionDetail.name} -> ${result}`);
+            return result;
           } else {
             // For other forms: "ポケモン名（フォーム名）" format
             const result = `${japaneseName.name}（${formTranslation}）`;
@@ -263,30 +345,6 @@ export function getPokemonGenus(pokemon: Pokemon, language: 'en' | 'ja'): string
   return genus?.genus || '';
 }
 
-/**
- * Type name translations
- * PokeAPI types are always in English, so we need manual translation
- */
-export const TYPE_TRANSLATIONS: Record<string, { en: string; ja: string }> = {
-  normal: { en: 'Normal', ja: 'ノーマル' },
-  fire: { en: 'Fire', ja: 'ほのお' },
-  water: { en: 'Water', ja: 'みず' },
-  electric: { en: 'Electric', ja: 'でんき' },
-  grass: { en: 'Grass', ja: 'くさ' },
-  ice: { en: 'Ice', ja: 'こおり' },
-  fighting: { en: 'Fighting', ja: 'かくとう' },
-  poison: { en: 'Poison', ja: 'どく' },
-  ground: { en: 'Ground', ja: 'じめん' },
-  flying: { en: 'Flying', ja: 'ひこう' },
-  psychic: { en: 'Psychic', ja: 'エスパー' },
-  bug: { en: 'Bug', ja: 'むし' },
-  rock: { en: 'Rock', ja: 'いわ' },
-  ghost: { en: 'Ghost', ja: 'ゴースト' },
-  dragon: { en: 'Dragon', ja: 'ドラゴン' },
-  dark: { en: 'Dark', ja: 'あく' },
-  steel: { en: 'Steel', ja: 'はがね' },
-  fairy: { en: 'Fairy', ja: 'フェアリー' },
-};
 
 /**
  * Get translated type name
@@ -296,17 +354,6 @@ export function getTypeName(typeName: string, language: 'en' | 'ja'): string {
   return translation ? translation[language] : typeName;
 }
 
-/**
- * Stat name translations
- */
-export const STAT_TRANSLATIONS: Record<string, { en: string; ja: string }> = {
-  hp: { en: 'HP', ja: 'HP' },
-  attack: { en: 'Attack', ja: 'こうげき' },
-  defense: { en: 'Defense', ja: 'ぼうぎょ' },
-  'special-attack': { en: 'Sp. Attack', ja: 'とくこう' },
-  'special-defense': { en: 'Sp. Defense', ja: 'とくぼう' },
-  speed: { en: 'Speed', ja: 'すばやさ' },
-};
 
 /**
  * Get translated stat name
@@ -316,20 +363,6 @@ export function getStatName(statName: string, language: 'en' | 'ja'): string {
   return translation ? translation[language] : statName;
 }
 
-/**
- * Move learn method translations
- */
-export const MOVE_LEARN_METHOD_TRANSLATIONS: Record<string, { en: string; ja: string }> = {
-  'level-up': { en: 'Level Up', ja: 'レベルアップ' },
-  'machine': { en: 'TM/TR', ja: 'わざマシン' },
-  'egg': { en: 'Egg Moves', ja: 'タマゴわざ' },
-  'tutor': { en: 'Move Tutor', ja: 'おしえわざ' },
-  'light-ball-egg': { en: 'Egg (Light Ball)', ja: 'タマゴわざ (でんきだま)' },
-  'colosseum-purification': { en: 'Purification', ja: 'スナッチング' },
-  'xd-shadow': { en: 'Shadow', ja: 'ダーク' },
-  'xd-purification': { en: 'Purification', ja: 'リライブ' },
-  'form-change': { en: 'Form Change', ja: 'フォルムチェンジ' },
-};
 
 /**
  * Get translated move learn method
@@ -353,62 +386,6 @@ export function formatMoveName(moveName: string): string {
  * Ability name translations
  * Common Pokemon abilities in Japanese
  */
-export const ABILITY_TRANSLATIONS: Record<string, { en: string; ja: string }> = {
-  'overgrow': { en: 'Overgrow', ja: 'しんりょく' },
-  'chlorophyll': { en: 'Chlorophyll', ja: 'ようりょくそ' },
-  'blaze': { en: 'Blaze', ja: 'もうか' },
-  'solar-power': { en: 'Solar Power', ja: 'サンパワー' },
-  'torrent': { en: 'Torrent', ja: 'げきりゅう' },
-  'rain-dish': { en: 'Rain Dish', ja: 'あめうけざら' },
-  'shield-dust': { en: 'Shield Dust', ja: 'りんぷん' },
-  'compound-eyes': { en: 'Compound Eyes', ja: 'ふくがん' },
-  'tinted-lens': { en: 'Tinted Lens', ja: 'いろめがね' },
-  'swarm': { en: 'Swarm', ja: 'むしのしらせ' },
-  'keen-eye': { en: 'Keen Eye', ja: 'するどいめ' },
-  'tangled-feet': { en: 'Tangled Feet', ja: 'ちどりあし' },
-  'big-pecks': { en: 'Big Pecks', ja: 'はとむね' },
-  'intimidate': { en: 'Intimidate', ja: 'いかく' },
-  'shed-skin': { en: 'Shed Skin', ja: 'だっぴ' },
-  'wonder-skin': { en: 'Wonder Skin', ja: 'ミラクルスキン' },
-  'static': { en: 'Static', ja: 'せいでんき' },
-  'lightning-rod': { en: 'Lightning Rod', ja: 'ひらいしん' },
-  'sand-veil': { en: 'Sand Veil', ja: 'すながくれ' },
-  'sand-rush': { en: 'Sand Rush', ja: 'すなかき' },
-  'poison-point': { en: 'Poison Point', ja: 'どくのトゲ' },
-  'rivalry': { en: 'Rivalry', ja: 'とうそうしん' },
-  'sheer-force': { en: 'Sheer Force', ja: 'ちからずく' },
-  'cute-charm': { en: 'Cute Charm', ja: 'メロメロボディ' },
-  'magic-guard': { en: 'Magic Guard', ja: 'マジックガード' },
-  'unaware': { en: 'Unaware', ja: 'てんねん' },
-  'flash-fire': { en: 'Flash Fire', ja: 'もらいび' },
-  'flame-body': { en: 'Flame Body', ja: 'ほのおのからだ' },
-  'water-absorb': { en: 'Water Absorb', ja: 'ちょすい' },
-  'damp': { en: 'Damp', ja: 'しめりけ' },
-  'thick-fat': { en: 'Thick Fat', ja: 'あついしぼう' },
-  'synchronize': { en: 'Synchronize', ja: 'シンクロ' },
-  'inner-focus': { en: 'Inner Focus', ja: 'せいしんりょく' },
-  'steadfast': { en: 'Steadfast', ja: 'ふくつのこころ' },
-  'limber': { en: 'Limber', ja: 'じゅうなん' },
-  'imposter': { en: 'Imposter', ja: 'かわりもの' },
-  'insomnia': { en: 'Insomnia', ja: 'ふみん' },
-  'forewarn': { en: 'Forewarn', ja: 'よちむ' },
-  'own-tempo': { en: 'Own Tempo', ja: 'マイペース' },
-  'technician': { en: 'Technician', ja: 'テクニシャン' },
-  'skill-link': { en: 'Skill Link', ja: 'スキルリンク' },
-  'sturdy': { en: 'Sturdy', ja: 'がんじょう' },
-  'rock-head': { en: 'Rock Head', ja: 'いしあたま' },
-  'weak-armor': { en: 'Weak Armor', ja: 'くだけるよろい' },
-  'magnet-pull': { en: 'Magnet Pull', ja: 'じりょく' },
-  'analytic': { en: 'Analytic', ja: 'アナライズ' },
-  'vital-spirit': { en: 'Vital Spirit', ja: 'やるき' },
-  'anger-point': { en: 'Anger Point', ja: 'いかりのつぼ' },
-  'defiant': { en: 'Defiant', ja: 'まけんき' },
-  'guts': { en: 'Guts', ja: 'こんじょう' },
-  'hustle': { en: 'Hustle', ja: 'はりきり' },
-  'pressure': { en: 'Pressure', ja: 'プレッシャー' },
-  'multiscale': { en: 'Multiscale', ja: 'マルチスケイル' },
-  'unnerve': { en: 'Unnerve', ja: 'きんちょうかん' },
-};
 
 /**
  * Get ability name in the specified language
@@ -453,43 +430,6 @@ export function getAbilityName(ability: { name: string; names?: { name: string; 
 /**
  * Game version translations
  */
-export const VERSION_TRANSLATIONS: Record<string, { en: string; ja: string }> = {
-  'red': { en: 'Red', ja: 'あか' },
-  'blue': { en: 'Blue', ja: 'あお' },
-  'yellow': { en: 'Yellow', ja: 'きいろ' },
-  'gold': { en: 'Gold', ja: 'きん' },
-  'silver': { en: 'Silver', ja: 'ぎん' },
-  'crystal': { en: 'Crystal', ja: 'クリスタル' },
-  'ruby': { en: 'Ruby', ja: 'ルビー' },
-  'sapphire': { en: 'Sapphire', ja: 'サファイア' },
-  'emerald': { en: 'Emerald', ja: 'エメラルド' },
-  'firered': { en: 'FireRed', ja: 'ファイアレッド' },
-  'leafgreen': { en: 'LeafGreen', ja: 'リーフグリーン' },
-  'diamond': { en: 'Diamond', ja: 'ダイヤモンド' },
-  'pearl': { en: 'Pearl', ja: 'パール' },
-  'platinum': { en: 'Platinum', ja: 'プラチナ' },
-  'heartgold': { en: 'HeartGold', ja: 'ハートゴールド' },
-  'soulsilver': { en: 'SoulSilver', ja: 'ソウルシルバー' },
-  'black': { en: 'Black', ja: 'ブラック' },
-  'white': { en: 'White', ja: 'ホワイト' },
-  'black-2': { en: 'Black 2', ja: 'ブラック2' },
-  'white-2': { en: 'White 2', ja: 'ホワイト2' },
-  'x': { en: 'X', ja: 'X' },
-  'y': { en: 'Y', ja: 'Y' },
-  'omega-ruby': { en: 'Omega Ruby', ja: 'オメガルビー' },
-  'alpha-sapphire': { en: 'Alpha Sapphire', ja: 'アルファサファイア' },
-  'sun': { en: 'Sun', ja: 'サン' },
-  'moon': { en: 'Moon', ja: 'ムーン' },
-  'ultra-sun': { en: 'Ultra Sun', ja: 'ウルトラサン' },
-  'ultra-moon': { en: 'Ultra Moon', ja: 'ウルトラムーン' },
-  'sword': { en: 'Sword', ja: 'ソード' },
-  'shield': { en: 'Shield', ja: 'シールド' },
-  'brilliant-diamond': { en: 'Brilliant Diamond', ja: 'ブリリアントダイヤモンド' },
-  'shining-pearl': { en: 'Shining Pearl', ja: 'シャイニングパール' },
-  'legends-arceus': { en: 'Legends: Arceus', ja: 'レジェンズアルセウス' },
-  'scarlet': { en: 'Scarlet', ja: 'スカーレット' },
-  'violet': { en: 'Violet', ja: 'バイオレット' },
-};
 
 /**
  * Get translated version name
@@ -624,26 +564,6 @@ export function getTypeBackgroundGradient(pokemon: Pokemon): string {
 /**
  * Type effectiveness chart - each type's weaknesses (what they take super effective damage from)
  */
-const TYPE_EFFECTIVENESS: Record<string, string[]> = {
-  normal: ['fighting'],
-  fire: ['water', 'ground', 'rock'],
-  water: ['electric', 'grass'],
-  electric: ['ground'],
-  grass: ['fire', 'ice', 'poison', 'flying', 'bug'],
-  ice: ['fire', 'fighting', 'rock', 'steel'],
-  fighting: ['flying', 'psychic', 'fairy'],
-  poison: ['ground', 'psychic'],
-  ground: ['water', 'grass', 'ice'],
-  flying: ['electric', 'ice', 'rock'],
-  psychic: ['bug', 'ghost', 'dark'],
-  bug: ['fire', 'flying', 'rock'],
-  rock: ['water', 'grass', 'fighting', 'ground', 'steel'],
-  ghost: ['ghost', 'dark'],
-  dragon: ['ice', 'dragon', 'fairy'],
-  dark: ['fighting', 'bug', 'fairy'],
-  steel: ['fire', 'fighting', 'ground'],
-  fairy: ['poison', 'steel']
-};
 
 /**
  * Get Pokemon's type weaknesses (types that deal super effective damage)
@@ -689,166 +609,6 @@ export function getPokemonSpriteUrl(pokemon: Pokemon, isShiny: boolean = false):
 /**
  * Move name translations for common moves
  */
-export const MOVE_TRANSLATIONS: Record<string, { en: string; ja: string }> = {
-  'tackle': { en: 'Tackle', ja: 'たいあたり' },
-  'growl': { en: 'Growl', ja: 'なきごえ' },
-  'vine-whip': { en: 'Vine Whip', ja: 'つるのムチ' },
-  'leech-seed': { en: 'Leech Seed', ja: 'やどりぎのタネ' },
-  'razor-leaf': { en: 'Razor Leaf', ja: 'はっぱカッター' },
-  'poison-powder': { en: 'Poison Powder', ja: 'どくのこな' },
-  'sleep-powder': { en: 'Sleep Powder', ja: 'ねむりごな' },
-  'petal-dance': { en: 'Petal Dance', ja: 'はなびらのまい' },
-  'string-shot': { en: 'String Shot', ja: 'いとをはく' },
-  'ember': { en: 'Ember', ja: 'ひのこ' },
-  'flamethrower': { en: 'Flamethrower', ja: 'かえんほうしゃ' },
-  'fire-spin': { en: 'Fire Spin', ja: 'かえんぐるま' },
-  'scratch': { en: 'Scratch', ja: 'ひっかく' },
-  'dragon-rage': { en: 'Dragon Rage', ja: 'りゅうのいかり' },
-  'fire-blast': { en: 'Fire Blast', ja: 'だいもんじ' },
-  'water-gun': { en: 'Water Gun', ja: 'みずでっぽう' },
-  'hydro-pump': { en: 'Hydro Pump', ja: 'ハイドロポンプ' },
-  'surf': { en: 'Surf', ja: 'なみのり' },
-  'ice-beam': { en: 'Ice Beam', ja: 'れいとうビーム' },
-  'blizzard': { en: 'Blizzard', ja: 'ふぶき' },
-  'bubble-beam': { en: 'Bubble Beam', ja: 'バブルこうせん' },
-  'aurora-beam': { en: 'Aurora Beam', ja: 'オーロラビーム' },
-  'hyper-beam': { en: 'Hyper Beam', ja: 'はかいこうせん' },
-  'peck': { en: 'Peck', ja: 'つつく' },
-  'drill-peck': { en: 'Drill Peck', ja: 'ドリルくちばし' },
-  'thunder-shock': { en: 'Thunder Shock', ja: 'でんきショック' },
-  'thunderbolt': { en: 'Thunderbolt', ja: '10まんボルト' },
-  'thunder-wave': { en: 'Thunder Wave', ja: 'でんじは' },
-  'thunder': { en: 'Thunder', ja: 'かみなり' },
-  'rock-throw': { en: 'Rock Throw', ja: 'いわおとし' },
-  'earthquake': { en: 'Earthquake', ja: 'じしん' },
-  'dig': { en: 'Dig', ja: 'あなをほる' },
-  'toxic': { en: 'Toxic', ja: 'どくどく' },
-  'psychic': { en: 'Psychic', ja: 'サイコキネシス' },
-  'hypnosis': { en: 'Hypnosis', ja: 'さいみんじゅつ' },
-  'meditate': { en: 'Meditate', ja: 'ヨガのポーズ' },
-  'agility': { en: 'Agility', ja: 'こうそくいどう' },
-  'quick-attack': { en: 'Quick Attack', ja: 'でんこうせっか' },
-  'rage': { en: 'Rage', ja: 'いかり' },
-  'teleport': { en: 'Teleport', ja: 'テレポート' },
-  'night-shade': { en: 'Night Shade', ja: 'ナイトヘッド' },
-  'mimic': { en: 'Mimic', ja: 'ものまね' },
-  'screech': { en: 'Screech', ja: 'きんぞくおん' },
-  'double-team': { en: 'Double Team', ja: 'かげぶんしん' },
-  'recover': { en: 'Recover', ja: 'じこさいせい' },
-  'harden': { en: 'Harden', ja: 'かたくなる' },
-  'minimize': { en: 'Minimize', ja: 'ちいさくなる' },
-  'smokescreen': { en: 'Smokescreen', ja: 'えんまく' },
-  'confuse-ray': { en: 'Confuse Ray', ja: 'あやしいひかり' },
-  'withdraw': { en: 'Withdraw', ja: 'からにこもる' },
-  'defense-curl': { en: 'Defense Curl', ja: 'まるくなる' },
-  'barrier': { en: 'Barrier', ja: 'バリアー' },
-  'light-screen': { en: 'Light Screen', ja: 'ひかりのかべ' },
-  'haze': { en: 'Haze', ja: 'くろいきり' },
-  'reflect': { en: 'Reflect', ja: 'リフレクター' },
-  'focus-energy': { en: 'Focus Energy', ja: 'きあいだめ' },
-  'bide': { en: 'Bide', ja: 'がまん' },
-  'metronome': { en: 'Metronome', ja: 'ゆびをふる' },
-  'mirror-move': { en: 'Mirror Move', ja: 'オウムがえし' },
-  'self-destruct': { en: 'Self-Destruct', ja: 'じばく' },
-  'egg-bomb': { en: 'Egg Bomb', ja: 'タマゴばくだん' },
-  'lick': { en: 'Lick', ja: 'したでなめる' },
-  'smog': { en: 'Smog', ja: 'スモッグ' },
-  'sludge': { en: 'Sludge', ja: 'ヘドロこうげき' },
-  'bone-club': { en: 'Bone Club', ja: 'ホネこんぼう' },
-  'fire-punch': { en: 'Fire Punch', ja: 'ほのおのパンチ' },
-  'ice-punch': { en: 'Ice Punch', ja: 'れいとうパンチ' },
-  'thunder-punch': { en: 'Thunder Punch', ja: 'かみなりパンチ' },
-  'slash': { en: 'Slash', ja: 'きりさく' },
-  'substitute': { en: 'Substitute', ja: 'みがわり' },
-  'struggle': { en: 'Struggle', ja: 'わるあがき' },
-  'sketch': { en: 'Sketch', ja: 'スケッチ' },
-  'triple-kick': { en: 'Triple Kick', ja: 'トリプルキック' },
-  'thief': { en: 'Thief', ja: 'どろぼう' },
-  'spider-web': { en: 'Spider Web', ja: 'クモのす' },
-  'mind-reader': { en: 'Mind Reader', ja: 'こころのめ' },
-  'nightmare': { en: 'Nightmare', ja: 'あくむ' },
-  'flame-wheel': { en: 'Flame Wheel', ja: 'かえんぐるま' },
-  'snore': { en: 'Snore', ja: 'いびき' },
-  'curse': { en: 'Curse', ja: 'のろい' },
-  'flail': { en: 'Flail', ja: 'じたばた' },
-  'conversion-2': { en: 'Conversion 2', ja: 'テクスチャー2' },
-  'aeroblast': { en: 'Aeroblast', ja: 'エアロブラスト' },
-  'cotton-spore': { en: 'Cotton Spore', ja: 'わたほうし' },
-  'reversal': { en: 'Reversal', ja: 'きしかいせい' },
-  'spite': { en: 'Spite', ja: 'うらみ' },
-  'powder-snow': { en: 'Powder Snow', ja: 'こなゆき' },
-  'protect': { en: 'Protect', ja: 'まもる' },
-  'mach-punch': { en: 'Mach Punch', ja: 'マッハパンチ' },
-  'scary-face': { en: 'Scary Face', ja: 'こわいかお' },
-  'feint-attack': { en: 'Feint Attack', ja: 'だましうち' },
-  'sweet-kiss': { en: 'Sweet Kiss', ja: 'てんしのキッス' },
-  'belly-drum': { en: 'Belly Drum', ja: 'はらだいこ' },
-  'sludge-bomb': { en: 'Sludge Bomb', ja: 'ヘドロばくだん' },
-  'mud-slap': { en: 'Mud-Slap', ja: 'どろかけ' },
-  'octazooka': { en: 'Octazooka', ja: 'オクタンほう' },
-  'spikes': { en: 'Spikes', ja: 'まきびし' },
-  'zap-cannon': { en: 'Zap Cannon', ja: 'でんじほう' },
-  'foresight': { en: 'Foresight', ja: 'みやぶる' },
-  'destiny-bond': { en: 'Destiny Bond', ja: 'みちづれ' },
-  'perish-song': { en: 'Perish Song', ja: 'ほろびのうた' },
-  'icy-wind': { en: 'Icy Wind', ja: 'こごえるかぜ' },
-  'detect': { en: 'Detect', ja: 'みきり' },
-  'bone-rush': { en: 'Bone Rush', ja: 'ホネブーメラン' },
-  'lock-on': { en: 'Lock-On', ja: 'ロックオン' },
-  'outrage': { en: 'Outrage', ja: 'げきりん' },
-  'sandstorm': { en: 'Sandstorm', ja: 'すなあらし' },
-  'giga-drain': { en: 'Giga Drain', ja: 'ギガドレイン' },
-  'endure': { en: 'Endure', ja: 'こらえる' },
-  'charm': { en: 'Charm', ja: 'あまえる' },
-  'rollout': { en: 'Rollout', ja: 'ころがる' },
-  'false-swipe': { en: 'False Swipe', ja: 'みねうち' },
-  'swagger': { en: 'Swagger', ja: 'いばる' },
-  'milk-drink': { en: 'Milk Drink', ja: 'ミルクのみ' },
-  'spark': { en: 'Spark', ja: 'スパーク' },
-  'fury-cutter': { en: 'Fury Cutter', ja: 'れんぞくぎり' },
-  'steel-wing': { en: 'Steel Wing', ja: 'はがねのつばさ' },
-  'mean-look': { en: 'Mean Look', ja: 'くろいまなざし' },
-  'attract': { en: 'Attract', ja: 'メロメロ' },
-  'sleep-talk': { en: 'Sleep Talk', ja: 'ねごと' },
-  'heal-bell': { en: 'Heal Bell', ja: 'いやしのすず' },
-  'return': { en: 'Return', ja: 'おんがえし' },
-  'present': { en: 'Present', ja: 'プレゼント' },
-  'frustration': { en: 'Frustration', ja: 'やつあたり' },
-  'safeguard': { en: 'Safeguard', ja: 'しんぴのまもり' },
-  'pain-split': { en: 'Pain Split', ja: 'いたみわけ' },
-  'sacred-fire': { en: 'Sacred Fire', ja: 'せいなるほのお' },
-  'magnitude': { en: 'Magnitude', ja: 'マグニチュード' },
-  'dynamic-punch': { en: 'Dynamic Punch', ja: 'ばくれつパンチ' },
-  'megahorn': { en: 'Megahorn', ja: 'メガホーン' },
-  'dragon-breath': { en: 'Dragon Breath', ja: 'りゅうのいぶき' },
-  'baton-pass': { en: 'Baton Pass', ja: 'バトンタッチ' },
-  'encore': { en: 'Encore', ja: 'アンコール' },
-  'pursuit': { en: 'Pursuit', ja: 'おいうち' },
-  'rapid-spin': { en: 'Rapid Spin', ja: 'こうそくスピン' },
-  'sweet-scent': { en: 'Sweet Scent', ja: 'あまいかおり' },
-  'iron-tail': { en: 'Iron Tail', ja: 'アイアンテール' },
-  'metal-claw': { en: 'Metal Claw', ja: 'メタルクロー' },
-  'vital-throw': { en: 'Vital Throw', ja: 'あてみなげ' },
-  'morning-sun': { en: 'Morning Sun', ja: 'あさのひざし' },
-  'synthesis': { en: 'Synthesis', ja: 'こうごうせい' },
-  'moonlight': { en: 'Moonlight', ja: 'つきのひかり' },
-  'hidden-power': { en: 'Hidden Power', ja: 'めざめるパワー' },
-  'cross-chop': { en: 'Cross Chop', ja: 'クロスチョップ' },
-  'twister': { en: 'Twister', ja: 'たつまき' },
-  'rain-dance': { en: 'Rain Dance', ja: 'あまごい' },
-  'sunny-day': { en: 'Sunny Day', ja: 'にほんばれ' },
-  'crunch': { en: 'Crunch', ja: 'かみくだく' },
-  'mirror-coat': { en: 'Mirror Coat', ja: 'ミラーコート' },
-  'psych-up': { en: 'Psych Up', ja: 'じこあんじ' },
-  'extreme-speed': { en: 'Extreme Speed', ja: 'しんそく' },
-  'ancient-power': { en: 'Ancient Power', ja: 'げんしのちから' },
-  'shadow-ball': { en: 'Shadow Ball', ja: 'シャドーボール' },
-  'future-sight': { en: 'Future Sight', ja: 'みらいよち' },
-  'rock-smash': { en: 'Rock Smash', ja: 'いわくだき' },
-  'whirlpool': { en: 'Whirlpool', ja: 'うずしお' },
-  'beat-up': { en: 'Beat Up', ja: 'ふくろだたき' },
-  'stomp': { en: 'Stomp', ja: 'ふみつけ' }
-};
 
 /**
  * Get move name in the specified language

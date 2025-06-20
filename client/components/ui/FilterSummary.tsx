@@ -2,8 +2,7 @@
 
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { clearFilters } from '@/store/slices/pokemonSlice';
-import { Badge } from './Badge';
-import { POKEMON_TYPE_COLORS, PokemonTypeName } from '@/types/pokemon';
+import { Badge, TypeBadge } from './Badge';
 import { getTypeName } from '@/lib/pokemonUtils';
 
 interface FilterSummaryProps {
@@ -69,18 +68,15 @@ export function FilterSummary({ resultCount, totalCount }: FilterSummaryProps) {
 
         {/* Type Filters */}
         {filters.types.map((type) => {
-          const typeName = type.name as PokemonTypeName;
-          const typeColor = POKEMON_TYPE_COLORS[typeName] || '#68A090';
           const displayName = getTypeName(type.name, language);
           
           return (
-            <Badge 
+            <TypeBadge 
               key={type.name} 
-              className="text-white text-xs"
-              style={{ backgroundColor: typeColor }}
-            >
-              {displayName}
-            </Badge>
+              type={type.name}
+              displayName={displayName}
+              size="sm"
+            />
           );
         })}
 

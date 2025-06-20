@@ -915,6 +915,29 @@ app/[lang]/              # Dynamic language routing
 
 ## Recent Major Updates
 
+### Data File Separation Refactoring (June 2025)
+- **Complete Translation Data Organization**: Separated all large translation objects from utility files into dedicated data files
+- **File Structure Enhancement**: Created organized `client/lib/data/` directory with individual files:
+  - **abilityTranslations.ts**: 55+ Pokemon abilities in English/Japanese
+  - **moveTranslations.ts**: 150+ Pokemon moves in English/Japanese  
+  - **versionTranslations.ts**: Game version translations for all generations
+  - **typeEffectiveness.ts**: Type weakness chart for battle calculations
+  - **moveLearnMethodTranslations.ts**: Move learning method translations
+  - **statTranslations.ts**: Pokemon stat name translations
+  - **typeTranslations.ts**: Pokemon type name translations
+  - **itemTranslations.ts**: Evolution item translations (stones, trade items, etc.)
+- **Code Organization Improvements**: 
+  - Removed ~350 lines of inline translation data from pokemonUtils.ts
+  - Eliminated duplicate gameNames object from PokemonGameHistory.tsx
+  - Centralized all translation data with consistent import patterns
+  - Enhanced maintainability by separating data from logic
+- **Component Updates**: Updated all components to use centralized translation files:
+  - PokemonEvolutionChain.tsx now imports ITEM_TRANSLATIONS
+  - PokemonGameHistory.tsx refactored to use VERSION_TRANSLATIONS
+  - All utility functions updated with proper imports and type safety
+- **Build Verification**: All 309 static pages generate successfully with new data organization
+- **Performance Benefits**: Reduced bundle size and improved code splitting through modular data files
+
 ### App Router i18n Migration (December 2024)
 - **Migration from Pages Router**: Complete transition from next-i18next to native Next.js 15 App Router i18n
 - **Architecture Overhaul**: New `[lang]` directory structure with middleware-based language detection

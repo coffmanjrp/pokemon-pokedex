@@ -6,7 +6,8 @@ import React from 'react';
 import { EvolutionDetail, PokemonTypeSlot, EvolutionTrigger, FormVariant } from '@/types/pokemon';
 import { Locale } from '@/lib/dictionaries';
 import { getTypeName, getEvolutionPokemonName } from '@/lib/pokemonUtils';
-import { getFormDisplayName } from '@/lib/formUtils';
+import { getFormDisplayName, getFormBadgeName, getFormBadgeColor } from '@/lib/formUtils';
+import { ITEM_TRANSLATIONS } from '@/lib/data/itemTranslations';
 import { POKEMON_TYPE_COLORS } from '@/types/pokemon';
 
 interface PokemonEvolutionChainProps {
@@ -99,31 +100,21 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
 
                     {/* Form Info */}
                     <div className="text-center">
-                      <p className="text-xs text-gray-700 font-medium truncate max-w-20">
-                        {getFormDisplayName(pokemonName, form.formName, lang)}
-                      </p>
-                      
-                      {/* Form Category Badge */}
-                      <div className="mt-1">
-                        {form.isRegionalVariant && (
-                          <span className="px-1 py-0.5 bg-green-100 text-green-800 text-xs rounded">
-                            {lang === 'en' ? 'Regional' : '地方'}
-                          </span>
-                        )}
-                        {form.isMegaEvolution && (
-                          <span className="px-1 py-0.5 bg-purple-100 text-purple-800 text-xs rounded">
-                            {lang === 'en' ? 'Mega' : 'メガ'}
-                          </span>
-                        )}
-                        {form.isDynamax && (
-                          <span className="px-1 py-0.5 bg-red-100 text-red-800 text-xs rounded">
-                            {lang === 'en' ? 'G-Max' : 'キョダイ'}
-                          </span>
-                        )}
+                      {/* Form Badge */}
+                      <div className="mb-1">
+                        {(() => {
+                          const badgeName = getFormBadgeName(form.formName, lang);
+                          const badgeColor = getFormBadgeColor(form.formName);
+                          return badgeName ? (
+                            <span className={`px-1 py-0.5 text-xs rounded ${badgeColor}`}>
+                              {badgeName}
+                            </span>
+                          ) : null;
+                        })()}
                       </div>
 
                       {/* Form Types */}
-                      <div className="flex gap-1 mt-1 justify-center">
+                      <div className="flex gap-1 justify-center">
                         {form.types && form.types.slice(0, 2).map((typeInfo: PokemonTypeSlot) => (
                           <span
                             key={typeInfo.type.name}
@@ -183,54 +174,20 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
     }
 
     if (trigger.item) {
-      const itemName = trigger.item.name.replace(/-/g, ' ');
+      const itemKey = trigger.item.name.toLowerCase();
+      const itemTranslation = ITEM_TRANSLATIONS[itemKey];
       
-      // Item name translation for Japanese
-      const getItemName = (itemName: string, lang: string): string => {
-        if (lang === 'en') return itemName;
-        
-        const itemTranslations: Record<string, string> = {
-          'thunder stone': 'かみなりのいし',
-          'fire stone': 'ほのおのいし',
-          'water stone': 'みずのいし',
-          'leaf stone': 'リーフのいし',
-          'moon stone': 'つきのいし',
-          'sun stone': 'たいようのいし',
-          'shiny stone': 'ひかりのいし',
-          'dusk stone': 'やみのいし',
-          'dawn stone': 'めざめいし',
-          'ice stone': 'こおりのいし',
-          'oval stone': 'まんまるいし',
-          'kings rock': 'おうじゃのしるし',
-          'metal coat': 'メタルコート',
-          'dragon scale': 'りゅうのウロコ',
-          'upgrade': 'アップグレード',
-          'dubious disc': 'あやしいパッチ',
-          'protector': 'プロテクター',
-          'electirizer': 'エレキブースター',
-          'magmarizer': 'マグマブースター',
-          'razor claw': 'するどいツメ',
-          'razor fang': 'するどいキバ',
-          'reaper cloth': 'れいかいのぬの',
-          'deep sea tooth': 'しんかいのキバ',
-          'deep sea scale': 'しんかいのウロコ',
-          'prism scale': 'きれいなウロコ',
-          'sachet': 'においぶくろ',
-          'whipped dream': 'ホイップポップ',
-          'strawberry sweet': 'いちごアメざいく',
-          'berry sweet': 'ベリーアメざいく',
-          'love sweet': 'ハートアメざいく',
-          'star sweet': 'スターアメざいく',
-          'clover sweet': 'よつばアメざいく',
-          'flower sweet': 'おはなアメざいく',
-          'ribbon sweet': 'リボンアメざいく'
-        };
-        
-        return itemTranslations[itemName.toLowerCase()] || itemName;
-      };
-      
-      const translatedItemName = getItemName(itemName, lang);
-      conditions.push(lang === 'en' ? `Use ${itemName}` : `${translatedItemName}を使用`);
+      if (itemTranslation) {
+        const itemName = itemTranslation[lang === 'en' ? 'en' : 'ja'];
+        conditions.push(lang === 'en' ? `Use ${itemName}` : `${itemName}を使用`);
+      } else {
+        // Fallback to formatted item name
+        const formattedName = trigger.item.name.replace(/-/g, ' ');
+        const capitalizedName = formattedName.split(' ').map(word => 
+          word.charAt(0).toUpperCase() + word.slice(1)
+        ).join(' ');
+        conditions.push(lang === 'en' ? `Use ${capitalizedName}` : `${capitalizedName}を使用`);
+      }
     }
 
     if (trigger.trigger?.name === 'trade') {
