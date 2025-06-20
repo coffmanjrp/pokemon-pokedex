@@ -646,9 +646,25 @@ export const MOVE_TRANSLATIONS: Record<string, { en: string; ja: string }> = {
 
 /**
  * Get move name in the specified language
- * Falls back to English name if target language is not available
+ * Prioritizes GraphQL data, falls back to manual translations, then English name
  */
 export function getMoveName(move: Move, language: 'en' | 'ja'): string {
+  // First, try to get name from GraphQL API data if available
+  if (move.names && move.names.length > 0) {
+    const targetLanguage = language === 'ja' ? ['ja', 'ja-Hrkt'] : ['en'];
+    
+    for (const lang of targetLanguage) {
+      const languageName = move.names.find(
+        nameEntry => nameEntry.language.name === lang
+      );
+      
+      if (languageName) {
+        return languageName.name;
+      }
+    }
+  }
+  
+  // Fallback to manual translation table for moves not covered by API
   const moveName = move.name.toLowerCase();
   const translation = MOVE_TRANSLATIONS[moveName];
   
@@ -656,6 +672,6 @@ export function getMoveName(move: Move, language: 'en' | 'ja'): string {
     return translation[language];
   }
   
-  // Fallback to formatted English name
+  // Final fallback to formatted English name
   return move.name.charAt(0).toUpperCase() + move.name.slice(1).replace(/-/g, ' ');
 }

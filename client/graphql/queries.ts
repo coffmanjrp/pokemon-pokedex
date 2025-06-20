@@ -130,6 +130,13 @@ export const GET_POKEMON = gql`
           id
           name
           url
+          names {
+            name
+            language {
+              name
+              url
+            }
+          }
           type {
             id
             name

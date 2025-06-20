@@ -333,6 +333,7 @@ export interface Move {
   id: string;
   name: string;
   url: string;
+  names: NamedResourceWithLanguage[];
   type: PokemonType;
   damageClass: MoveDamageClass;
   power?: number;
