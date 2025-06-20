@@ -1,13 +1,83 @@
 import { Pokemon, EvolutionDetail, Move } from '@/types/pokemon';
-import { getFormDisplayName } from '@/lib/formUtils';
+import { getFormDisplayName, REGIONAL_FORM_TRANSLATIONS, MEGA_FORM_TRANSLATIONS, GIGANTAMAX_FORM_TRANSLATIONS, SPECIAL_FORM_TRANSLATIONS } from '@/lib/formUtils';
 import React from 'react';
+
+/**
+ * Get form translation for use in Japanese Pokemon names
+ * Returns the form suffix like "アローラのすがた", "メガ", etc.
+ */
+function getFormTranslation(formName: string, language: 'en' | 'ja'): string | null {
+  // Check regional forms
+  for (const [key, translation] of Object.entries(REGIONAL_FORM_TRANSLATIONS)) {
+    if (formName.includes(key)) {
+      return translation[language];
+    }
+  }
+  
+  // Check mega forms
+  for (const [key, translation] of Object.entries(MEGA_FORM_TRANSLATIONS)) {
+    if (formName.includes(key)) {
+      return translation[language];
+    }
+  }
+  
+  // Check gigantamax forms
+  for (const [key, translation] of Object.entries(GIGANTAMAX_FORM_TRANSLATIONS)) {
+    if (formName.includes(key)) {
+      return translation[language];
+    }
+  }
+  
+  // Check special forms
+  for (const [key, translation] of Object.entries(SPECIAL_FORM_TRANSLATIONS)) {
+    if (formName.includes(key)) {
+      return translation[language];
+    }
+  }
+  
+  return null;
+}
 
 /**
  * Get Pokemon name in the specified language
  * Falls back to English name if target language is not available
  */
 export function getPokemonName(pokemon: Pokemon, language: 'en' | 'ja'): string {
-  // For Japanese, always use species name if available
+  // Check if this is a variant Pokemon
+  const nameParts = pokemon.name.split('-');
+  const isVariant = nameParts.length > 1;
+  
+  if (isVariant) {
+    const baseName = nameParts[0];
+    const formName = nameParts.slice(1).join('-');
+    
+    if (language === 'ja' && pokemon.species?.names) {
+      // For Japanese variants, combine Japanese species name with form translation
+      const japaneseName = pokemon.species.names.find(
+        nameEntry => nameEntry.language.name === 'ja' || nameEntry.language.name === 'ja-Hrkt'
+      );
+      
+      if (japaneseName?.name) {
+        // Use getFormDisplayName to get the form part in Japanese
+        const fullFormName = getFormDisplayName(baseName, formName, language);
+        
+        // Extract just the form part from the full form name
+        // For example, "Alolan Sandslash" -> "Alolan", then translate to "（アローラのすがた）"
+        const formTranslation = getFormTranslation(formName, language);
+        
+        if (formTranslation) {
+          return `${japaneseName.name}（${formTranslation}）`;
+        }
+        
+        return japaneseName.name;
+      }
+    }
+    
+    // For English or when Japanese name is not available
+    return getFormDisplayName(baseName, formName, language);
+  }
+  
+  // For non-variant Pokemon
   if (language === 'ja' && pokemon.species?.names) {
     const japaneseName = pokemon.species.names.find(
       nameEntry => nameEntry.language.name === 'ja' || nameEntry.language.name === 'ja-Hrkt'
@@ -16,22 +86,8 @@ export function getPokemonName(pokemon: Pokemon, language: 'en' | 'ja'): string 
       return japaneseName.name;
     }
   }
-
-  // For English, check if this is a variant and format appropriately
-  if (language === 'en') {
-    // Extract base name and form from the Pokemon name
-    const nameParts = pokemon.name.split('-');
-    if (nameParts.length > 1) {
-      const baseName = nameParts[0];
-      const formName = nameParts.slice(1).join('-');
-      return getFormDisplayName(baseName, formName, language);
-    }
-    
-    // For non-variant Pokemon, just capitalize
-    return pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
-  }
-
-  // Fallback
+  
+  // Fallback: capitalize English name
   return pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
 }
 
@@ -40,7 +96,36 @@ export function getPokemonName(pokemon: Pokemon, language: 'en' | 'ja'): string 
  * Falls back to English name if target language is not available
  */
 export function getEvolutionPokemonName(evolutionDetail: EvolutionDetail, language: 'en' | 'ja'): string {
-  // For Japanese, always use species name if available
+  // Check if this is a variant Pokemon
+  const nameParts = evolutionDetail.name.split('-');
+  const isVariant = nameParts.length > 1;
+  
+  if (isVariant) {
+    const baseName = nameParts[0];
+    const formName = nameParts.slice(1).join('-');
+    
+    if (language === 'ja' && evolutionDetail.species?.names) {
+      // For Japanese variants, combine Japanese species name with form translation
+      const japaneseName = evolutionDetail.species.names.find(
+        nameEntry => nameEntry.language.name === 'ja' || nameEntry.language.name === 'ja-Hrkt'
+      );
+      
+      if (japaneseName?.name) {
+        const formTranslation = getFormTranslation(formName, language);
+        
+        if (formTranslation) {
+          return `${japaneseName.name}（${formTranslation}）`;
+        }
+        
+        return japaneseName.name;
+      }
+    }
+    
+    // For English or when Japanese name is not available
+    return getFormDisplayName(baseName, formName, language);
+  }
+  
+  // For non-variant Pokemon
   if (language === 'ja' && evolutionDetail.species?.names) {
     const japaneseName = evolutionDetail.species.names.find(
       nameEntry => nameEntry.language.name === 'ja' || nameEntry.language.name === 'ja-Hrkt'
@@ -49,22 +134,8 @@ export function getEvolutionPokemonName(evolutionDetail: EvolutionDetail, langua
       return japaneseName.name;
     }
   }
-
-  // For English, check if this is a variant and format appropriately
-  if (language === 'en') {
-    // Extract base name and form from the Pokemon name
-    const nameParts = evolutionDetail.name.split('-');
-    if (nameParts.length > 1) {
-      const baseName = nameParts[0];
-      const formName = nameParts.slice(1).join('-');
-      return getFormDisplayName(baseName, formName, language);
-    }
-    
-    // For non-variant Pokemon, just capitalize
-    return evolutionDetail.name.charAt(0).toUpperCase() + evolutionDetail.name.slice(1);
-  }
-
-  // Fallback
+  
+  // Fallback: capitalize English name
   return evolutionDetail.name.charAt(0).toUpperCase() + evolutionDetail.name.slice(1);
 }
 
