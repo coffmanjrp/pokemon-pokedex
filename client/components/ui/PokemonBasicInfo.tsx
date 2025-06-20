@@ -303,7 +303,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
                   
                   return (
                     <div key={index} className="flex items-center gap-3">
-                      <div className="w-16 text-xs text-gray-600">
+                      <div className="w-20 text-xs text-gray-600 text-right">
                         {getStatName(statName, language)}
                       </div>
                       <div className="text-sm font-semibold w-8 text-right">
