@@ -16,11 +16,19 @@ import {
 } from '@/lib/pokemonUtils';
 import { PokemonTypes } from './PokemonTypes';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface PokemonBasicInfoProps {
   pokemon: Pokemon;
   language: 'en' | 'ja';
 }
+
+// Helper function to get previous/next Pokemon ID
+const getPrevNextPokemonId = (currentId: number) => {
+  const prevId = currentId > 1 ? currentId - 1 : 1025; // Loop to last Pokemon
+  const nextId = currentId < 1025 ? currentId + 1 : 1; // Loop to first Pokemon
+  return { prevId, nextId };
+};
 
 export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
   const [isShiny, setIsShiny] = useState(false);
@@ -30,6 +38,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
   const genus = getPokemonGenus(pokemon, language);
   const weaknesses = getPokemonWeaknesses(pokemon);
   const primaryTypeColor = getPrimaryTypeColor(pokemon);
+  const { prevId, nextId } = getPrevNextPokemonId(parseInt(pokemon.id));
 
   // Type colors for stat bars (matching reference design colors)
   const typeColors: Record<string, string> = {
@@ -50,7 +59,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
         {/* Left Side - Pokemon Image (3/5 columns) */}
         <div className="lg:col-span-3 flex items-center justify-center relative">
           <div className="relative">
-            {/* Navigation arrows will be added later */}
+            {/* Pokemon Image with Navigation Arrows */}
             <div className="w-96 h-96 flex items-center justify-center relative">
               {/* Background circle with type color */}
               <div 
@@ -65,6 +74,23 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
                   backgroundColor: primaryTypeColor,
                 }}
               />
+              
+              {/* Previous Pokemon Navigation */}
+              <Link
+                href={`/${language}/pokemon/${prevId}`}
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200 group"
+              >
+                <svg 
+                  className="w-6 h-6 text-gray-600 group-hover:text-gray-900 transition-colors" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </Link>
+              
+              {/* Pokemon Image */}
               <div className="relative w-full h-full z-10">
                 <Image
                   src={getPokemonSpriteUrl(pokemon, isShiny)}
@@ -75,6 +101,21 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
                   priority={true}
                 />
               </div>
+              
+              {/* Next Pokemon Navigation */}
+              <Link
+                href={`/${language}/pokemon/${nextId}`}
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200 group"
+              >
+                <svg 
+                  className="w-6 h-6 text-gray-600 group-hover:text-gray-900 transition-colors" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
             </div>
           </div>
         </div>
@@ -256,6 +297,35 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
                 {language === 'en' ? 'No stats available' : 'ステータスがありません'}
               </div>
             )}
+          </div>
+
+          {/* Navigation Info */}
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <div className="flex justify-between items-center text-sm">
+              <Link
+                href={`/${language}/pokemon/${prevId}`}
+                className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                <span>#{prevId.toString().padStart(3, '0')}</span>
+              </Link>
+              
+              <span className="text-gray-400 text-xs">
+                #{pokemon.id.toString().padStart(3, '0')} / 1025
+              </span>
+              
+              <Link
+                href={`/${language}/pokemon/${nextId}`}
+                className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
+              >
+                <span>#{nextId.toString().padStart(3, '0')}</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
