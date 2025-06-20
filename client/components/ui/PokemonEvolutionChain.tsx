@@ -18,26 +18,11 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
   const renderEvolutionChain = (evolution: EvolutionDetail): React.ReactElement[] => {
     const chain: React.ReactElement[] = [];
     
-    const addEvolutionStage = (currentEvolution: EvolutionDetail, nextEvolution?: EvolutionDetail) => {
+    const addEvolutionStage = (currentEvolution: EvolutionDetail) => {
       if (!currentEvolution) return;
       const pokemonName = currentEvolution.name || 'Unknown';
       const pokemonId = currentEvolution.id || '0';
       const imageUrl = currentEvolution.sprites?.other?.officialArtwork?.frontDefault || currentEvolution.sprites?.frontDefault;
-
-      // Add evolution arrow if there's a next evolution
-      if (nextEvolution) {
-        chain.push(
-          <div key={`arrow-${nextEvolution.id}`} className="flex flex-col md:flex-row items-center mx-2 md:mx-4">
-            <div className="w-0 h-0 border-l-8 border-r-8 border-b-12 border-l-transparent border-r-transparent border-b-blue-500 rotate-180 md:rotate-90 mb-2 md:mb-0 md:mr-2"></div>
-            <div className="bg-blue-50 px-3 py-2 rounded-lg text-sm text-blue-800 font-medium text-center whitespace-nowrap border border-blue-100 shadow-sm">
-              {Array.isArray(nextEvolution.evolutionDetails) && nextEvolution.evolutionDetails.length > 0 ? 
-                renderEvolutionCondition(nextEvolution.evolutionDetails[0], lang) : 
-                (lang === 'en' ? 'Unknown' : '不明')
-              }
-            </div>
-          </div>
-        );
-      }
 
       // Add Pokemon card
       chain.push(
@@ -65,7 +50,7 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
             {/* Pokemon Info */}
             <div className="text-center">
               <p className="text-sm text-gray-500 font-medium">#{pokemonId.padStart(3, '0')}</p>
-              <p className="font-semibold text-gray-900 capitalize">{pokemonName}</p>
+              <p className="font-semibold text-gray-900">{pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1)}</p>
               
               {/* Types */}
               <div className="flex gap-1 mt-2 justify-center">
@@ -156,24 +141,29 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
         </div>
       );
 
-      // Process evolutions (only first evolution to keep linear chain)
+      // Add evolution arrow and next stage if evolution exists
       if (currentEvolution.evolvesTo && Array.isArray(currentEvolution.evolvesTo) && currentEvolution.evolvesTo.length > 0) {
-        const nextStage = currentEvolution.evolvesTo[0];
-        const thirdStage = nextStage.evolvesTo && Array.isArray(nextStage.evolvesTo) && nextStage.evolvesTo.length > 0 
-          ? nextStage.evolvesTo[0] 
-          : undefined;
+        const nextEvolution = currentEvolution.evolvesTo[0];
         
-        addEvolutionStage(nextStage, thirdStage);
+        // Add arrow
+        chain.push(
+          <div key={`arrow-${nextEvolution.id}`} className="flex flex-col md:flex-row items-center mx-2 md:mx-4">
+            <div className="w-0 h-0 border-l-8 border-r-8 border-b-12 border-l-transparent border-r-transparent border-b-blue-500 rotate-180 md:rotate-90 mb-2 md:mb-0 md:mr-2"></div>
+            <div className="bg-blue-50 px-3 py-2 rounded-lg text-sm text-blue-800 font-medium text-center whitespace-nowrap border border-blue-100 shadow-sm">
+              {Array.isArray(nextEvolution.evolutionDetails) && nextEvolution.evolutionDetails.length > 0 ? 
+                renderEvolutionCondition(nextEvolution.evolutionDetails[0], lang) : 
+                (lang === 'en' ? 'Unknown' : '不明')
+              }
+            </div>
+          </div>
+        );
+        
+        // Recursively add next evolution
+        addEvolutionStage(nextEvolution);
       }
     };
 
-    // Start with the base evolution
-    const firstStage = evolution;
-    const secondStage = firstStage.evolvesTo && Array.isArray(firstStage.evolvesTo) && firstStage.evolvesTo.length > 0 
-      ? firstStage.evolvesTo[0] 
-      : undefined;
-    
-    addEvolutionStage(firstStage, secondStage);
+    addEvolutionStage(evolution);
     return chain;
   };
 
