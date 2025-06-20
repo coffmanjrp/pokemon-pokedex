@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { PokemonMove, POKEMON_TYPE_COLORS, PokemonTypeName } from '@/types/pokemon';
-import { getMoveLearnMethodName, formatMoveName, getTypeName } from '@/lib/pokemonUtils';
+import { getMoveLearnMethodName, getMoveName, getTypeName } from '@/lib/pokemonUtils';
 
 interface PokemonMovesProps {
   moves?: PokemonMove[];
@@ -117,7 +117,7 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <h4 className="font-medium text-gray-900 text-lg">
-                        {formatMoveName(move.move.name)}
+                        {getMoveName(move.move, language)}
                       </h4>
                       {selectedMethod === 'level-up' && (
                         <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">

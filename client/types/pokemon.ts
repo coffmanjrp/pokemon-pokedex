@@ -332,6 +332,7 @@ export interface PokemonMove {
 export interface Move {
   id: string;
   name: string;
+  names: NamedResourceWithLanguage[];
   url: string;
   type: PokemonType;
   damageClass: MoveDamageClass;

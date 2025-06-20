@@ -1,4 +1,4 @@
-import { Pokemon, EvolutionDetail } from '@/types/pokemon';
+import { Pokemon, EvolutionDetail, Move } from '@/types/pokemon';
 import React from 'react';
 
 /**
@@ -479,4 +479,21 @@ export function getPokemonSpriteUrl(pokemon: Pokemon, isShiny: boolean = false):
     pokemon.sprites.frontDefault ||
     '/placeholder-pokemon.png'
   );
+}
+
+/**
+ * Get move name in the specified language
+ * Falls back to English name if target language is not available
+ */
+export function getMoveName(move: Move, language: 'en' | 'ja'): string {
+  if (language === 'en' || !move.names) {
+    return move.name.charAt(0).toUpperCase() + move.name.slice(1).replace(/-/g, ' ');
+  }
+
+  // Find Japanese name from move names data
+  const japaneseName = move.names.find(
+    nameEntry => nameEntry.language.name === 'ja' || nameEntry.language.name === 'ja-Hrkt'
+  );
+
+  return japaneseName?.name || move.name.charAt(0).toUpperCase() + move.name.slice(1).replace(/-/g, ' ');
 }
