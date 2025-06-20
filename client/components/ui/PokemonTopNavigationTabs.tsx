@@ -60,8 +60,8 @@ export function PokemonTopNavigationTabs({ pokemon, lang }: PokemonTopNavigation
             
             {/* Evolution Chain Section - Between Hero and Sprites */}
             {pokemon.species?.evolutionChain?.chain && (
-              <div className="max-w-7xl mx-auto px-8 py-8">
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+              <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 md:py-8">
+                <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-gray-100">
                   <PokemonEvolutionChain 
                     evolutionChain={pokemon.species.evolutionChain.chain} 
                     lang={lang}
@@ -71,7 +71,7 @@ export function PokemonTopNavigationTabs({ pokemon, lang }: PokemonTopNavigation
             )}
 
             {/* Sprites Gallery */}
-            <div className="max-w-7xl mx-auto px-8 pb-8">
+            <div className="max-w-7xl mx-auto px-4 md:px-8 pb-4 md:pb-8">
               <PokemonSpritesGallery pokemon={pokemon} language={lang} />
             </div>
           </div>
@@ -79,8 +79,8 @@ export function PokemonTopNavigationTabs({ pokemon, lang }: PokemonTopNavigation
       
       case 'moves':
         return (
-          <div className="max-w-7xl mx-auto px-8 py-8">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8">
+          <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 md:py-8">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 md:p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
                 {lang === 'en' ? 'Moves' : 'わざ'}
               </h2>
@@ -94,8 +94,8 @@ export function PokemonTopNavigationTabs({ pokemon, lang }: PokemonTopNavigation
       
       case 'description':
         return (
-          <div className="max-w-7xl mx-auto px-8 py-8">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8">
+          <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 md:py-8">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 md:p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
                 {lang === 'en' ? 'Description' : '説明'}
               </h2>
@@ -109,8 +109,8 @@ export function PokemonTopNavigationTabs({ pokemon, lang }: PokemonTopNavigation
       
       case 'gameHistory':
         return (
-          <div className="max-w-7xl mx-auto px-8 py-8">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8">
+          <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 md:py-8">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 md:p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
                 {lang === 'en' ? 'Game History' : 'ゲーム履歴'}
               </h2>
@@ -133,13 +133,13 @@ export function PokemonTopNavigationTabs({ pokemon, lang }: PokemonTopNavigation
       {/* Top Navigation Tabs */}
       <div className="bg-white border-b border-gray-100 sticky top-0 z-20 shadow-sm">
         <div className="max-w-7xl mx-auto">
-          <nav className="flex space-x-0" aria-label="Top Navigation">
+          <nav className="flex space-x-0 overflow-x-auto" aria-label="Top Navigation">
             {topTabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTopTab(tab.id)}
                 disabled={!tab.available}
-                className={`px-6 py-4 text-sm font-medium border-b-2 transition-all duration-200 ${
+                className={`px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm font-medium border-b-2 transition-all duration-200 whitespace-nowrap ${
                   activeTopTab === tab.id
                     ? 'border-blue-500 text-blue-600 bg-blue-50'
                     : tab.available

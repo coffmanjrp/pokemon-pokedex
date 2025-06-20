@@ -27,7 +27,7 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
       // Add evolution arrow if not the first Pokemon
       if (!isFirst) {
         chain.push(
-          <div key={`arrow-${currentEvolution.id}`} className="flex flex-col items-center mx-4">
+          <div key={`arrow-${currentEvolution.id}`} className="flex flex-col items-center mx-2 md:mx-4">
             <div className="w-0 h-0 border-l-8 border-r-8 border-b-12 border-l-transparent border-r-transparent border-b-blue-500 rotate-90 mb-2"></div>
             <div className="bg-blue-50 px-3 py-2 rounded-lg text-sm text-blue-800 font-medium text-center whitespace-nowrap border border-blue-100 shadow-sm">
               {currentEvolution.evolutionDetails && currentEvolution.evolutionDetails.length > 0 ? 
@@ -44,10 +44,10 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
         <div key={`pokemon-${currentEvolution.id}`} className="flex flex-col items-center">
           <Link
             href={`/${lang}/pokemon/${pokemonId}`}
-            className="group flex flex-col items-center p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 hover:border-blue-200"
+            className="group flex flex-col items-center p-3 md:p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 hover:border-blue-200"
           >
             {/* Pokemon Image */}
-            <div className="relative w-28 h-28 mb-3">
+            <div className="relative w-24 h-24 md:w-28 md:h-28 mb-3">
               {imageUrl ? (
                 <Image
                   src={imageUrl}
@@ -223,7 +223,7 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
         {lang === 'en' ? 'Evolution Chain' : '進化チェーン'}
       </h2>
       <div className="flex justify-center overflow-x-auto">
-        <div className="flex items-center min-w-max px-4">
+        <div className="flex items-center min-w-max px-2 md:px-4">
           {renderEvolutionChain(evolutionChain)}
         </div>
       </div>

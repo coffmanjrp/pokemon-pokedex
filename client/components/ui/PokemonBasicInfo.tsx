@@ -67,21 +67,21 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
       {/* Page-level Navigation - Previous Pokemon */}
       <Link
         href={`/${language}/pokemon/${prevId}`}
-        className="fixed left-4 top-1/2 -translate-y-1/2 z-30 group hover:scale-110 transition-all duration-200"
+        className="fixed left-2 md:left-4 top-1/2 -translate-y-1/2 z-30 group hover:scale-110 transition-all duration-200"
       >
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-1 md:gap-2">
           <div className="text-xs text-gray-500 font-medium text-center">
             #{prevId.toString().padStart(3, '0')}
           </div>
           <svg 
-            className="w-4 h-4 text-gray-400 group-hover:text-gray-700 transition-colors" 
+            className="w-3 h-3 md:w-4 md:h-4 text-gray-400 group-hover:text-gray-700 transition-colors" 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          <div className="text-xs text-gray-500 font-medium text-center max-w-16 truncate">
+          <div className="text-xs text-gray-500 font-medium text-center max-w-12 md:max-w-16 truncate">
             {getPokemonNameById(prevId)}
           </div>
         </div>
@@ -90,33 +90,33 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
       {/* Page-level Navigation - Next Pokemon */}
       <Link
         href={`/${language}/pokemon/${nextId}`}
-        className="fixed right-4 top-1/2 -translate-y-1/2 z-30 group hover:scale-110 transition-all duration-200"
+        className="fixed right-2 md:right-4 top-1/2 -translate-y-1/2 z-30 group hover:scale-110 transition-all duration-200"
       >
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-1 md:gap-2">
           <div className="text-xs text-gray-500 font-medium text-center">
             #{nextId.toString().padStart(3, '0')}
           </div>
           <svg 
-            className="w-4 h-4 text-gray-400 group-hover:text-gray-700 transition-colors" 
+            className="w-3 h-3 md:w-4 md:h-4 text-gray-400 group-hover:text-gray-700 transition-colors" 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
-          <div className="text-xs text-gray-500 font-medium text-center max-w-16 truncate">
+          <div className="text-xs text-gray-500 font-medium text-center max-w-12 md:max-w-16 truncate">
             {getPokemonNameById(nextId)}
           </div>
         </div>
       </Link>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 p-8 px-16">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-8 p-4 md:p-8 px-4 md:px-16">
         {/* Left Side - Pokemon Image (3/5 columns) */}
         <div className="lg:col-span-3 flex items-center justify-center relative">
           <div className="relative">
             {/* Pokemon Image with Navigation Arrows */}
-            <div className="w-96 h-96 flex items-center justify-center relative">
+            <div className="w-72 h-72 md:w-96 md:h-96 flex items-center justify-center relative">
               {/* Background circle with type color */}
               <div 
                 className="absolute inset-0 rounded-full opacity-20 blur-3xl transform scale-150"
@@ -231,7 +231,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
           </div>
 
           {/* Basic Info Grid */}
-          <div className="grid grid-cols-3 gap-4 mb-6 bg-gray-50 p-4 rounded-lg">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-6 bg-gray-50 p-3 md:p-4 rounded-lg">
             <div className="text-center">
               <div className="text-xs text-gray-500 mb-1">
                 {language === 'en' ? 'Height' : '高さ'}
@@ -264,7 +264,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
                 {(pokemon.weight / 10).toFixed(1)}kg
               </div>
             </div>
-            <div className="text-center col-span-2">
+            <div className="text-center col-span-2 md:col-span-2">
               <div className="text-xs text-gray-500 mb-1">
                 {language === 'en' ? 'Abilities' : '特性'}
               </div>
