@@ -30,16 +30,6 @@ const getPrevNextPokemonId = (currentId: number): { prevId: number | null; nextI
   return { prevId, nextId };
 };
 
-// Simple Pokemon name mapping for common Pokemon (for demo purposes)
-// In a real app, you'd fetch this data from your API
-const getPokemonNameById = (id: number | null): string => {
-  if (!id) return '';
-  const commonNames: Record<number, string> = {
-    1: 'Bulbasaur', 2: 'Ivysaur', 3: 'Venusaur', 4: 'Charmander', 5: 'Charmeleon',
-    6: 'Charizard', 7: 'Squirtle', 8: 'Wartortle', 9: 'Blastoise', 10: 'Caterpie'
-  };
-  return commonNames[id] || `Pokemon #${id}`;
-};
 
 export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
   const [isShiny, setIsShiny] = useState(false);
@@ -71,22 +61,17 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
           href={`/${language}/pokemon/${prevId}`}
           className="hidden md:block fixed left-4 top-1/2 -translate-y-1/2 z-30 group hover:scale-110 transition-all duration-200"
         >
-          <div className="flex flex-col items-center gap-1">
-            <div className="flex items-center gap-2">
-              <svg 
-                className="w-4 h-4 text-gray-400 group-hover:text-gray-700 transition-colors" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              <div className="text-lg text-gray-500 font-medium text-center">
-                #{prevId.toString().padStart(3, '0')}
-              </div>
-            </div>
-            <div className="text-xs text-gray-500 font-medium text-center max-w-16 truncate">
-              {getPokemonNameById(prevId)}
+          <div className="flex items-center gap-2">
+            <svg 
+              className="w-4 h-4 text-gray-400 group-hover:text-gray-700 transition-colors" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            <div className="text-lg text-gray-500 font-medium text-center">
+              #{prevId.toString().padStart(3, '0')}
             </div>
           </div>
         </Link>
@@ -98,23 +83,18 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
           href={`/${language}/pokemon/${nextId}`}
           className="hidden md:block fixed right-4 top-1/2 -translate-y-1/2 z-30 group hover:scale-110 transition-all duration-200"
         >
-          <div className="flex flex-col items-center gap-1">
-            <div className="flex items-center gap-2">
-              <div className="text-lg text-gray-500 font-medium text-center">
-                #{nextId.toString().padStart(3, '0')}
-              </div>
-              <svg 
-                className="w-4 h-4 text-gray-400 group-hover:text-gray-700 transition-colors" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
+          <div className="flex items-center gap-2">
+            <div className="text-lg text-gray-500 font-medium text-center">
+              #{nextId.toString().padStart(3, '0')}
             </div>
-            <div className="text-xs text-gray-500 font-medium text-center max-w-16 truncate">
-              {getPokemonNameById(nextId)}
-            </div>
+            <svg 
+              className="w-4 h-4 text-gray-400 group-hover:text-gray-700 transition-colors" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
           </div>
         </Link>
       )}
