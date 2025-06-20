@@ -7,9 +7,12 @@ import React from 'react';
  * Returns the form suffix like "アローラのすがた", "メガ", etc.
  */
 function getFormTranslation(formName: string, language: 'en' | 'ja'): string | null {
+  console.log(`[getFormTranslation] Looking for translation of "${formName}" in language "${language}"`);
+  
   // Check regional forms
   for (const [key, translation] of Object.entries(REGIONAL_FORM_TRANSLATIONS)) {
     if (formName.includes(key)) {
+      console.log(`[getFormTranslation] Found regional form: ${key} -> ${translation[language]}`);
       return translation[language];
     }
   }
@@ -17,6 +20,7 @@ function getFormTranslation(formName: string, language: 'en' | 'ja'): string | n
   // Check mega forms
   for (const [key, translation] of Object.entries(MEGA_FORM_TRANSLATIONS)) {
     if (formName.includes(key)) {
+      console.log(`[getFormTranslation] Found mega form: ${key} -> ${translation[language]}`);
       return translation[language];
     }
   }
@@ -24,6 +28,7 @@ function getFormTranslation(formName: string, language: 'en' | 'ja'): string | n
   // Check gigantamax forms
   for (const [key, translation] of Object.entries(GIGANTAMAX_FORM_TRANSLATIONS)) {
     if (formName.includes(key)) {
+      console.log(`[getFormTranslation] Found gigantamax form: ${key} -> ${translation[language]}`);
       return translation[language];
     }
   }
@@ -31,10 +36,12 @@ function getFormTranslation(formName: string, language: 'en' | 'ja'): string | n
   // Check special forms
   for (const [key, translation] of Object.entries(SPECIAL_FORM_TRANSLATIONS)) {
     if (formName.includes(key)) {
+      console.log(`[getFormTranslation] Found special form: ${key} -> ${translation[language]}`);
       return translation[language];
     }
   }
   
+  console.log(`[getFormTranslation] No translation found for "${formName}"`);
   return null;
 }
 
@@ -58,15 +65,12 @@ export function getPokemonName(pokemon: Pokemon, language: 'en' | 'ja'): string 
       );
       
       if (japaneseName?.name) {
-        // Use getFormDisplayName to get the form part in Japanese
-        const fullFormName = getFormDisplayName(baseName, formName, language);
-        
-        // Extract just the form part from the full form name
-        // For example, "Alolan Sandslash" -> "Alolan", then translate to "（アローラのすがた）"
         const formTranslation = getFormTranslation(formName, language);
         
         if (formTranslation) {
-          return `${japaneseName.name}（${formTranslation}）`;
+          const result = `${japaneseName.name}（${formTranslation}）`;
+          console.log(`[getPokemonName] Japanese variant: ${pokemon.name} -> ${result}`);
+          return result;
         }
         
         return japaneseName.name;
@@ -114,7 +118,9 @@ export function getEvolutionPokemonName(evolutionDetail: EvolutionDetail, langua
         const formTranslation = getFormTranslation(formName, language);
         
         if (formTranslation) {
-          return `${japaneseName.name}（${formTranslation}）`;
+          const result = `${japaneseName.name}（${formTranslation}）`;
+          console.log(`[getEvolutionPokemonName] Japanese variant: ${evolutionDetail.name} -> ${result}`);
+          return result;
         }
         
         return japaneseName.name;
