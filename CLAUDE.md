@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including completely redesigned Pokemon detail pages based on reference design, enhanced evolution chains with form variants, enhanced move data display with detailed statistics, SSG implementation, advanced search/filter functionality, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. Recently completed major detail page redesign with 2-column layout, type effectiveness system, mobile-responsive evolution chains, and streamlined navigation. **LATEST**: Enhanced multilingual data integration with comprehensive GraphQL-based ability name support, Japanese Pokemon names for all generations, Japanese move names via PokeAPI integration, evolution item translations, and refined Japanese UI text throughout detail pages. Implemented 3-tier fallback system for both moves and abilities ensuring reliable multilingual display. Main areas for future enhancement: testing coverage, environment configuration, and error boundaries.
+**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including completely redesigned Pokemon detail pages based on reference design, enhanced evolution chains with form variants, enhanced move data display with detailed statistics, SSG implementation, advanced search/filter functionality, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. **LATEST**: Completed major detail page redesign matching reference design with 2-column layout, type effectiveness system, Normal/Shiny toggle, mobile-responsive design, comprehensive multilingual data integration with GraphQL-based ability and move name support, standardized variant Pokemon display, and enhanced Japanese naming conventions for Mega Evolution forms. All 309 static pages generate successfully. Main areas for future enhancement: testing coverage, environment configuration, and error boundaries.
 
 ## Architecture
 
@@ -257,36 +257,39 @@ app/[lang]/              # Dynamic language routing
 - **Solution**: Use `href="{/${language}/}"` instead of `href="/"` in all navigation components
 - **Implementation**: Extract current language using `usePathname()` and `getLocaleFromPathname()` for client components
 
-## Current Development Priorities
+## Development Priorities
 
 ### High Priority (Immediate)
-1. **Pokemon Breeding Information**: Egg groups, breeding compatibility, egg moves, hatching steps
-2. **Pokemon Location/Habitat Information**: Game location data, encounter rates, habitat descriptions
-3. **Test Suite Implementation**: Unit tests, integration tests, E2E tests (currently no tests exist)
-4. **Environment Configuration**: Create actual .env files from .env.example templates
-5. **Error Boundaries**: React error boundaries for graceful error handling
+1. **Test Suite Implementation**: Unit tests, integration tests, E2E tests (currently no tests exist)
+2. **Environment Configuration**: Create actual .env files from .env.example templates
+3. **Error Boundaries**: React error boundaries for graceful error handling
+4. **Accessibility Features**: ARIA labels, keyboard navigation, screen reader support
 
 ### Medium Priority (Next Phase)
-6. **Pokemon Comparison Feature**: Side-by-side stat comparison between Pokemon
-7. **Pokemon Cry/Sound Playback**: Audio playback functionality for Pokemon cries
-8. **Type Effectiveness Calculator**: Weakness/resistance calculator with damage multipliers
-9. **Pokemon Size Comparison**: Visual size comparison with human scale
-10. **Accessibility Features**: ARIA labels, keyboard navigation, screen reader support
-11. **SEO Optimization**: Metadata, Open Graph tags, structured data
-12. **Server Caching**: Redis or in-memory caching for PokeAPI requests
+5. **Pokemon Breeding Information**: Egg groups, breeding compatibility, egg moves, hatching steps
+6. **Pokemon Location/Habitat Information**: Game location data, encounter rates, habitat descriptions
+7. **Pokemon Comparison Feature**: Side-by-side stat comparison between Pokemon
+8. **Pokemon Cry/Sound Playback**: Audio playback functionality for Pokemon cries
+9. **Server Caching**: Redis or in-memory caching for PokeAPI requests
+10. **Performance Analysis**: Bundle optimization and monitoring
 
 ### Low Priority (Future)
-13. **Pokemon Encounter Data**: Encounter rates and location data from games
-14. **Pokemon Team Builder**: Team composition and strategy tools
-15. **Shiny Variant Display**: Toggle for shiny Pokemon variants
-16. **PWA Implementation**: Service worker, offline support, app manifest
-17. **Performance Analysis**: Bundle optimization and monitoring
+11. **Pokemon Encounter Data**: Enhanced encounter rates and location data from games
+12. **Pokemon Team Builder**: Team composition and strategy tools
+13. **PWA Implementation**: Service worker, offline support, app manifest
+14. **Advanced Type Effectiveness**: Damage calculator with move interactions
 
 ## Implementation Status
 
 ### ✅ Fully Implemented
+- **Complete Pokemon Detail Pages**: 2-column layout matching reference design with:
+  - Large Pokemon image with type-colored background aura
+  - Unified information panel with Weaknesses, Story, Versions, Stats
+  - Normal/Shiny sprite toggle with functional state management
+  - Type effectiveness calculation and weakness display
+  - Mobile-responsive design with vertical evolution chains
+  - Previous/Next navigation arrows (hidden on mobile and variants)
 - **GraphQL Backend**: Complete Apollo Server with cursor-based pagination and extended schema
-- **Pokemon Detail Pages**: SSG implementation with comprehensive data display and componentized architecture
 - **Advanced Filtering**: Search, type filters, generation filters with auto-loading
 - **State Management**: Redux Toolkit with proper error handling and deduplication
 - **Responsive UI**: Complete component library with Ruby/Sapphire theming
@@ -295,24 +298,25 @@ app/[lang]/              # Dynamic language routing
   - Middleware-based language detection and automatic routing (/en/, /ja/)
   - Server-side dictionary loading for optimal performance (no client bundles)
   - Complete filter system multilingual support (FilterModal, TypeFilter, GenerationFilter)
-  - GraphQL-based multilingual data integration with PokeAPI
+  - GraphQL-based multilingual data integration with PokeAPI for abilities and moves
   - Japanese Pokemon names for all generations via species data
   - Japanese move names with 3-tier priority system (GraphQL → manual → English fallback)
+  - Japanese ability names with 3-tier priority system
   - Evolution item translations and refined detail page Japanese text
-  - 308 static pages generated (151 Pokemon × 2 languages)
+  - 309 static pages generated (154 Pokemon × 2 languages + base pages)
   - SEO-optimized with proper hreflang and language-specific metadata
-  - Language-consistent navigation preserves user's language choice across all pages
-- **Image Optimization**: Next.js Image with fallbacks, lazy loading, and size variants
-- **Rich Data Display**: Moves, Pokedex entries, game history, and comprehensive stats
-- **SEO Optimization**: Meta tags, Open Graph, Twitter Cards for all Pokemon pages
-- **Component Architecture**: Modular, maintainable components with clear separation of concerns
-- **Pokemon Form Variations**: Complete support for Pokemon form variants including:
-  - Regional variants (Alolan, Galarian, Hisuian, Paldean) with proper categorization
-  - Mega Evolution forms (Mega, Mega X, Mega Y) with visual indicators
-  - Gigantamax forms (G-Max) with distinct styling
-  - 40+ form translations for English/Japanese localization
+  - Mega Evolution naming conventions (メガリザードンX format)
+- **Variant Pokemon Support**: Standardized display for Pokemon variants including:
+  - Regional variants (Alolan, Galarian, Hisuian, Paldean) with base species ID display
+  - Mega Evolution forms with proper Japanese naming (メガポケモン名 format)
+  - Gigantamax forms with distinct styling
+  - Form translation system with 40+ form translations
   - Enhanced evolution chains with form display and navigation
-  - Type-safe form detection and classification
+  - Navigation arrows hidden for variant forms to prevent confusion
+- **Image Optimization**: Next.js Image with fallbacks, lazy loading, and size variants
+- **Rich Data Display**: Moves with detailed statistics, Pokedex entries, game history, sprites gallery
+- **SEO Optimization**: Pokemon-specific meta tags, Open Graph, Twitter Cards with rich descriptions
+- **Component Architecture**: Modular, maintainable components with clean separation of concerns
 
 ### ⚠️ Partially Implemented
 - **Error Handling**: Basic error states exist but no error boundaries
@@ -952,12 +956,14 @@ app/[lang]/              # Dynamic language routing
 
 ### Build Status
 - ✅ **Production Build**: Successfully compiles with Next.js 15 App Router
-- ✅ **Static Generation**: 308 pages generated (151 Pokemon × 2 languages + base pages)
+- ✅ **Static Generation**: 309 pages generated (154 Pokemon × 2 languages + base pages)
 - ✅ **i18n Implementation**: Native App Router i18n with middleware routing
 - ✅ **Type Safety**: Full TypeScript coverage with no build errors
 - ✅ **ESLint Compliance**: All linting rules passed
 - ✅ **Bundle Optimization**: Server-side translations eliminate client-side i18n bundles
 - ✅ **Dependency Reduction**: Removed 384 i18n packages for better performance
+- ✅ **Responsive Design**: Mobile-optimized layout with touch-friendly navigation
+- ✅ **Variant Pokemon Support**: Standardized display for regional forms and Mega Evolution
 
 ### Component Architecture
 - **PokemonBasicInfo**: Pokemon hero section with core information (image, name, types, stats, abilities)
