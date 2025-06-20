@@ -73,9 +73,6 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
         >
           <div className="flex flex-col items-center gap-1">
             <div className="flex items-center gap-2">
-              <div className="text-xs text-gray-500 font-medium text-center">
-                #{prevId.toString().padStart(3, '0')}
-              </div>
               <svg 
                 className="w-3 h-3 md:w-4 md:h-4 text-gray-400 group-hover:text-gray-700 transition-colors" 
                 fill="none" 
@@ -84,6 +81,9 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
+              <div className="text-xs text-gray-500 font-medium text-center">
+                #{prevId.toString().padStart(3, '0')}
+              </div>
             </div>
             <div className="text-xs text-gray-500 font-medium text-center max-w-12 md:max-w-16 truncate">
               {getPokemonNameById(prevId)}
@@ -100,6 +100,9 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
         >
           <div className="flex flex-col items-center gap-1">
             <div className="flex items-center gap-2">
+              <div className="text-xs text-gray-500 font-medium text-center">
+                #{nextId.toString().padStart(3, '0')}
+              </div>
               <svg 
                 className="w-3 h-3 md:w-4 md:h-4 text-gray-400 group-hover:text-gray-700 transition-colors" 
                 fill="none" 
@@ -108,9 +111,6 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-              <div className="text-xs text-gray-500 font-medium text-center">
-                #{nextId.toString().padStart(3, '0')}
-              </div>
             </div>
             <div className="text-xs text-gray-500 font-medium text-center max-w-12 md:max-w-16 truncate">
               {getPokemonNameById(nextId)}
