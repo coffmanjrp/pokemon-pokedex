@@ -18,20 +18,20 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
   const renderEvolutionChain = (evolution: EvolutionDetail): React.ReactElement[] => {
     const chain: React.ReactElement[] = [];
     
-    const addEvolutionStage = (currentEvolution: EvolutionDetail, isFirst: boolean = false) => {
+    const addEvolutionStage = (currentEvolution: EvolutionDetail, nextEvolution?: EvolutionDetail) => {
       if (!currentEvolution) return;
       const pokemonName = currentEvolution.name || 'Unknown';
       const pokemonId = currentEvolution.id || '0';
       const imageUrl = currentEvolution.sprites?.other?.officialArtwork?.frontDefault || currentEvolution.sprites?.frontDefault;
 
-      // Add evolution arrow if not the first Pokemon
-      if (!isFirst) {
+      // Add evolution arrow if there's a next evolution
+      if (nextEvolution) {
         chain.push(
-          <div key={`arrow-${currentEvolution.id}`} className="flex flex-col md:flex-row items-center mx-2 md:mx-4">
+          <div key={`arrow-${nextEvolution.id}`} className="flex flex-col md:flex-row items-center mx-2 md:mx-4">
             <div className="w-0 h-0 border-l-8 border-r-8 border-b-12 border-l-transparent border-r-transparent border-b-blue-500 rotate-180 md:rotate-90 mb-2 md:mb-0 md:mr-2"></div>
             <div className="bg-blue-50 px-3 py-2 rounded-lg text-sm text-blue-800 font-medium text-center whitespace-nowrap border border-blue-100 shadow-sm">
-              {Array.isArray(currentEvolution.evolutionDetails) && currentEvolution.evolutionDetails.length > 0 ? 
-                renderEvolutionCondition(currentEvolution.evolutionDetails[0], lang) : 
+              {Array.isArray(nextEvolution.evolutionDetails) && nextEvolution.evolutionDetails.length > 0 ? 
+                renderEvolutionCondition(nextEvolution.evolutionDetails[0], lang) : 
                 (lang === 'en' ? 'Unknown' : '不明')
               }
             </div>
@@ -158,11 +158,22 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
 
       // Process evolutions (only first evolution to keep linear chain)
       if (currentEvolution.evolvesTo && Array.isArray(currentEvolution.evolvesTo) && currentEvolution.evolvesTo.length > 0) {
-        addEvolutionStage(currentEvolution.evolvesTo[0], false);
+        const nextStage = currentEvolution.evolvesTo[0];
+        const thirdStage = nextStage.evolvesTo && Array.isArray(nextStage.evolvesTo) && nextStage.evolvesTo.length > 0 
+          ? nextStage.evolvesTo[0] 
+          : undefined;
+        
+        addEvolutionStage(nextStage, thirdStage);
       }
     };
 
-    addEvolutionStage(evolution, true);
+    // Start with the base evolution
+    const firstStage = evolution;
+    const secondStage = firstStage.evolvesTo && Array.isArray(firstStage.evolvesTo) && firstStage.evolvesTo.length > 0 
+      ? firstStage.evolvesTo[0] 
+      : undefined;
+    
+    addEvolutionStage(firstStage, secondStage);
     return chain;
   };
 
