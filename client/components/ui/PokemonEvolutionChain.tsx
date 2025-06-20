@@ -145,6 +145,7 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
       if (currentEvolution.evolvesTo && Array.isArray(currentEvolution.evolvesTo) && currentEvolution.evolvesTo.length > 0) {
         const nextEvolution = currentEvolution.evolvesTo[0];
         
+        
         // Add arrow
         chain.push(
           <div key={`arrow-${nextEvolution.id}`} className="flex flex-col md:flex-row items-center mx-2 md:mx-4">
@@ -171,6 +172,7 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
     if (!trigger || typeof trigger !== 'object') {
       return lang === 'en' ? 'Unknown' : '不明';
     }
+
 
     const conditions = [];
 
@@ -215,11 +217,16 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
     }
 
     return conditions.length > 0 ? conditions.join(lang === 'en' ? ' + ' : ' + ') : (lang === 'en' ? 'Special' : '特殊');
+
+    
   };
 
   if (!evolutionChain) {
     return null;
   }
+
+
+  
 
   return (
     <div>

@@ -747,6 +747,23 @@ app/[lang]/              # Dynamic language routing
 - **Evolution Chain Refinements**: Enhanced evolution display with cleaner styling
   - Evolution condition badges with subtle bg-blue-50 and border styling
   - Main Pokemon cards with white backgrounds instead of gray-50
+
+### Evolution Chain Bug Fix (June 2025)
+- **GraphQL Query Depth Issue Resolution**: Fixed missing evolution conditions in third-level evolution chains
+  - **Problem**: Evolution conditions showing "Unknown" for Ivysaur → Venusaur despite correct API data
+  - **Root Cause**: Main GraphQL query in `/client/graphql/queries.ts` missing `evolutionDetails` field for third-level `evolvesTo` section
+  - **Investigation**: Created debugging API routes (`/api/pokemon/[id]` and `/api/evolution/[id]`) to compare data
+  - **Solution**: Added missing `evolutionDetails` field to third-level evolution query (lines 409-453)
+- **Technical Implementation**:
+  - Extended GraphQL query to include complete evolution condition data for all chain levels
+  - Added full evolution details schema (minLevel, item, trigger, timeOfDay, location, etc.) to third evolution stage
+  - Removed debug console.log statements after successful fix
+  - Ensured query structure matches API route implementation for consistency
+- **User Experience Improvement**:
+  - Evolution conditions now display correctly for all evolution chains
+  - Bulbasaur → Ivysaur shows "Level 16" 
+  - Ivysaur → Venusaur now correctly shows "Level 32" instead of "Unknown"
+  - Complete evolution chain data available for all 3-stage Pokemon evolution lines
   - Improved hover states with subtle border-blue-200 instead of harsh blue-300
   - Consistent shadow-sm application for better visual hierarchy
 - **Technical Implementation**:

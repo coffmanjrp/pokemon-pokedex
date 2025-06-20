@@ -406,6 +406,51 @@ export const GET_POKEMON = gql`
                     url
                   }
                 }
+                evolutionDetails {
+                  minLevel
+                  item {
+                    id
+                    name
+                    url
+                  }
+                  trigger {
+                    id
+                    name
+                    url
+                  }
+                  timeOfDay
+                  location {
+                    id
+                    name
+                    url
+                  }
+                  knownMove {
+                    id
+                    name
+                    url
+                  }
+                  minHappiness
+                  minBeauty
+                  minAffection
+                  needsOverworldRain
+                  partySpecies {
+                    id
+                    name
+                    url
+                  }
+                  partyType {
+                    id
+                    name
+                    url
+                  }
+                  relativePhysicalStats
+                  tradeSpecies {
+                    id
+                    name
+                    url
+                  }
+                  turnUpsideDown
+                }
                 forms {
                   id
                   name
