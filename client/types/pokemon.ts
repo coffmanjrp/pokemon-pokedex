@@ -29,12 +29,19 @@ export interface PokemonSprites {
   frontShiny?: string;
   backDefault?: string;
   backShiny?: string;
+  frontFemale?: string;
+  frontShinyFemale?: string;
+  backFemale?: string;
+  backShinyFemale?: string;
   other?: OtherSprites;
+  versions?: VersionSprites;
 }
 
 export interface OtherSprites {
   officialArtwork?: OfficialArtwork;
   home?: HomeSprites;
+  dreamWorld?: DreamWorldSprites;
+  showdown?: ShowdownSprites;
 }
 
 export interface OfficialArtwork {
@@ -45,6 +52,228 @@ export interface OfficialArtwork {
 export interface HomeSprites {
   frontDefault?: string;
   frontShiny?: string;
+  frontFemale?: string;
+  frontShinyFemale?: string;
+}
+
+export interface DreamWorldSprites {
+  frontDefault?: string;
+  frontFemale?: string;
+}
+
+export interface ShowdownSprites {
+  frontDefault?: string;
+  frontShiny?: string;
+  backDefault?: string;
+  backShiny?: string;
+  frontFemale?: string;
+  frontShinyFemale?: string;
+  backFemale?: string;
+  backShinyFemale?: string;
+}
+
+export interface VersionSprites {
+  generationI?: GenerationISprites;
+  generationII?: GenerationIISprites;
+  generationIII?: GenerationIIISprites;
+  generationIV?: GenerationIVSprites;
+  generationV?: GenerationVSprites;
+  generationVI?: GenerationVISprites;
+  generationVII?: GenerationVIISprites;
+  generationVIII?: GenerationVIIISprites;
+}
+
+export interface GenerationISprites {
+  redBlue?: RedBlueSprites;
+  yellow?: YellowSprites;
+}
+
+export interface RedBlueSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontGray?: string;
+  backGray?: string;
+  frontTransparent?: string;
+  backTransparent?: string;
+}
+
+export interface YellowSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontGray?: string;
+  backGray?: string;
+  frontTransparent?: string;
+  backTransparent?: string;
+}
+
+export interface GenerationIISprites {
+  crystal?: CrystalSprites;
+  gold?: GoldSprites;
+  silver?: SilverSprites;
+}
+
+export interface CrystalSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+  frontTransparent?: string;
+  backTransparent?: string;
+  frontShinyTransparent?: string;
+  backShinyTransparent?: string;
+}
+
+export interface GoldSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+  frontTransparent?: string;
+  backTransparent?: string;
+  frontShinyTransparent?: string;
+  backShinyTransparent?: string;
+}
+
+export interface SilverSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+  frontTransparent?: string;
+  backTransparent?: string;
+  frontShinyTransparent?: string;
+  backShinyTransparent?: string;
+}
+
+export interface GenerationIIISprites {
+  emerald?: EmeraldSprites;
+  fireredLeafgreen?: FireredLeafgreenSprites;
+  rubySapphire?: RubySapphireSprites;
+}
+
+export interface EmeraldSprites {
+  frontDefault?: string;
+  frontShiny?: string;
+}
+
+export interface FireredLeafgreenSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+}
+
+export interface RubySapphireSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+}
+
+export interface GenerationIVSprites {
+  diamondPearl?: DiamondPearlSprites;
+  heartgoldSoulsilver?: HeartgoldSoulsilverSprites;
+  platinum?: PlatinumSprites;
+}
+
+export interface DiamondPearlSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+  frontFemale?: string;
+  backFemale?: string;
+  frontShinyFemale?: string;
+  backShinyFemale?: string;
+}
+
+export interface HeartgoldSoulsilverSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+  frontFemale?: string;
+  backFemale?: string;
+  frontShinyFemale?: string;
+  backShinyFemale?: string;
+}
+
+export interface PlatinumSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+  frontFemale?: string;
+  backFemale?: string;
+  frontShinyFemale?: string;
+  backShinyFemale?: string;
+}
+
+export interface GenerationVSprites {
+  blackWhite?: BlackWhiteSprites;
+}
+
+export interface BlackWhiteSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+  frontFemale?: string;
+  backFemale?: string;
+  frontShinyFemale?: string;
+  backShinyFemale?: string;
+  animated?: AnimatedSprites;
+}
+
+export interface AnimatedSprites {
+  frontDefault?: string;
+  backDefault?: string;
+  frontShiny?: string;
+  backShiny?: string;
+  frontFemale?: string;
+  backFemale?: string;
+  frontShinyFemale?: string;
+  backShinyFemale?: string;
+}
+
+export interface GenerationVISprites {
+  omegarubyAlphasapphire?: OmegarubyAlphasapphireSprites;
+  xy?: XYSprites;
+}
+
+export interface OmegarubyAlphasapphireSprites {
+  frontDefault?: string;
+  frontShiny?: string;
+  frontFemale?: string;
+  frontShinyFemale?: string;
+}
+
+export interface XYSprites {
+  frontDefault?: string;
+  frontShiny?: string;
+  frontFemale?: string;
+  frontShinyFemale?: string;
+}
+
+export interface GenerationVIISprites {
+  icons?: IconSprites;
+  ultraSunUltraMoon?: UltraSunUltraMoonSprites;
+}
+
+export interface IconSprites {
+  frontDefault?: string;
+  frontFemale?: string;
+}
+
+export interface UltraSunUltraMoonSprites {
+  frontDefault?: string;
+  frontShiny?: string;
+  frontFemale?: string;
+  frontShinyFemale?: string;
+}
+
+export interface GenerationVIIISprites {
+  icons?: IconSprites;
 }
 
 export interface PokemonStat {
@@ -69,6 +298,12 @@ export interface Ability {
   id: string;
   name: string;
   url: string;
+  names?: AbilityName[];
+}
+
+export interface AbilityName {
+  name: string;
+  language: Language;
 }
 
 export interface PokemonConnection {
@@ -104,6 +339,49 @@ export interface Move {
   id: string;
   name: string;
   url: string;
+  names: MoveName[];
+  type: PokemonType;
+  damageClass: MoveDamageClass;
+  power?: number;
+  accuracy?: number;
+  pp?: number;
+  priority: number;
+  target: MoveTarget;
+  effectChance?: number;
+  flavorTextEntries: MoveFlavorTextEntry[];
+}
+
+export interface MoveDamageClass {
+  id: string;
+  name: string;
+  names: MoveDamageClassName[];
+}
+
+export interface MoveDamageClassName {
+  name: string;
+  language: Language;
+}
+
+export interface MoveTarget {
+  id: string;
+  name: string;
+  names: MoveTargetName[];
+}
+
+export interface MoveTargetName {
+  name: string;
+  language: Language;
+}
+
+export interface MoveName {
+  name: string;
+  language: Language;
+}
+
+export interface MoveFlavorTextEntry {
+  flavorText?: string;
+  language: Language;
+  versionGroup: VersionGroup;
 }
 
 export interface MoveVersionGroupDetail {
@@ -130,6 +408,31 @@ export interface PokemonSpecies {
   genera: Genus[];
   generation: Generation;
   evolutionChain?: EvolutionChain;
+  varieties?: PokemonVariety[];
+}
+
+export interface PokemonVariety {
+  isDefault: boolean;
+  pokemon: NamedResource;
+}
+
+export interface PokemonForm {
+  id: string;
+  name: string;
+  formName?: string;
+  formNames?: FormName[];
+  formOrder: number;
+  isDefault: boolean;
+  isBattleOnly: boolean;
+  isMega: boolean;
+  sprites: PokemonSprites;
+  types: PokemonTypeSlot[];
+  versionGroup?: VersionGroup;
+}
+
+export interface FormName {
+  name: string;
+  language: Language;
 }
 
 export interface SpeciesName {
@@ -166,6 +469,53 @@ export interface Generation {
 
 export interface EvolutionChain {
   id: string;
+  url: string;
+  chain?: EvolutionDetail;
+}
+
+export interface EvolutionDetail {
+  id: string;
+  name: string;
+  sprites: PokemonSprites;
+  types: PokemonTypeSlot[];
+  species?: PokemonSpecies;
+  evolutionDetails?: EvolutionTrigger[];
+  evolvesTo: EvolutionDetail[];
+  forms?: FormVariant[];
+}
+
+export interface FormVariant {
+  id: string;
+  name: string;
+  formName?: string;
+  sprites: PokemonSprites;
+  types: PokemonTypeSlot[];
+  isRegionalVariant?: boolean;
+  isMegaEvolution?: boolean;
+  isDynamax?: boolean;
+}
+
+export interface EvolutionTrigger {
+  minLevel?: number;
+  item?: NamedResource;
+  trigger: NamedResource;
+  timeOfDay?: string;
+  location?: NamedResource;
+  knownMove?: NamedResource;
+  minHappiness?: number;
+  minBeauty?: number;
+  minAffection?: number;
+  needsOverworldRain?: boolean;
+  partySpecies?: NamedResource;
+  partyType?: NamedResource;
+  relativePhysicalStats?: number;
+  tradeSpecies?: NamedResource;
+  turnUpsideDown?: boolean;
+}
+
+export interface NamedResource {
+  id: string;
+  name: string;
   url: string;
 }
 

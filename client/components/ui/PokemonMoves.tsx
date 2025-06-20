@@ -2,7 +2,10 @@
 
 import { useState } from 'react';
 import { PokemonMove } from '@/types/pokemon';
-import { getMoveLearnMethodName, formatMoveName } from '@/lib/pokemonUtils';
+import { getMoveLearnMethodName, getMoveName, getTypeName } from '@/lib/pokemonUtils';
+import { TabNavigation } from './TabNavigation';
+import { DataEmptyState } from './DataEmptyState';
+import { TypeBadge, LevelBadge } from './Badge';
 
 interface PokemonMovesProps {
   moves?: PokemonMove[];
@@ -13,17 +16,11 @@ type LearnMethod = 'level-up' | 'machine' | 'egg' | 'tutor' | 'other';
 
 export function PokemonMoves({ moves, language }: PokemonMovesProps) {
   const [selectedMethod, setSelectedMethod] = useState<LearnMethod>('level-up');
-  const [selectedGeneration, setSelectedGeneration] = useState<string>('latest');
-
   if (!moves || moves.length === 0) {
-    return (
-      <div className="text-gray-500 text-center py-8">
-        {language === 'en' ? 'No moves data available' : '技データがありません'}
-      </div>
-    );
+    return <DataEmptyState type="moves" language={language} />;
   }
 
-  // Group moves by learn method
+  // Group moves by learn method (simplified - no generation filtering)
   const movesByMethod = moves.reduce((acc, move) => {
     move.versionGroupDetails.forEach(detail => {
       const method = detail.moveLearnMethod.name as LearnMethod;
@@ -39,96 +36,47 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
           versionGroupDetails: [detail]
         });
       } else {
-        // Add version group detail if not already present
-        const hasDetail = existing.versionGroupDetails.some(
-          d => d.versionGroup.name === detail.versionGroup.name
-        );
-        if (!hasDetail) {
-          existing.versionGroupDetails.push(detail);
+        // Update level if this is a level-up move with a higher level
+        const existingLevel = existing.versionGroupDetails[0]?.levelLearnedAt || 0;
+        const newLevel = detail.levelLearnedAt || 0;
+        if (method === 'level-up' && newLevel > existingLevel) {
+          existing.versionGroupDetails[0] = detail;
         }
       }
     });
     return acc;
   }, {} as Record<LearnMethod, PokemonMove[]>);
 
-  // Get available generations
-  const getAvailableGenerations = () => {
-    const generations = new Set<string>();
-    moves.forEach(move => {
-      move.versionGroupDetails.forEach(detail => {
-        generations.add(detail.versionGroup.name);
-      });
-    });
-    return Array.from(generations).sort();
-  };
-
-  const availableGenerations = getAvailableGenerations();
-
-  // Filter moves by selected generation
-  const filterByGeneration = (pokemonMoves: PokemonMove[]) => {
-    if (selectedGeneration === 'latest') {
-      return pokemonMoves;
-    }
-    
-    return pokemonMoves.filter(move =>
-      move.versionGroupDetails.some(detail =>
-        detail.versionGroup.name === selectedGeneration
-      )
-    );
+  // Get damage class display name
+  const getDamageClassName = (damageClass: string) => {
+    const damageClassMap = {
+      'physical': language === 'en' ? 'Physical' : '物理',
+      'special': language === 'en' ? 'Special' : '特殊',
+      'status': language === 'en' ? 'Status' : '変化'
+    };
+    return damageClassMap[damageClass as keyof typeof damageClassMap] || damageClass;
   };
 
 
   const methodTabs: LearnMethod[] = ['level-up', 'machine', 'egg', 'tutor'];
   const availableMethods = methodTabs.filter(method => movesByMethod[method]?.length > 0);
 
-  const currentMoves = filterByGeneration(movesByMethod[selectedMethod] || []);
+  const tabsData = availableMethods.map(method => ({
+    id: method,
+    label: getMoveLearnMethodName(method, language),
+    count: movesByMethod[method]?.length || 0
+  }));
+
+  const currentMoves = movesByMethod[selectedMethod] || [];
 
   return (
     <div className="space-y-6">
-      {/* Method Tabs */}
-      <div className="border-b border-gray-200">
-        <nav className="flex space-x-8">
-          {availableMethods.map((method) => (
-            <button
-              key={method}
-              onClick={() => setSelectedMethod(method)}
-              className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-                selectedMethod === method
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              {getMoveLearnMethodName(method, language)}
-              <span className="ml-2 bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
-                {movesByMethod[method]?.length || 0}
-              </span>
-            </button>
-          ))}
-        </nav>
-      </div>
-
-      {/* Generation Filter */}
-      {availableGenerations.length > 1 && (
-        <div className="flex items-center gap-4">
-          <label className="text-sm font-medium text-gray-700">
-            {language === 'en' ? 'Generation:' : '世代:'}
-          </label>
-          <select
-            value={selectedGeneration}
-            onChange={(e) => setSelectedGeneration(e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="latest">
-              {language === 'en' ? 'All Generations' : 'すべての世代'}
-            </option>
-            {availableGenerations.map(gen => (
-              <option key={gen} value={gen}>
-                {gen.charAt(0).toUpperCase() + gen.slice(1)}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+      <TabNavigation
+        tabs={tabsData}
+        activeTab={selectedMethod}
+        onTabChange={setSelectedMethod}
+        variant="underline"
+      />
 
       {/* Moves List */}
       {currentMoves.length > 0 ? (
@@ -149,21 +97,71 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
                 key={`${move.move.name}-${index}`}
                 className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h4 className="font-medium text-gray-900">
-                      {formatMoveName(move.move.name)}
-                    </h4>
-                    <div className="flex items-center gap-4 mt-1 text-sm text-gray-600">
+                <div className="space-y-3">
+                  {/* Header with move name and level */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <h4 className="font-medium text-gray-900 text-lg">
+                        {getMoveName(move.move, language)}
+                      </h4>
                       {selectedMethod === 'level-up' && (
-                        <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
-                          {language === 'en' ? 'Level' : 'Lv.'} {move.versionGroupDetails[0]?.levelLearnedAt || '-'}
-                        </span>
+                        <LevelBadge 
+                          level={move.versionGroupDetails[0]?.levelLearnedAt || 0}
+                          variant="level"
+                        />
                       )}
-                      <span className="text-gray-500">
-                        {move.versionGroupDetails.map(detail => 
-                          detail.versionGroup.name.charAt(0).toUpperCase() + detail.versionGroup.name.slice(1)
-                        ).join(', ')}
+                    </div>
+                  </div>
+                  
+                  {/* Move details */}
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
+                    {/* Type */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-500 font-medium">
+                        {language === 'en' ? 'Type:' : 'タイプ:'}
+                      </span>
+                      <TypeBadge 
+                        type={move.move.type.name}
+                        displayName={getTypeName(move.move.type.name, language)}
+                        size="sm"
+                      />
+                    </div>
+                    
+                    {/* Damage Class */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-500 font-medium">
+                        {language === 'en' ? 'Category:' : '分類:'}
+                      </span>
+                      <span className="text-gray-900 font-medium">
+                        {getDamageClassName(move.move.damageClass.name)}
+                      </span>
+                    </div>
+                    
+                    {/* Power */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-500 font-medium">
+                        {language === 'en' ? 'Power:' : '威力:'}
+                      </span>
+                      <span className="text-gray-900 font-medium">
+                        {move.move.power || '-'}
+                      </span>
+                    </div>
+                    
+                    {/* Accuracy */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-500 font-medium">
+                        {language === 'en' ? 'Accuracy:' : '命中:'}
+                      </span>
+                      <span className="text-gray-900 font-medium">
+                        {move.move.accuracy || '-'}
+                      </span>
+                    </div>
+                    
+                    {/* PP */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-500 font-medium">PP:</span>
+                      <span className="text-gray-900 font-medium">
+                        {move.move.pp || '-'}
                       </span>
                     </div>
                   </div>

@@ -5,6 +5,8 @@ export const typeDefs = gql`
     hello: String
     pokemon(id: ID!): Pokemon
     pokemons(limit: Int, offset: Int): PokemonConnection
+    pokemonForms(speciesId: ID!): [PokemonForm!]!
+    pokemonForm(id: ID!): PokemonForm
   }
 
   type Pokemon {
@@ -78,6 +80,12 @@ export const typeDefs = gql`
     id: ID!
     name: String!
     url: String!
+    names: [AbilityName!]!
+  }
+
+  type AbilityName {
+    name: String!
+    language: Language!
   }
 
   type PokemonConnection {
@@ -107,6 +115,49 @@ export const typeDefs = gql`
     id: ID!
     name: String!
     url: String!
+    names: [MoveName!]!
+    type: Type!
+    damageClass: MoveDamageClass!
+    power: Int
+    accuracy: Int
+    pp: Int
+    priority: Int
+    target: MoveTarget!
+    effectChance: Int
+    flavorTextEntries: [MoveFlavorTextEntry!]!
+  }
+
+  type MoveDamageClass {
+    id: ID!
+    name: String!
+    names: [MoveDamageClassName!]!
+  }
+
+  type MoveDamageClassName {
+    name: String!
+    language: Language!
+  }
+
+  type MoveName {
+    name: String!
+    language: Language!
+  }
+
+  type MoveTarget {
+    id: ID!
+    name: String!
+    names: [MoveTargetName!]!
+  }
+
+  type MoveTargetName {
+    name: String!
+    language: Language!
+  }
+
+  type MoveFlavorTextEntry {
+    flavorText: String
+    language: Language!
+    versionGroup: VersionGroup!
   }
 
   type MoveVersionGroupDetail {
@@ -133,6 +184,31 @@ export const typeDefs = gql`
     genera: [Genus!]!
     generation: Generation!
     evolutionChain: EvolutionChain
+    varieties: [PokemonVariety!]!
+  }
+
+  type PokemonVariety {
+    isDefault: Boolean!
+    pokemon: NamedResource!
+  }
+
+  type PokemonForm {
+    id: ID!
+    name: String!
+    formName: String
+    formNames: [FormName!]!
+    formOrder: Int!
+    isDefault: Boolean!
+    isBattleOnly: Boolean!
+    isMega: Boolean!
+    sprites: PokemonSprites!
+    types: [PokemonType!]!
+    versionGroup: VersionGroup
+  }
+
+  type FormName {
+    name: String!
+    language: Language!
   }
 
   type SpeciesName {
@@ -167,9 +243,56 @@ export const typeDefs = gql`
     url: String!
   }
 
+  type NamedResource {
+    id: ID!
+    name: String!
+    url: String!
+  }
+
   type EvolutionChain {
     id: ID!
     url: String!
+    chain: EvolutionDetail!
+  }
+
+  type EvolutionDetail {
+    id: ID!
+    name: String!
+    sprites: PokemonSprites!
+    types: [PokemonType!]!
+    species: PokemonSpecies
+    evolutionDetails: [EvolutionTrigger!]
+    evolvesTo: [EvolutionDetail!]!
+    forms: [FormVariant!]!
+  }
+
+  type FormVariant {
+    id: ID!
+    name: String!
+    formName: String
+    sprites: PokemonSprites!
+    types: [PokemonType!]!
+    isRegionalVariant: Boolean!
+    isMegaEvolution: Boolean!
+    isDynamax: Boolean!
+  }
+
+  type EvolutionTrigger {
+    minLevel: Int
+    item: NamedResource
+    trigger: NamedResource!
+    timeOfDay: String
+    location: NamedResource
+    knownMove: NamedResource
+    minHappiness: Int
+    minBeauty: Int
+    minAffection: Int
+    needsOverworldRain: Boolean
+    partySpecies: NamedResource
+    partyType: NamedResource
+    relativePhysicalStats: Int
+    tradeSpecies: NamedResource
+    turnUpsideDown: Boolean
   }
 
   type GameIndex {

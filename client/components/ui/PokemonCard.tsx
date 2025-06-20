@@ -7,7 +7,6 @@ import { useAppSelector } from '@/store/hooks';
 import { PokemonImage } from './PokemonImage';
 import { PokemonTypes } from './PokemonTypes';
 import { StatBar } from './StatBar';
-import { Badge } from './Badge';
 
 interface PokemonCardProps {
   pokemon: Pokemon;
@@ -59,12 +58,12 @@ export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
 
       {/* Pokemon ID */}
       <div className="absolute top-3 right-3 z-10">
-        <Badge 
-          className="text-xs font-bold"
+        <span 
+          className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold text-white"
           style={{ backgroundColor: primaryColor }}
         >
           {formatPokemonId(pokemon.id)}
-        </Badge>
+        </span>
       </div>
 
       {/* Pokemon Image */}
@@ -80,7 +79,7 @@ export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
         </h3>
 
         {/* Types */}
-        <PokemonTypes types={pokemon.types} />
+        <PokemonTypes types={pokemon.types} language={language} />
 
         {/* Basic Info */}
         <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 mb-3">

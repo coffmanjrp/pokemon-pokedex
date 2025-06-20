@@ -1,108 +1,32 @@
-import { gql } from '@apollo/client';
+import { NextRequest, NextResponse } from 'next/server';
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
 
-export const GET_POKEMONS = gql`
-  query GetPokemons($limit: Int, $offset: Int) {
-    pokemons(limit: $limit, offset: $offset) {
-      edges {
-        node {
-          id
-          name
-          height
-          weight
-          baseExperience
-          types {
-            slot
-            type {
-              id
-              name
-              url
-            }
-          }
-          sprites {
-            frontDefault
-            frontShiny
-            other {
-              officialArtwork {
-                frontDefault
-                frontShiny
-              }
-              home {
-                frontDefault
-                frontShiny
-              }
-            }
-          }
-          stats {
-            baseStat
-            effort
-            stat {
-              id
-              name
-              url
-            }
-          }
-          abilities {
-            isHidden
-            slot
-            ability {
-              id
-              name
-              url
-              names {
-                name
-                language {
-                  name
-                  url
-                }
-              }
-            }
-          }
-          species {
-            id
-            name
-            names {
-              name
-              language {
-                name
-                url
-              }
-            }
-          }
-        }
-        cursor
-      }
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-        startCursor
-        endCursor
-      }
-      totalCount
-    }
-  }
-`;
+// GraphQL client setup
+const client = new ApolloClient({
+  uri: 'http://localhost:4000/graphql',
+  cache: new InMemoryCache(),
+});
 
-export const GET_POKEMON = gql`
-  query GetPokemon($id: ID!) {
+// GraphQL query for Pokemon details with evolution chain
+const GET_POKEMON_DETAIL = gql`
+  query GetPokemonDetail($id: ID!) {
     pokemon(id: $id) {
       id
       name
       height
       weight
       baseExperience
-      types {
-        slot
-        type {
-          id
-          name
-          url
-        }
-      }
+      order
+      isDefault
       sprites {
         frontDefault
         frontShiny
         backDefault
         backShiny
+        frontFemale
+        backFemale
+        frontShinyFemale
+        backShinyFemale
         other {
           officialArtwork {
             frontDefault
@@ -111,7 +35,26 @@ export const GET_POKEMON = gql`
           home {
             frontDefault
             frontShiny
+            frontFemale
+            frontShinyFemale
           }
+        }
+      }
+      abilities {
+        isHidden
+        slot
+        ability {
+          id
+          name
+          url
+        }
+      }
+      types {
+        slot
+        type {
+          id
+          name
+          url
         }
       }
       stats {
@@ -123,74 +66,34 @@ export const GET_POKEMON = gql`
           url
         }
       }
-      abilities {
-        isHidden
-        slot
-        ability {
-          id
-          name
-          url
-          names {
-            name
-            language {
-              name
-              url
-            }
-          }
-        }
-      }
       moves {
         move {
           id
           name
           url
-          names {
+          power
+          accuracy
+          pp
+          damageClass {
+            id
             name
-            language {
-              name
-              url
-            }
+            url
           }
           type {
             id
             name
             url
           }
-          damageClass {
-            id
-            name
-            names {
-              name
-              language {
-                name
-                url
-              }
-            }
-          }
-          power
-          accuracy
-          pp
-          priority
-          target {
-            id
-            name
-            names {
-              name
-              language {
-                name
-                url
-              }
-            }
-          }
-          effectChance
         }
         versionGroupDetails {
           levelLearnedAt
           moveLearnMethod {
+            id
             name
             url
           }
           versionGroup {
+            id
             name
             url
           }
@@ -199,20 +102,16 @@ export const GET_POKEMON = gql`
       species {
         id
         name
-        names {
-          name
-          language {
-            name
-            url
-          }
-        }
+        url
         flavorTextEntries {
           flavorText
           language {
+            id
             name
             url
           }
           version {
+            id
             name
             url
           }
@@ -220,6 +119,7 @@ export const GET_POKEMON = gql`
         genera {
           genus
           language {
+            id
             name
             url
           }
@@ -237,9 +137,17 @@ export const GET_POKEMON = gql`
             name
             sprites {
               frontDefault
+              frontShiny
+              backDefault
+              backShiny
               other {
                 officialArtwork {
                   frontDefault
+                  frontShiny
+                }
+                home {
+                  frontDefault
+                  frontShiny
                 }
               }
             }
@@ -249,17 +157,6 @@ export const GET_POKEMON = gql`
                 id
                 name
                 url
-              }
-            }
-            species {
-              id
-              name
-              names {
-                name
-                language {
-                  name
-                  url
-                }
               }
             }
             evolutionDetails {
@@ -311,11 +208,16 @@ export const GET_POKEMON = gql`
               id
               name
               formName
+              isMegaEvolution
+              isRegionalVariant
+              isDynamax
               sprites {
                 frontDefault
+                frontShiny
                 other {
                   officialArtwork {
                     frontDefault
+                    frontShiny
                   }
                 }
               }
@@ -327,18 +229,17 @@ export const GET_POKEMON = gql`
                   url
                 }
               }
-              isRegionalVariant
-              isMegaEvolution
-              isDynamax
             }
             evolvesTo {
               id
               name
               sprites {
                 frontDefault
+                frontShiny
                 other {
                   officialArtwork {
                     frontDefault
+                    frontShiny
                   }
                 }
               }
@@ -348,17 +249,6 @@ export const GET_POKEMON = gql`
                   id
                   name
                   url
-                }
-              }
-              species {
-                id
-                name
-                names {
-                  name
-                  language {
-                    name
-                    url
-                  }
                 }
               }
               evolutionDetails {
@@ -410,11 +300,16 @@ export const GET_POKEMON = gql`
                 id
                 name
                 formName
+                isMegaEvolution
+                isRegionalVariant
+                isDynamax
                 sprites {
                   frontDefault
+                  frontShiny
                   other {
                     officialArtwork {
                       frontDefault
+                      frontShiny
                     }
                   }
                 }
@@ -426,18 +321,17 @@ export const GET_POKEMON = gql`
                     url
                   }
                 }
-                isRegionalVariant
-                isMegaEvolution
-                isDynamax
               }
               evolvesTo {
                 id
                 name
                 sprites {
                   frontDefault
+                  frontShiny
                   other {
                     officialArtwork {
                       frontDefault
+                      frontShiny
                     }
                   }
                 }
@@ -447,17 +341,6 @@ export const GET_POKEMON = gql`
                     id
                     name
                     url
-                  }
-                }
-                species {
-                  id
-                  name
-                  names {
-                    name
-                    language {
-                      name
-                      url
-                    }
                   }
                 }
                 evolutionDetails {
@@ -505,30 +388,6 @@ export const GET_POKEMON = gql`
                   }
                   turnUpsideDown
                 }
-                forms {
-                  id
-                  name
-                  formName
-                  sprites {
-                    frontDefault
-                    other {
-                      officialArtwork {
-                        frontDefault
-                      }
-                    }
-                  }
-                  types {
-                    slot
-                    type {
-                      id
-                      name
-                      url
-                    }
-                  }
-                  isRegionalVariant
-                  isMegaEvolution
-                  isDynamax
-                }
               }
             }
           }
@@ -537,6 +396,7 @@ export const GET_POKEMON = gql`
       gameIndices {
         gameIndex
         version {
+          id
           name
           url
         }
@@ -544,3 +404,62 @@ export const GET_POKEMON = gql`
     }
   }
 `;
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Pokemon ID is required' },
+        { status: 400 }
+      );
+    }
+
+    // Fetch data from GraphQL server
+    const { data, error } = await client.query({
+      query: GET_POKEMON_DETAIL,
+      variables: { id },
+      errorPolicy: 'all',
+    });
+
+    if (error) {
+      console.error('GraphQL Error:', error);
+      return NextResponse.json(
+        { error: 'Failed to fetch Pokemon data', details: error.message },
+        { status: 500 }
+      );
+    }
+
+    if (!data?.pokemon) {
+      return NextResponse.json(
+        { error: 'Pokemon not found' },
+        { status: 404 }
+      );
+    }
+
+    // Return the raw GraphQL data for debugging
+    return NextResponse.json({
+      success: true,
+      pokemon: data.pokemon,
+      metadata: {
+        id,
+        timestamp: new Date().toISOString(),
+        source: 'GraphQL API',
+      },
+    });
+
+  } catch (error) {
+    console.error('API Route Error:', error);
+    return NextResponse.json(
+      { 
+        error: 'Internal server error', 
+        details: error instanceof Error ? error.message : 'Unknown error' 
+      },
+      { status: 500 }
+    );
+  }
+}
