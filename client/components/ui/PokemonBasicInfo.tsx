@@ -124,7 +124,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
         {/* Left Side - Pokemon Image (3/5 columns) */}
         <div className="lg:col-span-3 flex flex-col relative">
           {/* Pokemon Header - Name, Number, Types */}
-          <div className="mb-6">
+          <div className="mb-3">
             <h1 className="text-4xl font-bold text-gray-900 mb-3">
               {language === 'ja' ? displayName : displayName.charAt(0).toUpperCase() + displayName.slice(1)}
               <span className="text-2xl text-gray-500 ml-3">
@@ -132,7 +132,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
               </span>
             </h1>
             <div>
-              <PokemonTypes types={pokemon.types} size="lg" className="flex gap-2 justify-start mb-4" />
+              <PokemonTypes types={pokemon.types} size="lg" className="flex gap-2 justify-start mb-2" />
             </div>
           </div>
 
@@ -173,32 +173,6 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
 
         {/* Right Side - Information Panel (2/5 columns) */}
         <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-
-          {/* Weaknesses Section */}
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">
-              {language === 'en' ? 'Weaknesses' : '弱点'}
-            </h3>
-            {weaknesses.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {weaknesses.map((weaknessType) => (
-                  <span
-                    key={weaknessType}
-                    className="px-3 py-1.5 rounded-full text-xs font-medium text-white transition-all duration-200 hover:scale-105 hover:shadow-md"
-                    style={{
-                      backgroundColor: getTypeColorFromName(weaknessType),
-                    }}
-                  >
-                    {getTypeName(weaknessType, language)}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <div className="text-sm text-gray-500">
-                {language === 'en' ? 'No major weaknesses' : '特に弱点なし'}
-              </div>
-            )}
-          </div>
 
           {/* Story Section */}
           {description && (
@@ -296,6 +270,32 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
                 )}
               </div>
             </div>
+          </div>
+
+          {/* Weaknesses Section */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">
+              {language === 'en' ? 'Weaknesses' : '弱点'}
+            </h3>
+            {weaknesses.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {weaknesses.map((weaknessType) => (
+                  <span
+                    key={weaknessType}
+                    className="px-3 py-1.5 rounded-full text-xs font-medium text-white transition-all duration-200 hover:scale-105 hover:shadow-md"
+                    style={{
+                      backgroundColor: getTypeColorFromName(weaknessType),
+                    }}
+                  >
+                    {getTypeName(weaknessType, language)}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <div className="text-sm text-gray-500">
+                {language === 'en' ? 'No major weaknesses' : '特に弱点なし'}
+              </div>
+            )}
           </div>
 
           {/* Stats Section */}
