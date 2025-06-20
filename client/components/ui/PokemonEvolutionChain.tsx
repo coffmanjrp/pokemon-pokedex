@@ -183,7 +183,53 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
 
     if (trigger.item) {
       const itemName = trigger.item.name.replace(/-/g, ' ');
-      conditions.push(lang === 'en' ? `Use ${itemName}` : `${itemName}を使用`);
+      
+      // Item name translation for Japanese
+      const getItemName = (itemName: string, lang: string): string => {
+        if (lang === 'en') return itemName;
+        
+        const itemTranslations: Record<string, string> = {
+          'thunder stone': 'かみなりのいし',
+          'fire stone': 'ほのおのいし',
+          'water stone': 'みずのいし',
+          'leaf stone': 'リーフのいし',
+          'moon stone': 'つきのいし',
+          'sun stone': 'たいようのいし',
+          'shiny stone': 'ひかりのいし',
+          'dusk stone': 'やみのいし',
+          'dawn stone': 'めざめいし',
+          'ice stone': 'こおりのいし',
+          'oval stone': 'まんまるいし',
+          'kings rock': 'おうじゃのしるし',
+          'metal coat': 'メタルコート',
+          'dragon scale': 'りゅうのウロコ',
+          'upgrade': 'アップグレード',
+          'dubious disc': 'あやしいパッチ',
+          'protector': 'プロテクター',
+          'electirizer': 'エレキブースター',
+          'magmarizer': 'マグマブースター',
+          'razor claw': 'するどいツメ',
+          'razor fang': 'するどいキバ',
+          'reaper cloth': 'れいかいのぬの',
+          'deep sea tooth': 'しんかいのキバ',
+          'deep sea scale': 'しんかいのウロコ',
+          'prism scale': 'きれいなウロコ',
+          'sachet': 'においぶくろ',
+          'whipped dream': 'ホイップポップ',
+          'strawberry sweet': 'いちごアメざいく',
+          'berry sweet': 'ベリーアメざいく',
+          'love sweet': 'ハートアメざいく',
+          'star sweet': 'スターアメざいく',
+          'clover sweet': 'よつばアメざいく',
+          'flower sweet': 'おはなアメざいく',
+          'ribbon sweet': 'リボンアメざいく'
+        };
+        
+        return itemTranslations[itemName.toLowerCase()] || itemName;
+      };
+      
+      const translatedItemName = getItemName(itemName, lang);
+      conditions.push(lang === 'en' ? `Use ${itemName}` : `${translatedItemName}を使用`);
     }
 
     if (trigger.trigger?.name === 'trade') {
