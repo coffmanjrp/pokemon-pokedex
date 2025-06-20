@@ -298,9 +298,21 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
 
           {/* Stats Section */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              {language === 'en' ? 'Stats' : 'ステータス'}
-            </h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">
+                {language === 'en' ? 'Stats' : 'ステータス'}
+              </h3>
+              {pokemon.stats && pokemon.stats.length > 0 && (
+                <div className="bg-blue-100 border border-blue-200 rounded-lg px-3 py-2">
+                  <div className="text-xs text-blue-600 font-medium mb-1">
+                    {language === 'en' ? 'Total' : '合計'}
+                  </div>
+                  <div className="text-lg font-bold text-blue-800">
+                    {pokemon.stats.reduce((total, stat) => total + stat.baseStat, 0)}
+                  </div>
+                </div>
+              )}
+            </div>
             {pokemon.stats && pokemon.stats.length > 0 ? (
               <div className="space-y-3">
                 {pokemon.stats.map((pokemonStat, index) => {
