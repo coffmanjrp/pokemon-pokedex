@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import { Pokemon } from '@/types/pokemon';
+import { PokemonMoves } from './PokemonMoves';
+import { PokemonDescription } from './PokemonDescription';
+import { PokemonGameHistory } from './PokemonGameHistory';
 import Image from 'next/image';
 
 interface PokemonSpritesGalleryProps {
@@ -15,8 +18,41 @@ interface SpriteInfo {
   category: string;
 }
 
+type ContentTabType = 'sprites' | 'description' | 'moves' | 'gameHistory';
+
+interface ContentTabInfo {
+  id: ContentTabType;
+  label: string;
+  available: boolean;
+}
+
 export function PokemonSpritesGallery({ pokemon, language }: PokemonSpritesGalleryProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('official');
+  const [activeContentTab, setActiveContentTab] = useState<ContentTabType>('sprites');
+
+  // Define content tabs
+  const contentTabs: ContentTabInfo[] = [
+    {
+      id: 'sprites',
+      label: language === 'en' ? 'Sprites & Artwork' : 'スプライト・アートワーク',
+      available: true
+    },
+    {
+      id: 'description',
+      label: language === 'en' ? 'Description' : '説明',
+      available: !!(pokemon.species?.flavorTextEntries && pokemon.species.flavorTextEntries.length > 0)
+    },
+    {
+      id: 'moves',
+      label: language === 'en' ? 'Moves' : 'わざ',
+      available: !!(pokemon.moves && pokemon.moves.length > 0)
+    },
+    {
+      id: 'gameHistory',
+      label: language === 'en' ? 'Game History' : 'ゲーム履歴',
+      available: !!(pokemon.gameIndices && pokemon.gameIndices.length > 0)
+    }
+  ];
   
   // Helper function to create sprite info objects
   const createSpriteInfo = (url: string | undefined, labelEn: string, labelJa: string, category: string): SpriteInfo | null => {
@@ -285,72 +321,130 @@ export function PokemonSpritesGallery({ pokemon, language }: PokemonSpritesGalle
     ? allSprites 
     : allSprites.filter(sprite => sprite.category === selectedCategory);
 
+  const renderTabContent = () => {
+    switch (activeContentTab) {
+      case 'sprites':
+        return (
+          <div>
+            {/* Category Filter Tabs */}
+            {categories.length > 1 && (
+              <div className="mb-6">
+                <div className="flex flex-wrap gap-2">
+                  {categories.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => setSelectedCategory(category.id)}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        selectedCategory === category.id
+                          ? 'bg-blue-500 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {category.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Sprites Grid */}
+            {filteredSprites.length > 0 ? (
+              <div className={`grid gap-4 ${
+                selectedCategory === 'official' 
+                  ? 'grid-cols-1 md:grid-cols-2' 
+                  : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+              }`}>
+                {filteredSprites.map((sprite, index) => (
+                  <div key={index} className="bg-gray-50 rounded-lg p-4 text-center">
+                    <div className={`relative mx-auto mb-3 ${
+                      selectedCategory === 'official' 
+                        ? 'w-48 h-48' 
+                        : selectedCategory === 'animated'
+                        ? 'w-32 h-32'
+                        : 'w-24 h-24'
+                    }`}>
+                      <Image 
+                        src={sprite.url} 
+                        alt={`${pokemon.name} ${sprite.label}`}
+                        fill
+                        className="object-contain"
+                        sizes={selectedCategory === 'official' ? '192px' : selectedCategory === 'animated' ? '128px' : '96px'}
+                        unoptimized={selectedCategory === 'animated'} // For animated GIFs
+                      />
+                    </div>
+                    <div className="text-sm text-gray-600 font-medium">
+                      {sprite.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                {language === 'en' 
+                  ? 'No sprites available for this category' 
+                  : 'このカテゴリーには利用可能なスプライトがありません'
+                }
+              </div>
+            )}
+          </div>
+        );
+
+      case 'description':
+        return (
+          <PokemonDescription
+            pokemon={pokemon}
+            language={language}
+          />
+        );
+
+      case 'moves':
+        return (
+          <PokemonMoves 
+            moves={pokemon.moves} 
+            language={language} 
+          />
+        );
+
+      case 'gameHistory':
+        return (
+          <PokemonGameHistory
+            gameIndices={pokemon.gameIndices}
+            generation={pokemon.species?.generation}
+            language={language}
+          />
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        {language === 'en' ? 'Sprites & Artwork' : 'スプライト・アートワーク'}
-      </h2>
-      
-      {/* Category Filter Tabs */}
-      {categories.length > 1 && (
-        <div className="mb-6">
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  selectedCategory === category.id
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {category.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Sprites Grid */}
-      {filteredSprites.length > 0 ? (
-        <div className={`grid gap-4 ${
-          selectedCategory === 'official' 
-            ? 'grid-cols-1 md:grid-cols-2' 
-            : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
-        }`}>
-          {filteredSprites.map((sprite, index) => (
-            <div key={index} className="bg-gray-50 rounded-lg p-4 text-center">
-              <div className={`relative mx-auto mb-3 ${
-                selectedCategory === 'official' 
-                  ? 'w-48 h-48' 
-                  : selectedCategory === 'animated'
-                  ? 'w-32 h-32'
-                  : 'w-24 h-24'
-              }`}>
-                <Image 
-                  src={sprite.url} 
-                  alt={`${pokemon.name} ${sprite.label}`}
-                  fill
-                  className="object-contain"
-                  sizes={selectedCategory === 'official' ? '192px' : selectedCategory === 'animated' ? '128px' : '96px'}
-                  unoptimized={selectedCategory === 'animated'} // For animated GIFs
-                />
-              </div>
-              <div className="text-sm text-gray-600 font-medium">
-                {sprite.label}
-              </div>
-            </div>
+      {/* Content Tabs */}
+      <div className="border-b border-gray-200 mb-6">
+        <nav className="flex space-x-0 overflow-x-auto" aria-label="Content Navigation">
+          {contentTabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveContentTab(tab.id)}
+              disabled={!tab.available}
+              className={`px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm font-medium border-b-2 transition-all duration-200 whitespace-nowrap ${
+                activeContentTab === tab.id
+                  ? 'border-blue-500 text-blue-600 bg-blue-50'
+                  : tab.available
+                  ? 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                  : 'border-transparent text-gray-300 cursor-not-allowed'
+              } ${!tab.available ? 'opacity-50' : ''}`}
+            >
+              {tab.label}
+            </button>
           ))}
-        </div>
-      ) : (
-        <div className="text-center py-8 text-gray-500">
-          {language === 'en' 
-            ? 'No sprites available for this category' 
-            : 'このカテゴリーには利用可能なスプライトがありません'
-          }
-        </div>
-      )}
+        </nav>
+      </div>
+
+      {/* Tab Content */}
+      {renderTabContent()}
     </div>
   );
 }
