@@ -5,7 +5,7 @@ import Image from 'next/image';
 import React from 'react';
 import { EvolutionDetail, PokemonTypeSlot, EvolutionTrigger, FormVariant } from '@/types/pokemon';
 import { Locale } from '@/lib/dictionaries';
-import { getTypeName, getPokemonName } from '@/lib/pokemonUtils';
+import { getTypeName, getEvolutionPokemonName } from '@/lib/pokemonUtils';
 import { getFormDisplayName } from '@/lib/formUtils';
 import { POKEMON_TYPE_COLORS } from '@/types/pokemon';
 
@@ -18,23 +18,22 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
   const renderEvolutionChain = (evolution: EvolutionDetail): React.ReactElement[] => {
     const chain: React.ReactElement[] = [];
     
+    // Get Pokemon name using species data if available, fallback to English name
+    const getEvolutionPokemonName = (evolution: EvolutionDetail, language: string): string => {
+      if (language === 'en' || !evolution.species?.names) {
+        return evolution.name.charAt(0).toUpperCase() + evolution.name.slice(1);
+      }
+
+      // Find Japanese name from species data
+      const japaneseName = evolution.species.names.find(
+        nameEntry => nameEntry.language.name === 'ja' || nameEntry.language.name === 'ja-Hrkt'
+      );
+
+      return japaneseName?.name || evolution.name.charAt(0).toUpperCase() + evolution.name.slice(1);
+    };
+
     const addEvolutionStage = (currentEvolution: EvolutionDetail) => {
       if (!currentEvolution) return;
-      
-      // Get Pokemon name using species data if available, fallback to English name
-      const getEvolutionPokemonName = (evolution: EvolutionDetail, language: string): string => {
-        if (language === 'en' || !evolution.species?.names) {
-          return evolution.name.charAt(0).toUpperCase() + evolution.name.slice(1);
-        }
-
-        // Find Japanese name from species data
-        const japaneseName = evolution.species.names.find(
-          nameEntry => nameEntry.language.name === 'ja' || nameEntry.language.name === 'ja-Hrkt'
-        );
-
-        return japaneseName?.name || evolution.name.charAt(0).toUpperCase() + evolution.name.slice(1);
-      };
-      
       const pokemonName = getEvolutionPokemonName(currentEvolution, lang);
       const pokemonId = currentEvolution.id || '0';
       const imageUrl = currentEvolution.sprites?.other?.officialArtwork?.frontDefault || currentEvolution.sprites?.frontDefault;

@@ -1,4 +1,4 @@
-import { Pokemon } from '@/types/pokemon';
+import { Pokemon, EvolutionDetail } from '@/types/pokemon';
 import React from 'react';
 
 /**
@@ -16,6 +16,23 @@ export function getPokemonName(pokemon: Pokemon, language: 'en' | 'ja'): string 
   );
 
   return japaneseName?.name || pokemon.name;
+}
+
+/**
+ * Get Pokemon name from evolution detail in the specified language
+ * Falls back to English name if target language is not available
+ */
+export function getEvolutionPokemonName(evolutionDetail: EvolutionDetail, language: 'en' | 'ja'): string {
+  if (language === 'en' || !evolutionDetail.species?.names) {
+    return evolutionDetail.name;
+  }
+
+  // Find Japanese name from species data
+  const japaneseName = evolutionDetail.species.names.find(
+    nameEntry => nameEntry.language.name === 'ja' || nameEntry.language.name === 'ja-Hrkt'
+  );
+
+  return japaneseName?.name || evolutionDetail.name;
 }
 
 /**
