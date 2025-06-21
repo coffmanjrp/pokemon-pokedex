@@ -70,43 +70,6 @@ export function PageTransition({ isActive, pokemon, sourceElement, onComplete }:
       colorLayers.push(layer);
     });
 
-    // Create sparkle effects for each layer
-    const createSparkleEffect = (color: string) => {
-      const sparkleContainer = document.createElement('div');
-      sparkleContainer.style.cssText = `
-        position: fixed;
-        left: 0;
-        top: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: 10000;
-        pointer-events: none;
-        opacity: 0;
-      `;
-      
-      // Check if the color is light (yellow, light colors) to adjust sparkle visibility
-      const isLightColor = color === POKEMON_TYPE_COLORS.electric || 
-                          color === POKEMON_TYPE_COLORS.normal ||
-                          color === POKEMON_TYPE_COLORS.fairy;
-      
-      // Create multiple sparkles
-      for (let i = 0; i < 12; i++) {
-        const sparkle = document.createElement('div');
-        sparkle.innerHTML = '✨';
-        sparkle.style.cssText = `
-          position: absolute;
-          font-size: 24px;
-          left: ${Math.random() * 90}%;
-          top: ${Math.random() * 90}%;
-          transform: scale(0);
-          ${isLightColor ? 'filter: drop-shadow(0 0 3px #000000);' : ''}
-        `;
-        sparkleContainer.appendChild(sparkle);
-      }
-      
-      document.body.appendChild(sparkleContainer);
-      return sparkleContainer;
-    };
 
     // Initial states
     gsap.set(overlayRef.current, { opacity: 0 });

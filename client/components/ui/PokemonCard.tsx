@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { getPokemonName, getPokemonGenus } from '@/lib/pokemonUtils';
 import { useAppSelector } from '@/store/hooks';
 import { useRef } from 'react';
+import { createParticleEchoCombo, AnimationConfig } from '@/lib/animations';
 import { PokemonImage } from './PokemonImage';
 import { PokemonTypes } from './PokemonTypes';
 
@@ -20,9 +21,39 @@ export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
   const primaryType = pokemon.types[0]?.type.name as PokemonTypeName;
   const primaryColor = POKEMON_TYPE_COLORS[primaryType] || '#68A090';
 
+  const triggerAnimation = (e: React.MouseEvent) => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    // Find the grid container for border echo effects
+    const gridContainer = card.closest('.grid') as HTMLElement;
+    
+    if (!gridContainer) {
+      console.warn('Grid container not found for particle echo combo effect');
+      return;
+    }
+
+    // Use actual click position for particle burst
+    // No need to modify the click event - use it as is
+
+    const animationConfig: AnimationConfig = {
+      pokemon,
+      clickEvent: e,
+      targetElement: card,
+      gridContainer
+    };
+
+    createParticleEchoCombo(animationConfig);
+  };
+
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    onClick?.(pokemon, cardRef.current || undefined);
+    triggerAnimation(e);
+    
+    // Small delay for visual feedback before navigation
+    setTimeout(() => {
+      onClick?.(pokemon, cardRef.current || undefined);
+    }, 200);
   };
 
   const formatPokemonId = (id: string) => {

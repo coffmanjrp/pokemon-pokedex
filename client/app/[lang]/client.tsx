@@ -5,7 +5,6 @@ import { PokemonGrid } from '../../components/ui/PokemonGrid';
 import { LoadingOverlay } from '../../components/ui/LoadingSpinner';
 import { FilterSummary } from '../../components/ui/FilterSummary';
 import { AnimatedLoadingScreen } from '../../components/ui/AnimatedLoadingScreen';
-import { PageTransition } from '../../components/ui/PageTransition';
 import { usePokemonList } from '../../hooks/usePokemonList';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setSelectedPokemon } from '../../store/slices/pokemonSlice';
@@ -29,9 +28,6 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
   
   const [showLoadingScreen, setShowLoadingScreen] = useState(true);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
-  const [showTransition, setShowTransition] = useState(false);
-  const [selectedPokemonForTransition, setSelectedPokemonForTransition] = useState<Pokemon | null>(null);
-  const [sourceElement, setSourceElement] = useState<HTMLElement | null>(null);
   const observerTarget = useRef<HTMLDivElement>(null);
 
   // Sync language from server props to Redux store
@@ -52,27 +48,9 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
     setShowLoadingScreen(false);
   };
 
-  const handlePokemonClick = (pokemon: Pokemon, element?: HTMLElement) => {
+  const handlePokemonClick = (pokemon: Pokemon) => {
     dispatch(setSelectedPokemon(pokemon));
-    
-    if (element) {
-      // Start transition animation
-      setSelectedPokemonForTransition(pokemon);
-      setSourceElement(element);
-      setShowTransition(true);
-    } else {
-      // Fallback to direct navigation
-      router.push(`/${lang}/pokemon/${pokemon.id}`);
-    }
-  };
-
-  const handleTransitionComplete = () => {
-    setShowTransition(false);
-    if (selectedPokemonForTransition) {
-      router.push(`/${lang}/pokemon/${selectedPokemonForTransition.id}`);
-    }
-    setSelectedPokemonForTransition(null);
-    setSourceElement(null);
+    router.push(`/${lang}/pokemon/${pokemon.id}`);
   };
 
   // Infinite scroll implementation with debouncing
@@ -211,13 +189,6 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
         </div>
       )}
 
-      {/* Page Transition Animation */}
-      <PageTransition
-        isActive={showTransition}
-        pokemon={selectedPokemonForTransition || undefined}
-        sourceElement={sourceElement}
-        onComplete={handleTransitionComplete}
-      />
     </>
   );
 }
