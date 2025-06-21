@@ -4,22 +4,25 @@ import { Pokemon, POKEMON_TYPE_COLORS, PokemonTypeName } from '@/types/pokemon';
 import { cn } from '@/lib/utils';
 import { getPokemonName, getPokemonGenus } from '@/lib/pokemonUtils';
 import { useAppSelector } from '@/store/hooks';
+import { useRef } from 'react';
 import { PokemonImage } from './PokemonImage';
 import { PokemonTypes } from './PokemonTypes';
 
 interface PokemonCardProps {
   pokemon: Pokemon;
-  onClick?: (pokemon: Pokemon) => void;
+  onClick?: (pokemon: Pokemon, element?: HTMLElement) => void;
   className?: string;
 }
 
 export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
   const { language } = useAppSelector((state) => state.ui);
+  const cardRef = useRef<HTMLDivElement>(null);
   const primaryType = pokemon.types[0]?.type.name as PokemonTypeName;
   const primaryColor = POKEMON_TYPE_COLORS[primaryType] || '#68A090';
 
-  const handleClick = () => {
-    onClick?.(pokemon);
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onClick?.(pokemon, cardRef.current || undefined);
   };
 
   const formatPokemonId = (id: string) => {
@@ -35,6 +38,7 @@ export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
 
   return (
     <div
+      ref={cardRef}
       className={cn(
         'relative overflow-hidden rounded-xl bg-gradient-to-br from-white to-gray-50',
         'border-2 border-gray-200 shadow-lg transition-all duration-300',

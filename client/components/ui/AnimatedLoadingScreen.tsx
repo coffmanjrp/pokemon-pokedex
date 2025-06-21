@@ -112,8 +112,11 @@ export function AnimatedLoadingScreen({ language, onComplete }: AnimatedLoadingS
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animation: `float 3s ease-in-out infinite`
+              animationName: 'float',
+              animationDuration: '3s',
+              animationTimingFunction: 'ease-in-out',
+              animationIterationCount: 'infinite',
+              animationDelay: `${Math.random() * 3}s`
             }}
           />
         ))}
