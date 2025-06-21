@@ -6,6 +6,7 @@ import { setLoading, setError, setPokemons, addPokemons, setHasNextPage, setEndC
 import { GET_POKEMONS } from '@/graphql/queries';
 import { Pokemon } from '@/types/pokemon';
 import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 
 interface UsePokemonListOptions {
   limit?: number;
@@ -15,8 +16,11 @@ interface UsePokemonListOptions {
 export function usePokemonList({ limit = 20, autoFetch = true }: UsePokemonListOptions = {}) {
   const dispatch = useAppDispatch();
   const { pokemons, loading, error, hasNextPage, endCursor, filters } = useAppSelector((state) => state.pokemon);
+  const { language } = useAppSelector((state) => state.ui);
   const isLoadingMore = useRef(false);
   const [isAutoLoading, setIsAutoLoading] = useState(false);
+  const [currentToastId, setCurrentToastId] = useState<string | null>(null);
+  const [lastFilterState, setLastFilterState] = useState<string>('');
 
   const { data, loading: queryLoading, error: queryError, fetchMore, refetch } = useQuery(
     GET_POKEMONS,
@@ -53,77 +57,248 @@ export function usePokemonList({ limit = 20, autoFetch = true }: UsePokemonListO
     }
   }, [data, dispatch]);
 
-  // Auto-load more Pokemon when generation filters are applied
+  // Auto-load Pokemon when filters are applied (generation or type filters)
   useEffect(() => {
     const hasGenerationFilter = filters.generation !== null;
+    const hasTypeFilter = filters.types.length > 0;
+    const hasSearchFilter = filters.search && filters.search.trim() !== '';
+    const hasAnyFilter = hasGenerationFilter || hasTypeFilter || hasSearchFilter;
     
     const autoLoadMore = async () => {
-      if (!hasGenerationFilter) {
+      if (!hasAnyFilter) {
         setIsAutoLoading(false);
+        // Dismiss any existing toast when clearing filters
+        if (currentToastId) {
+          console.log('Dismissing toast due to filter clear');
+          toast.dismiss(currentToastId);
+          setCurrentToastId(null);
+        }
+        // Also dismiss all toasts to be safe
+        toast.dismiss();
         return;
       }
       
-      // For generation filters, determine how many Pokemon we need
-      const generationRanges = {
-        1: 151,   // Kanto
-        2: 251,   // Through Johto
-        3: 386,   // Through Hoenn
-        4: 493,   // Through Sinnoh
-        5: 649,   // Through Unova
-        6: 721,   // Through Kalos
-        7: 809,   // Through Alola
-        8: 905,   // Through Galar
-        9: 1000,  // Through Paldea (approximate)
-      };
-      const targetCount = generationRanges[filters.generation as keyof typeof generationRanges] || 1000;
+      // For any filter application, we want to load sufficient Pokemon data for filtering
+      // Reduced target due to server API issues with some Pokemon
+      const TARGET_POKEMON_COUNT = Math.min(300, 1010); // Load 300 Pokemon for good type coverage while avoiding problematic Pokemon
       
       setIsAutoLoading(true);
       
-      // Load more Pokemon if we don't have enough for the current generation
-      let attempts = 0;
-      const maxAttempts = 10; // Increase attempts for higher generations
-      let currentPokemonCount = pokemons.length;
+      // Check if filters have actually changed
+      const currentFilterState = JSON.stringify({
+        generation: filters.generation,
+        types: filters.types,
+        search: filters.search
+      });
       
-      while (currentPokemonCount < targetCount && hasNextPage && attempts < maxAttempts) {
-        attempts++;
-        console.log(`Auto-loading attempt ${attempts} for generation ${filters.generation}. Current: ${currentPokemonCount}, Target: ${targetCount}`);
+      // Only show toast if filters changed or no toast is active
+      if (currentFilterState !== lastFilterState || !currentToastId) {
+        setLastFilterState(currentFilterState);
         
-        if (!isLoadingMore.current && !loading) {
-          await loadMore();
-          // Wait for state to update
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          // Re-check the current count from Redux state
-          currentPokemonCount = pokemons.length;
-          console.log(`After loading: ${currentPokemonCount} Pokemon available`);
+        // Dismiss previous toast if exists
+        if (currentToastId) {
+          toast.dismiss(currentToastId);
+        }
+        
+        // Show toast notification for loading
+        const getFilterMessage = () => {
+          if (hasGenerationFilter) {
+            return language === 'ja' 
+              ? `第${filters.generation}世代のポケモンを読み込み中...`
+              : `Loading Generation ${filters.generation} Pokemon...`;
+          } else if (hasTypeFilter) {
+            const typeNames = filters.types.map(t => t.name).join(', ');
+            return language === 'ja'
+              ? `${typeNames}タイプのポケモンを読み込み中...`
+              : `Loading ${typeNames} type Pokemon...`;
+          } else {
+            return language === 'ja'
+              ? 'ポケモンを読み込み中...'
+              : 'Loading Pokemon...';
+          }
+        };
+        
+        const toastId = toast.loading(getFilterMessage());
+        setCurrentToastId(toastId);
+      }
+      
+      // Only start loading if we haven't reached the target yet
+      if (pokemons.length < TARGET_POKEMON_COUNT && hasNextPage) {
+        // Load more Pokemon until we have sufficient data for filtering
+        let attempts = 0;
+        const maxAttempts = 15; // Reduced for faster completion
+        let currentPokemonCount = pokemons.length;
+        let consecutiveFailures = 0;
+        let noProgressAttempts = 0;
+        
+        console.log(`Starting auto-load for filters. Current: ${currentPokemonCount}, Target: ${TARGET_POKEMON_COUNT}`);
+        
+        let forcedOffset = 0; // Track forced offset to skip duplicates
+        
+        while (currentPokemonCount < TARGET_POKEMON_COUNT && hasNextPage && attempts < maxAttempts && consecutiveFailures < 8) {
+          attempts++;
+          const previousCount = currentPokemonCount;
+          console.log(`Auto-loading attempt ${attempts}. Current: ${currentPokemonCount}, Target: ${TARGET_POKEMON_COUNT}, HasNextPage: ${hasNextPage}`);
+          
+          if (!isLoadingMore.current && !loading) {
+            try {
+              // If we had no progress in previous attempts, try forcing offset
+              const useForceOffset = noProgressAttempts >= 2 ? forcedOffset : undefined;
+              if (useForceOffset !== undefined) {
+                console.log(`Using forced offset: ${useForceOffset} to skip potential duplicates`);
+              }
+              
+              const actuallyAdded = await loadMore(useForceOffset);
+              
+              // Wait for Redux state to update with polling
+              let waitCount = 0;
+              const maxWaitCount = 10;
+              let newReduxCount = pokemons.length;
+              
+              while (waitCount < maxWaitCount && newReduxCount === previousCount) {
+                await new Promise(resolve => setTimeout(resolve, 200));
+                newReduxCount = pokemons.length; // Re-check Redux state
+                waitCount++;
+              }
+              
+              // Get fresh counts from both sources
+              const reduxCount = newReduxCount;
+              const uniqueCount = uniquePokemons.length;
+              const maxCount = Math.max(reduxCount, uniqueCount);
+              
+              console.log(`After loadMore: Redux=${reduxCount}, Unique=${uniqueCount}, Max=${maxCount}, Previous=${previousCount}, ActuallyAdded=${actuallyAdded}`);
+              
+              // Update currentPokemonCount - use actual progress from Redux
+              if (reduxCount > currentPokemonCount) {
+                currentPokemonCount = reduxCount;
+                console.log(`Progress detected: ${previousCount} -> ${currentPokemonCount} Pokemon available`);
+                consecutiveFailures = 0; // Reset on successful load
+                noProgressAttempts = 0; // Reset no progress counter
+                forcedOffset = 0; // Reset forced offset on success
+              } else if (actuallyAdded === 0) {
+                // No new Pokemon were actually added (all were duplicates)
+                noProgressAttempts++;
+                console.warn(`No progress made in attempt ${attempts}. No progress attempts: ${noProgressAttempts}`);
+                console.warn(`Previous: ${previousCount}, Current: ${currentPokemonCount}, Redux: ${reduxCount}, ActuallyAdded: ${actuallyAdded}`);
+                
+                // If no progress for multiple attempts, increment forced offset
+                if (noProgressAttempts >= 1) { // More aggressive offset jumping
+                  forcedOffset = Math.max(forcedOffset, reduxCount) + limit; // Jump ahead
+                  console.log(`Incrementing forced offset to ${forcedOffset} to skip duplicates`);
+                  consecutiveFailures++;
+                  await new Promise(resolve => setTimeout(resolve, 500));
+                }
+              } else {
+                // ActuallyAdded > 0 but Redux didn't update yet - likely a timing issue
+                console.log(`ActuallyAdded: ${actuallyAdded} but Redux not updated. Waiting longer...`);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                currentPokemonCount = Math.max(currentPokemonCount, pokemons.length);
+              }
+            } catch (error) {
+              console.error(`Error during auto-loading attempt ${attempts}:`, error);
+              consecutiveFailures++;
+              
+              // If it's a server error, try to skip ahead more aggressively
+              if (error instanceof Error && (error.message.includes('404') || error.message.includes('500') || error.message.includes('Network Error'))) {
+                console.warn('Server error detected, skipping ahead more aggressively');
+                forcedOffset += limit * 2; // Skip ahead by 2 batch sizes to avoid problematic Pokemon
+              }
+              
+              await new Promise(resolve => setTimeout(resolve, 1500)); // Longer wait for server recovery
+            }
+          } else {
+            // Wait if already loading
+            console.log(`Waiting for current load to complete... (loading: ${loading}, isLoadingMore: ${isLoadingMore.current})`);
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+        }
+        
+        // Log final status and handle toast
+        if (consecutiveFailures >= 8) {
+          console.warn(`Auto-loading stopped due to consecutive failures. Loaded ${currentPokemonCount} Pokemon.`);
+          if (currentToastId) {
+            toast.error(
+              language === 'ja'
+                ? '読み込み中にエラーが発生しました。利用可能なポケモンでフィルタリングします。'
+                : 'Loading error occurred. Filtering with available Pokemon.',
+              { id: currentToastId }
+            );
+          }
+        } else if (attempts >= maxAttempts) {
+          console.warn(`Auto-loading stopped due to max attempts reached. Loaded ${currentPokemonCount} Pokemon.`);
+          if (currentToastId) {
+            toast.dismiss(currentToastId);
+          }
         } else {
-          // Wait if already loading
-          await new Promise(resolve => setTimeout(resolve, 500));
+          console.log(`Auto-loading completed successfully. Loaded ${currentPokemonCount} Pokemon.`);
         }
       }
       
       setIsAutoLoading(false);
-      console.log(`Auto-loading completed for generation ${filters.generation}. Final count: ${currentPokemonCount}`);
+      
+      // Simply dismiss the loading toast without showing success message
+      if (currentToastId) {
+        toast.dismiss(currentToastId);
+      }
+      
+      setCurrentToastId(null);
+      console.log(`Auto-loading completed. Final count: ${pokemons.length}`);
     };
     
-    if (hasGenerationFilter) {
+    if (hasAnyFilter) {
       autoLoadMore();
     } else {
       setIsAutoLoading(false);
+      setLastFilterState(''); // Reset filter state when no filters
+      // Ensure toast is dismissed when no filters
+      if (currentToastId) {
+        console.log('Force dismissing toast - no filters active');
+        toast.dismiss(currentToastId);
+        setCurrentToastId(null);
+      }
     }
-  }, [filters.generation, pokemons.length]);
+  }, [filters.generation, filters.types, filters.search, language, currentToastId]); // Added currentToastId to ensure cleanup
 
-  const loadMore = async () => {
+  // Additional useEffect specifically for toast cleanup on filter clear
+  useEffect(() => {
+    const hasAnyFilter = filters.generation !== null || filters.types.length > 0 || (filters.search && filters.search.trim() !== '');
+    
+    if (!hasAnyFilter) {
+      console.log('Cleanup useEffect: No filters detected, dismissing all toasts');
+      if (currentToastId) {
+        console.log('Dismissing specific toast:', currentToastId);
+        toast.dismiss(currentToastId);
+        setCurrentToastId(null);
+      }
+      // Always dismiss all toasts when no filters
+      toast.dismiss();
+      setIsAutoLoading(false); // Stop auto loading
+    }
+  }, [filters, currentToastId]);
+
+  // Force cleanup on component unmount
+  useEffect(() => {
+    return () => {
+      if (currentToastId) {
+        console.log('Component cleanup: Dismissing toast');
+        toast.dismiss(currentToastId);
+      }
+    };
+  }, [currentToastId]);
+
+  const loadMore = async (forceOffset?: number): Promise<number> => {
     if (!hasNextPage || loading || isLoadingMore.current) {
       console.log('loadMore blocked:', { hasNextPage, loading, isLoadingMore: isLoadingMore.current });
-      return;
+      return 0;
     }
 
     try {
       isLoadingMore.current = true;
       dispatch(setLoading(true));
       
-      const currentOffset = pokemons.length;
-      console.log('Loading more Pokemon. Current count:', currentOffset, 'Limit:', limit);
+      // Use forced offset if provided, otherwise use current Pokemon count
+      const currentOffset = forceOffset !== undefined ? forceOffset : pokemons.length;
+      console.log('Loading more Pokemon. Current count:', pokemons.length, 'Using offset:', currentOffset, 'Limit:', limit);
       
       const { data: moreData } = await fetchMore({
         variables: {
@@ -148,13 +323,30 @@ export function usePokemonList({ limit = 20, autoFetch = true }: UsePokemonListO
         
         console.log('Fetched', newPokemon.length, 'new Pokemon. HasNextPage:', pageInfo.hasNextPage);
         
+        const beforeCount = pokemons.length;
         dispatch(addPokemons(newPokemon));
         dispatch(setHasNextPage(pageInfo.hasNextPage));
         dispatch(setEndCursor(pageInfo.endCursor));
+        
+        // Check if any new Pokemon were actually added (more reliable)
+        const newUniqueIds = new Set(pokemons.map((p: Pokemon) => p.id));
+        const actuallyAdded = newPokemon.filter((p: Pokemon) => !newUniqueIds.has(p.id)).length;
+        console.log(`Actually added ${actuallyAdded} new Pokemon (before: ${beforeCount}, checking ${newPokemon.length} fetched)`);
+        
+        return actuallyAdded; // Return count of actually added Pokemon
       }
+      return 0;
     } catch (err) {
       console.error('Failed to load more Pokemon:', err);
-      dispatch(setError(err instanceof Error ? err.message : 'Failed to load more Pokemon'));
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load more Pokemon';
+      
+      // Don't set permanent error for server-side issues, just log them
+      if (errorMessage.includes('dudunsparce') || errorMessage.includes('404') || errorMessage.includes('500')) {
+        console.warn('Server-side Pokemon data issue, continuing with available data');
+      } else {
+        dispatch(setError(errorMessage));
+      }
+      return 0;
     } finally {
       dispatch(setLoading(false));
       isLoadingMore.current = false;
@@ -195,9 +387,22 @@ export function usePokemonList({ limit = 20, autoFetch = true }: UsePokemonListO
     // Type filter
     if (filters.types.length > 0) {
       const pokemonTypes = pokemon.types.map(t => t.type.name);
+      const filterTypeNames = filters.types.map(ft => ft.name);
+      
+      // Debug logging for type filtering issues
+      if (filterTypeNames.includes('dark')) {
+        console.log(`[DEBUG] Pokemon ${pokemon.name} (${pokemon.id}) types:`, pokemonTypes);
+        console.log(`[DEBUG] Filter types:`, filterTypeNames);
+      }
+      
       const hasMatchingType = filters.types.some(filterType => 
         pokemonTypes.includes(filterType.name)
       );
+      
+      if (filterTypeNames.includes('dark') && hasMatchingType) {
+        console.log(`[DEBUG] Found matching dark type Pokemon: ${pokemon.name} (${pokemon.id})`);
+      }
+      
       if (!hasMatchingType) {
         return false;
       }
@@ -252,8 +457,11 @@ export function usePokemonList({ limit = 20, autoFetch = true }: UsePokemonListO
     ? (isAutoLoading || (loading && filteredPokemons.length === 0))
     : loading;
   
-  // Disable infinite scroll when filtering to prevent loading irrelevant Pokemon
-  const shouldShowHasNextPage = hasActiveFilters ? false : hasNextPage;
+  // Enable infinite scroll when not filtering or when auto-loading is complete
+  // During auto-loading, we want to continue loading more Pokemon
+  const shouldShowHasNextPage = hasActiveFilters 
+    ? false  // Disable infinite scroll when filtering (we load all data via auto-loading)
+    : hasNextPage;
 
   return {
     pokemons: filteredPokemons,

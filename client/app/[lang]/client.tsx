@@ -1,7 +1,6 @@
 'use client';
 
-import Image from 'next/image';
-import { PokemonGrid } from '../../components/ui/PokemonGrid';
+import { VirtualPokemonGrid } from '../../components/ui/VirtualPokemonGrid';
 import { LoadingOverlay } from '../../components/ui/LoadingSpinner';
 import { FilterSummary } from '../../components/ui/FilterSummary';
 import { AnimatedLoadingScreen } from '../../components/ui/AnimatedLoadingScreen';
@@ -12,7 +11,7 @@ import { setLanguage } from '../../store/slices/uiSlice';
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Pokemon } from '@/types/pokemon';
-import { Dictionary, Locale, interpolate } from '@/lib/dictionaries';
+import { Dictionary, Locale } from '@/lib/dictionaries';
 
 interface PokemonListClientProps {
   dictionary: Dictionary;
@@ -22,9 +21,8 @@ interface PokemonListClientProps {
 export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { filters } = useAppSelector((state) => state.pokemon);
   const { language: currentLanguage } = useAppSelector((state) => state.ui);
-  const { pokemons, allPokemons, loading, error, hasNextPage, loadMore, isFiltering, isAutoLoading } = usePokemonList();
+  const { pokemons, allPokemons, loading, error, hasNextPage, loadMore, isFiltering, isAutoLoading } = usePokemonList({ limit: 12 });
   
   const [showLoadingScreen, setShowLoadingScreen] = useState(true);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
@@ -41,11 +39,18 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
   useEffect(() => {
     if (!loading && pokemons.length > 0 && !initialLoadComplete) {
       setInitialLoadComplete(true);
+      // データ取得完了後、少し待ってからローディング終了
+      setTimeout(() => {
+        setShowLoadingScreen(false);
+      }, 800); // 0.8秒でローディング終了（従来の2.5秒より短縮）
     }
   }, [loading, pokemons.length, initialLoadComplete]);
 
   const handleLoadingComplete = () => {
-    setShowLoadingScreen(false);
+    // データがまだの場合のフォールバック
+    if (initialLoadComplete) {
+      setShowLoadingScreen(false);
+    }
   };
 
   const handlePokemonClick = (pokemon: Pokemon) => {
@@ -110,50 +115,19 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
 
   return (
     <>
-      {/* Hero Section */}
-      <div className="text-center py-12 px-4">
-        <div className="flex justify-center mb-4">
-          <Image
-            src="/logo.png"
-            alt={lang === 'en' ? 'Pokédex' : 'ポケモン図鑑'}
-            width={300}
-            height={112}
-            priority
-            className="h-auto w-auto max-w-xs md:max-w-md"
-          />
-        </div>
-        <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
-          {dictionary.meta.description}
-        </p>
+      {/* Filter Summary */}
+      <div className="bg-white">
+        <FilterSummary 
+          resultCount={pokemons.length}
+          totalCount={allPokemons.length}
+        />
       </div>
 
-      {/* Filter Summary */}
-      <FilterSummary 
-        resultCount={pokemons.length}
-        totalCount={allPokemons.length}
-      />
-
-      {/* Auto-loading indicator for filtering */}
-      {isAutoLoading && (
-        <div className="flex justify-center items-center py-8 mx-6">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 w-full max-w-md text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <div className="text-blue-800 font-medium">
-              {interpolate(dictionary.ui.loading.loadingGeneration, { generation: filters.generation?.toString() || '' })}
-            </div>
-            <div className="text-sm text-blue-600 mt-2">
-              {lang === 'en' 
-                ? 'This may take a moment for higher generations'
-                : '高い世代の場合、時間がかかる場合があります'
-              }
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Auto-loading is now handled by Toast notifications */}
 
       {/* Pokemon Grid */}
       <LoadingOverlay show={loading && pokemons.length === 0 && !isAutoLoading} message={dictionary.ui.loading.loadingPokemon}>
-        <PokemonGrid
+        <VirtualPokemonGrid
           pokemons={pokemons}
           onPokemonClick={handlePokemonClick}
           loading={loading}

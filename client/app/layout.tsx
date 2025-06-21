@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "../components/providers/Providers";
+import { ToastProvider } from "@/components/ui/ToastProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,11 +26,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* DNS prefetch and preconnect for faster API calls */}
+        <link rel="dns-prefetch" href="//raw.githubusercontent.com" />
+        <link rel="dns-prefetch" href="//assets.pokemon.com" />
+        <link rel="preconnect" href={process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:4000'} />
+        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+        <link rel="preconnect" href="//fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning={true}
       >
         <Providers>
           {children}
+          <ToastProvider />
         </Providers>
       </body>
     </html>

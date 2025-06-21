@@ -11,14 +11,30 @@ export const apolloClient = new ApolloClient({
       Pokemon: {
         keyFields: ['id'],
       },
+      Query: {
+        fields: {
+          pokemons: {
+            // Cursor-based pagination caching
+            keyArgs: false,
+            merge(existing = { edges: [], pageInfo: {} }, incoming) {
+              return {
+                ...incoming,
+                edges: [...existing.edges, ...incoming.edges],
+              };
+            },
+          },
+        },
+      },
     },
   }),
   defaultOptions: {
     watchQuery: {
       errorPolicy: 'all',
+      fetchPolicy: 'cache-first', // Prioritize cache
     },
     query: {
       errorPolicy: 'all',
+      fetchPolicy: 'cache-first',
     },
   },
 });

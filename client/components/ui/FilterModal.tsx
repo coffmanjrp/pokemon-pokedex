@@ -11,6 +11,7 @@ import { Modal } from './Modal';
 import { TypeFilter } from './TypeFilter';
 import { GenerationFilter } from './GenerationFilter';
 import { Badge } from './Badge';
+import toast from 'react-hot-toast';
 
 interface FilterModalProps {
   lang?: Locale;
@@ -52,9 +53,12 @@ export function FilterModal({ lang = 'en' }: FilterModalProps) {
   };
 
   const handleClearFilters = () => {
+    console.log('FilterModal: Clearing all filters and dismissing toasts');
     setLocalTypes([]);
     setLocalGeneration(null);
     dispatch(clearFilters());
+    // Force dismiss all toasts when clearing filters
+    toast.dismiss();
   };
 
   const hasActiveFilters = localTypes.length > 0 || localGeneration !== null;

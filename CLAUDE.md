@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including completely redesigned Pokemon detail pages based on reference design, enhanced evolution chains with form variants, enhanced move data display with detailed statistics, SSG implementation, advanced search/filter functionality, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. **LATEST**: Completed major detail page redesign matching reference design with 2-column layout, type effectiveness system, Normal/Shiny toggle, mobile-responsive design, comprehensive multilingual data integration with GraphQL-based ability and move name support, standardized variant Pokemon display, and enhanced Japanese naming conventions for Mega Evolution forms. All 309 static pages generate successfully. Main areas for future enhancement: testing coverage, environment configuration, and error boundaries.
+**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including completely redesigned Pokemon detail pages based on reference design, enhanced evolution chains with form variants, enhanced move data display with detailed statistics, SSG implementation, advanced search/filter functionality, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. **LATEST**: Completed comprehensive performance optimization including virtual scrolling implementation, Apollo Client cache optimization, image loading enhancements, and Next.js bundle optimization. Main Pokemon list now uses VirtualPokemonGrid for efficient rendering of large datasets. All 311 static pages generate successfully with optimized performance. Main areas for future enhancement: testing coverage, environment configuration, and error boundaries.
 
 ## Architecture
 
@@ -91,7 +91,13 @@ pokemon-pokedex/
   - Type-based filtering with visual type badges
   - Generation-based filtering (1-9) with region names (Kanto, Johto, etc.)
   - Auto-loading mechanism for generation filters to ensure complete results
-- **Infinite Scroll**: Intersection Observer with debouncing and smart loading
+- **Virtual Scrolling**: @tanstack/react-virtual for efficient rendering of large Pokemon lists
+- **Performance Optimization**: Comprehensive optimizations including:
+  - Virtual scrolling with responsive column calculation (1-5 columns based on screen size)
+  - Apollo Client cache-first strategy with cursor-based pagination caching
+  - Image optimization (quality: 60%, WebP/AVIF formats, blur placeholders)
+  - Next.js bundle optimization with code splitting for Apollo/GraphQL
+  - Image preloading hooks for smoother user experience
 - **State Management**: Redux Toolkit with client-side filtering and deduplication
 - **Native App Router i18n**: Complete English/Japanese support with middleware-based routing
   - Language detection from browser headers with automatic redirection
@@ -238,6 +244,34 @@ app/[lang]/              # Dynamic language routing
 - ✅ Stats and technical information
 - ✅ Navigation consistency (back buttons, error pages, detail page links)
 - ✅ Detail page text refinements (ストーリー→説明, ノーマル→通常, etc.)
+
+## Filtering System Enhancement (2024-12-21)
+
+### Issue: Limited Filtering Results
+**Problem**: Filtering only worked on initially loaded Pokemon (20-40 items), not the full dataset of 1010 Pokemon.
+- Example: Filtering by "fire" type only showed Charmander, Charmeleon, Charizard (first 3 fire types)
+- Missing: Growlithe (#58), Arcanine (#59), Ponyta (#77), etc.
+
+**Root Cause**: Client-side filtering on limited data pool + disabled infinite scroll during filtering.
+
+### Solution: Enhanced Client-Side Filtering with Auto-Loading
+**Implementation Strategy**:
+1. **Initial Display**: Show first 50 Pokemon for fast page load
+2. **Filter Trigger**: When user applies filters, automatically load ALL Pokemon data
+3. **Background Loading**: Progressive data loading with user feedback
+4. **Instant Filtering**: Once data is loaded, all filter operations are instant
+
+**Key Benefits**:
+- ✅ Fast initial page load (50 Pokemon)
+- ✅ Complete filtering results (all 1010 Pokemon)
+- ✅ Instant filter switching after initial load
+- ✅ Optimal user experience with loading indicators
+
+### Implementation Details
+- **Enhanced usePokemonList hook**: Auto-load all data when filters applied
+- **Smart caching**: Avoid redundant API calls for subsequent filtering
+- **Loading states**: Clear user feedback during data loading
+- **Performance optimized**: Efficient memory usage and rendering
 
 ## Common Issues & Solutions
 
@@ -1223,3 +1257,60 @@ app/[lang]/              # Dynamic language routing
   - **Authentic Names**: Proper Japanese Mega Evolution naming matching official Pokemon standards
   - **Consistent Application**: Applied across both detail pages and evolution chains
   - **Clear Distinctions**: Different naming patterns for different form types maintain clarity
+
+### Comprehensive Performance Optimization (June 2025)
+- **Virtual Scrolling Implementation**: Replaced PokemonGrid with VirtualPokemonGrid for efficient large dataset rendering
+  - **@tanstack/react-virtual Integration**: Implemented virtual scrolling for Pokemon card list
+  - **Responsive Column Calculation**: Dynamic 1-5 column layout based on screen size (mobile to large desktop)
+  - **Window Resize Handling**: Real-time column adjustment with state management
+  - **Overscan Optimization**: Increased overscan to 10 items for smoother scrolling experience
+  - **Memory Efficiency**: Only renders visible items plus buffer, reducing DOM nodes significantly
+- **Apollo Client Cache Optimization**: Enhanced GraphQL client performance
+  - **Cache-First Strategy**: Prioritized cached data over network requests
+  - **Cursor-Based Pagination Caching**: Intelligent merge strategy for infinite scroll
+  - **Type Policies Enhancement**: Improved Pokemon entity caching with proper key fields
+  - **Error Policy**: Maintained 'all' error policy for graceful degradation
+- **Image Loading Optimization**: Comprehensive image performance improvements
+  - **Quality Reduction**: Reduced image quality from 75% to 60% for faster loading
+  - **Modern Format Support**: Added WebP and AVIF format support in Next.js config
+  - **Cache TTL**: Extended image cache to 24 hours (86400 seconds)
+  - **GIF Animation Preservation**: Added unoptimized flag for animated GIFs
+  - **Blur Placeholder**: Enhanced loading experience with base64 blur placeholders
+- **Next.js Bundle Optimization**: Advanced webpack and build optimizations
+  - **Code Splitting**: Separated Apollo Client and GraphQL into dedicated chunks
+  - **Package Import Optimization**: Optimized react-hot-toast and @apollo/client imports
+  - **Compression**: Enabled built-in Next.js compression
+  - **Console Log Removal**: Production builds strip console logs except errors and warnings
+  - **Webpack Fallbacks**: Proper fallback configuration for Node.js modules
+- **Performance Utilities**: Additional optimization tools
+  - **Image Preloading Hook**: useImagePreload for proactive image loading
+  - **Memoization Hook**: useMemoizedPokemon for optimized Pokemon data processing
+  - **Service Worker**: Basic service worker implementation for API and image caching
+- **Build Results**: Maintained 311 static pages with optimized performance
+  - **Bundle Analysis**: First Load JS maintained under 243 kB for main pages
+  - **Static Generation**: All Pokemon detail pages and multilingual content properly generated
+  - **Type Safety**: Maintained full TypeScript compliance throughout optimization
+
+### Header Layout Optimization (June 2025)
+- **Header Integration**: Moved Pokemon logo and description from scrollable content to header section
+  - **Problem**: Pokemon logo and description scrolled with card list, reducing usable viewing area
+  - **Root Cause**: Hero section was part of main content flow instead of header
+  - **Solution**: Integrated hero content into header while maintaining clean separation
+- **Non-Sticky Header Implementation**: Chose simple, non-intrusive header design
+  - **Initial Approach**: Implemented sticky header with auto-hide functionality based on scroll direction
+  - **User Feedback**: Sticky header interfered with card list viewing area and felt intrusive
+  - **Final Solution**: Standard positioned header that scrolls naturally with content
+- **Improved Content Layout**: Optimized card list viewing experience
+  - **Header Structure**: Logo, search bar, filter button, and language toggle in main header
+  - **Hero Section**: Large Pokemon logo and description text integrated into header on list pages
+  - **Conditional Display**: Hero section only appears on main Pokemon list page, not detail pages
+  - **Clean Separation**: Filter summary and card list have dedicated, unobstructed space
+- **Performance Benefits**: Simplified header reduces complexity and improves performance
+  - **Removed Features**: Scroll direction detection, transform animations, z-index management
+  - **Cleaner DOM**: Eliminated unnecessary scroll listeners and position calculations
+  - **Better UX**: Predictable, standard web behavior without unexpected header movements
+- **Technical Implementation**:
+  - **GraphQL Integration**: Header receives dictionary props for multilingual hero content
+  - **Conditional Rendering**: Hero section visibility based on page type detection
+  - **Layout Flexibility**: Header adapts between list page (with hero) and detail page (minimal)
+  - **Type Safety**: Proper TypeScript interfaces for header props and dictionary integration
