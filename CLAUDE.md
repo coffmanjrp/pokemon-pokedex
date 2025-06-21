@@ -397,10 +397,39 @@ app/[lang]/              # Dynamic language routing
   - Reduced cognitive load by removing irrelevant navigation elements
   - Maintained essential navigation controls (language switching)
   - Consistent header height and spacing across page types
+
+### Card List Page Enhancements (June 2025)
+- **FilterButton Width Stabilization**: Fixed layout shifts when switching between languages
+- **Implementation Details**:
+  - Fixed FilterButton width to `w-36` (144px) to accommodate Japanese "フィルター" text
+  - Prevents text wrapping and layout shifts when switching between English and Japanese
+  - Maintains consistent button sizing across language contexts
+- **Pokemon Card Enhancements**:
+  - **Removed cluttered information**: Eliminated height, weight, and HP display from cards for cleaner appearance
+  - **Added type-based background**: Applied subtle 10% opacity primary type color background matching detail page styling
+  - **Added species classification**: Integrated Pokemon genus display (e.g., "たねポケモン", "しんかポケモン") with bold text styling
+  - **Enhanced GraphQL query**: Extended `GET_POKEMONS` query to include `species.genera` field for classification data
+- **User Experience Improvements**:
+  - Cleaner, less cluttered card design focused on essential information
+  - Consistent visual theming between list and detail views
+  - Enhanced information hierarchy with species classification
+  - Stable layout preventing jarring transitions during language switching
 - **Technical Implementation**:
   - Path-based conditional rendering using Next.js usePathname hook
   - Clean separation of navigation concerns per page type
   - Streamlined Redux state management for UI controls
+
+### Language State Synchronization Fix (June 2025)  
+- **Page Reload Language Issue**: Fixed Japanese language display reverting to English after page reload at `/ja` URLs
+- **Root Cause**: Redux store initializing with default English language state, not syncing with server-side language parameter
+- **Implementation Details**:
+  - Added language synchronization logic in `PokemonListClient` component
+  - Implemented `useEffect` hook to sync server `lang` prop with Redux store language state
+  - Ensures consistent language display between server-side routing and client-side state management
+- **User Experience Improvements**:
+  - Reliable Japanese language persistence across page reloads
+  - Consistent language state between initial page load and subsequent interactions
+  - Eliminated language state desynchronization issues in multilingual navigation
 
 ### Type-Based Background Styling (June 2025)
 - **Dynamic Background Colors**: Pokemon detail pages now reflect primary type colors
@@ -418,6 +447,52 @@ app/[lang]/              # Dynamic language routing
   - Type-safe color mapping with fallback to Normal type color
   - DOM manipulation to replace layout container background (removes bg-gray-50, applies type gradient)
   - React useEffect for lifecycle management with proper cleanup on unmount
+
+### GSAP Animated Loading Screen Implementation (June 2025)
+- **Professional Loading Experience**: Implemented high-quality animated splash screen using GSAP animation library
+- **Pokemon-Themed Design**:
+  - High-precision Pokeball SVG with detailed design (outer frame, red top section, center button)
+  - Soft pastel gradient background (`from-sky-100 via-blue-100 to-emerald-100`)
+  - Floating particle animation using CSS keyframes for ambient movement
+  - Multilingual loading text support (English: "Loading Pokédex...", Japanese: "ポケモン図鑑を読み込み中...")
+- **GSAP Animation Timeline**:
+  - Pokeball entrance with bounce effect and 360° rotation animation
+  - Text entrance with back.out easing for dynamic appearance
+  - Staggered loading dots with pulsing scale animation
+  - Smooth fade-out with scale effect (opacity: 0, scale: 1.1) on completion
+- **Performance Optimizations**:
+  - Shows only during initial data load (first 20 Pokemon cards)
+  - Automatically transitions to main content when data is ready
+  - Proper cleanup of GSAP timelines to prevent memory leaks
+  - Blue particle system with 60% opacity for visibility against light background
+- **User Experience**:
+  - Eliminates jarring "No Pokemon found" → skeleton → content transition
+  - Creates anticipation and polish for first-time visitors
+  - Maintains consistent branding with Pokemon theme throughout loading process
+  - Responsive design works across all device sizes
+
+### Netflix-Style Page Transition Animation (June 2025)
+- **Professional Page Transitions**: Implemented cinematic page transition animation using GSAP for Pokemon detail navigation
+- **Dynamic Pokemon Type Colors**:
+  - First layer uses clicked Pokemon's primary type color for personalized experience
+  - Subsequent layers use randomized Pokemon type colors (no duplicates) for variety
+  - 18 different type colors available from official Pokemon type palette
+  - Every transition creates unique color combinations while maintaining Pokemon authenticity
+- **Netflix-Inspired Animation Flow**:
+  - Sequential layer animation with smooth exponential easing (`expo.out`/`expo.in`)
+  - Each color layer slides up from bottom, covers screen, then exits upward
+  - Overlapping transitions (-=0.3s timing) for seamless color flow
+  - Final layer remains and fades out after page transition completes
+- **Technical Excellence**:
+  - GSAP timeline with optimized easing curves for professional feel
+  - Proper memory management with automatic DOM element cleanup
+  - Error handling for interrupted animations and component unmounting
+  - Responsive full-screen coverage (100vw × 100vh) on all devices
+- **User Experience Enhancement**:
+  - Smooth transition eliminates jarring page changes typical in SPAs
+  - Color-coded connection between Pokemon cards and their detail pages
+  - 2-3 second cinematic experience that feels premium and polished
+  - Maintains user engagement during navigation with beautiful visual feedback
   - Fixed function call issue in `getPrimaryTypeColor()` to properly use `getTypeColorFromName()`
   - Preserves existing component architecture and styling
   - Compatible with existing card designs and text contrast requirements
@@ -915,6 +990,27 @@ app/[lang]/              # Dynamic language routing
 
 ## Recent Major Updates
 
+### Card Animation System Implementation (June 2025)
+- **Particle-Echo-Combo Effect Integration**: Successfully implemented particle-echo-combo animation effect for Pokemon card list
+- **Animation Library Enhancement**: Extended existing modular animation system with comprehensive card click effects
+  - **Particle Burst**: Type-based particles that burst radially from click position using official Pokemon type colors
+  - **Border Echo**: Card border frames that expand outward with proper type-colored styling
+  - **Combined Effect**: Seamless integration of both effects with proper timing and layering
+- **Position Calculation Fix**: Resolved complex positioning issues in animation system
+  - **Grid Container Positioning**: Added automatic `position: relative` setting for grid containers to ensure proper absolute positioning
+  - **Click Position Accuracy**: Implemented accurate click position calculation relative to card elements
+  - **Transform Compatibility**: Fixed issues with CSS transforms (hover effects) interfering with position calculations
+  - **Overflow Handling**: Resolved `overflow-hidden` issues by placing animation elements in grid container instead of card elements
+- **Technical Implementation**: 
+  - **Unified Coordinate System**: All animation elements use consistent positioning relative to grid container
+  - **Memory Management**: Proper cleanup of animation elements with GSAP timeline completion handlers
+  - **Type Safety**: Enhanced TypeScript support for animation configuration objects
+  - **Error Handling**: Added fallback mechanisms and warning systems for missing required elements
+- **Build System**: Successfully compiled production build with 311 static pages generated
+  - **Code Quality**: Resolved all ESLint and TypeScript errors for production deployment
+  - **Performance**: Maintained optimal bundle sizes with First Load JS under 204KB for main pages
+  - **Static Generation**: All Pokemon detail pages and multilingual content properly generated
+
 ### Data File Separation Refactoring (June 2025)
 - **Complete Translation Data Organization**: Separated all large translation objects from utility files into dedicated data files
 - **File Structure Enhancement**: Created organized `client/lib/data/` directory with individual files:
@@ -979,7 +1075,7 @@ app/[lang]/              # Dynamic language routing
 
 ### Build Status
 - ✅ **Production Build**: Successfully compiles with Next.js 15 App Router
-- ✅ **Static Generation**: 309 pages generated (154 Pokemon × 2 languages + base pages)
+- ✅ **Static Generation**: 311 pages generated (154 Pokemon × 2 languages + base pages)
 - ✅ **i18n Implementation**: Native App Router i18n with middleware routing
 - ✅ **Type Safety**: Full TypeScript coverage with no build errors
 - ✅ **ESLint Compliance**: All linting rules passed
@@ -987,6 +1083,8 @@ app/[lang]/              # Dynamic language routing
 - ✅ **Dependency Reduction**: Removed 384 i18n packages for better performance
 - ✅ **Responsive Design**: Mobile-optimized layout with touch-friendly navigation
 - ✅ **Variant Pokemon Support**: Standardized display for regional forms and Mega Evolution
+- ✅ **Animation System**: GSAP-powered animation effects with proper memory management and positioning
+- ✅ **Performance Optimization**: First Load JS under 204KB for main pages, optimized bundle sizes
 
 ### Component Architecture
 - **PokemonBasicInfo**: Pokemon hero section with core information (image, name, types, stats, abilities)
@@ -1024,6 +1122,20 @@ app/[lang]/              # Dynamic language routing
   - Clickable navigation to form-specific Pokemon pages
   - Multilingual form names and category labels
   - Type visualization for each form variant
+- **PokemonCard**: Interactive card component with advanced animation system:
+  - **Particle-Echo-Combo Effect**: Click-responsive animation combining particle burst and border echo
+  - **Type-Based Particles**: Particles use official Pokemon type colors and themed symbols (🔥 for fire, ⚡ for electric, etc.)
+  - **Border Echo Animation**: Card border frames that expand outward with type-colored styling
+  - **Position-Accurate Effects**: Animations trigger from actual click position on card
+  - **Grid Container Integration**: Proper positioning system to handle CSS transforms and overflow constraints
+  - **Memory Management**: Automatic cleanup of animation elements via GSAP timeline completion handlers
+- **Animation Library System**: Comprehensive modular animation framework:
+  - **lib/animations/**: Modular animation system with 13+ different effects
+  - **combinationEffects.ts**: Complex animations including particle-echo-combo, ultimate-echo-combo, elemental-storm, mega-evolution
+  - **ANIMATIONS Registry**: Type-safe animation registry for easy effect selection and integration
+  - **AnimationConfig Interface**: Standardized configuration object for consistent animation behavior
+  - **Grid Container Positioning**: Automatic `position: relative` setting for proper absolute positioning
+  - **Cross-Component Compatibility**: Reusable animations work across card lists, detail pages, and sandbox environments
 
 ### GraphQL-Based Ability Multilingual Support Implementation (June 2025)
 - **Complete Server-Side Integration**: Extended GraphQL schema and service layer for multilingual ability names

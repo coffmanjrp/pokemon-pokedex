@@ -2,25 +2,58 @@
 
 import { Pokemon, POKEMON_TYPE_COLORS, PokemonTypeName } from '@/types/pokemon';
 import { cn } from '@/lib/utils';
-import { getPokemonName } from '@/lib/pokemonUtils';
+import { getPokemonName, getPokemonGenus } from '@/lib/pokemonUtils';
 import { useAppSelector } from '@/store/hooks';
+import { useRef } from 'react';
+import { createParticleEchoCombo, AnimationConfig } from '@/lib/animations';
 import { PokemonImage } from './PokemonImage';
 import { PokemonTypes } from './PokemonTypes';
-import { StatBar } from './StatBar';
 
 interface PokemonCardProps {
   pokemon: Pokemon;
-  onClick?: (pokemon: Pokemon) => void;
+  onClick?: (pokemon: Pokemon, element?: HTMLElement) => void;
   className?: string;
 }
 
 export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
   const { language } = useAppSelector((state) => state.ui);
+  const cardRef = useRef<HTMLDivElement>(null);
   const primaryType = pokemon.types[0]?.type.name as PokemonTypeName;
   const primaryColor = POKEMON_TYPE_COLORS[primaryType] || '#68A090';
 
-  const handleClick = () => {
-    onClick?.(pokemon);
+  const triggerAnimation = (e: React.MouseEvent) => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    // Find the grid container for border echo effects
+    const gridContainer = card.closest('.grid') as HTMLElement;
+    
+    if (!gridContainer) {
+      console.warn('Grid container not found for particle echo combo effect');
+      return;
+    }
+
+    // Use actual click position for particle burst
+    // No need to modify the click event - use it as is
+
+    const animationConfig: AnimationConfig = {
+      pokemon,
+      clickEvent: e,
+      targetElement: card,
+      gridContainer
+    };
+
+    createParticleEchoCombo(animationConfig);
+  };
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    triggerAnimation(e);
+    
+    // Small delay for visual feedback before navigation
+    setTimeout(() => {
+      onClick?.(pokemon, cardRef.current || undefined);
+    }, 200);
   };
 
   const formatPokemonId = (id: string) => {
@@ -32,9 +65,11 @@ export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
   };
 
   const displayName = getPokemonName(pokemon, language);
+  const genus = getPokemonGenus(pokemon, language);
 
   return (
     <div
+      ref={cardRef}
       className={cn(
         'relative overflow-hidden rounded-xl bg-gradient-to-br from-white to-gray-50',
         'border-2 border-gray-200 shadow-lg transition-all duration-300',
@@ -48,11 +83,11 @@ export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
         boxShadow: `0 4px 20px ${primaryColor}20`,
       }}
     >
-      {/* Background Pattern */}
+      {/* Type-based Background */}
       <div
-        className="absolute inset-0 opacity-5"
+        className="absolute inset-0 opacity-10"
         style={{
-          backgroundImage: `radial-gradient(circle at 20% 80%, ${primaryColor} 0%, transparent 50%), radial-gradient(circle at 80% 20%, ${primaryColor} 0%, transparent 50%)`,
+          backgroundColor: primaryColor,
         }}
       />
 
@@ -81,27 +116,15 @@ export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
         {/* Types */}
         <PokemonTypes types={pokemon.types} language={language} />
 
-        {/* Basic Info */}
-        <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 mb-3">
-          <div className="flex justify-between">
-            <span>{language === 'en' ? 'Height:' : '高さ:'}</span>
-            <span className="font-semibold">{(pokemon.height / 10).toFixed(1)}m</span>
+        {/* Species Classification */}
+        {genus && (
+          <div className="text-center mt-2">
+            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full font-bold">
+              {genus}
+            </span>
           </div>
-          <div className="flex justify-between">
-            <span>{language === 'en' ? 'Weight:' : '重さ:'}</span>
-            <span className="font-semibold">{(pokemon.weight / 10).toFixed(1)}kg</span>
-          </div>
-        </div>
-
-        {/* HP Stat Bar */}
-        {pokemon.stats.length > 0 && (
-          <StatBar
-            label="HP"
-            value={pokemon.stats[0].baseStat}
-            maxValue={150}
-            color={primaryColor}
-          />
         )}
+
       </div>
 
       {/* Hover Effect Overlay */}
