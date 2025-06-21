@@ -4,11 +4,12 @@ import Image from 'next/image';
 import { PokemonGrid } from '../../components/ui/PokemonGrid';
 import { LoadingOverlay } from '../../components/ui/LoadingSpinner';
 import { FilterSummary } from '../../components/ui/FilterSummary';
+import { AnimatedLoadingScreen } from '../../components/ui/AnimatedLoadingScreen';
 import { usePokemonList } from '../../hooks/usePokemonList';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setSelectedPokemon } from '../../store/slices/pokemonSlice';
 import { setLanguage } from '../../store/slices/uiSlice';
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Pokemon } from '@/types/pokemon';
 import { Dictionary, Locale, interpolate } from '@/lib/dictionaries';
@@ -25,6 +26,8 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
   const { language: currentLanguage } = useAppSelector((state) => state.ui);
   const { pokemons, allPokemons, loading, error, hasNextPage, loadMore, isFiltering, isAutoLoading } = usePokemonList();
   
+  const [showLoadingScreen, setShowLoadingScreen] = useState(true);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
 
   // Sync language from server props to Redux store
@@ -33,6 +36,17 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
       dispatch(setLanguage(lang));
     }
   }, [lang, currentLanguage, dispatch]);
+
+  // Handle initial loading completion
+  useEffect(() => {
+    if (!loading && pokemons.length > 0 && !initialLoadComplete) {
+      setInitialLoadComplete(true);
+    }
+  }, [loading, pokemons.length, initialLoadComplete]);
+
+  const handleLoadingComplete = () => {
+    setShowLoadingScreen(false);
+  };
 
   const handlePokemonClick = (pokemon: Pokemon) => {
     dispatch(setSelectedPokemon(pokemon));
@@ -81,6 +95,16 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
           {dictionary.ui.error.tryAgain}
         </button>
       </div>
+    );
+  }
+
+  // Show loading screen until initial data is loaded
+  if (showLoadingScreen && !initialLoadComplete) {
+    return (
+      <AnimatedLoadingScreen 
+        language={lang} 
+        onComplete={handleLoadingComplete}
+      />
     );
   }
 
