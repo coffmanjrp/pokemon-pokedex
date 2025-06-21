@@ -30,10 +30,11 @@ export function AnimatedLoadingScreen({ language, onComplete }: AnimatedLoadingS
       }
     });
 
-    // Initial state
+    // Initial state - completely hidden
     gsap.set([pokeballRef.current, textRef.current, dotsRef.current], {
       opacity: 0,
-      scale: 0.5
+      scale: 0.3,
+      y: 20
     });
 
     // Animation sequence
@@ -42,8 +43,10 @@ export function AnimatedLoadingScreen({ language, onComplete }: AnimatedLoadingS
       .to(pokeballRef.current, {
         opacity: 1,
         scale: 1,
+        y: 0,
         duration: 0.8,
-        ease: "bounce.out"
+        ease: "bounce.out",
+        delay: 0.3
       })
       // Pokeball rotation loop (infinite during loading)
       .to(pokeballRef.current, {
@@ -56,14 +59,17 @@ export function AnimatedLoadingScreen({ language, onComplete }: AnimatedLoadingS
       .to(textRef.current, {
         opacity: 1,
         scale: 1,
+        y: 0,
         duration: 0.6,
         ease: "back.out(1.7)"
-      }, "-=1.5")
+      }, "-=2.0")
       // Loading dots animation
       .to(dotsRef.current, {
         opacity: 1,
+        scale: 0.5,
+        y: 0,
         duration: 0.3
-      }, "-=0.8");
+      }, "-=1.4");
 
     // Dots pulsing animation (separate timeline)
     const dotsChildren = dotsRef.current.children;
@@ -115,7 +121,7 @@ export function AnimatedLoadingScreen({ language, onComplete }: AnimatedLoadingS
 
       <div className="text-center z-10">
         {/* Pokeball Animation */}
-        <div ref={pokeballRef} className="mx-auto mb-8">
+        <div ref={pokeballRef} className="mx-auto mb-8 opacity-0">
           <div className="relative w-32 h-32 mx-auto">
             {/* Enhanced Pokeball SVG */}
             <svg
@@ -140,14 +146,14 @@ export function AnimatedLoadingScreen({ language, onComplete }: AnimatedLoadingS
         </div>
 
         {/* Loading Text */}
-        <div ref={textRef}>
+        <div ref={textRef} className="opacity-0">
           <h2 className="text-3xl font-bold text-white mb-4 drop-shadow-lg">
             {language === 'en' ? 'Loading Pokédex...' : 'ポケモン図鑑を読み込み中...'}
           </h2>
         </div>
 
         {/* Loading Dots */}
-        <div ref={dotsRef} className="flex justify-center space-x-2">
+        <div ref={dotsRef} className="flex justify-center space-x-2 opacity-0">
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
