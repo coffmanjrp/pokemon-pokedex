@@ -7,10 +7,11 @@ import { usePokemonList } from '../../hooks/usePokemonList';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setSelectedPokemon } from '../../store/slices/pokemonSlice';
 import { setLanguage } from '../../store/slices/uiSlice';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Pokemon } from '@/types/pokemon';
 import { Dictionary, Locale } from '@/lib/dictionaries';
+import { gsap } from 'gsap';
 
 interface PokemonListClientProps {
   dictionary: Dictionary;
@@ -26,6 +27,8 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
   
   const [showLoadingScreen, setShowLoadingScreen] = useState(true);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+  const [showCompletionFooter, setShowCompletionFooter] = useState(true);
+  const completionFooterRef = useRef<HTMLElement>(null);
 
   // Sync language from server props to Redux store
   useEffect(() => {
@@ -58,8 +61,50 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
   const handleGenerationChange = (generation: number) => {
     setCurrentGeneration(generation);
     changeGeneration(generation);
+    // Reset completion footer when generation changes
+    setShowCompletionFooter(true);
     // Generation change doesn't show loading screen, only inline loading indicators
   };
+
+  // Auto-hide completion footer after 5 seconds with fade animation
+  useEffect(() => {
+    if (!loading && !hasNextPage && pokemons.length > 0 && showCompletionFooter) {
+      const timer = setTimeout(() => {
+        // Animate footer fade out before hiding
+        if (completionFooterRef.current) {
+          gsap.to(completionFooterRef.current, {
+            opacity: 0,
+            y: 20,
+            duration: 0.5,
+            ease: "power2.inOut",
+            onComplete: () => {
+              setShowCompletionFooter(false);
+            }
+          });
+        } else {
+          // Fallback if ref is not available
+          setShowCompletionFooter(false);
+        }
+      }, 5000); // Hide after 5 seconds
+
+      return () => clearTimeout(timer);
+    }
+  }, [loading, hasNextPage, pokemons.length, showCompletionFooter]);
+
+  // Animate completion footer entrance
+  useEffect(() => {
+    if (!loading && !hasNextPage && pokemons.length > 0 && showCompletionFooter && completionFooterRef.current) {
+      // Reset opacity and position for entrance animation
+      gsap.set(completionFooterRef.current, { opacity: 0, y: 20 });
+      gsap.to(completionFooterRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        ease: "back.out(1.7)",
+        delay: 0.2 // Small delay for better UX
+      });
+    }
+  }, [loading, hasNextPage, pokemons.length, showCompletionFooter]);
 
 
   // プリロード用のPreload Generation hook
@@ -217,8 +262,8 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
                   </div>
                 </div>
               </footer>
-            ) : !hasNextPage ? (
-              <footer className="fixed bottom-0 left-0 lg:left-80 right-0 bg-gradient-to-r from-green-50 to-emerald-50 border-t border-green-200 shadow-lg z-40">
+            ) : !hasNextPage && showCompletionFooter ? (
+              <footer ref={completionFooterRef} className="fixed bottom-0 left-0 lg:left-80 right-0 bg-gradient-to-r from-green-50 to-emerald-50 border-t border-green-200 shadow-lg z-40">
                 <div className="px-4 md:px-6 py-3">
                   <div className="flex items-center justify-between">
                     {/* Left side - Success indicator and text */}
@@ -232,7 +277,7 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
                       </span>
                     </div>
                     
-                    {/* Right side - Complete progress info */}
+                    {/* Right side - Complete progress info and close button */}
                     <div className="flex items-center space-x-2 md:space-x-3">
                       <span className="text-xs md:text-sm text-green-600 hidden sm:block">
                         {lang === 'ja' 
@@ -246,6 +291,29 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
                       <span className="text-xs font-medium text-green-600 min-w-[2rem] md:min-w-[2.5rem]">
                         100%
                       </span>
+                      <button
+                        onClick={() => {
+                          if (completionFooterRef.current) {
+                            gsap.to(completionFooterRef.current, {
+                              opacity: 0,
+                              y: 20,
+                              duration: 0.3,
+                              ease: "power2.inOut",
+                              onComplete: () => {
+                                setShowCompletionFooter(false);
+                              }
+                            });
+                          } else {
+                            setShowCompletionFooter(false);
+                          }
+                        }}
+                        className="ml-2 p-1 text-green-500 hover:text-green-700 hover:bg-green-100 rounded-full transition-colors duration-200"
+                        aria-label={lang === 'ja' ? '閉じる' : 'Close'}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
                 </div>
