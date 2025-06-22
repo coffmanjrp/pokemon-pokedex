@@ -24,12 +24,12 @@ export function VirtualPokemonGrid({
   onPokemonClick,
   loading = false,
   isFiltering = false,
-  isAutoLoading = false,
+  // isAutoLoading = false,
   estimateSize = 350, // Estimated height of each card
-  overscan = 2, // Further reduced for Generation 1 performance
-  hasNextPage = false,
-  onLoadMore,
-  language = 'en',
+  // overscan = 2, // Further reduced for Generation 1 performance
+  // hasNextPage = false,
+  // onLoadMore,
+  // language = 'en',
   priority = false
 }: VirtualPokemonGridProps) {
   const parentRef = useRef<HTMLDivElement>(null);

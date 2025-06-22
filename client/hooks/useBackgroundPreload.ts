@@ -82,7 +82,7 @@ export function useBackgroundPreload({
         
         // Also check from query results
         if (key.includes('GetPokemons')) {
-          const queryData = cache[key];
+          const queryData = cache[key] as any;
           if (queryData?.pokemons?.edges) {
             queryData.pokemons.edges.forEach((edge: any) => {
               const id = parseInt(edge.node.id);
@@ -184,7 +184,7 @@ export function useBackgroundPreload({
       const cache = apolloClient.cache.extract();
       return Object.keys(cache).some(key => 
         key === `Pokemon:${pokemonId}` || 
-        (key.includes('GetPokemons') && cache[key]?.pokemons?.edges?.some((edge: any) => 
+        (key.includes('GetPokemons') && (cache[key] as any)?.pokemons?.edges?.some((edge: any) => 
           parseInt(edge.node.id) === pokemonId
         ))
       );

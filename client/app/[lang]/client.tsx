@@ -1,14 +1,13 @@
 'use client';
 
 import { VirtualPokemonGrid } from '../../components/ui/VirtualPokemonGrid';
-import { LoadingOverlay } from '../../components/ui/LoadingSpinner';
 import { AnimatedLoadingScreen } from '../../components/ui/AnimatedLoadingScreen';
 import { Sidebar } from '../../components/layout/Sidebar';
 import { usePokemonList } from '../../hooks/usePokemonList';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setSelectedPokemon } from '../../store/slices/pokemonSlice';
 import { setLanguage } from '../../store/slices/uiSlice';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Pokemon } from '@/types/pokemon';
 import { Dictionary, Locale } from '@/lib/dictionaries';
@@ -27,7 +26,6 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
   
   const [showLoadingScreen, setShowLoadingScreen] = useState(true);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
-  const [scrollContainer, setScrollContainer] = useState<Element | null>(null);
 
   // Sync language from server props to Redux store
   useEffect(() => {

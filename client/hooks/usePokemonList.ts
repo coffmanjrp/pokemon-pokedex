@@ -159,7 +159,7 @@ export function usePokemonList({ generation = 1, autoFetch = true }: UsePokemonL
             gameIndices: pokemon.gameIndices
           } as Pokemon;
         })
-        .filter((pokemon) => {
+        .filter((pokemon: Pokemon) => {
           // 世代範囲内のPokemonのみを含める
           const pokemonId = parseInt(pokemon.id);
           return pokemonId >= generationRange.min && pokemonId <= generationRange.max;
@@ -254,7 +254,7 @@ export function usePokemonList({ generation = 1, autoFetch = true }: UsePokemonL
               gameIndices: pokemon.gameIndices
             } as Pokemon;
           })
-          .filter((pokemon) => {
+          .filter((pokemon: Pokemon) => {
             // Only include Pokemon within generation range
             const pokemonId = parseInt(pokemon.id);
             return pokemonId >= generationRange.min && pokemonId <= generationRange.max;

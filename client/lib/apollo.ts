@@ -8,7 +8,6 @@ export const apolloClient = new ApolloClient({
   link: httpLink,
   cache: new InMemoryCache({
     addTypename: false, // Disable __typename to prevent cache issues
-    dataIdFromObject: () => null, // Disable normalization completely
   }),
   defaultOptions: {
     watchQuery: {
@@ -30,7 +29,6 @@ export function getClient() {
     }),
     cache: new InMemoryCache({
       addTypename: false, // Disable __typename for SSR consistency
-      dataIdFromObject: () => null, // Disable normalization
     }),
     ssrMode: typeof window === 'undefined',
   });

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including completely redesigned Pokemon detail pages based on reference design, enhanced evolution chains with form variants, enhanced move data display with detailed statistics, SSG implementation, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. **LATEST**: Completely redesigned navigation architecture from header-based to sidebar-based layout. Implemented generation-based pagination system replacing advanced filtering. Fixed critical GraphQL server stability issues with PokeAPI rate limiting, retry logic, and concurrency control. New sidebar contains logo, generation buttons (1-9), and language toggle. **NEWEST**: Simplified loading system replacing complex infinite scroll with progressive batch loading. Initial 20 Pokemon load immediately with automatic background loading of remaining Pokemon. Enhanced footer progress indicators provide visual feedback during background loading process. Fixed main content overflow issues and improved VirtualPokemonGrid layout for optimal space utilization.
+**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including completely redesigned Pokemon detail pages based on reference design, enhanced evolution chains with form variants, enhanced move data display with detailed statistics, SSG implementation, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. **LATEST**: Completely redesigned navigation architecture from header-based to sidebar-based layout. Implemented generation-based pagination system replacing advanced filtering. Fixed critical GraphQL server stability issues with PokeAPI rate limiting, retry logic, and concurrency control. New sidebar contains logo, generation buttons (1-9), and language toggle. **NEWEST**: Simplified loading system replacing complex infinite scroll with progressive batch loading. Initial 20 Pokemon load immediately with automatic background loading of remaining Pokemon. Enhanced footer progress indicators provide visual feedback during background loading process. Fixed main content overflow issues and improved VirtualPokemonGrid layout for optimal space utilization. **CURRENT**: Successfully implemented production-ready build with comprehensive Redis caching system. Ready to implement GraphQL query optimization for selective data loading between SSG build time and runtime site browsing.
 
 ## Architecture
 
@@ -22,6 +22,8 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 - **Server**: Apollo Server with Express
 - **Language**: TypeScript
 - **Data Source**: PokeAPI (https://pokeapi.co/api/v2/)
+- **Caching**: Redis-based intelligent caching system with selective data retention
+- **Architecture**: Layered caching strategy (PokeAPI → Redis Cache → GraphQL Server → Apollo Client → React Components)
 
 ## Development Commands
 
@@ -295,17 +297,21 @@ app/[lang]/              # Dynamic language routing
 ## Development Priorities
 
 ### High Priority (Immediate)
-1. **Test Suite Implementation**: Unit tests, integration tests, E2E tests (currently no tests exist)
-2. **Environment Configuration**: Create actual .env files from .env.example templates
-3. **Error Boundaries**: React error boundaries for graceful error handling
-4. **Accessibility Features**: ARIA labels, keyboard navigation, screen reader support
+1. **GraphQL Query Optimization**: Implement selective data loading strategy
+   - **SSG Build Time**: Full data queries (name, image, type, classification, descriptions, moves, evolution chains, game history)
+   - **Runtime Site Browsing**: Lightweight queries (name, image, type, classification only)
+   - **Staged Loading**: Progressive data loading for enhanced user experience
+   - **Server Context Detection**: Environment-based query routing (BUILD_MODE=ssg vs BUILD_MODE=runtime)
+2. **Test Suite Implementation**: Unit tests, integration tests, E2E tests (currently no tests exist)
+3. **Environment Configuration**: Create actual .env files from .env.example templates
+4. **Error Boundaries**: React error boundaries for graceful error handling
+5. **Accessibility Features**: ARIA labels, keyboard navigation, screen reader support
 
 ### Medium Priority (Next Phase)
-5. **Pokemon Breeding Information**: Egg groups, breeding compatibility, egg moves, hatching steps
-6. **Pokemon Location/Habitat Information**: Game location data, encounter rates, habitat descriptions
-7. **Pokemon Comparison Feature**: Side-by-side stat comparison between Pokemon
-8. **Pokemon Cry/Sound Playback**: Audio playback functionality for Pokemon cries
-9. **Server Caching**: Redis or in-memory caching for PokeAPI requests
+6. **Pokemon Breeding Information**: Egg groups, breeding compatibility, egg moves, hatching steps
+7. **Pokemon Location/Habitat Information**: Game location data, encounter rates, habitat descriptions
+8. **Pokemon Comparison Feature**: Side-by-side stat comparison between Pokemon
+9. **Pokemon Cry/Sound Playback**: Audio playback functionality for Pokemon cries
 10. **Performance Analysis**: Bundle optimization and monitoring
 
 ### Low Priority (Future)
