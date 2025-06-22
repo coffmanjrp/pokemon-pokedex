@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useRef } from 'react';
+import React, { useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EvolutionDetail, PokemonTypeSlot, EvolutionTrigger, FormVariant, Pokemon } from '@/types/pokemon';
 import { Locale } from '@/lib/dictionaries';
@@ -16,7 +16,7 @@ interface PokemonEvolutionChainProps {
   lang: Locale;
 }
 
-export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolutionChainProps) {
+function PokemonEvolutionChainContent({ evolutionChain, lang }: PokemonEvolutionChainProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
   const fromGeneration = searchParams.get('from');
@@ -321,5 +321,17 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
         </div>
       </div>
     </div>
+  );
+}
+
+export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolutionChainProps) {
+  if (!evolutionChain) {
+    return null;
+  }
+
+  return (
+    <Suspense fallback={<div>Loading evolution chain...</div>}>
+      <PokemonEvolutionChainContent evolutionChain={evolutionChain} lang={lang} />
+    </Suspense>
   );
 }

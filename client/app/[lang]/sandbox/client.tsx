@@ -2,7 +2,7 @@
 
 import { Dictionary, Locale } from '@/lib/dictionaries';
 import { POKEMON_TYPE_COLORS, PokemonTypeName } from '@/types/pokemon';
-import { useRef } from 'react';
+import { useRef, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -201,7 +201,7 @@ function TestCard({ pokemon, animationType, animationDescription, onAnimationCli
   );
 }
 
-export function SandboxClient({ lang }: SandboxClientProps) {
+function SandboxContent({ lang }: { lang: Locale }) {
   const searchParams = useSearchParams();
   const fromGeneration = searchParams.get('from');
   
@@ -343,5 +343,13 @@ export function SandboxClient({ lang }: SandboxClientProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+export function SandboxClient({ lang }: SandboxClientProps) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SandboxContent lang={lang} />
+    </Suspense>
   );
 }

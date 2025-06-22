@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including completely redesigned Pokemon detail pages based on reference design, enhanced evolution chains with form variants, enhanced move data display with detailed statistics, SSG implementation, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. **LATEST**: Completely redesigned navigation architecture from header-based to sidebar-based layout. Implemented generation-based pagination system replacing advanced filtering. Fixed critical GraphQL server stability issues with PokeAPI rate limiting, retry logic, and concurrency control. New sidebar contains logo, generation buttons (1-9), and language toggle. **NEWEST**: Simplified loading system replacing complex infinite scroll with progressive batch loading. Initial 20 Pokemon load immediately with automatic background loading of remaining Pokemon. Enhanced footer progress indicators provide visual feedback during background loading process. Fixed main content overflow issues and improved VirtualPokemonGrid layout for optimal space utilization. **RECENT**: Fully implemented GraphQL query optimization with selective data loading! SSG builds now fetch complete Pokemon data while runtime browsing uses lightweight queries for optimal performance. Progressive data loading provides seamless user experience with automatic data enhancement. **CURRENT**: Implemented comprehensive generation-based navigation with URL parameter support and fixed critical world generation switching bug that displayed incorrect Pokemon from different generations.
+**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including completely redesigned Pokemon detail pages based on reference design, enhanced evolution chains with form variants, enhanced move data display with detailed statistics, SSG implementation, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. **LATEST**: Completely redesigned navigation architecture from header-based to sidebar-based layout. Implemented generation-based pagination system replacing advanced filtering. Fixed critical GraphQL server stability issues with PokeAPI rate limiting, retry logic, and concurrency control. New sidebar contains logo, generation buttons (1-9), and language toggle. **NEWEST**: Simplified loading system replacing complex infinite scroll with progressive batch loading. Initial 20 Pokemon load immediately with automatic background loading of remaining Pokemon. Enhanced footer progress indicators provide visual feedback during background loading process. Fixed main content overflow issues and improved VirtualPokemonGrid layout for optimal space utilization. **RECENT**: Fully implemented GraphQL query optimization with selective data loading! SSG builds now fetch complete Pokemon data while runtime browsing uses lightweight queries for optimal performance. Progressive data loading provides seamless user experience with automatic data enhancement. **CURRENT**: Implemented comprehensive generation-based navigation with URL parameter support and smart data clearing system that eliminates visual flickering during generation switching with intelligent loading overlay.
 
 ## Architecture
 
@@ -1060,6 +1060,33 @@ app/[lang]/              # Dynamic language routing
   - Systematic color scheme and visual hierarchy improvements
 
 ## Recent Major Updates
+
+### Smart Data Clearing System with Loading Overlay (January 2025)
+- **Intelligent Data Management**: Implemented smart data clearing system that eliminates visual flickering during generation switching
+- **Smart Clear Logic**: 
+  - **Data Comparison**: Compares current Pokemon data with target generation range
+  - **Conditional Clearing**: Only clears store when switching to different generation ranges
+  - **Performance Optimization**: Preserves data for same-generation operations
+  - **Logic**: `needsClearForGeneration()` function checks if first Pokemon ID is outside new generation range
+- **Loading Overlay System**:
+  - **Visual Continuity**: Displays overlay instead of clearing screen during generation switches
+  - **Backdrop Blur**: `bg-white/90 backdrop-blur-sm` maintains visual context while indicating transition
+  - **Immediate Feedback**: Shows target generation information and range during loading
+  - **Smart Termination**: Overlay disappears as soon as first Pokemon loads (not when all data complete)
+- **Redux State Enhancement**:
+  - Added `generationSwitching: boolean` flag for precise state management
+  - Separate loading states for initial load vs generation switching
+  - Enhanced error handling with automatic overlay cleanup
+- **User Experience Flow**:
+  - **Same Generation**: No flickering, data preserved (e.g., navigating within Generation 1)
+  - **Different Generation**: Smooth overlay transition with preserved background content
+  - **Empty to Any**: Standard loading screen for initial data fetch
+  - **Error Cases**: Automatic overlay dismissal with proper error display
+- **Technical Implementation**:
+  - **Conditional UI Rendering**: Different loading indicators based on context
+  - **State Management**: `generationSwitching` vs `loading` state separation
+  - **Performance**: Eliminates unnecessary data destruction and recreation
+  - **Memory Efficiency**: Reduces garbage collection from frequent data clearing
 
 ### Generation-Based Navigation with URL Parameter Support (January 2025)
 - **Comprehensive Generation Navigation System**: Implemented complete URL parameter-based navigation for seamless generation switching

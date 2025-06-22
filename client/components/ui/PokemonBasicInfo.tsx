@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Pokemon } from '@/types/pokemon';
 import { 
@@ -30,7 +30,7 @@ interface PokemonBasicInfoProps {
   language: 'en' | 'ja';
 }
 
-export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
+function PokemonBasicInfoContent({ pokemon, language }: PokemonBasicInfoProps) {
   const [isShiny, setIsShiny] = useState(false);
   const searchParams = useSearchParams();
   const fromGeneration = searchParams.get('from');
@@ -360,5 +360,13 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
+  return (
+    <Suspense fallback={<div>Loading Pokemon details...</div>}>
+      <PokemonBasicInfoContent pokemon={pokemon} language={language} />
+    </Suspense>
   );
 }

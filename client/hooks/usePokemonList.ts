@@ -2,7 +2,7 @@
 
 import { useQuery } from '@apollo/client';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { setLoading, setError, setPokemons, addPokemons, setHasNextPage, setEndCursor, setCurrentGeneration } from '@/store/slices/pokemonSlice';
+import { setLoading, setError, setPokemons, addPokemons, setHasNextPage, setEndCursor, setCurrentGeneration as setReduxCurrentGeneration, setGenerationSwitching } from '@/store/slices/pokemonSlice';
 import { GET_POKEMONS } from '@/graphql/queries';
 import { getListQuery, isSSGBuild } from '@/lib/querySelector';
 import { Pokemon } from '@/types/pokemon';
@@ -19,6 +19,22 @@ const GENERATION_RANGES = {
   7: { min: 722, max: 809, region: { en: 'Alola', ja: 'アローラ地方' } },
   8: { min: 810, max: 905, region: { en: 'Galar', ja: 'ガラル地方' } },
   9: { min: 906, max: 1025, region: { en: 'Paldea', ja: 'パルデア地方' } },
+};
+
+// Smart clear logic: Check if current Pokemon data belongs to the new generation
+const needsClearForGeneration = (currentPokemons: Pokemon[], newGeneration: number): boolean => {
+  if (currentPokemons.length === 0) {
+    return false; // No data to clear
+  }
+  
+  const newGenerationRange = GENERATION_RANGES[newGeneration as keyof typeof GENERATION_RANGES];
+  const currentFirstPokemon = currentPokemons[0];
+  const currentFirstId = parseInt(currentFirstPokemon.id);
+  
+  // Check if current first Pokemon is outside the new generation range
+  const isOutsideRange = currentFirstId < newGenerationRange.min || currentFirstId > newGenerationRange.max;
+  
+  return isOutsideRange;
 };
 
 interface UsePokemonListOptions {
@@ -272,6 +288,9 @@ export function usePokemonList({ generation = 1, autoFetch = true }: UsePokemonL
       if (pokemonList.length > 0) {
         dispatch(setPokemons(pokemonList));
         
+        // End generation switching overlay when first Pokemon is loaded
+        dispatch(setGenerationSwitching(false));
+        
         // Check if we've loaded all Pokemon in this generation
         const totalPokemonInGeneration = generationRange.max - generationRange.min + 1;
         const hasMoreInGeneration = pokemonList.length < totalPokemonInGeneration;
@@ -283,6 +302,7 @@ export function usePokemonList({ generation = 1, autoFetch = true }: UsePokemonL
         console.warn('Received Pokemon data but none match the current generation range');
         dispatch(setError('No Pokemon found for this generation'));
         dispatch(setLoading(false));
+        dispatch(setGenerationSwitching(false));
       }
     }
   }, [data, dispatch, generationRange]);
@@ -410,18 +430,26 @@ export function usePokemonList({ generation = 1, autoFetch = true }: UsePokemonL
   // Generation change handler
   const changeGeneration = (newGeneration: number) => {
     if (newGeneration !== currentGeneration) {
-      // Immediately set loading state to prevent showing old data
-      dispatch(setLoading(true));
+      // Check if we need to clear current data
+      const shouldClear = needsClearForGeneration(pokemons, newGeneration);
       
-      // Clear Pokemon list and state immediately
-      dispatch(setPokemons([]));
-      dispatch(setHasNextPage(true));
-      dispatch(setEndCursor(null));
-      dispatch(setError(null));
+      if (shouldClear) {
+        // Start generation switching overlay
+        dispatch(setGenerationSwitching(true));
+        
+        // Clear Pokemon list and state
+        dispatch(setPokemons([]));
+        dispatch(setHasNextPage(true));
+        dispatch(setEndCursor(null));
+        dispatch(setError(null));
+      }
+      
+      // Always set loading state for new generation
+      dispatch(setLoading(true));
       
       // Update generation in both local state and Redux store
       setCurrentGeneration(newGeneration);
-      dispatch(setCurrentGeneration(newGeneration));
+      dispatch(setReduxCurrentGeneration(newGeneration));
       
       // Calculate new parameters and refetch immediately
       const newRange = GENERATION_RANGES[newGeneration as keyof typeof GENERATION_RANGES];
@@ -435,6 +463,7 @@ export function usePokemonList({ generation = 1, autoFetch = true }: UsePokemonL
       }).catch((error) => {
         dispatch(setError(error.message || 'Failed to load Pokemon for this generation'));
         dispatch(setLoading(false));
+        dispatch(setGenerationSwitching(false));
       });
     }
   };

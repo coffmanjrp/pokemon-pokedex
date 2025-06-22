@@ -7,7 +7,7 @@ import { usePokemonList } from '../../hooks/usePokemonList';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setSelectedPokemon } from '../../store/slices/pokemonSlice';
 import { setLanguage } from '../../store/slices/uiSlice';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Pokemon } from '@/types/pokemon';
 import { Dictionary, Locale } from '@/lib/dictionaries';
@@ -18,7 +18,7 @@ interface PokemonListClientProps {
   lang: Locale;
 }
 
-export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) {
+function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -35,6 +35,7 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
     return 1;
   });
   const { pokemons, loading, error, hasNextPage, loadMore, changeGeneration, generationRange, loadedCount, totalCount } = usePokemonList({ generation: currentGeneration });
+  const { generationSwitching } = useAppSelector((state) => state.pokemon);
   
   const [showLoadingScreen, setShowLoadingScreen] = useState(true);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
@@ -177,9 +178,9 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
         </header>
 
         {/* Pokemon Grid */}
-        <div className="flex-1 overflow-hidden">
-          {/* Inline loading indicator for generation changes */}
-          {loading && pokemons.length === 0 && (
+        <div className="flex-1 overflow-hidden relative">
+          {/* Inline loading indicator for initial load when no Pokemon data */}
+          {loading && pokemons.length === 0 && !generationSwitching && (
             <div className="flex flex-col items-center justify-center py-16 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -221,8 +222,8 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
             </div>
           )}
 
-          {/* Pokemon Grid - only show when we have Pokemon and not loading a new generation */}
-          {pokemons.length > 0 && !loading && (
+          {/* Pokemon Grid - show when we have Pokemon (overlay will handle generation switching) */}
+          {pokemons.length > 0 && (
             <VirtualPokemonGrid
               pokemons={pokemons}
               onPokemonClick={handlePokemonClick}
@@ -234,6 +235,29 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
               language={lang}
               priority={true}
             />
+          )}
+
+          {/* Generation Switching Overlay */}
+          {generationSwitching && (
+            <div className="absolute inset-0 bg-white/90 backdrop-blur-sm flex items-center justify-center z-50">
+              <div className="flex flex-col items-center space-y-4">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"></div>
+                <div className="text-center">
+                  <p className="text-lg font-medium text-gray-700 mb-1">
+                    {lang === 'ja' 
+                      ? `${generationRange.region.ja}に切り替え中...`
+                      : `Switching to ${generationRange.region.en}...`
+                    }
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {lang === 'ja' 
+                      ? `第${currentGeneration}世代 (#${generationRange.min}-#${generationRange.max})`
+                      : `Generation ${currentGeneration} (#${generationRange.min}-#${generationRange.max})`
+                    }
+                  </p>
+                </div>
+              </div>
+            </div>
           )}
         </div>
 
@@ -338,5 +362,13 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
         )}
       </div>
     </>
+  );
+}
+
+export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PokemonListContent dictionary={dictionary} lang={lang} />
+    </Suspense>
   );
 }

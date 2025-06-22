@@ -2,12 +2,13 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
 interface PokemonDetailHeaderProps {
   language: 'en' | 'ja';
 }
 
-export function PokemonDetailHeader({ language }: PokemonDetailHeaderProps) {
+function PokemonDetailHeaderContent({ language }: PokemonDetailHeaderProps) {
   const searchParams = useSearchParams();
   const fromGeneration = searchParams.get('from');
   
@@ -28,5 +29,13 @@ export function PokemonDetailHeader({ language }: PokemonDetailHeaderProps) {
         {language === 'en' ? 'Pokedex' : 'ポケモン図鑑'}
       </Link>
     </div>
+  );
+}
+
+export function PokemonDetailHeader({ language }: PokemonDetailHeaderProps) {
+  return (
+    <Suspense fallback={<div className="max-w-7xl mx-auto px-6 md:px-8 pt-8 pb-4">Loading...</div>}>
+      <PokemonDetailHeaderContent language={language} />
+    </Suspense>
   );
 }
