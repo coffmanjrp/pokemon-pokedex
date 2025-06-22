@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Pokemon } from '@/types/pokemon';
 import { 
   getPokemonName, 
@@ -31,6 +32,8 @@ interface PokemonBasicInfoProps {
 
 export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
   const [isShiny, setIsShiny] = useState(false);
+  const searchParams = useSearchParams();
+  const fromGeneration = searchParams.get('from');
   
   const displayName = getPokemonName(pokemon, language);
   const displayId = getPokemonDisplayId(pokemon);
@@ -43,6 +46,12 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
   const weaknesses = getPokemonWeaknesses(pokemon);
   const primaryTypeColor = getPrimaryTypeColor(pokemon);
   const { prevId, nextId } = getPrevNextPokemonId(parseInt(pokemon.id));
+
+  // Helper function to create navigation URL with generation parameter
+  const createNavigationUrl = (pokemonId: number) => {
+    const baseUrl = `/${language}/pokemon/${pokemonId}`;
+    return fromGeneration ? `${baseUrl}?from=${fromGeneration}` : baseUrl;
+  };
 
   // Individual stat colors for better visual distinction
   const statColors: Record<string, string> = {
@@ -61,7 +70,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
       {/* Page-level Navigation - Previous Pokemon */}
       {!isVariant && prevId && (
         <Link
-          href={`/${language}/pokemon/${prevId}`}
+          href={createNavigationUrl(prevId)}
           className="hidden md:block fixed left-4 top-1/2 -translate-y-1/2 z-30 group hover:scale-110 transition-all duration-200"
         >
           <div className="flex items-center gap-2">
@@ -83,7 +92,7 @@ export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
       {/* Page-level Navigation - Next Pokemon */}
       {!isVariant && nextId && (
         <Link
-          href={`/${language}/pokemon/${nextId}`}
+          href={createNavigationUrl(nextId)}
           className="hidden md:block fixed right-4 top-1/2 -translate-y-1/2 z-30 group hover:scale-110 transition-all duration-200"
         >
           <div className="flex items-center gap-2">

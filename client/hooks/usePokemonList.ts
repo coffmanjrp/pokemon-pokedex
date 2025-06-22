@@ -2,7 +2,7 @@
 
 import { useQuery } from '@apollo/client';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { setLoading, setError, setPokemons, addPokemons, setHasNextPage, setEndCursor } from '@/store/slices/pokemonSlice';
+import { setLoading, setError, setPokemons, addPokemons, setHasNextPage, setEndCursor, setCurrentGeneration } from '@/store/slices/pokemonSlice';
 import { GET_POKEMONS } from '@/graphql/queries';
 import { getListQuery, isSSGBuild } from '@/lib/querySelector';
 import { Pokemon } from '@/types/pokemon';
@@ -256,19 +256,34 @@ export function usePokemonList({ generation = 1, autoFetch = true }: UsePokemonL
           } as Pokemon;
         })
         .filter((pokemon: Pokemon) => {
-          // 世代範囲内のPokemonのみを含める
+          // 厳格な世代範囲チェック - 現在の世代範囲内のPokemonのみを含める
           const pokemonId = parseInt(pokemon.id);
-          return pokemonId >= generationRange.min && pokemonId <= generationRange.max;
+          const isInCurrentGeneration = pokemonId >= generationRange.min && pokemonId <= generationRange.max;
+          
+          // デバッグ用ログ（本番では削除）
+          if (!isInCurrentGeneration) {
+            console.warn(`Filtered out Pokemon #${pokemonId} (${pokemon.name}) - not in current generation range ${generationRange.min}-${generationRange.max}`);
+          }
+          
+          return isInCurrentGeneration;
         });
       
-      dispatch(setPokemons(pokemonList));
-      
-      // Check if we've loaded all Pokemon in this generation
-      const totalPokemonInGeneration = generationRange.max - generationRange.min + 1;
-      const hasMoreInGeneration = pokemonList.length < totalPokemonInGeneration;
-      
-      dispatch(setHasNextPage(hasMoreInGeneration));
-      dispatch(setEndCursor(pageInfo.endCursor));
+      // Only update state if we have valid Pokemon in the correct generation
+      if (pokemonList.length > 0) {
+        dispatch(setPokemons(pokemonList));
+        
+        // Check if we've loaded all Pokemon in this generation
+        const totalPokemonInGeneration = generationRange.max - generationRange.min + 1;
+        const hasMoreInGeneration = pokemonList.length < totalPokemonInGeneration;
+        
+        dispatch(setHasNextPage(hasMoreInGeneration));
+        dispatch(setEndCursor(pageInfo.endCursor));
+      } else if (edges.length > 0) {
+        // If we got data but no Pokemon match the generation range, something is wrong
+        console.warn('Received Pokemon data but none match the current generation range');
+        dispatch(setError('No Pokemon found for this generation'));
+        dispatch(setLoading(false));
+      }
     }
   }, [data, dispatch, generationRange]);
 
@@ -395,23 +410,32 @@ export function usePokemonList({ generation = 1, autoFetch = true }: UsePokemonL
   // Generation change handler
   const changeGeneration = (newGeneration: number) => {
     if (newGeneration !== currentGeneration) {
-      setCurrentGeneration(newGeneration);
-      // Clear Pokemon list when generation changes
+      // Immediately set loading state to prevent showing old data
+      dispatch(setLoading(true));
+      
+      // Clear Pokemon list and state immediately
       dispatch(setPokemons([]));
       dispatch(setHasNextPage(true));
       dispatch(setEndCursor(null));
+      dispatch(setError(null));
       
-      // Force re-fetch with new generation parameters (initial batch)
-      setTimeout(() => {
-        const newRange = GENERATION_RANGES[newGeneration as keyof typeof GENERATION_RANGES];
-        const newOffset = newRange.min - 1;
-        const newLimit = initialBatchSize;
-        
-        refetch({
-          limit: newLimit,
-          offset: newOffset
-        });
-      }, 100);
+      // Update generation in both local state and Redux store
+      setCurrentGeneration(newGeneration);
+      dispatch(setCurrentGeneration(newGeneration));
+      
+      // Calculate new parameters and refetch immediately
+      const newRange = GENERATION_RANGES[newGeneration as keyof typeof GENERATION_RANGES];
+      const newOffset = newRange.min - 1;
+      const newLimit = initialBatchSize;
+      
+      // Immediate refetch without setTimeout to prevent race conditions
+      refetch({
+        limit: newLimit,
+        offset: newOffset
+      }).catch((error) => {
+        dispatch(setError(error.message || 'Failed to load Pokemon for this generation'));
+        dispatch(setLoading(false));
+      });
     }
   };
 

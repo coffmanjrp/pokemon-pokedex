@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including completely redesigned Pokemon detail pages based on reference design, enhanced evolution chains with form variants, enhanced move data display with detailed statistics, SSG implementation, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. **LATEST**: Completely redesigned navigation architecture from header-based to sidebar-based layout. Implemented generation-based pagination system replacing advanced filtering. Fixed critical GraphQL server stability issues with PokeAPI rate limiting, retry logic, and concurrency control. New sidebar contains logo, generation buttons (1-9), and language toggle. **NEWEST**: Simplified loading system replacing complex infinite scroll with progressive batch loading. Initial 20 Pokemon load immediately with automatic background loading of remaining Pokemon. Enhanced footer progress indicators provide visual feedback during background loading process. Fixed main content overflow issues and improved VirtualPokemonGrid layout for optimal space utilization. **CURRENT**: Fully implemented GraphQL query optimization with selective data loading! SSG builds now fetch complete Pokemon data while runtime browsing uses lightweight queries for optimal performance. Progressive data loading provides seamless user experience with automatic data enhancement.
+**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including completely redesigned Pokemon detail pages based on reference design, enhanced evolution chains with form variants, enhanced move data display with detailed statistics, SSG implementation, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. **LATEST**: Completely redesigned navigation architecture from header-based to sidebar-based layout. Implemented generation-based pagination system replacing advanced filtering. Fixed critical GraphQL server stability issues with PokeAPI rate limiting, retry logic, and concurrency control. New sidebar contains logo, generation buttons (1-9), and language toggle. **NEWEST**: Simplified loading system replacing complex infinite scroll with progressive batch loading. Initial 20 Pokemon load immediately with automatic background loading of remaining Pokemon. Enhanced footer progress indicators provide visual feedback during background loading process. Fixed main content overflow issues and improved VirtualPokemonGrid layout for optimal space utilization. **RECENT**: Fully implemented GraphQL query optimization with selective data loading! SSG builds now fetch complete Pokemon data while runtime browsing uses lightweight queries for optimal performance. Progressive data loading provides seamless user experience with automatic data enhancement. **CURRENT**: Implemented comprehensive generation-based navigation with URL parameter support and fixed critical world generation switching bug that displayed incorrect Pokemon from different generations.
 
 ## Architecture
 
@@ -1060,6 +1060,36 @@ app/[lang]/              # Dynamic language routing
   - Systematic color scheme and visual hierarchy improvements
 
 ## Recent Major Updates
+
+### Generation-Based Navigation with URL Parameter Support (January 2025)
+- **Comprehensive Generation Navigation System**: Implemented complete URL parameter-based navigation for seamless generation switching
+- **URL Parameter Implementation**: 
+  - Pokemon card clicks add generation context: `/pokemon/158?from=generation-2`
+  - Sidebar generation buttons update URLs: `/?generation=2`
+  - Back navigation preserves generation context across all components
+  - Evolution chain links maintain generation parameters
+  - Sandbox page navigation supports generation context
+- **Smart Parameter Management**:
+  - URL parameters only added when users actively switch generations via sidebar
+  - Initial page load reads generation from URL parameter without forcing updates
+  - Generation switching updates URL immediately for bookmarkable links
+  - Parameter preservation across detail page navigation (previous/next arrows)
+- **Critical Bug Fixes**:
+  - **Generation Switching Bug**: Fixed critical issue where wrong generation Pokemon displayed during switching (e.g., #514-#533 showing in Generation 6 instead of #650-#721)
+  - **Data Race Condition**: Eliminated setTimeout delays causing Redux store and UI desynchronization
+  - **Immediate State Management**: Implemented instant loading state and data clearing to prevent old data display
+- **Technical Implementation**:
+  - Enhanced `usePokemonList.ts` with immediate data clearing and error handling
+  - Added `currentGeneration` to Redux store for state consistency
+  - Strict generation range filtering with debug logging
+  - UI loading state prevents old generation data display
+  - `PokemonBasicInfo.tsx` and `PokemonEvolutionChain.tsx` support parameter preservation
+- **User Experience Improvements**:
+  - Consistent generation-based navigation across entire application
+  - Bookmarkable URLs with generation context
+  - No unexpected generation resets or data display issues
+  - Seamless navigation between Pokemon within same generation
+  - Clear separation between user-initiated and automatic navigation
 
 ### Progressive Loading System Redesign (December 2024)
 - **Simplified Loading Experience**: Replaced complex infinite scroll system with user-friendly progressive batch loading

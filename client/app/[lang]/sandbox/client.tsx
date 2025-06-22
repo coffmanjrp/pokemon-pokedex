@@ -4,6 +4,8 @@ import { Dictionary, Locale } from '@/lib/dictionaries';
 import { POKEMON_TYPE_COLORS, PokemonTypeName } from '@/types/pokemon';
 import { useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { ANIMATIONS, AnimationType } from '@/lib/animations';
 
 interface SandboxClientProps {
@@ -200,6 +202,14 @@ function TestCard({ pokemon, animationType, animationDescription, onAnimationCli
 }
 
 export function SandboxClient({ lang }: SandboxClientProps) {
+  const searchParams = useSearchParams();
+  const fromGeneration = searchParams.get('from');
+  
+  // Create back URL based on generation parameter
+  const backUrl = fromGeneration && fromGeneration.startsWith('generation-') 
+    ? `/${lang}/?generation=${fromGeneration.split('-')[1]}` 
+    : `/${lang}/`;
+
   const animations = [
     {
       type: 'ripple-wave' as AnimationType,
@@ -287,6 +297,18 @@ export function SandboxClient({ lang }: SandboxClientProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-12">
       <div className="max-w-7xl mx-auto px-4">
+        <div className="mb-8">
+          <Link 
+            href={backUrl}
+            className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium"
+          >
+            <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            {lang === 'en' ? 'Pokedex' : 'ポケモン図鑑'}
+          </Link>
+        </div>
+        
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">
             {lang === 'en' ? 'Animation Sandbox' : 'アニメーション サンドボックス'}

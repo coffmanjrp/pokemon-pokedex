@@ -8,6 +8,7 @@ interface PokemonState {
   error: string | null;
   hasNextPage: boolean;
   endCursor: string | null;
+  currentGeneration: number;
 }
 
 const initialState: PokemonState = {
@@ -17,6 +18,7 @@ const initialState: PokemonState = {
   error: null,
   hasNextPage: true,
   endCursor: null,
+  currentGeneration: 1,
 };
 
 const pokemonSlice = createSlice({
@@ -53,6 +55,9 @@ const pokemonSlice = createSlice({
       state.hasNextPage = true;
       state.endCursor = null;
     },
+    setCurrentGeneration: (state, action: PayloadAction<number>) => {
+      state.currentGeneration = action.payload;
+    },
   },
 });
 
@@ -65,6 +70,7 @@ export const {
   setHasNextPage,
   setEndCursor,
   resetPokemonList,
+  setCurrentGeneration,
 } = pokemonSlice.actions;
 
 export default pokemonSlice.reducer;

@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import React, { useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { EvolutionDetail, PokemonTypeSlot, EvolutionTrigger, FormVariant, Pokemon } from '@/types/pokemon';
 import { Locale } from '@/lib/dictionaries';
 import { getTypeName, getEvolutionPokemonName } from '@/lib/pokemonUtils';
@@ -17,6 +18,14 @@ interface PokemonEvolutionChainProps {
 
 export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolutionChainProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const searchParams = useSearchParams();
+  const fromGeneration = searchParams.get('from');
+
+  // Helper function to create Pokemon URL with generation parameter
+  const createPokemonUrl = (pokemonId: string) => {
+    const baseUrl = `/${lang}/pokemon/${pokemonId}`;
+    return fromGeneration ? `${baseUrl}?from=${fromGeneration}` : baseUrl;
+  };
 
   const triggerEvolutionAnimation = (e: React.MouseEvent, pokemon: EvolutionDetail) => {
     e.preventDefault();
@@ -47,7 +56,7 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
     
     // Small delay for visual feedback before navigation
     setTimeout(() => {
-      window.location.href = `/${lang}/pokemon/${pokemon.id}`;
+      window.location.href = createPokemonUrl(pokemon.id);
     }, 200);
   };
 
@@ -80,7 +89,7 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
     
     // Small delay for visual feedback before navigation
     setTimeout(() => {
-      window.location.href = `/${lang}/pokemon/${form.id}`;
+      window.location.href = createPokemonUrl(form.id);
     }, 200);
   };
 

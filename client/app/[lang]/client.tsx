@@ -8,7 +8,7 @@ import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setSelectedPokemon } from '../../store/slices/pokemonSlice';
 import { setLanguage } from '../../store/slices/uiSlice';
 import { useEffect, useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Pokemon } from '@/types/pokemon';
 import { Dictionary, Locale } from '@/lib/dictionaries';
 import { gsap } from 'gsap';
@@ -21,8 +21,19 @@ interface PokemonListClientProps {
 export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { language: currentLanguage } = useAppSelector((state) => state.ui);
-  const [currentGeneration, setCurrentGeneration] = useState(1);
+  // Initialize generation from URL parameter on first load
+  const [currentGeneration, setCurrentGeneration] = useState(() => {
+    const generationParam = searchParams.get('generation');
+    if (generationParam) {
+      const generation = parseInt(generationParam, 10);
+      if (generation >= 1 && generation <= 9) {
+        return generation;
+      }
+    }
+    return 1;
+  });
   const { pokemons, loading, error, hasNextPage, loadMore, changeGeneration, generationRange, loadedCount, totalCount } = usePokemonList({ generation: currentGeneration });
   
   const [showLoadingScreen, setShowLoadingScreen] = useState(true);
@@ -36,6 +47,7 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
       dispatch(setLanguage(lang));
     }
   }, [lang, currentLanguage, dispatch]);
+
 
   // Handle initial loading completion
   useEffect(() => {
@@ -55,7 +67,7 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
 
   const handlePokemonClick = (pokemon: Pokemon) => {
     dispatch(setSelectedPokemon(pokemon));
-    router.push(`/${lang}/pokemon/${pokemon.id}`);
+    router.push(`/${lang}/pokemon/${pokemon.id}?from=generation-${currentGeneration}`);
   };
 
   const handleGenerationChange = (generation: number) => {
@@ -64,6 +76,9 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
     // Reset completion footer when generation changes
     setShowCompletionFooter(true);
     // Generation change doesn't show loading screen, only inline loading indicators
+    
+    // Update URL with generation parameter
+    router.replace(`/${lang}/?generation=${generation}`);
   };
 
   // Auto-hide completion footer after 5 seconds with fade animation
@@ -206,8 +221,8 @@ export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) 
             </div>
           )}
 
-          {/* Pokemon Grid - only show when we have Pokemon */}
-          {pokemons.length > 0 && (
+          {/* Pokemon Grid - only show when we have Pokemon and not loading a new generation */}
+          {pokemons.length > 0 && !loading && (
             <VirtualPokemonGrid
               pokemons={pokemons}
               onPokemonClick={handlePokemonClick}

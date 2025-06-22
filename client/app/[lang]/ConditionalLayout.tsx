@@ -9,9 +9,10 @@ interface ConditionalLayoutProps {
 export default function ConditionalLayout({ children }: ConditionalLayoutProps) {
   const pathname = usePathname();
   const isPokemonDetailPage = pathname.includes('/pokemon/');
+  const isSandboxPage = pathname.includes('/sandbox');
 
   return (
-    <main className={isPokemonDetailPage ? "min-h-screen" : "lg:ml-80 min-h-screen"}>
+    <main className={(isPokemonDetailPage || isSandboxPage) ? "min-h-screen" : "lg:ml-80 min-h-screen"}>
       {children}
     </main>
   );
