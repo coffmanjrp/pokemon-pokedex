@@ -31,12 +31,12 @@ export function PokemonTypes({ types, size = 'md', className, language: propLang
 
   return (
     <div className={className || defaultClassName}>
-      {types.map((typeInfo) => {
+      {types.map((typeInfo, index) => {
         const displayName = getTypeName(typeInfo.type.name, language);
 
         return (
           <TypeBadge
-            key={typeInfo.type.id}
+            key={`${typeInfo.type.id}-${typeInfo.slot || index}`}
             type={typeInfo.type.name}
             displayName={displayName}
             size={size}

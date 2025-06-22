@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Pokemon, PokemonType } from '@/types/pokemon';
+import { Pokemon } from '@/types/pokemon';
 
 interface PokemonState {
   pokemons: Pokemon[];
@@ -8,11 +8,6 @@ interface PokemonState {
   error: string | null;
   hasNextPage: boolean;
   endCursor: string | null;
-  filters: {
-    search: string;
-    types: PokemonType[];
-    generation: number | null;
-  };
 }
 
 const initialState: PokemonState = {
@@ -22,11 +17,6 @@ const initialState: PokemonState = {
   error: null,
   hasNextPage: true,
   endCursor: null,
-  filters: {
-    search: '',
-    types: [],
-    generation: null,
-  },
 };
 
 const pokemonSlice = createSlice({
@@ -46,9 +36,8 @@ const pokemonSlice = createSlice({
       // Filter out duplicates based on Pokemon ID
       const existingIds = new Set(state.pokemons.map(p => p.id));
       const newPokemons = action.payload.filter(pokemon => !existingIds.has(pokemon.id));
-      console.log(`Adding ${newPokemons.length} new Pokemon (filtered from ${action.payload.length}). Total before: ${state.pokemons.length}`);
+      
       state.pokemons.push(...newPokemons);
-      console.log(`Total after: ${state.pokemons.length}`);
     },
     setSelectedPokemon: (state, action: PayloadAction<Pokemon | null>) => {
       state.selectedPokemon = action.payload;
@@ -58,22 +47,6 @@ const pokemonSlice = createSlice({
     },
     setEndCursor: (state, action: PayloadAction<string | null>) => {
       state.endCursor = action.payload;
-    },
-    setSearchFilter: (state, action: PayloadAction<string>) => {
-      state.filters.search = action.payload;
-    },
-    setTypeFilters: (state, action: PayloadAction<PokemonType[]>) => {
-      state.filters.types = action.payload;
-    },
-    setGenerationFilter: (state, action: PayloadAction<number | null>) => {
-      state.filters.generation = action.payload;
-    },
-    clearFilters: (state) => {
-      state.filters = {
-        search: '',
-        types: [],
-        generation: null,
-      };
     },
     resetPokemonList: (state) => {
       state.pokemons = [];
@@ -91,10 +64,6 @@ export const {
   setSelectedPokemon,
   setHasNextPage,
   setEndCursor,
-  setSearchFilter,
-  setTypeFilters,
-  setGenerationFilter,
-  clearFilters,
   resetPokemonList,
 } = pokemonSlice.actions;
 

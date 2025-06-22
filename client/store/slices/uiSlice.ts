@@ -5,7 +5,6 @@ export type Language = 'en' | 'ja';
 interface UIState {
   language: Language;
   isMenuOpen: boolean;
-  isFilterModalOpen: boolean;
   isLoading: boolean;
   notifications: Array<{
     id: string;
@@ -18,7 +17,6 @@ interface UIState {
 const initialState: UIState = {
   language: 'en',
   isMenuOpen: false,
-  isFilterModalOpen: false,
   isLoading: false,
   notifications: [],
 };
@@ -35,12 +33,6 @@ const uiSlice = createSlice({
     },
     toggleMenu: (state) => {
       state.isMenuOpen = !state.isMenuOpen;
-    },
-    setFilterModalOpen: (state, action: PayloadAction<boolean>) => {
-      state.isFilterModalOpen = action.payload;
-    },
-    toggleFilterModal: (state) => {
-      state.isFilterModalOpen = !state.isFilterModalOpen;
     },
     setGlobalLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
@@ -68,8 +60,6 @@ export const {
   setLanguage,
   setMenuOpen,
   toggleMenu,
-  setFilterModalOpen,
-  toggleFilterModal,
   setGlobalLoading,
   addNotification,
   removeNotification,

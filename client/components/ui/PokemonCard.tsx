@@ -4,18 +4,19 @@ import { Pokemon, POKEMON_TYPE_COLORS, PokemonTypeName } from '@/types/pokemon';
 import { cn } from '@/lib/utils';
 import { getPokemonName, getPokemonGenus } from '@/lib/pokemonUtils';
 import { useAppSelector } from '@/store/hooks';
-import { useRef } from 'react';
+import { useRef, memo } from 'react';
 import { createParticleEchoCombo, AnimationConfig } from '@/lib/animations';
 import { PokemonImage } from './PokemonImage';
 import { PokemonTypes } from './PokemonTypes';
 
 interface PokemonCardProps {
   pokemon: Pokemon;
-  onClick?: (pokemon: Pokemon, element?: HTMLElement) => void;
+  onClick?: (pokemon: Pokemon) => void;
   className?: string;
+  priority?: boolean;
 }
 
-export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
+const PokemonCard = memo(function PokemonCard({ pokemon, onClick, className, priority = false }: PokemonCardProps) {
   const { language } = useAppSelector((state) => state.ui);
   const cardRef = useRef<HTMLDivElement>(null);
   const primaryType = pokemon.types[0]?.type.name as PokemonTypeName;
@@ -52,7 +53,7 @@ export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
     
     // Small delay for visual feedback before navigation
     setTimeout(() => {
-      onClick?.(pokemon, cardRef.current || undefined);
+      onClick?.(pokemon);
     }, 200);
   };
 
@@ -103,7 +104,7 @@ export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
 
       {/* Pokemon Image */}
       <div className="relative h-48 flex items-center justify-center p-4">
-        <PokemonImage pokemon={pokemon} />
+        <PokemonImage pokemon={pokemon} priority={priority} />
       </div>
 
       {/* Pokemon Info */}
@@ -131,4 +132,10 @@ export function PokemonCard({ pokemon, onClick, className }: PokemonCardProps) {
       <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
     </div>
   );
-}
+}, (prevProps, nextProps) => {
+  // Only re-render if pokemon ID changes to prevent unnecessary re-renders
+  return prevProps.pokemon.id === nextProps.pokemon.id && 
+         prevProps.priority === nextProps.priority;
+});
+
+export { PokemonCard };

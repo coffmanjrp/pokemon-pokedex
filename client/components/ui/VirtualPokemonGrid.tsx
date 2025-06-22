@@ -13,6 +13,10 @@ interface VirtualPokemonGridProps {
   isAutoLoading?: boolean;
   estimateSize?: number;
   overscan?: number;
+  hasNextPage?: boolean;
+  onLoadMore?: () => void;
+  language?: 'en' | 'ja';
+  priority?: boolean;
 }
 
 export function VirtualPokemonGrid({
@@ -22,9 +26,18 @@ export function VirtualPokemonGrid({
   isFiltering = false,
   isAutoLoading = false,
   estimateSize = 350, // Estimated height of each card
-  overscan = 10 // Increased for smoother scrolling
+  overscan = 2, // Further reduced for Generation 1 performance
+  hasNextPage = false,
+  onLoadMore,
+  language = 'en',
+  priority = false
 }: VirtualPokemonGridProps) {
   const parentRef = useRef<HTMLDivElement>(null);
+  const [isMounted, setIsMounted] = useState(false);
+  
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Calculate how many columns we can fit based on screen size
   const getColumns = () => {
@@ -39,14 +52,22 @@ export function VirtualPokemonGrid({
 
   const [columns, setColumns] = useState(() => getColumns());
 
-  // Update columns on window resize
+  // Debounced resize handler for better performance
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
     const handleResize = () => {
-      setColumns(getColumns());
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setColumns(getColumns());
+      }, 150); // 150ms debounce
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   // Group Pokemon into rows
@@ -62,12 +83,12 @@ export function VirtualPokemonGrid({
     count: rows.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => estimateSize,
-    overscan,
+    overscan: 5, // 無限スクロール用にoverscanを増加
   });
 
   if (loading && pokemons.length === 0) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4">
         {Array.from({ length: 12 }).map((_, i) => (
           <div
             key={i}
@@ -78,10 +99,26 @@ export function VirtualPokemonGrid({
     );
   }
 
+  // Don't render virtual scrolling until mounted to avoid SSR issues
+  if (!isMounted) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4">
+        {pokemons.slice(0, 12).map((pokemon) => (
+          <PokemonCard
+            key={pokemon.id}
+            pokemon={pokemon}
+            onClick={onPokemonClick}
+            className="h-80"
+          />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div
       ref={parentRef}
-      className="h-[80vh] overflow-auto" // Fixed height container for virtual scrolling
+      className="h-full w-full overflow-auto" // Full height and width
       style={{
         contain: 'strict', // CSS containment for better performance
       }}
@@ -91,6 +128,7 @@ export function VirtualPokemonGrid({
           height: `${rowVirtualizer.getTotalSize()}px`,
           width: '100%',
           position: 'relative',
+          paddingBottom: '64px', // Footer height space
         }}
       >
         {rowVirtualizer.getVirtualItems().map((virtualRow) => {
@@ -109,27 +147,29 @@ export function VirtualPokemonGrid({
                 transform: `translateY(${virtualRow.start}px)`,
               }}
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-6 h-full">
-                {row.map((pokemon) => (
-                  <PokemonCard
-                    key={pokemon.id}
-                    pokemon={pokemon}
-                    onClick={onPokemonClick}
-                    className="h-80" // Fixed height for consistent virtual scrolling
-                  />
-                ))}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4 h-full">
+                {row.map((pokemon, cardIndex) => {
+                  // Calculate global index for priority loading
+                  const globalIndex = virtualRow.index * columns + cardIndex;
+                  // Priority for first visible row only (faster initial load)
+                  const shouldPrioritize = priority && globalIndex < columns;
+                  
+                  return (
+                    <PokemonCard
+                      key={pokemon.id}
+                      pokemon={pokemon}
+                      onClick={onPokemonClick}
+                      className="h-80" // Fixed height for consistent virtual scrolling
+                      priority={shouldPrioritize}
+                    />
+                  );
+                })}
               </div>
             </div>
           );
         })}
+        
       </div>
-
-      {/* Loading indicator for infinite scroll */}
-      {(loading || isAutoLoading) && pokemons.length > 0 && (
-        <div className="flex justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        </div>
-      )}
 
       {/* Show message when filtering */}
       {isFiltering && pokemons.length === 0 && !loading && (

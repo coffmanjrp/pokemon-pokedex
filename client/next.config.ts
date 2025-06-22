@@ -16,8 +16,12 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
-    formats: ['image/webp', 'image/avif'], // Modern formats
+    formats: ['image/webp', 'image/avif'], // Modern formats with better compression
     minimumCacheTTL: 86400, // 24 hours cache
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920], // Optimized device sizes
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384], // Common image sizes for Pokemon cards
+    dangerouslyAllowSVG: false, // Security: disable SVG
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;", // Security for images
   },
   // Suppress hydration warnings for browser extensions
   experimental: {

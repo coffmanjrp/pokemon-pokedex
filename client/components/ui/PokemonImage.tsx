@@ -1,7 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import { Pokemon } from '@/types/pokemon';
+import { useState } from 'react';
+import { Pokemon, PokemonTypeName, POKEMON_TYPE_COLORS } from '@/types/pokemon';
+import { generatePokemonBlurDataURL, DEFAULT_BLUR_DATA_URL } from '@/lib/blurDataUtils';
 
 interface PokemonImageProps {
   pokemon: Pokemon;
@@ -16,6 +18,8 @@ export function PokemonImage({
   className,
   priority = false 
 }: PokemonImageProps) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  
   const getImageUrl = () => {
     return (
       pokemon.sprites.other?.officialArtwork?.frontDefault ||
@@ -24,6 +28,14 @@ export function PokemonImage({
       '/placeholder-pokemon.png'
     );
   };
+
+  // Pokemon のプライマリタイプを取得
+  const primaryType = pokemon.types[0]?.type?.name as PokemonTypeName;
+  
+  // Pokemon タイプに基づく動的blur placeholder
+  const blurDataURL = primaryType ? 
+    generatePokemonBlurDataURL(primaryType) : 
+    DEFAULT_BLUR_DATA_URL;
 
   const getSizeClasses = () => {
     switch (size) {
@@ -59,21 +71,39 @@ export function PokemonImage({
 
   return (
     <div className={className || defaultClassName}>
+      {/* Loading skeleton overlay while image loads - Pokemon type colored */}
+      {!imageLoaded && (
+        <div 
+          className="absolute inset-0 rounded-lg flex items-center justify-center z-10 transition-opacity duration-300"
+          style={{
+            background: primaryType 
+              ? `linear-gradient(135deg, ${POKEMON_TYPE_COLORS[primaryType]}20, ${POKEMON_TYPE_COLORS[primaryType]}10)`
+              : 'linear-gradient(135deg, #f3f4f6, #e5e7eb)'
+          }}
+        >
+          <div className="text-gray-400 text-xs animate-pulse">⚡</div>
+        </div>
+      )}
+      
       <Image
         src={getImageUrl()}
         alt={pokemon.name}
         fill
-        className="object-contain drop-shadow-lg"
+        className={`object-contain drop-shadow-lg transition-opacity duration-500 rounded-lg ${
+          imageLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
         sizes={getSizes()}
         priority={priority}
-        quality={60} // Further reduced for faster loading
+        quality={80} // Slightly higher quality for better Pokemon artwork
         placeholder="blur"
-        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-        loading="lazy"
+        blurDataURL={blurDataURL}
+        loading={priority ? "eager" : "lazy"}
         unoptimized={getImageUrl().includes('.gif')} // Preserve GIF animations
+        onLoad={() => setImageLoaded(true)}
         onError={(e) => {
           const target = e.target as HTMLImageElement;
           target.src = '/placeholder-pokemon.png';
+          setImageLoaded(true);
         }}
       />
     </div>

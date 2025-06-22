@@ -19,14 +19,10 @@ export function AnimatedLoadingScreen({ language, onComplete }: AnimatedLoadingS
 
     const tl = gsap.timeline({
       onComplete: () => {
-        // Fade out the loading screen with scale effect
-        gsap.to(containerRef.current, {
-          opacity: 0,
-          scale: 1.1,
-          duration: 0.8,
-          ease: "power2.inOut",
-          onComplete: onComplete
-        });
+        // Immediately call onComplete without fade out animation
+        if (onComplete) {
+          onComplete();
+        }
       }
     });
 

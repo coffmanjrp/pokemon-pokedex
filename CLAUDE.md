@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including completely redesigned Pokemon detail pages based on reference design, enhanced evolution chains with form variants, enhanced move data display with detailed statistics, SSG implementation, advanced search/filter functionality, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. **LATEST**: Completed comprehensive performance optimization including virtual scrolling implementation, Apollo Client cache optimization, image loading enhancements, and Next.js bundle optimization. Main Pokemon list now uses VirtualPokemonGrid for efficient rendering of large datasets. All 311 static pages generate successfully with optimized performance. Main areas for future enhancement: testing coverage, environment configuration, and error boundaries.
+**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including completely redesigned Pokemon detail pages based on reference design, enhanced evolution chains with form variants, enhanced move data display with detailed statistics, SSG implementation, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. **LATEST**: Completely redesigned navigation architecture from header-based to sidebar-based layout. Implemented generation-based pagination system replacing advanced filtering. Fixed critical GraphQL server stability issues with PokeAPI rate limiting, retry logic, and concurrency control. New sidebar contains logo, generation buttons (1-9), and language toggle. **NEWEST**: Simplified loading system replacing complex infinite scroll with progressive batch loading. Initial 20 Pokemon load immediately with automatic background loading of remaining Pokemon. Enhanced footer progress indicators provide visual feedback during background loading process. Fixed main content overflow issues and improved VirtualPokemonGrid layout for optimal space utilization.
 
 ## Architecture
 
@@ -56,7 +56,7 @@ pokemon-pokedex/
 │   │   └── layout.tsx             # Root layout with providers
 │   ├── middleware.ts               # Language detection and routing
 │   ├── components/                # React components (fully multilingual)
-│   │   ├── layout/                # Header, Footer, navigation components
+│   │   ├── layout/                # Sidebar, navigation components
 │   │   ├── pokemon/              # Pokemon-specific components
 │   │   └── ui/                   # Reusable UI components with i18n
 │   ├── lib/                      # Utility functions and configurations
@@ -86,11 +86,11 @@ pokemon-pokedex/
 ### Implemented Features
 - **Pokemon Display**: Card-based layout with official artwork and sprites
 - **Type System**: Official Pokemon type colors and badges
-- **Advanced Search & Filtering**: 
-  - Search by Pokemon name and ID with real-time results
-  - Type-based filtering with visual type badges
-  - Generation-based filtering (1-9) with region names (Kanto, Johto, etc.)
-  - Auto-loading mechanism for generation filters to ensure complete results
+- **Generation-Based Navigation**: 
+  - Sidebar navigation with generation buttons (1-9) replacing advanced filtering
+  - Simple generation-based pagination with region names (Kanto, Johto, etc.)
+  - Progressive batch loading (initial 20 Pokemon per generation with automatic background completion)
+  - Footer progress indicators for visual loading feedback
 - **Virtual Scrolling**: @tanstack/react-virtual for efficient rendering of large Pokemon lists
 - **Performance Optimization**: Comprehensive optimizations including:
   - Virtual scrolling with responsive column calculation (1-5 columns based on screen size)
@@ -98,11 +98,11 @@ pokemon-pokedex/
   - Image optimization (quality: 60%, WebP/AVIF formats, blur placeholders)
   - Next.js bundle optimization with code splitting for Apollo/GraphQL
   - Image preloading hooks for smoother user experience
-- **State Management**: Redux Toolkit with client-side filtering and deduplication
+- **State Management**: Redux Toolkit with generation-based navigation and deduplication
 - **Native App Router i18n**: Complete English/Japanese support with middleware-based routing
   - Language detection from browser headers with automatic redirection
   - Server-side dictionary loading for optimal performance
-  - Complete filter system multilingual support (FilterModal, TypeFilter, GenerationFilter)
+  - Complete sidebar navigation multilingual support (Sidebar, LanguageToggle, GenerationButtons)
   - Pokemon data translations (names, types, abilities, moves, game versions)
   - URL-based language switching (/en/, /ja/) with proper SEO
 - **Responsive Design**: Desktop-first with mobile and tablet optimizations
@@ -113,11 +113,11 @@ pokemon-pokedex/
   - Horizontal scrollable layout with form categorization
   - Clickable navigation to form-specific Pokemon pages
 
-### Search & Filter Implementation
-- **Client-Side Filtering**: All filtering happens after data is loaded for instant results
-- **Auto-Loading for Generations**: When generation filter is applied, automatically loads sufficient Pokemon to display all Pokemon from that generation
-- **Filter Summary**: Shows active filters and result counts
-- **Empty States**: Helpful messages when no results found
+### Navigation & Loading Implementation
+- **Generation-Based Navigation**: Sidebar with clickable generation buttons for simple navigation
+- **Progressive Batch Loading**: Initial 20 Pokemon load immediately, remaining Pokemon load automatically in background
+- **Simplified Loading System**: Replaced complex infinite scroll with user-friendly footer progress indicators
+- **Generation Summary**: Sticky header shows current generation region, footer displays loading progress with visual indicators
 
 ### Design System
 - Ruby/Sapphire game-inspired UI components
@@ -138,25 +138,25 @@ pokemon-pokedex/
 
 ### State Management Architecture
 - **Redux Toolkit**: Centralized state management with two main slices
-  - `pokemonSlice`: Pokemon data, filters, and loading states
-  - `uiSlice`: UI state including language, modals, and user preferences
+  - `pokemonSlice`: Pokemon data, generation navigation, and loading states
+  - `uiSlice`: UI state including language, sidebar state, and user preferences
 - **Apollo Client**: GraphQL client integration with Redux
-- **Client-Side Filtering**: All filtering happens on cached data for instant results
+- **Generation-Based Loading**: Pokemon data loads by generation chunks for optimal performance
 
-### Search & Filter System
-- **Search Types**: Name, ID, and exact match capabilities
-- **Type Filtering**: Visual type badges with official Pokemon type colors
-- **Generation Filtering**: 
+### Navigation System (Redesigned)
+- **Sidebar Navigation**: Fixed sidebar with generation buttons (1-9)
+- **Generation Switching**: Simple click-based navigation between regions
+- **Generation Ranges**: 
   - Generations 1-9 with region names (Kanto, Johto, Hoenn, etc.)
-  - Auto-loading mechanism: automatically loads sufficient Pokemon to display all from selected generation
-  - Progress indicators during auto-loading
-- **Filter State**: Maintains active filters and result counts
+  - Each generation loads Pokemon within specific ID ranges
+  - Clear generation summaries with loaded/total counts
 
-### Data Loading Strategy
-- **Infinite Scroll**: Intersection Observer API with debouncing
+### Data Loading Strategy (Redesigned)
+- **Progressive Batch Loading**: Initial 20 Pokemon load immediately, remaining Pokemon load automatically in background
 - **Duplicate Prevention**: Client-side deduplication in both Redux slice and hooks
-- **Smart Loading**: Auto-loading for generation filters ensures complete datasets
-- **Loading States**: Differentiated between regular loading and auto-loading states
+- **Generation-Based Chunks**: Loads Pokemon by generation ranges for better performance
+- **Visual Progress Feedback**: Footer progress indicators with percentage and progress bars
+- **Simplified UX**: Replaced complex infinite scroll with user-friendly automatic loading
 
 ### Generation Ranges
 ```typescript
@@ -245,46 +245,47 @@ app/[lang]/              # Dynamic language routing
 - ✅ Navigation consistency (back buttons, error pages, detail page links)
 - ✅ Detail page text refinements (ストーリー→説明, ノーマル→通常, etc.)
 
-## Filtering System Enhancement (2024-12-21)
+## Navigation System Redesign (2024-12-22)
 
-### Issue: Limited Filtering Results
-**Problem**: Filtering only worked on initially loaded Pokemon (20-40 items), not the full dataset of 1010 Pokemon.
-- Example: Filtering by "fire" type only showed Charmander, Charmeleon, Charizard (first 3 fire types)
-- Missing: Growlithe (#58), Arcanine (#59), Ponyta (#77), etc.
+### Issue: Complex Filtering and Server Stability Problems
+**Problems**:
+1. Advanced filtering system was complex and caused performance issues
+2. GraphQL server experiencing ECONNRESET errors from PokeAPI due to overwhelming concurrent requests
+3. White screen on development environment after loading screen completion
 
-**Root Cause**: Client-side filtering on limited data pool + disabled infinite scroll during filtering.
+**Root Cause**: Server trying to load all 151 Pokemon simultaneously, overwhelming PokeAPI with requests.
 
-### Solution: Enhanced Client-Side Filtering with Auto-Loading
+### Solution: Generation-Based Navigation with Server Optimization
 **Implementation Strategy**:
-1. **Initial Display**: Show first 50 Pokemon for fast page load
-2. **Filter Trigger**: When user applies filters, automatically load ALL Pokemon data
-3. **Background Loading**: Progressive data loading with user feedback
-4. **Instant Filtering**: Once data is loaded, all filter operations are instant
+1. **Sidebar Navigation**: Replace header navigation with fixed sidebar containing generation buttons
+2. **Progressive Loading**: Initial 20 Pokemon per generation with Load More functionality
+3. **Server Rate Limiting**: Implement concurrency control and retry logic for PokeAPI requests
+4. **Simple Pagination**: Generation-based navigation replacing complex filtering system
 
 **Key Benefits**:
-- ✅ Fast initial page load (50 Pokemon)
-- ✅ Complete filtering results (all 1010 Pokemon)
-- ✅ Instant filter switching after initial load
-- ✅ Optimal user experience with loading indicators
+- ✅ Resolved all GraphQL server stability issues (no more ECONNRESET errors)
+- ✅ Fast initial loading with progressive data display
+- ✅ Simple, intuitive navigation using Pokemon generations
+- ✅ Improved user experience with clear generation summaries
 
 ### Implementation Details
-- **Enhanced usePokemonList hook**: Auto-load all data when filters applied
-- **Smart caching**: Avoid redundant API calls for subsequent filtering
-- **Loading states**: Clear user feedback during data loading
-- **Performance optimized**: Efficient memory usage and rendering
+- **Enhanced pokemonService.ts**: Added concurrency limiting, retry logic with exponential backoff
+- **New Sidebar component**: Logo, generation buttons (1-9), language toggle at bottom
+- **Redesigned layout**: Left margin accommodation for fixed sidebar
+- **Updated usePokemonList hook**: Generation-based loading with Load More functionality
 
 ## Common Issues & Solutions
 
-### Filter State Access
-- When accessing filter state in components, ensure you import filters from Redux state:
+### Generation Navigation State
+- When accessing generation state in components, use Redux state:
   ```typescript
-  const { filters } = useAppSelector((state) => state.pokemon);
+  const currentGeneration = useAppSelector((state) => state.pokemon.currentGeneration);
   ```
-- The `filters` object contains: `search`, `types`, and `generation` properties
+- The sidebar handles generation switching and updates the Redux state accordingly
 
 ### Runtime Errors
-- "filters is not defined": Add filters selector to component (see above)
-- Loading state conflicts: Check that auto-loading and regular loading states are properly differentiated
+- "ECONNRESET errors": Resolved with server-side rate limiting and retry logic
+- Generation loading conflicts: Ensure generation state is properly managed in Redux store
 
 ### Language Navigation Issues
 - **Problem**: Navigation links not preserving language context (e.g., detail page back button going to `/en/` instead of `/ja/`)
@@ -364,9 +365,10 @@ app/[lang]/              # Dynamic language routing
 ## External APIs
 
 - **PokeAPI**: Primary data source for Pokemon information (v2 API)
-- **GraphQL Server**: Custom Apollo Server wrapper with efficient data fetching
-- **Cursor-Based Pagination**: Implemented for optimal performance
-- **Auto-Loading Logic**: Ensures complete generation datasets when filters are applied
+- **Redis Cache**: Server-side caching for Pokemon basic data and species information (5-minute TTL)
+- **GraphQL Server**: Custom Apollo Server wrapper with intelligent caching strategy
+- **Apollo Client Cache**: Browser-side caching for efficient data management
+- **Progressive Loading**: Automatic background loading with visual progress indicators
 
 ### Pokemon Form Variations Implementation (January 2025)
 - **Complete Form Support**: Added comprehensive Pokemon form variation support to evolution chains
@@ -1024,6 +1026,29 @@ app/[lang]/              # Dynamic language routing
 
 ## Recent Major Updates
 
+### Progressive Loading System Redesign (December 2024)
+- **Simplified Loading Experience**: Replaced complex infinite scroll system with user-friendly progressive batch loading
+- **Problem Solved**: 
+  - Complex infinite scroll with Intersection Observer was causing technical issues and user confusion
+  - Multiple loading states and footer overlaps were creating poor UX
+  - Infinite scroll triggers weren't working reliably across generation switches
+- **New Implementation**:
+  - **Fast Initial Display**: Initial 20 Pokemon load immediately for quick first impression
+  - **Automatic Background Loading**: Remaining Pokemon load automatically after 1.5 second delay
+  - **Visual Progress Feedback**: Footer progress indicators show loading status with percentage and progress bars
+  - **Clean State Management**: Loading and completion states clearly indicated with color-coded footers
+- **Technical Improvements**:
+  - **Simplified Hook Logic**: `usePokemonList` now handles progressive loading with `useEffect` automation
+  - **Footer Design Restoration**: Returned to original footer design with loading/completion states
+  - **Layout Optimization**: Fixed VirtualPokemonGrid to fill entire main area without sidebar overlap
+  - **Memory Management**: Removed unused infinite scroll hooks and cleanup code
+- **User Experience Benefits**:
+  - **Immediate Feedback**: Users see Pokemon cards within seconds of page load
+  - **Background Processing**: Remaining Pokemon load transparently without blocking interaction
+  - **Clear Progress**: Visual indicators show exactly how many Pokemon are loaded vs total
+  - **No Confusion**: Eliminated complex scrolling behaviors that users found unpredictable
+
+
 ### Card Animation System Implementation (June 2025)
 - **Particle-Echo-Combo Effect Integration**: Successfully implemented particle-echo-combo animation effect for Pokemon card list
 - **Animation Library Enhancement**: Extended existing modular animation system with comprehensive card click effects
@@ -1314,3 +1339,63 @@ app/[lang]/              # Dynamic language routing
   - **Conditional Rendering**: Hero section visibility based on page type detection
   - **Layout Flexibility**: Header adapts between list page (with hero) and detail page (minimal)
   - **Type Safety**: Proper TypeScript interfaces for header props and dictionary integration
+
+## Background Preloading System Implementation (June 2025)
+
+### **Intelligent Pokemon Preloading Strategy**
+- **Strategic Background Loading**: Implemented comprehensive background preloading system for Pokemon detail pages with intelligent targeting strategies
+- **Multi-Tier Preloading Approach**: 4-strategy priority system for optimal user experience:
+  1. **Sequential Targets**: Next 10 Pokemon after current ID (sequential browsing pattern)
+  2. **Next Unloaded Targets**: 10 Pokemon after highest cached ID (smart caching strategy)
+  3. **Generation Start Targets**: First 9 Pokemon of each generation (for faster generation switching)
+  4. **Popular Targets**: Generation-specific popular Pokemon (starters, legendaries, evolutions)
+
+### **Generation-Based Performance Optimization**
+- **Cross-Generation Preloading**: Proactively loads the first 9 Pokemon from each generation (御三家 starters and popular Pokemon)
+  - **Target Pokemon**: Generation starters and their evolutions (#1-9, #152-160, #252-260, etc.)
+  - **Smart Cache Detection**: Only preloads Pokemon not already in Apollo Client cache
+  - **Generation Switching Optimization**: Eliminates loading delays when users switch between generations
+- **Intelligent Cache Management**: 
+  - **Cache Analysis**: Scans Apollo Client cache to identify highest cached Pokemon ID
+  - **Duplicate Prevention**: Avoids reloading already cached Pokemon for optimal performance
+  - **Strategic Targeting**: Prioritizes Pokemon most likely to be accessed by users
+
+### **Network-Aware Background Processing**
+- **Connection Detection**: Automatically detects slow connections (2G, slow-2G, saveData mode) using Connection API
+- **Adaptive Behavior**: Disables preloading on slow connections to preserve bandwidth and performance
+- **Low-Priority Processing**: Uses `Priority: u=4` headers for background requests that don't interfere with main content
+- **Batch Processing**: Processes preloading in batches with 500ms delays and maximum 2 concurrent requests
+- **AbortController Cleanup**: Proper cancellation and memory management for interrupted operations
+
+### **Generation Range Filtering Enhancement**
+- **Cross-Generation Display Bug Fix**: Resolved issue where Pokemon from other generations (e.g., #081-#109) appeared in wrong generation context
+- **Enhanced Filter Logic**: Strengthened generation range filtering in `usePokemonList.ts` with precise boundary checks
+- **Accurate Pokemon Counting**: Fixed Pokemon count calculation to only include current generation Pokemon
+- **Force Refetch Implementation**: Added generation switching logic with automatic refetch using correct parameters
+
+### **Technical Implementation Details**
+- **Hook Integration**: `useBackgroundPreload` hook with comprehensive configuration options
+  - **Configurable Parameters**: Delay (3 seconds default), max concurrent requests (2), priority levels
+  - **Status Tracking**: Real-time preloading progress with completed/total counts
+  - **Development Debug**: Visual indicator in development mode showing preloading status
+- **Strategic Functions**: 
+  - **`getPreloadTargets()`**: Intelligent target selection with 4-tier priority system
+  - **`getGenerationStartTargets()`**: Cross-generation preloading for faster switching
+  - **`isIdInCache()`**: Efficient cache checking to prevent duplicate requests
+  - **`executePreload()`**: Batch processing with proper error handling and cleanup
+- **Redux Integration**: Enhanced generation change handling with immediate Pokemon list clearing and forced refetch
+- **Error Resilience**: Graceful handling of network errors and interrupted preloading without affecting main functionality
+
+### **User Experience Improvements**
+- **Seamless Navigation**: Pokemon detail pages load instantly when users navigate sequentially
+- **Fast Generation Switching**: Instant display of first 9 Pokemon when changing generations in sidebar
+- **Background Processing**: All preloading happens invisibly without affecting main interface performance
+- **Intelligent Predictions**: System learns from user behavior patterns to preload most relevant Pokemon
+- **Mobile Optimization**: Respects data-saving preferences and connection quality for mobile users
+
+### **Performance Benefits**
+- **Reduced Loading Times**: Background preloading eliminates waiting for frequently accessed Pokemon
+- **Optimal Resource Usage**: Strategic targeting prevents wasting bandwidth on unlikely-to-be-accessed Pokemon
+- **Cache Efficiency**: Leverages Apollo Client cache for maximum performance with minimal memory overhead
+- **Generation Navigation**: Near-instantaneous generation switching with preloaded starter Pokemon
+- **Network Respect**: Adaptive behavior based on connection quality ensures optimal experience across all devices
