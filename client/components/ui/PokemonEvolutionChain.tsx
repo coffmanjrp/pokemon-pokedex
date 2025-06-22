@@ -1,14 +1,14 @@
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
-import React from 'react';
-import { EvolutionDetail, PokemonTypeSlot, EvolutionTrigger, FormVariant } from '@/types/pokemon';
+import React, { useRef } from 'react';
+import { EvolutionDetail, PokemonTypeSlot, EvolutionTrigger, FormVariant, Pokemon } from '@/types/pokemon';
 import { Locale } from '@/lib/dictionaries';
 import { getTypeName, getEvolutionPokemonName } from '@/lib/pokemonUtils';
 import { getFormDisplayName, getFormBadgeName, getFormBadgeColor } from '@/lib/formUtils';
 import { ITEM_TRANSLATIONS } from '@/lib/data/itemTranslations';
 import { POKEMON_TYPE_COLORS } from '@/types/pokemon';
+import { createParticleEchoCombo, AnimationConfig } from '@/lib/animations';
 
 interface PokemonEvolutionChainProps {
   evolutionChain: EvolutionDetail;
@@ -16,6 +16,74 @@ interface PokemonEvolutionChainProps {
 }
 
 export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolutionChainProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const triggerEvolutionAnimation = (e: React.MouseEvent, pokemon: EvolutionDetail) => {
+    e.preventDefault();
+    
+    const card = e.currentTarget as HTMLElement;
+    const gridContainer = containerRef.current;
+    
+    if (!card || !gridContainer) {
+      console.warn('Evolution animation elements not found');
+      return;
+    }
+
+    // Create a mock Pokemon object for the animation
+    const mockPokemon = {
+      id: pokemon.id,
+      name: pokemon.name,
+      types: pokemon.types || []
+    };
+
+    const animationConfig: AnimationConfig = {
+      pokemon: mockPokemon as Pokemon,
+      clickEvent: e,
+      targetElement: card,
+      gridContainer
+    };
+
+    createParticleEchoCombo(animationConfig);
+    
+    // Small delay for visual feedback before navigation
+    setTimeout(() => {
+      window.location.href = `/${lang}/pokemon/${pokemon.id}`;
+    }, 200);
+  };
+
+  const triggerFormAnimation = (e: React.MouseEvent, form: FormVariant, pokemonName: string) => {
+    e.preventDefault();
+    
+    const card = e.currentTarget as HTMLElement;
+    const gridContainer = containerRef.current;
+    
+    if (!card || !gridContainer) {
+      console.warn('Form animation elements not found');
+      return;
+    }
+
+    // Create a mock Pokemon object for the animation
+    const mockPokemon = {
+      id: form.id,
+      name: pokemonName,
+      types: form.types || []
+    };
+
+    const animationConfig: AnimationConfig = {
+      pokemon: mockPokemon as Pokemon,
+      clickEvent: e,
+      targetElement: card,
+      gridContainer
+    };
+
+    createParticleEchoCombo(animationConfig);
+    
+    // Small delay for visual feedback before navigation
+    setTimeout(() => {
+      window.location.href = `/${lang}/pokemon/${form.id}`;
+    }, 200);
+  };
+
   const renderEvolutionChain = (evolution: EvolutionDetail): React.ReactElement[] => {
     const chain: React.ReactElement[] = [];
     
@@ -29,9 +97,9 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
       // Add Pokemon card
       chain.push(
         <div key={`pokemon-${currentEvolution.id}`} className="flex flex-col items-center">
-          <Link
-            href={`/${lang}/pokemon/${pokemonId}`}
-            className="group flex flex-col items-center p-3 md:p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 hover:border-blue-200"
+          <div
+            onClick={(e) => triggerEvolutionAnimation(e, currentEvolution)}
+            className="group flex flex-col items-center p-3 md:p-4 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 hover:-translate-y-1 transition-all duration-200 border border-gray-100 hover:border-blue-200 cursor-pointer"
           >
             {/* Pokemon Image */}
             <div className="relative w-24 h-24 md:w-28 md:h-28 mb-3">
@@ -67,7 +135,7 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
                 ))}
               </div>
             </div>
-          </Link>
+          </div>
 
           {/* Form Variations - Always Visible */}
           {currentEvolution.forms && Array.isArray(currentEvolution.forms) && currentEvolution.forms.length > 0 && (
@@ -77,10 +145,10 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
               </div>
               <div className="flex flex-wrap gap-2 justify-center max-w-xs">
                 {currentEvolution.forms.map((form: FormVariant) => (
-                  <Link
+                  <div
                     key={form.id}
-                    href={`/${lang}/pokemon/${form.id}`}
-                    className="group flex flex-col items-center p-2 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 hover:border-blue-200"
+                    onClick={(e) => triggerFormAnimation(e, form, pokemonName)}
+                    className="group flex flex-col items-center p-2 bg-white rounded-lg shadow-sm hover:shadow-md hover:scale-105 hover:-translate-y-1 transition-all duration-200 border border-gray-100 hover:border-blue-200 cursor-pointer"
                   >
                     {/* Form Image */}
                     <div className="relative w-12 h-12 mb-1">
@@ -125,7 +193,7 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
                         ))}
                       </div>
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
             </div>
@@ -233,7 +301,7 @@ export function PokemonEvolutionChain({ evolutionChain, lang }: PokemonEvolution
   
 
   return (
-    <div>
+    <div ref={containerRef}>
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
 {lang === 'en' ? 'Evolution Chain' : '進化の流れ'}
       </h2>

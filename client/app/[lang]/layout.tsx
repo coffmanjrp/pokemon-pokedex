@@ -1,4 +1,5 @@
 import { Locale } from '@/lib/dictionaries'
+import ConditionalLayout from './ConditionalLayout'
 
 export async function generateStaticParams() {
   return [{ lang: 'en' }, { lang: 'ja' }]
@@ -16,10 +17,9 @@ export default async function LangLayout({
 }: LangLayoutProps) {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Main content with left margin for sidebar */}
-      <main className="lg:ml-80 min-h-screen">
+      <ConditionalLayout>
         {children}
-      </main>
+      </ConditionalLayout>
     </div>
   )
 }
