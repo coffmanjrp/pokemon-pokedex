@@ -53,5 +53,72 @@ export const resolvers = {
         throw new Error('Failed to fetch pokemons');
       }
     },
+
+    // Selective data loading queries for performance optimization
+    pokemonBasic: async (_: any, { id }: { id: string }) => {
+      try {
+        const cacheKey = cacheService.getPokemonBasicKey(parseInt(id));
+        const cachedResult = await cacheService.get(cacheKey);
+        
+        if (cachedResult) {
+          console.log(`Cache hit for pokemonBasic query (id: ${id})`);
+          return cachedResult;
+        }
+
+        const result = await pokemonService.getPokemonBasicById(id);
+        
+        // Cache basic Pokemon for longer (60 minutes) since it's lightweight and frequently accessed
+        await cacheService.set(cacheKey, result, 3600);
+        console.log(`Cached pokemonBasic query result (id: ${id}) for 60 minutes`);
+        
+        return result;
+      } catch (error) {
+        console.error('Error fetching basic pokemon:', error);
+        throw new Error(`Failed to fetch basic pokemon with id: ${id}`);
+      }
+    },
+
+    pokemonFull: async (_: any, { id }: { id: string }) => {
+      try {
+        // Use the existing pokemon resolver for full data
+        return await resolvers.Query.pokemon(_, { id });
+      } catch (error) {
+        console.error('Error fetching full pokemon:', error);
+        throw new Error(`Failed to fetch full pokemon with id: ${id}`);
+      }
+    },
+
+    pokemonsBasic: async (_: any, { limit = 20, offset = 0 }: { limit?: number; offset?: number }) => {
+      try {
+        const cacheKey = cacheService.getPokemonBasicListKey(limit, offset);
+        const cachedResult = await cacheService.get(cacheKey);
+        
+        if (cachedResult) {
+          console.log(`Cache hit for pokemonsBasic query (limit: ${limit}, offset: ${offset})`);
+          return cachedResult;
+        }
+
+        const result = await pokemonService.getPokemonsBasic(limit, offset);
+        
+        // Cache basic Pokemon list for longer (60 minutes) since it's lightweight and frequently accessed
+        await cacheService.set(cacheKey, result, 3600);
+        console.log(`Cached pokemonsBasic query result (limit: ${limit}, offset: ${offset}) for 60 minutes`);
+        
+        return result;
+      } catch (error) {
+        console.error('Error fetching basic pokemons:', error);
+        throw new Error('Failed to fetch basic pokemons');
+      }
+    },
+
+    pokemonsFull: async (_: any, { limit = 20, offset = 0 }: { limit?: number; offset?: number }) => {
+      try {
+        // Use the existing pokemons resolver for full data
+        return await resolvers.Query.pokemons(_, { limit, offset });
+      } catch (error) {
+        console.error('Error fetching full pokemons:', error);
+        throw new Error('Failed to fetch full pokemons');
+      }
+    },
   },
 };

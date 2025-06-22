@@ -187,6 +187,120 @@ class PokemonService {
     };
   }
 
+  // Lightweight methods for selective data loading
+  async getPokemonBasicById(id: string): Promise<any> {
+    const pokemonData = await this.fetchFromPokeAPI(`/pokemon/${id}`);
+    
+    // Get basic species data (names and genera only)
+    let speciesData = null;
+    if (pokemonData.species && pokemonData.species.url) {
+      try {
+        const speciesEndpoint = pokemonData.species.url.replace('https://pokeapi.co/api/v2', '');
+        speciesData = await this.fetchFromPokeAPI(speciesEndpoint);
+      } catch (error) {
+        console.warn(`Could not fetch species data for Pokemon ${id}:`, error);
+      }
+    }
+    
+    return this.transformPokemonBasicData(pokemonData, speciesData);
+  }
+
+  async getPokemonsBasic(limit: number, offset: number): Promise<any> {
+    const listData = await this.fetchFromPokeAPI(`/pokemon?limit=${limit}&offset=${offset}`);
+    
+    const pokemonProcessor = async (pokemon: any) => {
+      const pokemonData = await this.fetchFromPokeAPI(`/pokemon/${pokemon.name}`);
+      
+      if (!pokemonData) {
+        console.warn(`Could not fetch Pokemon data for ${pokemon.name}`);
+        return null;
+      }
+      
+      // Get basic species data (names and genera only)
+      let speciesData = null;
+      if (pokemonData.species && pokemonData.species.url) {
+        try {
+          const speciesEndpoint = pokemonData.species.url.replace('https://pokeapi.co/api/v2', '');
+          speciesData = await this.fetchFromPokeAPI(speciesEndpoint);
+        } catch (error) {
+          console.warn(`Could not fetch species data for Pokemon ${pokemon.name}:`, error);
+        }
+      }
+      
+      return this.transformPokemonBasicData(pokemonData, speciesData);
+    };
+
+    // Use concurrency limit for Pokemon processing
+    const pokemonResults = await this.processWithConcurrencyLimit(listData.results, pokemonProcessor, 3);
+    const pokemons = pokemonResults.filter(pokemon => pokemon !== null);
+    
+    const edges = pokemons.map((pokemon, index) => ({
+      node: pokemon,
+      cursor: Buffer.from(`${offset + index}`).toString('base64'),
+    }));
+
+    return {
+      edges,
+      pageInfo: {
+        hasNextPage: listData.next !== null,
+        hasPreviousPage: listData.previous !== null,
+        startCursor: edges[0]?.cursor || null,
+        endCursor: edges[edges.length - 1]?.cursor || null,
+      },
+      totalCount: listData.count,
+    };
+  }
+
+  // Lightweight transformation for basic Pokemon data (browsing)
+  private transformPokemonBasicData(data: any, speciesData: any = null): any {
+    return {
+      id: data.id.toString(),
+      name: data.name,
+      types: data.types.map((typeInfo: any) => ({
+        slot: typeInfo.slot,
+        type: {
+          id: this.extractIdFromUrl(typeInfo.type.url),
+          name: typeInfo.type.name,
+          url: typeInfo.type.url,
+        },
+      })),
+      sprites: {
+        frontDefault: data.sprites.front_default,
+        frontShiny: data.sprites.front_shiny,
+        backDefault: data.sprites.back_default,
+        backShiny: data.sprites.back_shiny,
+        other: {
+          officialArtwork: {
+            frontDefault: data.sprites.other?.['official-artwork']?.front_default ?? undefined,
+            frontShiny: data.sprites.other?.['official-artwork']?.front_shiny ?? undefined,
+          },
+          home: {
+            frontDefault: data.sprites.other?.home?.front_default,
+            frontShiny: data.sprites.other?.home?.front_shiny,
+          },
+        },
+      },
+      species: speciesData ? {
+        id: speciesData.id.toString(),
+        name: speciesData.name,
+        names: speciesData.names.map((nameEntry: any) => ({
+          name: nameEntry.name,
+          language: {
+            name: nameEntry.language.name,
+            url: nameEntry.language.url,
+          },
+        })),
+        genera: speciesData.genera.map((genus: any) => ({
+          genus: genus.genus,
+          language: {
+            name: genus.language.name,
+            url: genus.language.url,
+          },
+        })),
+      } : null,
+    };
+  }
+
   private async transformPokemonData(data: any, speciesData: any = null): Promise<Pokemon> {
     return {
       id: data.id.toString(),

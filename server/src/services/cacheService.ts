@@ -85,6 +85,15 @@ class CacheService {
     return this.generateKey('pokemon-list', limit.toString(), offset.toString());
   }
 
+  // Basic Pokemon caching (lightweight data for browsing)
+  getPokemonBasicKey(id: number): string {
+    return this.generateKey('pokemon-basic', id.toString());
+  }
+
+  getPokemonBasicListKey(limit: number, offset: number): string {
+    return this.generateKey('pokemon-basic-list', limit.toString(), offset.toString());
+  }
+
   getSpeciesKey(id: number): string {
     return this.generateKey('species', id.toString());
   }

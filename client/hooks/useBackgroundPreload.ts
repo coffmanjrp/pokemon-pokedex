@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { apolloClient } from '@/lib/apollo';
 import { GET_POKEMONS } from '@/graphql/queries';
+import { getListQuery } from '@/lib/querySelector';
 
 interface UseBackgroundPreloadOptions {
   currentPokemonId: number;
@@ -80,11 +81,12 @@ export function useBackgroundPreload({
           }
         }
         
-        // Also check from query results
+        // Also check from query results (handle both query types)
         if (key.includes('GetPokemons')) {
           const queryData = cache[key] as any;
-          if (queryData?.pokemons?.edges) {
-            queryData.pokemons.edges.forEach((edge: any) => {
+          const pokemonData = queryData?.pokemons || queryData?.pokemonsBasic || queryData?.pokemonsFull;
+          if (pokemonData?.edges) {
+            pokemonData.edges.forEach((edge: any) => {
               const id = parseInt(edge.node.id);
               if (!isNaN(id) && id > maxCachedId) {
                 maxCachedId = id;
@@ -184,9 +186,11 @@ export function useBackgroundPreload({
       const cache = apolloClient.cache.extract();
       return Object.keys(cache).some(key => 
         key === `Pokemon:${pokemonId}` || 
-        (key.includes('GetPokemons') && (cache[key] as any)?.pokemons?.edges?.some((edge: any) => 
-          parseInt(edge.node.id) === pokemonId
-        ))
+        (key.includes('GetPokemons') && (() => {
+          const queryData = cache[key] as any;
+          const pokemonData = queryData?.pokemons || queryData?.pokemonsBasic || queryData?.pokemonsFull;
+          return pokemonData?.edges?.some((edge: any) => parseInt(edge.node.id) === pokemonId);
+        })())
       );
     } catch {
       return false;
@@ -232,9 +236,10 @@ export function useBackgroundPreload({
           try {
             if (signal.aborted) return;
             
-            // Request with low priority
+            // Request with low priority using appropriate query
+            const selectedQuery = getListQuery();
             await apolloClient.query({
-              query: GET_POKEMONS,
+              query: selectedQuery,
               variables: { limit: 1, offset: offset - 1 },
               fetchPolicy: 'cache-first',
               errorPolicy: 'ignore',

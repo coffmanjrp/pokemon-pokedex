@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/client';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { setLoading, setError, setPokemons, addPokemons, setHasNextPage, setEndCursor } from '@/store/slices/pokemonSlice';
 import { GET_POKEMONS } from '@/graphql/queries';
+import { getListQuery, isSSGBuild } from '@/lib/querySelector';
 import { Pokemon } from '@/types/pokemon';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -47,8 +48,11 @@ export function usePokemonList({ generation = 1, autoFetch = true }: UsePokemonL
     }
   }, [generation, currentGeneration]);
 
+  // Use appropriate query based on build mode
+  const selectedQuery = getListQuery();
+  
   const { data, loading: queryLoading, error: queryError, refetch } = useQuery(
-    GET_POKEMONS,
+    selectedQuery,
     {
       variables: { limit: generationLimit, offset: generationOffset },
       skip: !autoFetch,
@@ -59,59 +63,149 @@ export function usePokemonList({ generation = 1, autoFetch = true }: UsePokemonL
 
   // Direct fetch function to bypass Apollo Client circular reference issues
   const fetchMorePokemons = async (variables: { limit: number; offset: number }) => {
+    // Use appropriate query based on build mode
+    const queryString = isSSGBuild() ? `
+      query GetPokemonsFull($limit: Int, $offset: Int) {
+        pokemonsFull(limit: $limit, offset: $offset) {
+          edges {
+            node {
+              id
+              name
+              height
+              weight
+              baseExperience
+              types {
+                slot
+                type {
+                  id
+                  name
+                  url
+                }
+              }
+              sprites {
+                frontDefault
+                frontShiny
+                other {
+                  officialArtwork {
+                    frontDefault
+                    frontShiny
+                  }
+                  home {
+                    frontDefault
+                    frontShiny
+                  }
+                }
+              }
+              stats {
+                baseStat
+                effort
+                stat {
+                  id
+                  name
+                  url
+                }
+              }
+              abilities {
+                isHidden
+                slot
+                ability {
+                  id
+                  name
+                  url
+                  names {
+                    name
+                    language {
+                      name
+                      url
+                    }
+                  }
+                }
+              }
+              species {
+                id
+                name
+                names {
+                  name
+                  language {
+                    name
+                    url
+                  }
+                }
+                genera {
+                  genus
+                  language {
+                    name
+                    url
+                  }
+                }
+              }
+            }
+            cursor
+          }
+          pageInfo {
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+          }
+          totalCount
+        }
+      }
+    ` : `
+      query GetPokemonsBasic($limit: Int, $offset: Int) {
+        pokemonsBasic(limit: $limit, offset: $offset) {
+          edges {
+            node {
+              id
+              name
+              types {
+                type {
+                  name
+                }
+              }
+              sprites {
+                frontDefault
+                other {
+                  officialArtwork {
+                    frontDefault
+                  }
+                }
+              }
+              species {
+                names {
+                  name
+                  language {
+                    name
+                  }
+                }
+                genera {
+                  genus
+                  language {
+                    name
+                  }
+                }
+              }
+            }
+            cursor
+          }
+          pageInfo {
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+          }
+          totalCount
+        }
+      }
+    `;
+
     const response = await fetch(process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:4000/graphql', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        query: `
-          query GetPokemons($limit: Int, $offset: Int) {
-            pokemons(limit: $limit, offset: $offset) {
-              edges {
-                node {
-                  id
-                  name
-                  types {
-                    type {
-                      name
-                    }
-                  }
-                  sprites {
-                    frontDefault
-                    other {
-                      officialArtwork {
-                        frontDefault
-                      }
-                    }
-                  }
-                  species {
-                    names {
-                      name
-                      language {
-                        name
-                      }
-                    }
-                    genera {
-                      genus
-                      language {
-                        name
-                      }
-                    }
-                  }
-                }
-                cursor
-              }
-              pageInfo {
-                hasNextPage
-                hasPreviousPage
-                startCursor
-                endCursor
-              }
-              totalCount
-            }
-          }
-        `,
+        query: queryString,
         variables,
       }),
     });
@@ -138,8 +232,10 @@ export function usePokemonList({ generation = 1, autoFetch = true }: UsePokemonL
   }, [queryError, dispatch]);
 
   useEffect(() => {
-    if (data?.pokemons && !isLoadingMore.current) {
-      const { edges, pageInfo } = data.pokemons;
+    // Handle both pokemonsBasic and pokemons response formats
+    const pokemonData = data?.pokemonsBasic || data?.pokemons;
+    if (pokemonData && !isLoadingMore.current) {
+      const { edges, pageInfo } = pokemonData;
       const pokemonList = edges
         .map((edge: any) => {
           // Clean Pokemon data to remove any potential circular references
@@ -233,8 +329,9 @@ export function usePokemonList({ generation = 1, autoFetch = true }: UsePokemonL
       
       const moreData = result.data;
 
-      if (moreData?.pokemons) {
-        const { edges, pageInfo } = moreData.pokemons;
+      const morePokemonData = moreData?.pokemonsFull || moreData?.pokemonsBasic;
+      if (morePokemonData) {
+        const { edges, pageInfo } = morePokemonData;
         const newPokemon = edges
           .map((edge: any) => {
             // Clean Pokemon data to remove any potential circular references

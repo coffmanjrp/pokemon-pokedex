@@ -7,6 +7,12 @@ export const typeDefs = gql`
     pokemons(limit: Int, offset: Int): PokemonConnection
     pokemonForms(speciesId: ID!): [PokemonForm!]!
     pokemonForm(id: ID!): PokemonForm
+    
+    # Selective data loading queries
+    pokemonBasic(id: ID!): PokemonBasic
+    pokemonFull(id: ID!): Pokemon
+    pokemonsBasic(limit: Int, offset: Int): PokemonBasicConnection
+    pokemonsFull(limit: Int, offset: Int): PokemonConnection
   }
 
   type Pokemon {
@@ -298,5 +304,34 @@ export const typeDefs = gql`
   type GameIndex {
     gameIndex: Int!
     version: Version!
+  }
+
+  # Lightweight Pokemon type for browsing (name, image, type, classification only)
+  type PokemonBasic {
+    id: ID!
+    name: String!
+    types: [PokemonType!]!
+    sprites: PokemonSprites!
+    species: PokemonSpeciesBasic
+  }
+
+  # Lightweight species type for browsing
+  type PokemonSpeciesBasic {
+    id: ID!
+    name: String!
+    names: [SpeciesName!]!
+    genera: [Genus!]!
+  }
+
+  # Connection type for PokemonBasic pagination
+  type PokemonBasicConnection {
+    edges: [PokemonBasicEdge!]!
+    pageInfo: PageInfo!
+    totalCount: Int!
+  }
+
+  type PokemonBasicEdge {
+    node: PokemonBasic!
+    cursor: String!
   }
 `;
