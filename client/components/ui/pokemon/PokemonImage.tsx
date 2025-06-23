@@ -94,11 +94,12 @@ export function PokemonImage({
         }`}
         sizes={getSizes()}
         priority={priority}
-        quality={80} // Slightly higher quality for better Pokemon artwork
+        quality={priority ? 90 : 75} // Higher quality for priority images, optimized for others
         placeholder="blur"
         blurDataURL={blurDataURL}
         loading={priority ? "eager" : "lazy"}
         unoptimized={getImageUrl().includes('.gif')} // Preserve GIF animations
+        fetchPriority={priority ? "high" : "low"}
         onLoad={() => setImageLoaded(true)}
         onError={(e) => {
           const target = e.target as HTMLImageElement;

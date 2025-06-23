@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, SSG implementation, complete App Router i18n multilingual support (English/Japanese), and sidebar-based generation navigation. Major codebase cleanup completed with optimized component architecture and TypeScript compliance.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, complete SSG implementation for all 1302+ Pokemon (including Mega, Gigantamax, and regional forms), performance optimizations, and sidebar-based generation navigation. All 2613 static pages generated successfully with zero build errors. Major codebase cleanup completed with optimized component architecture and TypeScript compliance.
 
 ## Architecture
 
@@ -27,9 +27,16 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 - **Data Loading**: Selective query optimization - SSG builds use full data, runtime browsing uses lightweight queries
 
 ### Data Loading Strategy
-- **SSG Build Mode**: Complete Pokemon data for static generation
+- **SSG Build Mode**: Complete Pokemon data for static generation of all 1302+ Pokemon
 - **Runtime Mode**: Lightweight queries with progressive enhancement
 - **Smart Caching**: Multi-level caching strategy for optimal performance
+- **Valid ID Detection**: GraphQL-based validation to generate only existing Pokemon pages
+
+### Performance Optimizations
+- **Image Optimization**: AVIF/WebP formats, 1-year caching, dynamic quality settings
+- **Bundle Optimization**: Tree shaking, package optimization, code splitting
+- **Cache Strategy**: Long-term static asset caching, intelligent API response caching
+- **Build Performance**: Bundle analyzer integration, optimized webpack configuration
 
 ## Development Commands
 
@@ -45,6 +52,9 @@ npm run type-check      # Run TypeScript type checking
 cd server && npm run dev      # Start GraphQL server in development
 cd server && npm run build    # Build GraphQL server  
 cd server && npm run start    # Start production GraphQL server
+
+# Performance analysis
+ANALYZE=true npm run build    # Run bundle analyzer
 ```
 
 ## Project Structure
@@ -130,6 +140,12 @@ pokemon-pokedex/
 - **Generation Ranges**: Kanto (1-151), Johto (152-251), Hoenn (252-386), etc.
 - **Progressive Loading**: Initial 20 Pokemon load immediately, background loading for remainder
 
+### Static Site Generation
+- **Complete Coverage**: All 1302+ Pokemon with forms/variants included
+- **Smart ID Validation**: GraphQL-based detection of valid Pokemon IDs
+- **Zero Build Errors**: Intelligent skipping of non-existent Pokemon
+- **Performance**: 2613 static pages generated in ~5 seconds
+
 ### Internationalization
 - **Languages**: English/Japanese support with middleware-based routing
 - **Structure**: `/[lang]/` routes with server-side dictionary loading
@@ -144,6 +160,12 @@ pokemon-pokedex/
 ### Language Navigation
 - Use `href="{/${language}/}"` instead of `href="/"` in navigation components
 - Extract current language using `usePathname()` and `getLocaleFromPathname()`
+
+### Performance Best Practices
+- Run `ANALYZE=true npm run build` for bundle analysis before major releases
+- Ensure image optimization settings are maintained in next.config.ts
+- Monitor Core Web Vitals in production environment
+- Use priority loading for first 5 Pokemon cards in initial render
 
 ## External APIs
 

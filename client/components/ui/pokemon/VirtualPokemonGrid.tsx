@@ -103,12 +103,13 @@ export function VirtualPokemonGrid({
   if (!isMounted) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4">
-        {pokemons.slice(0, 12).map((pokemon) => (
+        {pokemons.slice(0, 12).map((pokemon, index) => (
           <PokemonCard
             key={pokemon.id}
             pokemon={pokemon}
             onClick={onPokemonClick}
             className="h-80"
+            priority={index < 5} // Priority for first 5 cards in initial render
           />
         ))}
       </div>
