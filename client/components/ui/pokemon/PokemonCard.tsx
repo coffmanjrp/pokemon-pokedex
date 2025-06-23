@@ -75,13 +75,15 @@ const PokemonCard = memo(function PokemonCard({ pokemon, onClick, className, pri
         'relative overflow-hidden rounded-xl bg-gradient-to-br from-white to-gray-50',
         'border-2 border-gray-200 shadow-lg transition-all duration-300',
         'hover:shadow-xl hover:scale-105 hover:-translate-y-1',
-        'cursor-pointer group',
+        'active:scale-95 active:shadow-md', // Enhanced touch feedback
+        'cursor-pointer group touch-manipulation',
         className
       )}
       onClick={handleClick}
       style={{
         borderColor: primaryColor,
         boxShadow: `0 4px 20px ${primaryColor}20`,
+        touchAction: 'manipulation', // Prevent double-tap zoom
       }}
     >
       {/* Type-based Background */}
@@ -103,14 +105,14 @@ const PokemonCard = memo(function PokemonCard({ pokemon, onClick, className, pri
       </div>
 
       {/* Pokemon Image */}
-      <div className="relative h-48 flex items-center justify-center p-4">
+      <div className="relative h-36 sm:h-48 flex items-center justify-center p-3 sm:p-4">
         <PokemonImage pokemon={pokemon} priority={priority} />
       </div>
 
       {/* Pokemon Info */}
-      <div className="p-4 pt-0">
+      <div className="p-3 sm:p-4 pt-0">
         {/* Name */}
-        <h3 className="text-lg font-bold text-gray-800 mb-2 text-center">
+        <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-2 text-center leading-tight">
           {language === 'ja' ? displayName : formatName(displayName)}
         </h3>
 

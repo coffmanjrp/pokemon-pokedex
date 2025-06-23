@@ -167,8 +167,8 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
       <div className="flex flex-col h-screen overflow-hidden">
         {/* Sticky Generation Header */}
         <header className="flex-shrink-0 bg-gray-50 border-b border-gray-200 shadow-sm z-30">
-          <div className="px-4 md:px-6 py-2">
-            <h1 className="text-sm md:text-base font-bold text-gray-700">
+          <div className="relative px-4 md:px-6 py-3">
+            <h1 className="text-sm md:text-base font-bold text-gray-700 text-center">
               {lang === 'ja' 
                 ? `${generationRange.region.ja} (第${currentGeneration}世代)`
                 : `${generationRange.region.en} (Generation ${currentGeneration})`
