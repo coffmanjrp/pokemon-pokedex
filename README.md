@@ -1,18 +1,17 @@
 # Pokemon Pokedex
 
-Pokemon Pokedex application built with Next.js 15, React 19, TypeScript, and GraphQL.
+Pokemon Pokedex application built with Next.js 15, TypeScript, and GraphQL.
 
 ## ✨ Features
 
 - **Complete Pokemon Database**: All 1025+ Pokemon across 9 generations
 - **Detailed Information**: Stats, abilities, evolution chains, moves, sprites
-- **Multi-language Support**: English/Japanese localization with PokeAPI integration
 
 ## 🛠 Tech Stack
 
 | Category | Technologies |
 |----------|-------------|
-| **Frontend** | Next.js 15, React 19, TypeScript, TailwindCSS |
+| **Frontend** | Next.js 15, TypeScript, TailwindCSS |
 | **State** | Redux Toolkit, Apollo Client |
 | **Backend** | Apollo Server, Express, Redis |
 | **Data** | PokeAPI, GraphQL |
@@ -27,8 +26,47 @@ cd pokemon-pokedex
 # Install dependencies
 npm run install:all
 
+# Setup environment variables
+# Create server/.env and client/.env.local files
+
 # Start development servers
 npm run dev
+```
+
+## ⚙️ Environment Variables
+
+### Server Configuration
+
+Create `server/.env`:
+
+```bash
+# Redis Configuration (Optional - falls back to in-memory cache)
+REDIS_URL=your_redis_server_url
+
+# Server Configuration
+PORT=4000
+NODE_ENV=development
+
+# CORS Configuration
+CORS_ORIGIN=your_client_url
+```
+
+### Client Configuration
+
+Create `client/.env.local`:
+
+```bash
+# GraphQL Server Configuration
+NEXT_PUBLIC_GRAPHQL_URL=your_graphql_server_url
+
+# App Configuration
+NEXT_PUBLIC_APP_NAME=Pokemon Pokedex
+NEXT_PUBLIC_APP_VERSION=1.0.0
+
+# Build Mode Configuration (for selective data loading)
+# Set to 'ssg' during SSG build time, 'runtime' for client browsing
+NEXT_PUBLIC_BUILD_MODE=runtime
+BUILD_MODE=runtime
 ```
 
 ## 📝 Scripts
