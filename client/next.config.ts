@@ -26,12 +26,12 @@ const nextConfig: NextConfig = {
   // Suppress hydration warnings for browser extensions
   experimental: {
     optimizePackageImports: ['react-hot-toast', '@apollo/client'],
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
+  },
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
       },
     },
   },

@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getClient } from '@/lib/apollo';
-import { GET_POKEMON } from '@/graphql/queries';
+import { GET_POKEMON, GET_POKEMONS_BASIC } from '@/graphql/queries';
 import { Pokemon } from '@/types/pokemon';
 import { Locale, interpolate } from '@/lib/dictionaries'
 import { getDictionary } from '@/lib/get-dictionary';
@@ -17,20 +17,59 @@ interface PokemonDetailPageProps {
 
 // Generate static params for SSG
 export async function generateStaticParams() {
-  // Generate paths for both languages and first 151 Pokemon
+  // Generate paths for both languages and all existing Pokemon
   const paths = [];
   const languages = ['en', 'ja'];
   
-  for (const lang of languages) {
-    for (let i = 1; i <= 151; i++) {
-      paths.push({
-        lang,
-        id: i.toString(),
-      });
+  try {
+    // Use GraphQL to get all existing Pokemon IDs
+    const client = await getClient();
+    
+    // First get total count to determine how many to fetch
+    const { data: countData } = await client.query({
+      query: GET_POKEMONS_BASIC,
+      variables: { limit: 1, offset: 0 }
+    });
+    
+    const totalPokemon = countData?.pokemonsBasic?.totalCount || 1302;
+    
+    // Fetch all Pokemon to get valid IDs only
+    const { data } = await client.query({
+      query: GET_POKEMONS_BASIC,
+      variables: { limit: totalPokemon, offset: 0 }
+    });
+    
+    // Extract only valid Pokemon IDs that actually exist
+    const validPokemonIds = data?.pokemonsBasic?.edges?.map((edge: { node: { id: string } }) => edge.node.id) || [];
+    
+    // Generate paths only for valid Pokemon IDs
+    for (const lang of languages) {
+      for (const pokemonId of validPokemonIds) {
+        paths.push({
+          lang,
+          id: pokemonId.toString(),
+        });
+      }
     }
+    
+    console.log(`Generating ${paths.length} static paths for ${validPokemonIds.length} valid Pokemon in ${languages.length} languages`);
+    console.log(`Sample Pokemon IDs: ${validPokemonIds.slice(0, 10).join(', ')}...`);
+    return paths;
+  } catch (error) {
+    console.error('Error fetching Pokemon data from GraphQL, using sequential fallback:', error);
+    // Fallback: generate for known range and let individual pages handle errors
+    const fallbackCount = 1025; // Use conservative count for basic Pokemon
+    for (const lang of languages) {
+      for (let i = 1; i <= fallbackCount; i++) {
+        paths.push({
+          lang,
+          id: i.toString(),
+        });
+      }
+    }
+    console.log(`Using fallback: ${paths.length} paths for first ${fallbackCount} Pokemon`);
+    return paths;
   }
-  
-  return paths;
 }
 
 // Generate metadata for each Pokemon page
@@ -159,24 +198,28 @@ export async function generateMetadata({ params }: { params: PokemonDetailPagePr
 
 // Server Component for SSG
 export default async function PokemonDetailPage({ params }: { params: PokemonDetailPageProps['params'] }) {
+  const { id, lang } = await params;
+  
   try {
-    const { id, lang } = await params;
     const client = await getClient();
     
     const { data } = await client.query({
       query: GET_POKEMON,
       variables: { id },
+      errorPolicy: 'all' // Continue even if there are GraphQL errors
     });
 
     const pokemon: Pokemon = data?.pokemon;
 
     if (!pokemon) {
+      console.warn(`Pokemon with ID ${id} not found, redirecting to 404`);
       notFound();
     }
 
     return <PokemonDetailClient pokemon={pokemon} lang={lang} />;
   } catch (error) {
-    console.error('Error fetching Pokemon:', error);
+    console.error(`Error fetching Pokemon with ID ${id}:`, error);
+    // For invalid IDs that shouldn't have been generated, return 404
     notFound();
   }
 }
