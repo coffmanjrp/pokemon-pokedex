@@ -5,6 +5,7 @@ import { useAppDispatch } from '@/store/hooks';
 import { setLanguage } from '@/store/slices/uiSlice';
 import { useRouter, usePathname } from 'next/navigation';
 import { Locale, generateAlternateLanguageUrl } from '@/lib/dictionaries';
+import { setStoredLanguage } from '@/lib/languageStorage';
 import { Logo } from './Logo';
 import { LanguageToggle } from './LanguageToggle';
 
@@ -35,6 +36,9 @@ export function Sidebar({ lang, currentGeneration, onGenerationChange }: Sidebar
   const handleLanguageToggle = () => {
     const newLang = lang === 'en' ? 'ja' : 'en';
     const newUrl = generateAlternateLanguageUrl(pathname, newLang);
+    
+    // Save to localStorage first
+    setStoredLanguage(newLang);
     
     // Update Redux state
     dispatch(setLanguage(newLang));

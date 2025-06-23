@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including completely redesigned Pokemon detail pages based on reference design, enhanced evolution chains with form variants, enhanced move data display with detailed statistics, SSG implementation, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. **LATEST**: Completely redesigned navigation architecture from header-based to sidebar-based layout. Implemented generation-based pagination system replacing advanced filtering. Fixed critical GraphQL server stability issues with PokeAPI rate limiting, retry logic, and concurrency control. New sidebar contains logo, generation buttons (1-9), and language toggle. **NEWEST**: Simplified loading system replacing complex infinite scroll with progressive batch loading. Initial 20 Pokemon load immediately with automatic background loading of remaining Pokemon. Enhanced footer progress indicators provide visual feedback during background loading process. Fixed main content overflow issues and improved VirtualPokemonGrid layout for optimal space utilization. **RECENT**: Fully implemented GraphQL query optimization with selective data loading! SSG builds now fetch complete Pokemon data while runtime browsing uses lightweight queries for optimal performance. Progressive data loading provides seamless user experience with automatic data enhancement. **CURRENT**: Implemented comprehensive generation-based navigation with URL parameter support and smart data clearing system that eliminates visual flickering during generation switching with intelligent loading overlay.
+**Current Status**: Feature-complete Pokemon Pokedex with comprehensive detail pages including completely redesigned Pokemon detail pages based on reference design, enhanced evolution chains with form variants, enhanced move data display with detailed statistics, SSG implementation, complete App Router i18n multilingual support, and production-ready build. Successfully migrated from Pages Router i18n to modern Next.js 15 middleware-based approach. **LATEST**: Completely redesigned navigation architecture from header-based to sidebar-based layout. Implemented generation-based pagination system replacing advanced filtering. Fixed critical GraphQL server stability issues with PokeAPI rate limiting, retry logic, and concurrency control. New sidebar contains logo, generation buttons (1-9), and language toggle. **NEWEST**: Simplified loading system replacing complex infinite scroll with progressive batch loading. Initial 20 Pokemon load immediately with automatic background loading of remaining Pokemon. Enhanced footer progress indicators provide visual feedback during background loading process. Fixed main content overflow issues and improved VirtualPokemonGrid layout for optimal space utilization. **RECENT**: Fully implemented GraphQL query optimization with selective data loading! SSG builds now fetch complete Pokemon data while runtime browsing uses lightweight queries for optimal performance. Progressive data loading provides seamless user experience with automatic data enhancement. **CURRENT**: Implemented comprehensive generation-based navigation with URL parameter support and smart data clearing system that eliminates visual flickering during generation switching with intelligent loading overlay. **NEW**: Enhanced language detection system with User-Agent based Japanese detection and localStorage persistence with Cookie synchronization for server-side middleware access.
 
 ## Architecture
 
@@ -255,12 +255,14 @@ app/[lang]/              # Dynamic language routing
 - **GenerationFilter**: Generation names (第1世代) and regions (カントー地方)
 
 #### Implementation Files
-- `/client/middleware.ts`: Language detection and automatic routing
+- `/client/middleware.ts`: Enhanced language detection with User-Agent parsing and Cookie priority
 - `/client/lib/dictionaries.ts`: Type definitions and utility functions
 - `/client/lib/get-dictionary.ts`: Server-only dictionary loader with caching
 - `/client/lib/dictionaries/`: Translation files for UI text
 - `/client/lib/pokemonUtils.ts`: Pokemon data translation utilities
+- `/client/lib/languageStorage.ts`: localStorage and Cookie synchronization utilities
 - `/client/app/[lang]/`: Language-based page structure
+- `/client/components/providers/LanguageInitializer.tsx`: Client-side language hydration
 
 #### Translation Coverage
 - ✅ Pokemon names (via GraphQL/PokeAPI species data for all generations)
@@ -275,6 +277,31 @@ app/[lang]/              # Dynamic language routing
 - ✅ Stats and technical information
 - ✅ Navigation consistency (back buttons, error pages, detail page links)
 - ✅ Detail page text refinements (ストーリー→説明, ノーマル→通常, etc.)
+
+#### Enhanced Language Detection System (2024-12-23)
+
+**User-Agent Based Japanese Detection**:
+- Automatic `/ja` routing for Japanese browsers on initial visit
+- Detects Japanese language indicators: `ja`, `ja-jp`, `japanese`, `japan`, `jp`, etc.
+- Falls back to Accept-Language headers and defaults for non-Japanese browsers
+
+**localStorage Persistence with Cookie Synchronization**:
+- Language preferences stored in both localStorage and HTTP cookies
+- Server-side middleware can access Cookie values for routing decisions
+- Prevents language preference overwriting on subsequent visits
+- Client-side hydration restores localStorage values without conflicts
+
+**Detection Priority Order**:
+1. **Cookie** (localStorage backup for server-side access) - HIGHEST PRIORITY
+2. **User-Agent** (Japanese browser detection)
+3. **Accept-Language** header
+4. **Default** ('en')
+
+**Implementation Details**:
+- `languageStorage.ts`: Dual localStorage/Cookie storage utilities
+- Enhanced `middleware.ts`: Cookie-aware language detection
+- `LanguageInitializer`: Client-side hydration without storage conflicts
+- Redux integration: SSR-safe initialization with localStorage restoration
 
 ## Navigation System Redesign (2024-12-22)
 
