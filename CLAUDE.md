@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, complete SSG implementation for all 1302+ Pokemon (including Mega, Gigantamax, and regional forms), performance optimizations, and sidebar-based generation navigation. All 2613 static pages generated successfully with zero build errors. Major codebase cleanup completed with optimized component architecture and TypeScript compliance.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, complete SSG implementation for all 1302+ Pokemon (including Mega, Gigantamax, and regional forms), performance optimizations, and sidebar-based generation navigation. All 2613 static pages generated successfully with zero build errors. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes.
 
 ## Architecture
 
@@ -116,7 +116,8 @@ pokemon-pokedex/
 - **Generation Navigation**: Sidebar with generation buttons (1-9) and progressive loading
 - **Multilingual Support**: Complete English/Japanese localization with middleware-based routing
 - **Responsive Design**: Mobile-first with tablet and desktop optimizations
-- **Performance**: Virtual scrolling, smart caching, image optimization
+- **Mobile/Tablet Experience**: Hamburger menu navigation, touch-optimized UI, responsive grid layouts
+- **Performance**: Virtual scrolling, smart caching, image optimization, iOS Safari scroll optimization
 - **Detail Pages**: Comprehensive Pokemon information with evolution chains and form variants
 - **Type System**: Official Pokemon type colors and effectiveness calculations
 
@@ -136,9 +137,10 @@ pokemon-pokedex/
 - **Generation-Based Loading**: Progressive batch loading system
 
 ### Navigation System
-- **Sidebar Navigation**: Fixed sidebar with generation buttons (1-9)
+- **Sidebar Navigation**: Fixed sidebar with generation buttons (1-9), hamburger menu for mobile
 - **Generation Ranges**: Kanto (1-151), Johto (152-251), Hoenn (252-386), etc.
 - **Progressive Loading**: Initial 20 Pokemon load immediately, background loading for remainder
+- **Mobile Navigation**: Touch-optimized hamburger menu with overlay and logo positioning
 
 ### Static Site Generation
 - **Complete Coverage**: All 1302+ Pokemon with forms/variants included
@@ -160,6 +162,12 @@ pokemon-pokedex/
 ### Language Navigation
 - Use `href="{/${language}/}"` instead of `href="/"` in navigation components
 - Extract current language using `usePathname()` and `getLocaleFromPathname()`
+
+### Mobile/Tablet UI
+- Touch targets are minimum 44px for accessibility compliance
+- Hamburger menu with `bg-black/30` overlay for optimal visibility
+- Tab count indicators hidden on mobile with `hidden sm:inline-flex`
+- iOS Safari scroll optimization with `WebkitOverflowScrolling: 'touch'`
 
 ### Performance Best Practices
 - Run `ANALYZE=true npm run build` for bundle analysis before major releases
