@@ -1,5 +1,10 @@
 import type { NextConfig } from "next";
 
+// Bundle analyzer setup
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
+
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
@@ -16,16 +21,26 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
-    formats: ['image/webp', 'image/avif'], // Modern formats with better compression
-    minimumCacheTTL: 86400, // 24 hours cache
+    formats: ['image/avif', 'image/webp'], // Prioritize AVIF for better compression
+    minimumCacheTTL: 31536000, // 1 year cache for Pokemon images (rarely change)
     deviceSizes: [640, 750, 828, 1080, 1200, 1920], // Optimized device sizes
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384], // Common image sizes for Pokemon cards
+    imageSizes: [16, 32, 48, 64, 96, 128, 192, 256, 384, 512], // Extended sizes for Pokemon artwork
     dangerouslyAllowSVG: false, // Security: disable SVG
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;", // Security for images
+    // Loader optimization for external images
+    loader: 'default',
+    // Image optimization settings
+    unoptimized: false,
   },
   // Suppress hydration warnings for browser extensions
   experimental: {
-    optimizePackageImports: ['react-hot-toast', '@apollo/client'],
+    optimizePackageImports: [
+      'react-hot-toast', 
+      '@apollo/client',
+      '@tanstack/react-virtual'
+    ],
+    // Enable aggressive tree shaking
+    esmExternals: true,
   },
   turbopack: {
     rules: {
@@ -34,6 +49,46 @@ const nextConfig: NextConfig = {
         as: '*.js',
       },
     },
+  },
+  // Cache headers for better performance
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+        ],
+      },
+      {
+        source: '/api/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, s-maxage=3600, stale-while-revalidate=86400',
+          },
+        ],
+      },
+      {
+        source: '/_next/static/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ];
   },
   compiler: {
     // Remove console logs in production
@@ -77,4 +132,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);
