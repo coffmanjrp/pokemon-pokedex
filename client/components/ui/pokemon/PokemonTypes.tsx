@@ -3,7 +3,7 @@
 import { Pokemon } from '@/types/pokemon';
 import { getTypeName } from '@/lib/pokemonUtils';
 import { useAppSelector } from '@/store/hooks';
-import { TypeBadge } from './Badge';
+import { TypeBadge } from '../common/Badge';
 
 interface PokemonTypesProps {
   types: Pokemon['types'];

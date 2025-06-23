@@ -3,11 +3,13 @@
 import { useQuery } from '@apollo/client';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { setLoading, setError, setPokemons, addPokemons, setHasNextPage, setEndCursor, setCurrentGeneration as setReduxCurrentGeneration, setGenerationSwitching } from '@/store/slices/pokemonSlice';
-import { GET_POKEMONS } from '@/graphql/queries';
 import { getListQuery, isSSGBuild } from '@/lib/querySelector';
 import { Pokemon } from '@/types/pokemon';
-import { useEffect, useRef, useState } from 'react';
-import toast from 'react-hot-toast';
+import { useEffect, useRef, useState, useCallback } from 'react';
+
+interface PokemonEdge {
+  node: Pokemon;
+}
 
 const GENERATION_RANGES = {
   1: { min: 1, max: 151, region: { en: 'Kanto', ja: 'カントー地方' } },
@@ -44,8 +46,7 @@ interface UsePokemonListOptions {
 
 export function usePokemonList({ generation = 1, autoFetch = true }: UsePokemonListOptions = {}) {
   const dispatch = useAppDispatch();
-  const { pokemons, loading, error, hasNextPage, endCursor } = useAppSelector((state) => state.pokemon);
-  const { language } = useAppSelector((state) => state.ui);
+  const { pokemons, loading, error, hasNextPage } = useAppSelector((state) => state.pokemon);
   const isLoadingMore = useRef(false);
   const [currentGeneration, setCurrentGeneration] = useState(generation);
   
@@ -253,7 +254,7 @@ export function usePokemonList({ generation = 1, autoFetch = true }: UsePokemonL
     if (pokemonData && !isLoadingMore.current) {
       const { edges, pageInfo } = pokemonData;
       const pokemonList = edges
-        .map((edge: any) => {
+        .map((edge: PokemonEdge) => {
           // Clean Pokemon data to remove any potential circular references
           const pokemon = edge.node;
           return {
@@ -327,7 +328,7 @@ export function usePokemonList({ generation = 1, autoFetch = true }: UsePokemonL
   }, [currentGeneration, autoFetch, refetch, generationLimit, generationOffset]);
 
 
-  const loadMore = async (forceOffset?: number): Promise<number> => {
+  const loadMore = useCallback(async (): Promise<number> => {
     if (!hasNextPage || loading || isLoadingMore.current) {
       return 0;
     }
@@ -368,7 +369,7 @@ export function usePokemonList({ generation = 1, autoFetch = true }: UsePokemonL
       if (morePokemonData) {
         const { edges, pageInfo } = morePokemonData;
         const newPokemon = edges
-          .map((edge: any) => {
+          .map((edge: PokemonEdge) => {
             // Clean Pokemon data to remove any potential circular references
             const pokemon = edge.node;
             return {
@@ -404,14 +405,14 @@ export function usePokemonList({ generation = 1, autoFetch = true }: UsePokemonL
         return newPokemon.length;
       }
       return 0;
-    } catch (err) {
+    } catch {
       dispatch(setError('Failed to load more Pokemon'));
       return 0;
     } finally {
       dispatch(setLoading(false));
       isLoadingMore.current = false;
     }
-  };
+  }, [hasNextPage, loading, dispatch, generationRange.min, generationRange.max, uniquePokemons]);
 
   const refresh = async () => {
     try {
@@ -481,7 +482,7 @@ export function usePokemonList({ generation = 1, autoFetch = true }: UsePokemonL
       
       return () => clearTimeout(timer);
     }
-  }, [loading, uniquePokemons.length, canLoadMore, initialBatchSize]);
+  }, [loading, uniquePokemons.length, canLoadMore, initialBatchSize, loadMore]);
 
   return {
     pokemons: uniquePokemons,

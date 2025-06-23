@@ -11,14 +11,14 @@ import {
   isPokemonVariant,
   getPrevNextPokemonId
 } from '@/lib/pokemonUtils';
-import { PokemonNavigation } from './pokemon/PokemonNavigation';
-import { PokemonHeader } from './pokemon/PokemonHeader';
-import { PokemonImageDisplay } from './pokemon/PokemonImageDisplay';
-import { PokemonVersionToggle } from './pokemon/PokemonVersionToggle';
-import { PokemonStorySection } from './pokemon/PokemonStorySection';
-import { PokemonBasicInfoGrid } from './pokemon/PokemonBasicInfoGrid';
-import { PokemonWeaknessSection } from './pokemon/PokemonWeaknessSection';
-import { PokemonStatsSection } from './pokemon/PokemonStatsSection';
+import { PokemonNavigation } from './PokemonNavigation';
+import { PokemonHeader } from './PokemonHeader';
+import { PokemonImageDisplay } from './PokemonImageDisplay';
+import { PokemonVersionToggle } from './PokemonVersionToggle';
+import { PokemonStorySection } from './PokemonStorySection';
+import { PokemonBasicInfoGrid } from './PokemonBasicInfoGrid';
+import { PokemonWeaknessSection } from './PokemonWeaknessSection';
+import { PokemonStatsSection } from './PokemonStatsSection';
 
 interface PokemonBasicInfoProps {
   pokemon: Pokemon;

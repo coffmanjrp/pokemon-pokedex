@@ -6,20 +6,9 @@ import { setLanguage } from '@/store/slices/uiSlice';
 import { useRouter, usePathname } from 'next/navigation';
 import { Locale, generateAlternateLanguageUrl } from '@/lib/dictionaries';
 import { setStoredLanguage } from '@/lib/languageStorage';
+import { GENERATIONS } from '@/lib/data/generations';
 import { Logo } from './Logo';
 import { LanguageToggle } from './LanguageToggle';
-
-const GENERATIONS = [
-  { id: 1, name: { en: 'Generation I', ja: '第1世代' }, region: { en: 'Kanto', ja: 'カントー地方' } },
-  { id: 2, name: { en: 'Generation II', ja: '第2世代' }, region: { en: 'Johto', ja: 'ジョウト地方' } },
-  { id: 3, name: { en: 'Generation III', ja: '第3世代' }, region: { en: 'Hoenn', ja: 'ホウエン地方' } },
-  { id: 4, name: { en: 'Generation IV', ja: '第4世代' }, region: { en: 'Sinnoh', ja: 'シンオウ地方' } },
-  { id: 5, name: { en: 'Generation V', ja: '第5世代' }, region: { en: 'Unova', ja: 'イッシュ地方' } },
-  { id: 6, name: { en: 'Generation VI', ja: '第6世代' }, region: { en: 'Kalos', ja: 'カロス地方' } },
-  { id: 7, name: { en: 'Generation VII', ja: '第7世代' }, region: { en: 'Alola', ja: 'アローラ地方' } },
-  { id: 8, name: { en: 'Generation VIII', ja: '第8世代' }, region: { en: 'Galar', ja: 'ガラル地方' } },
-  { id: 9, name: { en: 'Generation IX', ja: '第9世代' }, region: { en: 'Paldea', ja: 'パルデア地方' } },
-];
 
 interface SidebarProps {
   lang: Locale;

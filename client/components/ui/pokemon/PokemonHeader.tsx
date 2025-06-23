@@ -7,7 +7,7 @@ import {
   getPokemonBaseName,
   getPokemonFormName
 } from '@/lib/pokemonUtils';
-import { PokemonTypes } from '../PokemonTypes';
+import { PokemonTypes } from './PokemonTypes';
 
 interface PokemonHeaderProps {
   pokemon: Pokemon;

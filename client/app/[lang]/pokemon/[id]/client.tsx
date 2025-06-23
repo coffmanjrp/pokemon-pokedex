@@ -2,8 +2,8 @@
 
 import { Pokemon } from '@/types/pokemon';
 import { Locale } from '@/lib/dictionaries';
-import { PokemonDetailHeader } from '@/components/ui/PokemonDetailHeader';
-import { PokemonTopNavigationTabs } from '@/components/ui/PokemonTopNavigationTabs';
+import { PokemonDetailHeader } from '@/components/ui/pokemon/PokemonDetailHeader';
+import { PokemonTopNavigationTabs } from '@/components/ui/pokemon/PokemonTopNavigationTabs';
 import { useBackgroundPreload } from '@/hooks/useBackgroundPreload';
 
 interface PokemonDetailClientProps {

@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { PokemonMove } from '@/types/pokemon';
 import { getMoveLearnMethodName, getMoveName, getTypeName } from '@/lib/pokemonUtils';
-import { TabNavigation } from './TabNavigation';
-import { DataEmptyState } from './DataEmptyState';
-import { TypeBadge, LevelBadge } from './Badge';
+import { TabNavigation } from '../common/TabNavigation';
+import { DataEmptyState } from '../common/DataEmptyState';
+import { TypeBadge, LevelBadge } from '../common/Badge';
 
 interface PokemonMovesProps {
   moves?: PokemonMove[];

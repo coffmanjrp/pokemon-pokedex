@@ -1,9 +1,30 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { apolloClient } from '@/lib/apollo';
-import { GET_POKEMONS } from '@/graphql/queries';
 import { getListQuery } from '@/lib/querySelector';
+
+// Type definitions for Navigator Connection API
+interface NetworkInformation extends EventTarget {
+  effectiveType: 'slow-2g' | '2g' | '3g' | '4g';
+  saveData: boolean;
+}
+
+interface NavigatorWithConnection extends Navigator {
+  connection?: NetworkInformation;
+}
+
+interface PokemonEdge {
+  node: {
+    id: string;
+  };
+}
+
+interface QueryData {
+  pokemons?: { edges: PokemonEdge[] };
+  pokemonsBasic?: { edges: PokemonEdge[] };
+  pokemonsFull?: { edges: PokemonEdge[] };
+}
 
 interface UseBackgroundPreloadOptions {
   currentPokemonId: number;
@@ -26,8 +47,9 @@ export function useBackgroundPreload({
   useEffect(() => {
     // Detect slow connections using Connection API
     if ('connection' in navigator) {
-      const connection = (navigator as any).connection;
+      const connection = (navigator as NavigatorWithConnection).connection;
       const checkConnection = () => {
+        if (!connection) return;
         setIsSlowConnection(
           connection.effectiveType === 'slow-2g' || 
           connection.effectiveType === '2g' ||
@@ -36,9 +58,10 @@ export function useBackgroundPreload({
       };
       
       checkConnection();
-      connection.addEventListener('change', checkConnection);
-      
-      return () => connection.removeEventListener('change', checkConnection);
+      if (connection) {
+        connection.addEventListener('change', checkConnection);
+        return () => connection.removeEventListener('change', checkConnection);
+      }
     }
   }, []);
   
@@ -83,10 +106,10 @@ export function useBackgroundPreload({
         
         // Also check from query results (handle both query types)
         if (key.includes('GetPokemons')) {
-          const queryData = cache[key] as any;
+          const queryData = cache[key] as QueryData;
           const pokemonData = queryData?.pokemons || queryData?.pokemonsBasic || queryData?.pokemonsFull;
           if (pokemonData?.edges) {
-            pokemonData.edges.forEach((edge: any) => {
+            pokemonData.edges.forEach((edge: PokemonEdge) => {
               const id = parseInt(edge.node.id);
               if (!isNaN(id) && id > maxCachedId) {
                 maxCachedId = id;
@@ -102,8 +125,42 @@ export function useBackgroundPreload({
     }
   };
 
+  // First 9 Pokemon of each generation (for faster generation switching)
+  const getGenerationStartTargets = useCallback((): number[] => {
+    const targets: number[] = [];
+    const generationStarts = [1, 152, 252, 387, 494, 650, 722, 810, 906]; // Starting IDs for each generation
+    
+    generationStarts.forEach(startId => {
+      // Check first 9 Pokemon of each generation
+      for (let i = 0; i < 9; i++) {
+        const pokemonId = startId + i;
+        
+        // Only add if not already cached
+        try {
+          const cache = apolloClient.cache.extract();
+          const isAlreadyCached = Object.keys(cache).some(key => 
+            key === `Pokemon:${pokemonId}` || 
+            (key.includes('GetPokemons') && (() => {
+              const queryData = cache[key] as QueryData;
+              const pokemonData = queryData?.pokemons || queryData?.pokemonsBasic || queryData?.pokemonsFull;
+              return pokemonData?.edges?.some((edge: PokemonEdge) => parseInt(edge.node.id) === pokemonId);
+            })())
+          );
+          if (!isAlreadyCached) {
+            targets.push(pokemonId);
+          }
+        } catch {
+          // If cache check fails, add to targets anyway
+          targets.push(pokemonId);
+        }
+      }
+    });
+    
+    return targets.slice(0, 40); // Maximum 40 Pokemon (generous allocation for generation switching)
+  }, []);
+
   // Determine preload target Pokemon IDs with strategic approach
-  const getPreloadTargets = (currentId: number): number[] => {
+  const getPreloadTargets = useCallback((currentId: number): number[] => {
     const range = getGenerationRange(currentId);
     const cachedCount = getCachedPokemonCount();
     const targets: number[] = [];
@@ -157,28 +214,8 @@ export function useBackgroundPreload({
     }
     
     return targets.filter(id => id >= range.min && id <= range.max);
-  };
+  }, [getGenerationStartTargets]);
 
-  // First 9 Pokemon of each generation (for faster generation switching)
-  const getGenerationStartTargets = (): number[] => {
-    const targets: number[] = [];
-    const generationStarts = [1, 152, 252, 387, 494, 650, 722, 810, 906]; // Starting IDs for each generation
-    
-    generationStarts.forEach(startId => {
-      // Check first 9 Pokemon of each generation
-      for (let i = 0; i < 9; i++) {
-        const pokemonId = startId + i;
-        
-        // Only add if not already cached
-        const isAlreadyCached = isIdInCache(pokemonId);
-        if (!isAlreadyCached) {
-          targets.push(pokemonId);
-        }
-      }
-    });
-    
-    return targets.slice(0, 40); // Maximum 40 Pokemon (generous allocation for generation switching)
-  };
 
   // Check if Pokemon ID exists in cache
   const isIdInCache = (pokemonId: number): boolean => {
@@ -187,9 +224,9 @@ export function useBackgroundPreload({
       return Object.keys(cache).some(key => 
         key === `Pokemon:${pokemonId}` || 
         (key.includes('GetPokemons') && (() => {
-          const queryData = cache[key] as any;
+          const queryData = cache[key] as QueryData;
           const pokemonData = queryData?.pokemons || queryData?.pokemonsBasic || queryData?.pokemonsFull;
-          return pokemonData?.edges?.some((edge: any) => parseInt(edge.node.id) === pokemonId);
+          return pokemonData?.edges?.some((edge: PokemonEdge) => parseInt(edge.node.id) === pokemonId);
         })())
       );
     } catch {
@@ -199,8 +236,6 @@ export function useBackgroundPreload({
 
   // Get popular Pokemon in generation range (starters, evolutions, legendaries)
   const getPopularPokemonInRange = (range: { min: number; max: number; generation: number }): number[] => {
-    const popular: number[] = [];
-    
     // Popular Pokemon by generation (starter evolutions and iconic Pokemon)
     const popularByGeneration: { [key: number]: number[] } = {
       1: [3, 6, 9, 25, 65, 68, 94, 130, 131, 144, 145, 146, 150, 151], // Venusaur, Charizard, Blastoise, Pikachu, Alakazam, Machamp, Gengar, Gyarados, Lapras, legendary birds, Mewtwo, Mew
@@ -219,7 +254,7 @@ export function useBackgroundPreload({
   };
 
   // Execute background preloading
-  const executePreload = async (targets: number[], signal: AbortSignal) => {
+  const executePreload = useCallback(async (targets: number[], signal: AbortSignal) => {
     const batchSize = maxConcurrent;
     let completed = 0;
     
@@ -268,7 +303,7 @@ export function useBackgroundPreload({
     }
     
     setPreloadStatus(prev => ({ ...prev, active: false }));
-  };
+  }, [maxConcurrent, priority]);
 
   useEffect(() => {
     if (!shouldPreload || isPreloadingRef.current) return;
@@ -300,7 +335,7 @@ export function useBackgroundPreload({
       controller.abort();
       isPreloadingRef.current = false;
     };
-  }, [currentPokemonId, shouldPreload, delay, maxConcurrent, priority]);
+  }, [currentPokemonId, shouldPreload, delay, maxConcurrent, priority, executePreload, getPreloadTargets]);
 
   // Cleanup on component unmount
   useEffect(() => {

@@ -1,7 +1,7 @@
 'use client';
 
-import { VirtualPokemonGrid } from '../../components/ui/VirtualPokemonGrid';
-import { AnimatedLoadingScreen } from '../../components/ui/AnimatedLoadingScreen';
+import { VirtualPokemonGrid } from '../../components/ui/pokemon/VirtualPokemonGrid';
+import { AnimatedLoadingScreen } from '../../components/ui/animation/AnimatedLoadingScreen';
 import { Sidebar } from '../../components/layout/Sidebar';
 import { usePokemonList } from '../../hooks/usePokemonList';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
