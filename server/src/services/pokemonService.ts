@@ -1,15 +1,124 @@
 import axios from 'axios';
 import { Pokemon, PokemonConnection } from '../types/pokemon';
+import { cacheService } from './cacheService';
 
 const POKEAPI_BASE_URL = process.env['POKEAPI_BASE_URL'] || 'https://pokeapi.co/api/v2';
 
+// Create axios instance with timeout and retry configuration
+const axiosInstance = axios.create({
+  timeout: 10000, // 10 second timeout
+  maxRedirects: 3,
+});
+
 class PokemonService {
-  private async fetchFromPokeAPI(endpoint: string) {
+  // Determine which endpoints should be cached
+  private shouldCacheEndpoint(endpoint: string): boolean {
+    // Cache essential data for card lists and basic Pokemon info
+    if (endpoint.includes('/pokemon/') && !endpoint.includes('/pokemon-species/')) {
+      return true; // Basic Pokemon data (for cards)
+    }
+    if (endpoint.includes('/pokemon-species/')) {
+      return true; // Species data (names, genera)
+    }
+    
+    // Don't cache heavy/infrequently accessed data
+    if (endpoint.includes('/move/')) {
+      return false; // Move details are heavy and rarely accessed
+    }
+    if (endpoint.includes('/evolution-chain/')) {
+      return false; // Evolution chains are complex and infrequently accessed
+    }
+    if (endpoint.includes('/ability/')) {
+      return false; // Ability details are rarely accessed in full
+    }
+    
+    return true; // Cache other endpoints by default
+  }
+
+  // Determine cache duration based on endpoint type
+  private getCacheDuration(endpoint: string): number {
+    if (endpoint.includes('/pokemon/') && !endpoint.includes('/pokemon-species/')) {
+      return 3600; // 60 minutes for basic Pokemon data (frequently accessed)
+    }
+    if (endpoint.includes('/pokemon-species/')) {
+      return 3600; // 60 minutes for species data (frequently accessed)
+    }
+    
+    return 1800; // 30 minutes for other endpoints
+  }
+
+  // Limit concurrent requests to prevent overwhelming PokeAPI
+  private async processWithConcurrencyLimit<T, R>(
+    items: T[],
+    processor: (item: T) => Promise<R>,
+    concurrencyLimit: number = 5
+  ): Promise<R[]> {
+    const results: R[] = [];
+    for (let i = 0; i < items.length; i += concurrencyLimit) {
+      const batch = items.slice(i, i + concurrencyLimit);
+      const batchResults = await Promise.all(batch.map(processor));
+      results.push(...batchResults);
+      
+      // Add small delay between batches to be nice to PokeAPI
+      if (i + concurrencyLimit < items.length) {
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
+    }
+    return results;
+  }
+
+  private async fetchFromPokeAPI(endpoint: string, retryCount = 0): Promise<any> {
+    // Determine if this endpoint should be cached
+    const shouldCache = this.shouldCacheEndpoint(endpoint);
+    
+    if (shouldCache) {
+      // Check cache first
+      const cacheKey = `pokeapi:${endpoint}`;
+      const cachedData = await cacheService.get(cacheKey);
+      if (cachedData) {
+        console.log(`Cache hit for ${endpoint}`);
+        return cachedData;
+      }
+    }
+
+    const maxRetries = 3;
+    const delay = (attempt: number) => new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempt))); // Exponential backoff
+    
     try {
-      const response = await axios.get(`${POKEAPI_BASE_URL}${endpoint}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Error fetching from PokeAPI: ${endpoint}`, error);
+      const response = await axiosInstance.get(`${POKEAPI_BASE_URL}${endpoint}`);
+      const data = response.data;
+      
+      if (shouldCache) {
+        // Determine cache duration based on endpoint type
+        const cacheDuration = this.getCacheDuration(endpoint);
+        await cacheService.set(`pokeapi:${endpoint}`, data, cacheDuration);
+        console.log(`Cached ${endpoint} for ${cacheDuration / 60} minutes`);
+      } else {
+        console.log(`Skipped caching for ${endpoint} (not cacheable)`);
+      }
+      
+      return data;
+    } catch (error: any) {
+      console.error(`Error fetching from PokeAPI: ${endpoint}`, error.code || error.message);
+      
+      // Retry on network errors or server errors
+      if (retryCount < maxRetries && (
+        error.code === 'ECONNRESET' || 
+        error.code === 'ETIMEDOUT' || 
+        error.code === 'ENOTFOUND' ||
+        (error.response && error.response.status >= 500)
+      )) {
+        console.log(`Retrying ${endpoint} (attempt ${retryCount + 1}/${maxRetries})`);
+        await delay(retryCount);
+        return this.fetchFromPokeAPI(endpoint, retryCount + 1);
+      }
+      
+      // Return null instead of throwing for non-critical data
+      if (error.code === 'ECONNRESET' || error.code === 'ETIMEDOUT') {
+        console.log(`Failed to fetch ${endpoint} after ${maxRetries} retries, returning null`);
+        return null;
+      }
+      
       throw error;
     }
   }
@@ -35,8 +144,13 @@ class PokemonService {
   async getPokemons(limit: number, offset: number): Promise<PokemonConnection> {
     const listData = await this.fetchFromPokeAPI(`/pokemon?limit=${limit}&offset=${offset}`);
     
-    const pokemonPromises = listData.results.map(async (pokemon: any) => {
+    const pokemonProcessor = async (pokemon: any) => {
       const pokemonData = await this.fetchFromPokeAPI(`/pokemon/${pokemon.name}`);
+      
+      if (!pokemonData) {
+        console.warn(`Could not fetch Pokemon data for ${pokemon.name}`);
+        return null;
+      }
       
       // Get species data using the species URL from Pokemon data
       let speciesData = null;
@@ -50,9 +164,11 @@ class PokemonService {
       }
       
       return await this.transformPokemonData(pokemonData, speciesData);
-    });
+    };
 
-    const pokemons = await Promise.all(pokemonPromises);
+    // Use concurrency limit for Pokemon processing (reduced from 5 to 3)
+    const pokemonResults = await this.processWithConcurrencyLimit(listData.results, pokemonProcessor, 3);
+    const pokemons = pokemonResults.filter(pokemon => pokemon !== null);
     
     const edges = pokemons.map((pokemon, index) => ({
       node: pokemon,
@@ -68,6 +184,120 @@ class PokemonService {
         endCursor: edges[edges.length - 1]?.cursor || null,
       },
       totalCount: listData.count,
+    };
+  }
+
+  // Lightweight methods for selective data loading
+  async getPokemonBasicById(id: string): Promise<any> {
+    const pokemonData = await this.fetchFromPokeAPI(`/pokemon/${id}`);
+    
+    // Get basic species data (names and genera only)
+    let speciesData = null;
+    if (pokemonData.species && pokemonData.species.url) {
+      try {
+        const speciesEndpoint = pokemonData.species.url.replace('https://pokeapi.co/api/v2', '');
+        speciesData = await this.fetchFromPokeAPI(speciesEndpoint);
+      } catch (error) {
+        console.warn(`Could not fetch species data for Pokemon ${id}:`, error);
+      }
+    }
+    
+    return this.transformPokemonBasicData(pokemonData, speciesData);
+  }
+
+  async getPokemonsBasic(limit: number, offset: number): Promise<any> {
+    const listData = await this.fetchFromPokeAPI(`/pokemon?limit=${limit}&offset=${offset}`);
+    
+    const pokemonProcessor = async (pokemon: any) => {
+      const pokemonData = await this.fetchFromPokeAPI(`/pokemon/${pokemon.name}`);
+      
+      if (!pokemonData) {
+        console.warn(`Could not fetch Pokemon data for ${pokemon.name}`);
+        return null;
+      }
+      
+      // Get basic species data (names and genera only)
+      let speciesData = null;
+      if (pokemonData.species && pokemonData.species.url) {
+        try {
+          const speciesEndpoint = pokemonData.species.url.replace('https://pokeapi.co/api/v2', '');
+          speciesData = await this.fetchFromPokeAPI(speciesEndpoint);
+        } catch (error) {
+          console.warn(`Could not fetch species data for Pokemon ${pokemon.name}:`, error);
+        }
+      }
+      
+      return this.transformPokemonBasicData(pokemonData, speciesData);
+    };
+
+    // Use concurrency limit for Pokemon processing
+    const pokemonResults = await this.processWithConcurrencyLimit(listData.results, pokemonProcessor, 3);
+    const pokemons = pokemonResults.filter(pokemon => pokemon !== null);
+    
+    const edges = pokemons.map((pokemon, index) => ({
+      node: pokemon,
+      cursor: Buffer.from(`${offset + index}`).toString('base64'),
+    }));
+
+    return {
+      edges,
+      pageInfo: {
+        hasNextPage: listData.next !== null,
+        hasPreviousPage: listData.previous !== null,
+        startCursor: edges[0]?.cursor || null,
+        endCursor: edges[edges.length - 1]?.cursor || null,
+      },
+      totalCount: listData.count,
+    };
+  }
+
+  // Lightweight transformation for basic Pokemon data (browsing)
+  private transformPokemonBasicData(data: any, speciesData: any = null): any {
+    return {
+      id: data.id.toString(),
+      name: data.name,
+      types: data.types.map((typeInfo: any) => ({
+        slot: typeInfo.slot,
+        type: {
+          id: this.extractIdFromUrl(typeInfo.type.url),
+          name: typeInfo.type.name,
+          url: typeInfo.type.url,
+        },
+      })),
+      sprites: {
+        frontDefault: data.sprites.front_default,
+        frontShiny: data.sprites.front_shiny,
+        backDefault: data.sprites.back_default,
+        backShiny: data.sprites.back_shiny,
+        other: {
+          officialArtwork: {
+            frontDefault: data.sprites.other?.['official-artwork']?.front_default ?? undefined,
+            frontShiny: data.sprites.other?.['official-artwork']?.front_shiny ?? undefined,
+          },
+          home: {
+            frontDefault: data.sprites.other?.home?.front_default,
+            frontShiny: data.sprites.other?.home?.front_shiny,
+          },
+        },
+      },
+      species: speciesData ? {
+        id: speciesData.id.toString(),
+        name: speciesData.name,
+        names: speciesData.names.map((nameEntry: any) => ({
+          name: nameEntry.name,
+          language: {
+            name: nameEntry.language.name,
+            url: nameEntry.language.url,
+          },
+        })),
+        genera: speciesData.genera.map((genus: any) => ({
+          genus: genus.genus,
+          language: {
+            name: genus.language.name,
+            url: genus.language.url,
+          },
+        })),
+      } : null,
     };
   }
 
@@ -397,11 +627,25 @@ class PokemonService {
   }
 
   private async transformAbilities(abilitiesData: any[]): Promise<any[]> {
-    const abilityPromises = abilitiesData.map(async (abilityInfo: any) => {
+    const abilityProcessor = async (abilityInfo: any) => {
       try {
         // Fetch detailed ability data from PokeAPI
         const abilityDetailUrl = abilityInfo.ability.url.replace('https://pokeapi.co/api/v2', '');
         const abilityDetails = await this.fetchFromPokeAPI(abilityDetailUrl);
+        
+        if (!abilityDetails) {
+          // Return basic ability data if detailed fetch fails
+          return {
+            isHidden: abilityInfo.is_hidden,
+            slot: abilityInfo.slot,
+            ability: {
+              id: this.extractIdFromUrl(abilityInfo.ability.url),
+              name: abilityInfo.ability.name,
+              url: abilityInfo.ability.url,
+              names: [],
+            },
+          };
+        }
 
         return {
           isHidden: abilityInfo.is_hidden,
@@ -433,17 +677,43 @@ class PokemonService {
           },
         };
       }
-    });
+    };
 
-    return await Promise.all(abilityPromises);
+    // Use concurrency limit to prevent overwhelming PokeAPI
+    return await this.processWithConcurrencyLimit(abilitiesData, abilityProcessor, 3);
   }
 
   private async transformMoves(movesData: any[]): Promise<any[]> {
-    const movePromises = movesData.map(async (moveInfo: any) => {
+    // Limit to first 20 moves to reduce API calls
+    const limitedMovesData = movesData.slice(0, 20);
+    
+    const moveProcessor = async (moveInfo: any) => {
       try {
         // Fetch detailed move data from PokeAPI
         const moveDetailUrl = moveInfo.move.url.replace('https://pokeapi.co/api/v2', '');
         const moveDetails = await this.fetchFromPokeAPI(moveDetailUrl);
+        
+        if (!moveDetails) {
+          // Return basic move data if detailed fetch fails
+          return {
+            move: {
+              id: this.extractIdFromUrl(moveInfo.move.url),
+              name: moveInfo.move.name,
+              url: moveInfo.move.url,
+              names: [],
+              type: { id: '1', name: 'normal', url: '' },
+              damageClass: { id: '1', name: 'status', names: [] },
+              power: null,
+              accuracy: null,
+              pp: null,
+              priority: 0,
+              target: { id: '1', name: 'target', names: [] },
+              effectChance: null,
+              flavorTextEntries: [],
+            },
+            versionGroupDetails: moveInfo.version_group_details || [],
+          };
+        }
 
         return {
           move: {
@@ -532,9 +802,10 @@ class PokemonService {
           })),
         };
       }
-    });
+    };
 
-    return await Promise.all(movePromises);
+    // Use concurrency limit to prevent overwhelming PokeAPI
+    return await this.processWithConcurrencyLimit(limitedMovesData, moveProcessor, 3);
   }
 
   private extractIdFromUrl(url: string): string {

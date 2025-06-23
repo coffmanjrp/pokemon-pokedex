@@ -1,10 +1,33 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getLanguageFromCookie } from '@/lib/languageStorage'
 
 const locales = ['en', 'ja']
 const defaultLocale = 'en'
 
-// Get the preferred locale, similar to the above or using a library
+// Check User-Agent for Japanese language indicators
+function getUserAgentLanguage(request: NextRequest): string | null {
+  const userAgent = request.headers.get('user-agent')
+  if (!userAgent) return null
+
+  const userAgentLower = userAgent.toLowerCase()
+  
+  // Check for Japanese language indicators in User-Agent
+  const japaneseIndicators = [
+    'ja', 'ja-jp', 'japanese', 'japan', 'jp',
+    'ＪＰ', 'ｊａ', '日本語'
+  ]
+  
+  for (const indicator of japaneseIndicators) {
+    if (userAgentLower.includes(indicator.toLowerCase())) {
+      return 'ja'
+    }
+  }
+  
+  return null
+}
+
+// Get the preferred locale with priority: Cookie > User-Agent > Accept-Language > Default
 function getLocale(request: NextRequest): string {
   // Check if there is any supported locale in the pathname
   const { pathname } = request.nextUrl
@@ -14,7 +37,20 @@ function getLocale(request: NextRequest): string {
 
   if (pathnameLocale) return pathnameLocale
 
-  // Check the Accept-Language header
+  // 1. Check cookie (localStorage backup) - HIGHEST PRIORITY
+  const cookieHeader = request.headers.get('cookie') || ''
+  const cookieLang = getLanguageFromCookie(cookieHeader)
+  if (cookieLang && locales.includes(cookieLang)) {
+    return cookieLang
+  }
+
+  // 2. Check User-Agent for Japanese detection
+  const userAgentLang = getUserAgentLanguage(request)
+  if (userAgentLang && locales.includes(userAgentLang)) {
+    return userAgentLang
+  }
+
+  // 3. Check the Accept-Language header
   const acceptLanguage = request.headers.get('accept-language')
   if (acceptLanguage) {
     const preferredLocales = acceptLanguage

@@ -19,14 +19,10 @@ export function AnimatedLoadingScreen({ language, onComplete }: AnimatedLoadingS
 
     const tl = gsap.timeline({
       onComplete: () => {
-        // Fade out the loading screen with scale effect
-        gsap.to(containerRef.current, {
-          opacity: 0,
-          scale: 1.1,
-          duration: 0.8,
-          ease: "power2.inOut",
-          onComplete: onComplete
-        });
+        // Immediately call onComplete without fade out animation
+        if (onComplete) {
+          onComplete();
+        }
       }
     });
 
@@ -105,21 +101,43 @@ export function AnimatedLoadingScreen({ language, onComplete }: AnimatedLoadingS
       >
       {/* Animated background particles */}
       <div className="absolute inset-0 overflow-hidden">
-        {Array.from({ length: 15 }).map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-2 h-2 bg-blue-400 rounded-full opacity-60"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationName: 'float',
-              animationDuration: '3s',
-              animationTimingFunction: 'ease-in-out',
-              animationIterationCount: 'infinite',
-              animationDelay: `${Math.random() * 3}s`
-            }}
-          />
-        ))}
+        {Array.from({ length: 15 }).map((_, i) => {
+          // Use deterministic positions based on index to avoid hydration mismatch
+          const positions = [
+            { left: 10, top: 20, delay: 0.5 },
+            { left: 80, top: 15, delay: 1.2 },
+            { left: 25, top: 70, delay: 0.8 },
+            { left: 60, top: 30, delay: 1.8 },
+            { left: 90, top: 60, delay: 0.3 },
+            { left: 15, top: 85, delay: 2.1 },
+            { left: 70, top: 10, delay: 1.5 },
+            { left: 40, top: 50, delay: 0.9 },
+            { left: 85, top: 35, delay: 1.7 },
+            { left: 20, top: 45, delay: 0.6 },
+            { left: 95, top: 80, delay: 2.4 },
+            { left: 55, top: 75, delay: 1.1 },
+            { left: 30, top: 25, delay: 1.9 },
+            { left: 75, top: 90, delay: 0.4 },
+            { left: 45, top: 5, delay: 2.2 }
+          ];
+          const pos = positions[i] || { left: 50, top: 50, delay: 1.0 };
+          
+          return (
+            <div
+              key={i}
+              className="absolute w-2 h-2 bg-blue-400 rounded-full opacity-60"
+              style={{
+                left: `${pos.left}%`,
+                top: `${pos.top}%`,
+                animationName: 'float',
+                animationDuration: '3s',
+                animationTimingFunction: 'ease-in-out',
+                animationIterationCount: 'infinite',
+                animationDelay: `${pos.delay}s`
+              }}
+            />
+          );
+        })}
       </div>
 
       <div className="text-center z-10">

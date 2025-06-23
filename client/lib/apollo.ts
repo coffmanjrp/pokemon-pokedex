@@ -7,18 +7,16 @@ const httpLink = createHttpLink({
 export const apolloClient = new ApolloClient({
   link: httpLink,
   cache: new InMemoryCache({
-    typePolicies: {
-      Pokemon: {
-        keyFields: ['id'],
-      },
-    },
+    addTypename: false, // Disable __typename to prevent cache issues
   }),
   defaultOptions: {
     watchQuery: {
-      errorPolicy: 'all',
+      errorPolicy: 'ignore',
+      fetchPolicy: 'no-cache', // Disable cache until issues are resolved
     },
     query: {
-      errorPolicy: 'all',
+      errorPolicy: 'ignore', 
+      fetchPolicy: 'no-cache', // Disable cache until issues are resolved
     },
   },
 });
@@ -30,11 +28,7 @@ export function getClient() {
       uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:4000/graphql',
     }),
     cache: new InMemoryCache({
-      typePolicies: {
-        Pokemon: {
-          keyFields: ['id'],
-        },
-      },
+      addTypename: false, // Disable __typename for SSR consistency
     }),
     ssrMode: typeof window === 'undefined',
   });

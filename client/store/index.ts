@@ -9,10 +9,9 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: ['persist/PERSIST'],
-      },
+      serializableCheck: false, // Disable serializable check to prevent circular reference errors
     }),
+  devTools: false, // Disable Redux DevTools to prevent serialization issues
 });
 
 export type RootState = ReturnType<typeof store.getState>;

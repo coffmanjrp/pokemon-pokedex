@@ -3,7 +3,7 @@
 import { Pokemon } from '@/types/pokemon';
 import { getTypeName } from '@/lib/pokemonUtils';
 import { useAppSelector } from '@/store/hooks';
-import { TypeBadge } from './Badge';
+import { TypeBadge } from '../common/Badge';
 
 interface PokemonTypesProps {
   types: Pokemon['types'];
@@ -31,12 +31,12 @@ export function PokemonTypes({ types, size = 'md', className, language: propLang
 
   return (
     <div className={className || defaultClassName}>
-      {types.map((typeInfo) => {
+      {types.map((typeInfo, index) => {
         const displayName = getTypeName(typeInfo.type.name, language);
 
         return (
           <TypeBadge
-            key={typeInfo.type.id}
+            key={`${typeInfo.type.id}-${typeInfo.slot || index}`}
             type={typeInfo.type.name}
             displayName={displayName}
             size={size}

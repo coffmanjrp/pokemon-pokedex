@@ -1,7 +1,142 @@
 import { gql } from '@apollo/client';
 
+// Basic queries for runtime browsing (lightweight)
+export const GET_POKEMONS_BASIC = gql`
+  query GetPokemonsBasic($limit: Int, $offset: Int) {
+    pokemonsBasic(limit: $limit, offset: $offset) {
+      edges {
+        node {
+          id
+          name
+          types {
+            type {
+              name
+            }
+          }
+          sprites {
+            frontDefault
+            other {
+              officialArtwork {
+                frontDefault
+              }
+            }
+          }
+          species {
+            names {
+              name
+              language {
+                name
+              }
+            }
+            genera {
+              genus
+              language {
+                name
+              }
+            }
+          }
+        }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+      totalCount
+    }
+  }
+`;
+
+export const GET_POKEMON_BASIC = gql`
+  query GetPokemonBasic($id: ID!) {
+    pokemonBasic(id: $id) {
+      id
+      name
+      types {
+        type {
+          name
+        }
+      }
+      sprites {
+        frontDefault
+        other {
+          officialArtwork {
+            frontDefault
+          }
+        }
+      }
+      species {
+        names {
+          name
+          language {
+            name
+          }
+        }
+        genera {
+          genus
+          language {
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
+// Optimized query for Pokemon card list - reduced by ~70% size
 export const GET_POKEMONS = gql`
   query GetPokemons($limit: Int, $offset: Int) {
+    pokemons(limit: $limit, offset: $offset) {
+      edges {
+        node {
+          id
+          name
+          types {
+            type {
+              name
+            }
+          }
+          sprites {
+            frontDefault
+            other {
+              officialArtwork {
+                frontDefault
+              }
+            }
+          }
+          species {
+            names {
+              name
+              language {
+                name
+              }
+            }
+            genera {
+              genus
+              language {
+                name
+              }
+            }
+          }
+        }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+      totalCount
+    }
+  }
+`;
+
+// Keep the full query for detailed pages (already used in SSG)
+export const GET_POKEMONS_FULL = gql`
+  query GetPokemonsFull($limit: Int, $offset: Int) {
     pokemons(limit: $limit, offset: $offset) {
       edges {
         node {

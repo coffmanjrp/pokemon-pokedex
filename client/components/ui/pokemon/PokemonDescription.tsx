@@ -2,7 +2,7 @@
 
 import { Pokemon } from '@/types/pokemon';
 import { getPokemonDescription, getVersionName } from '@/lib/pokemonUtils';
-import { DataEmptyState } from './DataEmptyState';
+import { DataEmptyState } from '../common/DataEmptyState';
 
 interface PokemonDescriptionProps {
   pokemon: Pokemon;

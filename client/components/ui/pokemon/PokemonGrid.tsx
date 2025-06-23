@@ -3,7 +3,7 @@
 import { Pokemon } from '@/types/pokemon';
 import { PokemonCard } from './PokemonCard';
 import { PokemonCardSkeleton } from './PokemonCardSkeleton';
-import { EmptyState } from './EmptyState';
+import { EmptyState } from '../common/EmptyState';
 import { cn } from '@/lib/utils';
 import { useAppSelector } from '@/store/hooks';
 

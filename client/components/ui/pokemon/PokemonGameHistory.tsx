@@ -3,7 +3,8 @@
 import { GameIndex, Generation } from '@/types/pokemon';
 import { getGenerationName } from '@/lib/pokemonUtils';
 import { VERSION_TRANSLATIONS } from '@/lib/data/versionTranslations';
-import { DataEmptyState } from './DataEmptyState';
+import { getGenerationByGame } from '@/lib/data/generations';
+import { DataEmptyState } from '../common/DataEmptyState';
 
 interface PokemonGameHistoryProps {
   gameIndices?: GameIndex[];
@@ -22,34 +23,32 @@ export function PokemonGameHistory({ gameIndices, generation, language }: Pokemo
     return translation?.[language] || version.charAt(0).toUpperCase() + version.slice(1);
   };
 
-  // Group games by generation/era
+  // Group games by generation/era using unified data
   const groupGamesByEra = () => {
     const eras: Record<string, GameIndex[]> = {};
     
     gameIndices.forEach(gameIndex => {
       const version = gameIndex.version.name;
-      let era = 'Other';
+      const generationData = getGenerationByGame(version);
       
-      if (['red', 'blue', 'yellow'].includes(version)) {
-        era = language === 'en' ? 'Generation I (Kanto)' : '第1世代 (カントー)';
-      } else if (['gold', 'silver', 'crystal'].includes(version)) {
-        era = language === 'en' ? 'Generation II (Johto)' : '第2世代 (ジョウト)';
-      } else if (['ruby', 'sapphire', 'emerald', 'firered', 'leafgreen'].includes(version)) {
-        era = language === 'en' ? 'Generation III (Hoenn)' : '第3世代 (ホウエン)';
-      } else if (['diamond', 'pearl', 'platinum', 'heartgold', 'soulsilver'].includes(version)) {
-        era = language === 'en' ? 'Generation IV (Sinnoh)' : '第4世代 (シンオウ)';
-      } else if (['black', 'white', 'black-2', 'white-2'].includes(version)) {
-        era = language === 'en' ? 'Generation V (Unova)' : '第5世代 (イッシュ)';
-      } else if (['x', 'y', 'omega-ruby', 'alpha-sapphire'].includes(version)) {
-        era = language === 'en' ? 'Generation VI (Kalos)' : '第6世代 (カロス)';
-      } else if (['sun', 'moon', 'ultra-sun', 'ultra-moon'].includes(version)) {
-        era = language === 'en' ? 'Generation VII (Alola)' : '第7世代 (アローラ)';
-      } else if (['sword', 'shield'].includes(version)) {
-        era = language === 'en' ? 'Generation VIII (Galar)' : '第8世代 (ガラル)';
-      } else if (['brilliant-diamond', 'shining-pearl', 'legends-arceus'].includes(version)) {
-        era = language === 'en' ? 'Generation VIII (Remakes)' : '第8世代 (リメイク)';
-      } else if (['scarlet', 'violet'].includes(version)) {
-        era = language === 'en' ? 'Generation IX (Paldea)' : '第9世代 (パルデア)';
+      let era: string;
+      if (generationData) {
+        // Use generation data for consistent naming
+        const genName = generationData.name[language];
+        const regionName = generationData.region[language];
+        
+        // Check if it's a remake
+        const isRemake = generationData.remakes?.includes(version);
+        if (isRemake) {
+          era = language === 'en' 
+            ? `${genName} (Remakes)` 
+            : `${genName} (リメイク)`;
+        } else {
+          era = `${genName} (${regionName})`;
+        }
+      } else {
+        // Fallback for unrecognized games
+        era = language === 'en' ? 'Other Games' : 'その他のゲーム';
       }
       
       if (!eras[era]) {

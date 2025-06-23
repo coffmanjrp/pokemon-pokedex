@@ -1,61 +1,12 @@
 import { Locale } from '@/lib/dictionaries';
-
-// Regional form translations
-export const REGIONAL_FORM_TRANSLATIONS: Record<string, { en: string; ja: string }> = {
-  'alola': { en: 'Alolan', ja: 'アローラのすがた' },
-  'alolan': { en: 'Alolan', ja: 'アローラのすがた' },
-  'galar': { en: 'Galarian', ja: 'ガラルのすがた' },
-  'galarian': { en: 'Galarian', ja: 'ガラルのすがた' },
-  'hisui': { en: 'Hisuian', ja: 'ヒスイのすがた' },
-  'hisuian': { en: 'Hisuian', ja: 'ヒスイのすがた' },
-  'paldea': { en: 'Paldean', ja: 'パルデアのすがた' },
-  'paldean': { en: 'Paldean', ja: 'パルデアのすがた' },
-};
-
-// Mega Evolution form translations
-// Note: Order matters! More specific forms (mega-x, mega-y) must come before general forms (mega)
-export const MEGA_FORM_TRANSLATIONS: Record<string, { en: string; ja: string }> = {
-  'mega-x': { en: 'Mega X', ja: 'X' },
-  'mega-y': { en: 'Mega Y', ja: 'Y' },
-  'mega': { en: 'Mega', ja: 'メガ' },
-};
-
-// Gigantamax form translations
-export const GIGANTAMAX_FORM_TRANSLATIONS: Record<string, { en: string; ja: string }> = {
-  'gmax': { en: 'Gigantamax', ja: 'キョダイマックスのすがた' },
-};
-
-// Special form translations
-export const SPECIAL_FORM_TRANSLATIONS: Record<string, { en: string; ja: string }> = {
-  'primal': { en: 'Primal', ja: 'ゲンシ' },
-  'origin': { en: 'Origin Forme', ja: 'オリジンフォルム' },
-  'altered': { en: 'Altered Forme', ja: 'アナザーフォルム' },
-  'sky': { en: 'Sky Forme', ja: 'スカイフォルム' },
-  'land': { en: 'Land Forme', ja: 'ランドフォルム' },
-  'therian': { en: 'Therian Forme', ja: 'れいじゅうフォルム' },
-  'incarnate': { en: 'Incarnate Forme', ja: 'けしんフォルム' },
-  'resolute': { en: 'Resolute Forme', ja: 'かくごのすがた' },
-  'ordinary': { en: 'Ordinary Forme', ja: 'いつものすがた' },
-  'zen': { en: 'Zen Mode', ja: 'ダルマモード' },
-  'standard': { en: 'Standard Mode', ja: 'ノーマルモード' },
-  'blade': { en: 'Blade Forme', ja: 'ブレードフォルム' },
-  'shield': { en: 'Shield Forme', ja: 'シールドフォルム' },
-  'unbound': { en: 'Unbound', ja: 'ときはなたれし' },
-  'confined': { en: 'Confined', ja: 'いましめられし' },
-  'complete': { en: 'Complete Forme', ja: 'パーフェクトフォルム' },
-  '10-percent': { en: '10% Forme', ja: '10%フォルム' },
-  '50-percent': { en: '50% Forme', ja: '50%フォルム' },
-  'dusk-mane': { en: 'Dusk Mane', ja: 'たそがれのたてがみ' },
-  'dawn-wings': { en: 'Dawn Wings', ja: 'あかつきのつばさ' },
-  'ultra': { en: 'Ultra', ja: 'ウルトラ' },
-  'red-meteor': { en: 'Red Meteor', ja: 'あかいいんせき' },
-  'blue-meteor': { en: 'Blue Meteor', ja: 'あおいいんせき' },
-  'yellow-meteor': { en: 'Yellow Meteor', ja: 'きいろいいんせき' },
-  'green-meteor': { en: 'Green Meteor', ja: 'みどりのいんせき' },
-  'orange-meteor': { en: 'Orange Meteor', ja: 'オレンジいんせき' },
-  'indigo-meteor': { en: 'Indigo Meteor', ja: 'あいいろのいんせき' },
-  'violet-meteor': { en: 'Violet Meteor', ja: 'むらさきのいんせき' },
-};
+import {
+  REGIONAL_FORM_TRANSLATIONS,
+  MEGA_FORM_TRANSLATIONS,
+  GIGANTAMAX_FORM_TRANSLATIONS,
+  SPECIAL_FORM_TRANSLATIONS,
+  getFormBadgeColor as getFormBadgeColorFromData,
+  getFormPriority as getFormPriorityFromData
+} from '@/lib/data/formTranslations';
 
 /**
  * Get display name for a Pokemon form
@@ -184,11 +135,7 @@ export function parsePokemonId(nameOrUrl: string): string {
  * Get form priority for sorting (lower number = higher priority)
  */
 export function getFormPriority(formName: string | undefined): number {
-  if (!formName || formName === 'default') return 0;
-  if (isRegionalVariant(formName)) return 1;
-  if (isMegaEvolution(formName)) return 2;
-  if (isGigantamax(formName)) return 3;
-  return 4;
+  return getFormPriorityFromData(formName);
 }
 
 /**
@@ -222,27 +169,5 @@ export function getFormBadgeName(formName: string | undefined, language: 'en' | 
  */
 export function getFormBadgeColor(formName: string | undefined): string {
   if (!formName) return 'bg-gray-100 text-gray-800';
-  
-  // Regional variants - green
-  if (formName.includes('alola') || formName.includes('galar') || 
-      formName.includes('hisui') || formName.includes('paldea')) {
-    return 'bg-green-100 text-green-800';
-  }
-  
-  // Mega Evolution - purple
-  if (formName.includes('mega')) {
-    return 'bg-purple-100 text-purple-800';
-  }
-  
-  // Gigantamax - red
-  if (formName.includes('gmax')) {
-    return 'bg-red-100 text-red-800';
-  }
-  
-  // Primal - blue
-  if (formName.includes('primal')) {
-    return 'bg-blue-100 text-blue-800';
-  }
-  
-  return 'bg-gray-100 text-gray-800';
+  return getFormBadgeColorFromData(formName);
 }

@@ -5,9 +5,9 @@ import { Pokemon } from '@/types/pokemon';
 import { PokemonMoves } from './PokemonMoves';
 import { PokemonDescription } from './PokemonDescription';
 import { PokemonGameHistory } from './PokemonGameHistory';
-import { InfoCard } from './InfoCard';
-import { TabNavigation } from './TabNavigation';
-import { DataEmptyState } from './DataEmptyState';
+import { InfoCard } from '../common/InfoCard';
+import { TabNavigation } from '../common/TabNavigation';
+import { DataEmptyState } from '../common/DataEmptyState';
 import Image from 'next/image';
 
 interface PokemonSpritesGalleryProps {

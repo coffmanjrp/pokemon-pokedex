@@ -21,7 +21,7 @@ export function PokemonTopNavigationTabs({ pokemon, lang }: PokemonTopNavigation
         
         {/* Evolution Chain Section - Between Hero and Sprites */}
         {pokemon.species?.evolutionChain?.chain && (
-          <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 md:py-8">
+          <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-8">
             <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-gray-100">
               <PokemonEvolutionChain 
                 evolutionChain={pokemon.species.evolutionChain.chain} 
@@ -32,7 +32,7 @@ export function PokemonTopNavigationTabs({ pokemon, lang }: PokemonTopNavigation
         )}
 
         {/* Sprites Gallery with embedded tabs */}
-        <div className="max-w-7xl mx-auto px-4 md:px-8 pb-4 md:pb-8">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 pb-4 md:pb-8">
           <PokemonSpritesGallery pokemon={pokemon} language={lang} />
         </div>
       </div>

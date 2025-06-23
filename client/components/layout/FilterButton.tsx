@@ -1,6 +1,5 @@
 'use client';
 
-import { useAppSelector } from '@/store/hooks';
 import { cn } from '@/lib/utils';
 import { Locale } from '@/lib/dictionaries';
 
@@ -12,18 +11,17 @@ interface FilterButtonProps {
 }
 
 export function FilterButton({ onClick, className, children, lang }: FilterButtonProps) {
-  const { filters } = useAppSelector((state) => state.pokemon);
-  
-  const activeFilterCount = filters.types.length + (filters.generation !== null ? 1 : 0);
-  const hasActiveFilters = activeFilterCount > 0;
+  // Filter functionality removed - this component is deprecated
+  const activeFilterCount = 0;
+  const hasActiveFilters = false;
 
   return (
     <button
       onClick={onClick}
       className={cn(
-        'relative px-4 py-2 bg-blue-600 text-white rounded-lg w-36',
+        'relative px-4 py-3 bg-blue-600 text-white rounded-lg',
         'hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500',
-        'transition-colors duration-200 font-medium',
+        'transition-colors duration-200 font-medium flex items-center justify-center',
         hasActiveFilters && 'bg-blue-700',
         className
       )}

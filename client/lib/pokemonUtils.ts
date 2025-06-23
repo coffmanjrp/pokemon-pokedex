@@ -1,12 +1,13 @@
 import { Pokemon, EvolutionDetail, Move } from '@/types/pokemon';
-import { getFormDisplayName, REGIONAL_FORM_TRANSLATIONS, MEGA_FORM_TRANSLATIONS, GIGANTAMAX_FORM_TRANSLATIONS, SPECIAL_FORM_TRANSLATIONS, isMegaEvolution } from '@/lib/formUtils';
+import { getFormDisplayName, isMegaEvolution } from '@/lib/formUtils';
+import { REGIONAL_FORM_TRANSLATIONS, MEGA_FORM_TRANSLATIONS, GIGANTAMAX_FORM_TRANSLATIONS, SPECIAL_FORM_TRANSLATIONS } from '@/lib/data/formTranslations';
 import { ABILITY_TRANSLATIONS } from '@/lib/data/abilityTranslations';
 import { VERSION_TRANSLATIONS } from '@/lib/data/versionTranslations';
 import { TYPE_EFFECTIVENESS } from '@/lib/data/typeEffectiveness';
 import { MOVE_TRANSLATIONS } from '@/lib/data/moveTranslations';
 import { MOVE_LEARN_METHOD_TRANSLATIONS } from '@/lib/data/moveLearnMethodTranslations';
 import { STAT_TRANSLATIONS } from '@/lib/data/statTranslations';
-import { TYPE_TRANSLATIONS } from '@/lib/data/typeTranslations';
+import { TYPE_TRANSLATIONS, getTypeColor } from '@/lib/data/typeTranslations';
 import React from 'react';
 
 /**
@@ -16,8 +17,14 @@ import React from 'react';
 function getFormTranslation(formName: string, language: 'en' | 'ja'): string | null {
   console.log(`[getFormTranslation] Looking for translation of "${formName}" in language "${language}"`);
   
+  // Safe access to translation objects with fallback
+  const safeRegionalForms = REGIONAL_FORM_TRANSLATIONS || {};
+  const safeMegaForms = MEGA_FORM_TRANSLATIONS || {};
+  const safeGigantamaxForms = GIGANTAMAX_FORM_TRANSLATIONS || {};
+  const safeSpecialForms = SPECIAL_FORM_TRANSLATIONS || {};
+  
   // Check regional forms - try exact match first, then partial match
-  for (const [key, translation] of Object.entries(REGIONAL_FORM_TRANSLATIONS)) {
+  for (const [key, translation] of Object.entries(safeRegionalForms)) {
     if (formName === key || formName.includes(key)) {
       console.log(`[getFormTranslation] Found regional form: ${key} -> ${translation[language]}`);
       return translation[language];
@@ -25,14 +32,14 @@ function getFormTranslation(formName: string, language: 'en' | 'ja'): string | n
   }
   
   // Check mega forms - exact match first
-  for (const [key, translation] of Object.entries(MEGA_FORM_TRANSLATIONS)) {
+  for (const [key, translation] of Object.entries(safeMegaForms)) {
     if (formName === key) {
       console.log(`[getFormTranslation] Found exact mega form: ${key} -> ${translation[language]}`);
       return translation[language];
     }
   }
   // Check mega forms - partial match as fallback
-  for (const [key, translation] of Object.entries(MEGA_FORM_TRANSLATIONS)) {
+  for (const [key, translation] of Object.entries(safeMegaForms)) {
     if (formName.includes(key)) {
       console.log(`[getFormTranslation] Found partial mega form: ${key} -> ${translation[language]}`);
       return translation[language];
@@ -40,7 +47,7 @@ function getFormTranslation(formName: string, language: 'en' | 'ja'): string | n
   }
   
   // Check gigantamax forms
-  for (const [key, translation] of Object.entries(GIGANTAMAX_FORM_TRANSLATIONS)) {
+  for (const [key, translation] of Object.entries(safeGigantamaxForms)) {
     if (formName === key || formName.includes(key)) {
       console.log(`[getFormTranslation] Found gigantamax form: ${key} -> ${translation[language]}`);
       return translation[language];
@@ -48,7 +55,7 @@ function getFormTranslation(formName: string, language: 'en' | 'ja'): string | n
   }
   
   // Check special forms
-  for (const [key, translation] of Object.entries(SPECIAL_FORM_TRANSLATIONS)) {
+  for (const [key, translation] of Object.entries(safeSpecialForms)) {
     if (formName === key || formName.includes(key)) {
       console.log(`[getFormTranslation] Found special form: ${key} -> ${translation[language]}`);
       return translation[language];
@@ -482,28 +489,7 @@ export function getPrimaryTypeColor(pokemon: Pokemon): string {
  * Get type color by type name
  */
 export function getTypeColorFromName(typeName: string): string {
-  const typeColorMap: Record<string, string> = {
-    normal: '#A8A878',
-    fire: '#F08030',
-    water: '#6890F0',
-    electric: '#F8D030',
-    grass: '#78C850',
-    ice: '#98D8D8',
-    fighting: '#C03028',
-    poison: '#A040A0',
-    ground: '#E0C068',
-    flying: '#A890F0',
-    psychic: '#F85888',
-    bug: '#A8B820',
-    rock: '#B8A038',
-    ghost: '#705898',
-    dragon: '#7038F8',
-    dark: '#705848',
-    steel: '#B8B8D0',
-    fairy: '#EE99AC',
-  };
-  
-  return typeColorMap[typeName.toLowerCase()] || '#A8A878';
+  return getTypeColor(typeName);
 }
 
 /**
