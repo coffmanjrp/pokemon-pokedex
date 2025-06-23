@@ -88,11 +88,11 @@ export function VirtualPokemonGrid({
 
   if (loading && pokemons.length === 0) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 px-3 sm:px-4 py-4">
         {Array.from({ length: 12 }).map((_, i) => (
           <div
             key={i}
-            className="bg-gray-200 animate-pulse rounded-xl h-80"
+            className="bg-gray-200 animate-pulse rounded-xl h-72 sm:h-80"
           />
         ))}
       </div>
@@ -102,13 +102,13 @@ export function VirtualPokemonGrid({
   // Don't render virtual scrolling until mounted to avoid SSR issues
   if (!isMounted) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 px-3 sm:px-4 py-4">
         {pokemons.slice(0, 12).map((pokemon, index) => (
           <PokemonCard
             key={pokemon.id}
             pokemon={pokemon}
             onClick={onPokemonClick}
-            className="h-80"
+            className="h-72 sm:h-80" // Slightly smaller on mobile
             priority={index < 5} // Priority for first 5 cards in initial render
           />
         ))}
@@ -122,6 +122,7 @@ export function VirtualPokemonGrid({
       className="h-full w-full overflow-auto" // Full height and width
       style={{
         contain: 'strict', // CSS containment for better performance
+        WebkitOverflowScrolling: 'touch', // iOS Safari smooth scrolling
       }}
     >
       <div
@@ -148,7 +149,7 @@ export function VirtualPokemonGrid({
                 transform: `translateY(${virtualRow.start}px)`,
               }}
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4 h-full">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 px-3 sm:px-4 py-4 h-full">
                 {row.map((pokemon, cardIndex) => {
                   // Calculate global index for priority loading
                   const globalIndex = virtualRow.index * columns + cardIndex;
@@ -160,7 +161,7 @@ export function VirtualPokemonGrid({
                       key={pokemon.id}
                       pokemon={pokemon}
                       onClick={onPokemonClick}
-                      className="h-80" // Fixed height for consistent virtual scrolling
+                      className="h-72 sm:h-80" // Responsive height for consistent virtual scrolling
                       priority={shouldPrioritize}
                     />
                   );

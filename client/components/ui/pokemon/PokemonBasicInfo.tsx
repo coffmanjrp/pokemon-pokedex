@@ -49,9 +49,9 @@ function PokemonBasicInfoContent({ pokemon, language }: PokemonBasicInfoProps) {
       />
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-8 p-4 md:p-8 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-8 p-4 sm:p-6 md:p-8 max-w-7xl mx-auto">
         {/* Left Side - Pokemon Image (3/5 columns) */}
-        <div className="lg:col-span-3 flex flex-col relative">
+        <div className="lg:col-span-3 flex flex-col relative order-1 lg:order-1">
           {/* Pokemon Header - Name, Number, Form, Types */}
           <PokemonHeader
             pokemon={pokemon}
@@ -68,7 +68,7 @@ function PokemonBasicInfoContent({ pokemon, language }: PokemonBasicInfoProps) {
         </div>
 
         {/* Right Side - Information Panel (2/5 columns) */}
-        <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="lg:col-span-2 bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 order-2 lg:order-2">
           {/* Story Section */}
           <PokemonStorySection
             description={description}
