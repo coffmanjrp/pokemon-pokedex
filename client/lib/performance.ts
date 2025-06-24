@@ -75,9 +75,8 @@ export function getNavigationTiming() {
         tcp: timing.connectEnd - timing.connectStart,
         request: timing.responseStart - timing.requestStart,
         response: timing.responseEnd - timing.responseStart,
-        domContentLoaded:
-          timing.domContentLoadedEventEnd - timing.navigationStart,
-        load: timing.loadEventEnd - timing.navigationStart,
+        domContentLoaded: timing.domContentLoadedEventEnd - timing.fetchStart,
+        load: timing.loadEventEnd - timing.fetchStart,
         ttfb: timing.responseStart - timing.requestStart,
       };
     }
@@ -134,7 +133,9 @@ export function monitorWebVitals(): void {
       const fidObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         entries.forEach((entry) => {
-          const fid = entry.processingStart - entry.startTime;
+          const firstInputEntry = entry as PerformanceEventTiming;
+          const fid =
+            firstInputEntry.processingStart - firstInputEntry.startTime;
           if (fid > WEB_VITALS_THRESHOLDS.FID) {
             console.warn(`⚠️ FID exceeded threshold: ${fid.toFixed(2)}ms`);
           }
