@@ -23,7 +23,7 @@
     "@reduxjs/toolkit": "^2.8.2",
     "@tanstack/react-virtual": "^3.13.10",
     "clsx": "^2.1.1",
-    "concurrently": "^9.1.2",
+    "concurrently": "^9.2.0",
     "graphql": "^16.11.0",
     "gsap": "^3.13.0",
     "next": "15.3.3",
