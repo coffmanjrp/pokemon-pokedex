@@ -9,8 +9,10 @@ import { initPerformanceMonitoring } from "@/lib/performance";
  */
 export function PerformanceMonitor() {
   useEffect(() => {
-    // Initialize performance monitoring when component mounts
-    initPerformanceMonitoring();
+    // Only initialize on client-side after component mounts
+    if (typeof window !== "undefined") {
+      initPerformanceMonitoring();
+    }
   }, []);
 
   // This component doesn't render anything
