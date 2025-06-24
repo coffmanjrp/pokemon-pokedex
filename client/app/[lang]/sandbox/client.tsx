@@ -125,7 +125,7 @@ interface TestCardProps {
 
 function TestCard({ pokemon, animationType, animationDescription, onAnimationClick }: TestCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const primaryType = pokemon.types[0]?.type.name as PokemonTypeName;
+  const primaryType = pokemon.types?.[0]?.type.name as PokemonTypeName;
   const primaryColor = POKEMON_TYPE_COLORS[primaryType] || '#68A090';
 
   const handleClick = (e: React.MouseEvent) => {
@@ -168,7 +168,7 @@ function TestCard({ pokemon, animationType, animationDescription, onAnimationCli
         {/* Pokemon Image */}
         <div className="relative h-32 flex items-center justify-center p-4">
           <Image
-            src={pokemon.sprites.other['official-artwork'].front_default}
+            src={pokemon.sprites?.other?.['official-artwork']?.front_default || '/placeholder-pokemon.png'}
             alt={pokemon.name}
             width={96}
             height={96}
@@ -259,22 +259,22 @@ function SandboxContent({ lang }: { lang: Locale }) {
     {
       type: 'particle-echo-combo' as AnimationType,
       description: 'Combination of particle burst and border echo',
-      pokemon: testPokemons[9]
+      pokemon: testPokemons[9] || testPokemons[0]
     },
     {
       type: 'ultimate-echo-combo' as AnimationType,
       description: 'Ultimate echo combo: particles + card echo + border echo',
-      pokemon: testPokemons[10]
+      pokemon: testPokemons[10] || testPokemons[0]
     },
     {
       type: 'elemental-storm' as AnimationType,
       description: 'Massive elemental storm with lightning and screen shake',
-      pokemon: testPokemons[11]
+      pokemon: testPokemons[11] || testPokemons[0]
     },
     {
       type: 'mega-evolution' as AnimationType,
       description: 'Evolution transformation with energy rings and power surge',
-      pokemon: testPokemons[12]
+      pokemon: testPokemons[12] || testPokemons[0]
     }
   ];
 
@@ -322,15 +322,17 @@ function SandboxContent({ lang }: { lang: Locale }) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 relative">
-          {animations.map((animation) => (
-            <TestCard
-              key={animation.type}
-              pokemon={animation.pokemon}
-              animationType={animation.type}
-              animationDescription={animation.description}
-              onAnimationClick={handleAnimationClick}
-            />
-          ))}
+          {animations.map((animation) => 
+            animation.pokemon ? (
+              <TestCard
+                key={animation.type}
+                pokemon={animation.pokemon}
+                animationType={animation.type}
+                animationDescription={animation.description}
+                onAnimationClick={handleAnimationClick}
+              />
+            ) : null
+          )}
         </div>
 
         <div className="mt-12 text-center">

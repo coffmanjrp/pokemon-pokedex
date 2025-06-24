@@ -63,7 +63,10 @@ export function PokemonDetailTabs({ pokemon, dictionary, language }: PokemonDeta
 
   // Set default active tab to first available
   if (availableTabs.length > 0 && !availableTabs.find(tab => tab.id === activeTab)) {
-    setActiveTab(availableTabs[0].id);
+    const firstTab = availableTabs[0];
+    if (firstTab) {
+      setActiveTab(firstTab.id);
+    }
   }
 
   if (availableTabs.length === 0) {
@@ -125,10 +128,10 @@ export function PokemonDetailTabs({ pokemon, dictionary, language }: PokemonDeta
           />
         )}
 
-        {activeTab === 'gameHistory' && pokemon.gameIndices && (
+        {activeTab === 'gameHistory' && pokemon.gameIndices && pokemon.species?.generation && (
           <PokemonGameHistory
             gameIndices={pokemon.gameIndices}
-            generation={pokemon.species?.generation}
+            generation={pokemon.species.generation}
             language={language}
           />
         )}

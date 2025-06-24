@@ -43,19 +43,56 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 ```bash
 # Frontend development
 npm run dev              # Start Next.js development server
-npm run build           # Build for production
+npm run build           # Build for production (includes type checking and linting)
 npm run start           # Start production server
 npm run lint            # Run ESLint
 npm run type-check      # Run TypeScript type checking
+
+# Testing
+npm run test            # Run Jest test suite
+npm run test:watch      # Run tests in watch mode
+npm run test:coverage   # Run tests with coverage report
+
+# Code quality
+npm run format          # Format code with Prettier
+npm run format:check    # Check code formatting
+npm run pre-commit      # Run pre-commit hooks (lint-staged)
+
+# Performance analysis
+npm run analyze         # Run bundle analyzer (same as ANALYZE=true npm run build)
+npm run analyze:server  # Analyze server bundle
+npm run analyze:browser # Analyze browser bundle
 
 # Backend development
 cd server && npm run dev      # Start GraphQL server in development
 cd server && npm run build    # Build GraphQL server  
 cd server && npm run start    # Start production GraphQL server
-
-# Performance analysis
-ANALYZE=true npm run build    # Run bundle analyzer
 ```
+
+## Development Environment
+
+### Code Quality Pipeline
+- **TypeScript**: Strict mode enabled with enhanced type safety
+- **Testing**: Jest + React Testing Library with comprehensive mocks
+- **Formatting**: Prettier with automated formatting on commit
+- **Pre-commit Hooks**: Husky + lint-staged for code quality enforcement
+- **CI/CD**: GitHub Actions with multi-node testing and automated checks
+
+### Required Checks Before Committing
+1. **Type checking**: `npm run type-check` - Must pass without errors
+2. **Linting**: `npm run lint` - Must pass ESLint rules
+3. **Testing**: `npm run test` - All tests must pass
+4. **Build**: `npm run build` - Must complete successfully
+
+### Automated Quality Checks
+- Pre-commit hooks automatically run on staged files:
+  - ESLint with auto-fix
+  - Prettier formatting
+  - TypeScript type checking on changed files
+- GitHub Actions CI runs on all PRs:
+  - Full test suite on Node.js 18.x and 20.x
+  - Type checking and linting
+  - Build verification
 
 ## Project Structure
 
@@ -123,11 +160,27 @@ pokemon-pokedex/
 
 ## Development Workflow
 
+### Branch Management
 1. Always work on feature branches
 2. Use conventional commit messages
-3. Run type checking before commits
-4. Test responsive design on multiple screen sizes
-5. Verify Pokemon data accuracy with official sources
+3. Create PRs with descriptive titles and summaries
+
+### Pre-commit Requirements
+1. **Run type checking**: `npm run type-check` - Must pass without errors
+2. **Run tests**: `npm run test` - All tests must pass
+3. **Run linting**: `npm run lint` - Must pass ESLint rules
+4. **Build verification**: `npm run build` - Must complete successfully
+
+### Quality Assurance
+- Test responsive design on multiple screen sizes
+- Verify Pokemon data accuracy with official sources
+- Check performance impact with bundle analyzer
+- Ensure all automated checks pass in GitHub Actions
+
+### Commit Strategy
+- Commit per todo item for better traceability
+- Use English for commit messages and PR descriptions
+- Include performance and accessibility considerations
 
 ## Technical Implementation
 
@@ -170,10 +223,22 @@ pokemon-pokedex/
 - iOS Safari scroll optimization with `WebkitOverflowScrolling: 'touch'`
 
 ### Performance Best Practices
-- Run `ANALYZE=true npm run build` for bundle analysis before major releases
+- Run `npm run analyze` for bundle analysis before major releases
 - Ensure image optimization settings are maintained in next.config.ts
 - Monitor Core Web Vitals in production environment
 - Use priority loading for first 5 Pokemon cards in initial render
+
+### Testing Strategy
+- **Unit Tests**: Component testing with React Testing Library
+- **Integration Tests**: End-to-end user flow testing
+- **Performance Tests**: Bundle size and load time monitoring
+- **Type Safety**: Comprehensive TypeScript strict mode compliance
+
+### Code Quality Standards
+- **TypeScript**: Strict mode with enhanced type safety features
+- **ESLint**: Extended Next.js configuration with custom rules
+- **Prettier**: Consistent code formatting across the codebase
+- **Pre-commit Hooks**: Automated quality checks before commits
 
 ## External APIs
 

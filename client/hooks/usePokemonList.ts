@@ -31,6 +31,11 @@ const needsClearForGeneration = (currentPokemons: Pokemon[], newGeneration: numb
   
   const newGenerationRange = GENERATION_RANGES[newGeneration as keyof typeof GENERATION_RANGES];
   const currentFirstPokemon = currentPokemons[0];
+  
+  if (!currentFirstPokemon) {
+    return true; // If no current Pokemon, we need to switch
+  }
+  
   const currentFirstId = parseInt(currentFirstPokemon.id);
   
   // Check if current first Pokemon is outside the new generation range

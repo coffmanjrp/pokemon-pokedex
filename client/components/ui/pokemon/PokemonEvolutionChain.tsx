@@ -214,22 +214,23 @@ function PokemonEvolutionChainContent({ evolutionChain, lang }: PokemonEvolution
       if (currentEvolution.evolvesTo && Array.isArray(currentEvolution.evolvesTo) && currentEvolution.evolvesTo.length > 0) {
         const nextEvolution = currentEvolution.evolvesTo[0];
         
-        
-        // Add arrow
-        chain.push(
-          <div key={`arrow-${nextEvolution.id}`} className="flex flex-col md:flex-row items-center mx-2 md:mx-4">
-            <div className="w-0 h-0 border-l-8 border-r-8 border-b-12 border-l-transparent border-r-transparent border-b-blue-500 rotate-180 md:rotate-90 mb-2 md:mb-0 md:mr-2"></div>
-            <div className="bg-blue-50 px-3 py-2 rounded-lg text-sm text-blue-800 font-medium text-center whitespace-nowrap border border-blue-100 shadow-sm">
-              {Array.isArray(nextEvolution.evolutionDetails) && nextEvolution.evolutionDetails.length > 0 ? 
-                renderEvolutionCondition(nextEvolution.evolutionDetails[0], lang) : 
-                (lang === 'en' ? 'Unknown' : '不明')
-              }
+        if (nextEvolution) {
+          // Add arrow
+          chain.push(
+            <div key={`arrow-${nextEvolution.id}`} className="flex flex-col md:flex-row items-center mx-2 md:mx-4">
+              <div className="w-0 h-0 border-l-8 border-r-8 border-b-12 border-l-transparent border-r-transparent border-b-blue-500 rotate-180 md:rotate-90 mb-2 md:mb-0 md:mr-2"></div>
+              <div className="bg-blue-50 px-3 py-2 rounded-lg text-sm text-blue-800 font-medium text-center whitespace-nowrap border border-blue-100 shadow-sm">
+                {Array.isArray(nextEvolution.evolutionDetails) && nextEvolution.evolutionDetails.length > 0 && nextEvolution.evolutionDetails[0] ? 
+                  renderEvolutionCondition(nextEvolution.evolutionDetails[0], lang) : 
+                  (lang === 'en' ? 'Unknown' : '不明')
+                }
+              </div>
             </div>
-          </div>
-        );
+          );
         
-        // Recursively add next evolution
-        addEvolutionStage(nextEvolution);
+          // Recursively add next evolution
+          addEvolutionStage(nextEvolution);
+        }
       }
     };
 

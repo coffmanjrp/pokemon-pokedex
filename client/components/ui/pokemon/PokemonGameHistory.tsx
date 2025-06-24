@@ -54,7 +54,7 @@ export function PokemonGameHistory({ gameIndices, generation, language }: Pokemo
       if (!eras[era]) {
         eras[era] = [];
       }
-      eras[era].push(gameIndex);
+      eras[era]?.push(gameIndex);
     });
     
     return eras;

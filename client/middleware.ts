@@ -55,7 +55,8 @@ function getLocale(request: NextRequest): string {
   if (acceptLanguage) {
     const preferredLocales = acceptLanguage
       .split(',')
-      .map(lang => lang.split(';')[0].trim())
+      .map(lang => lang.split(';')[0]?.trim())
+      .filter((lang): lang is string => lang !== undefined)
     
     for (const preferredLocale of preferredLocales) {
       if (locales.includes(preferredLocale)) {
@@ -63,7 +64,7 @@ function getLocale(request: NextRequest): string {
       }
       // Check for language prefix (e.g., 'ja' from 'ja-JP')
       const langPrefix = preferredLocale.split('-')[0]
-      if (locales.includes(langPrefix)) {
+      if (langPrefix && locales.includes(langPrefix)) {
         return langPrefix
       }
     }

@@ -406,20 +406,28 @@ export function PokemonSpritesGallery({ pokemon, language }: PokemonSpritesGalle
         );
 
       case 'moves':
-        return (
+        return pokemon.moves ? (
           <PokemonMoves 
             moves={pokemon.moves} 
             language={language} 
           />
+        ) : (
+          <div className="text-center py-8 text-gray-500">
+            {language === 'en' ? 'No moves data available' : 'わざデータがありません'}
+          </div>
         );
 
       case 'gameHistory':
-        return (
+        return pokemon.gameIndices && pokemon.species?.generation ? (
           <PokemonGameHistory
             gameIndices={pokemon.gameIndices}
-            generation={pokemon.species?.generation}
+            generation={pokemon.species.generation}
             language={language}
           />
+        ) : (
+          <div className="text-center py-8 text-gray-500">
+            {language === 'en' ? 'No game history data available' : 'ゲーム履歴データがありません'}
+          </div>
         );
 
       default:

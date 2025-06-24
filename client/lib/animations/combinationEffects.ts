@@ -54,7 +54,7 @@ export function createParticleEchoCombo(config: AnimationConfig) {
   // Place particles in grid container to avoid overflow-hidden issues
   for (let i = 0; i < particleCount; i++) {
     const particle = document.createElement('div');
-    const particleSymbol = particles[Math.floor(Math.random() * particles.length)];
+    const particleSymbol = particles[Math.floor(Math.random() * particles.length)] || '✨';
     
     const angle = (360 / particleCount) * i + Math.random() * 45;
     const distance = 60 + Math.random() * 40;
@@ -227,7 +227,7 @@ export function createUltimateEchoCombo(config: AnimationConfig) {
   // 1. Particle Burst Effect
   for (let i = 0; i < 8; i++) {
     const particle = document.createElement('div');
-    const particleSymbol = particles[Math.floor(Math.random() * particles.length)];
+    const particleSymbol = particles[Math.floor(Math.random() * particles.length)] || '✨';
     
     const angle = (360 / 8) * i + Math.random() * 45;
     const distance = 60 + Math.random() * 40;
@@ -437,7 +437,7 @@ export function createElementalStorm(config: AnimationConfig) {
   const stormParticles: HTMLElement[] = [];
   for (let i = 0; i < particleCount; i++) {
     const particle = document.createElement('div');
-    const particleSymbol = particles[Math.floor(Math.random() * particles.length)];
+    const particleSymbol = particles[Math.floor(Math.random() * particles.length)] || '✨';
     
     particle.innerHTML = particleSymbol;
     particle.style.cssText = `

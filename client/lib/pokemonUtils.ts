@@ -138,6 +138,7 @@ export function getPokemonBaseName(pokemon: Pokemon, language: 'en' | 'ja'): str
   
   // For English or when Japanese name is not available
   const baseName = pokemon.name.split('-')[0];
+  if (!baseName) return pokemon.name;
   return baseName.charAt(0).toUpperCase() + baseName.slice(1);
 }
 
@@ -217,7 +218,7 @@ export function getPokemonName(pokemon: Pokemon, language: 'en' | 'ja'): string 
     }
     
     // For English or when Japanese name is not available
-    return getFormDisplayName(baseName, formName, language);
+    return getFormDisplayName(baseName || pokemon.name, formName, language);
   }
   
   // For non-variant Pokemon
@@ -288,7 +289,7 @@ export function getEvolutionPokemonName(evolutionDetail: EvolutionDetail, langua
     }
     
     // For English or when Japanese name is not available
-    return getFormDisplayName(baseName, formName, language);
+    return getFormDisplayName(baseName || evolutionDetail.name, formName, language);
   }
   
   // For non-variant Pokemon
@@ -481,8 +482,8 @@ export function getPrimaryTypeColor(pokemon: Pokemon): string {
     return '#A8A878'; // Default to normal type color
   }
   
-  const primaryType = pokemon.types[0].type.name;
-  return getTypeColorFromName(primaryType);
+  const primaryType = pokemon.types[0]?.type.name;
+  return getTypeColorFromName(primaryType || 'normal');
 }
 
 /**
