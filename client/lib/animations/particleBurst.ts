@@ -16,7 +16,7 @@ export function createParticleBurst({ pokemon, clickEvent, targetElement }: Anim
   // Create particle burst
   for (let i = 0; i < particleCount; i++) {
     const particle = document.createElement('div');
-    const particleSymbol = particles[Math.floor(Math.random() * particles.length)];
+    const particleSymbol = particles[Math.floor(Math.random() * particles.length)] || '✨';
     
     // Calculate random direction (360 degrees)
     const angle = (360 / particleCount) * i + Math.random() * 45;

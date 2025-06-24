@@ -100,7 +100,7 @@ export const generateAlternateLanguageUrl = (pathname: string, newLocale: Locale
   const segments = pathname.split('/')
   const currentLocale = segments[1]
   
-  if (['en', 'ja'].includes(currentLocale)) {
+  if (currentLocale && ['en', 'ja'].includes(currentLocale)) {
     segments[1] = newLocale
     return segments.join('/')
   }

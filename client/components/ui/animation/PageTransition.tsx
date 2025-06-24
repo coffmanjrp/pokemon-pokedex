@@ -45,10 +45,12 @@ export function PageTransition({ isActive, pokemon, sourceElement, onComplete }:
     // Generate 3 random type colors (excluding the primary type)
     const availableTypes = allTypeNames.filter(type => type !== pokemon.types[0]?.type.name);
     const randomTypes = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 3 && availableTypes.length > 0; i++) {
       const randomIndex = Math.floor(Math.random() * availableTypes.length);
       const selectedType = availableTypes.splice(randomIndex, 1)[0];
-      randomTypes.push(POKEMON_TYPE_COLORS[selectedType]);
+      if (selectedType) {
+        randomTypes.push(POKEMON_TYPE_COLORS[selectedType]);
+      }
     }
     
     const typeColors = [primaryTypeColor, ...randomTypes];
@@ -81,20 +83,27 @@ export function PageTransition({ isActive, pokemon, sourceElement, onComplete }:
         opacity: 0.3,
         duration: 0.3,
         ease: "power2.out"
-      })
-      // Layer 1: First color slides up and covers screen
-      .to(colorLayers[0], {
-        top: 0,
-        duration: 0.6,
-        ease: "expo.out"
-      })
-      // Layer 1 slides up, Layer 2 follows
-      .to(colorLayers[0], {
-        top: "-100%",
-        duration: 0.5,
-        ease: "expo.in"
-      }, "+=0.3")
-      .to(colorLayers[1], {
+      });
+
+    // Only add layer animations if layers exist
+    if (colorLayers[0]) {
+      tl
+        // Layer 1: First color slides up and covers screen
+        .to(colorLayers[0], {
+          top: 0,
+          duration: 0.6,
+          ease: "expo.out"
+        })
+        // Layer 1 slides up, Layer 2 follows
+        .to(colorLayers[0], {
+          top: "-100%",
+          duration: 0.5,
+          ease: "expo.in"
+        }, "+=0.3");
+    }
+
+    if (colorLayers[1]) {
+      tl.to(colorLayers[1], {
         top: 0,
         duration: 0.6,
         ease: "expo.out"
@@ -104,27 +113,35 @@ export function PageTransition({ isActive, pokemon, sourceElement, onComplete }:
         top: "-100%",
         duration: 0.5,
         ease: "expo.in"
-      }, "+=0.3")
-      .to(colorLayers[2], {
-        top: 0,
-        duration: 0.6,
-        ease: "expo.out"
-      }, "-=0.3")
-      // Layer 3 slides up, Layer 4 follows
-      .to(colorLayers[2], {
-        top: "-100%",
-        duration: 0.5,
-        ease: "expo.in"
-      }, "+=0.3")
-      .to(colorLayers[3], {
-        top: 0,
-        duration: 0.6,
-        ease: "expo.out"
-      }, "-=0.3")
-      // Final layer stays and transition occurs
-      .to({}, { duration: 0.4 })
+      }, "+=0.3");
+
+      if (colorLayers[2]) {
+        tl.to(colorLayers[2], {
+          top: 0,
+          duration: 0.6,
+          ease: "expo.out"
+        }, "-=0.3")
+        // Layer 3 slides up, Layer 4 follows
+        .to(colorLayers[2], {
+          top: "-100%",
+          duration: 0.5,
+          ease: "expo.in"
+        }, "+=0.3");
+
+        if (colorLayers[3]) {
+          tl.to(colorLayers[3], {
+            top: 0,
+            duration: 0.6,
+            ease: "expo.out"
+          }, "-=0.3");
+        }
+      }
+    }
+
+    // Final layer stays and transition occurs
+    tl.to({}, { duration: 0.4 })
       // Smooth fade to complete transition
-      .to([colorLayers[3], overlayRef.current], {
+      .to([...(colorLayers[3] ? [colorLayers[3]] : []), overlayRef.current].filter(Boolean), {
         opacity: 0,
         duration: 0.6,
         ease: "power2.inOut",

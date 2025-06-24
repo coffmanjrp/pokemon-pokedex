@@ -62,7 +62,7 @@ export function PokemonGrid({
         <PokemonCard
           key={pokemon.id}
           pokemon={pokemon}
-          onClick={onPokemonClick}
+          {...(onPokemonClick && { onClick: onPokemonClick })}
         />
       ))}
       
