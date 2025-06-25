@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { VirtualPokemonGrid } from '../../components/ui/pokemon/VirtualPokemonGrid';
-import { AnimatedLoadingScreen } from '../../components/ui/animation/AnimatedLoadingScreen';
-import { Sidebar } from '../../components/layout/Sidebar';
-import { usePokemonList } from '../../hooks/usePokemonList';
-import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { setSelectedPokemon } from '../../store/slices/pokemonSlice';
-import { setLanguage } from '../../store/slices/uiSlice';
-import { useEffect, useState, useRef, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Pokemon } from '@/types/pokemon';
-import { Dictionary, Locale } from '@/lib/dictionaries';
-import { gsap } from 'gsap';
+import { VirtualPokemonGrid } from "../../components/ui/pokemon/VirtualPokemonGrid";
+import { AnimatedLoadingScreen } from "../../components/ui/animation/AnimatedLoadingScreen";
+import { Sidebar } from "../../components/layout/Sidebar";
+import { usePokemonList } from "../../hooks/usePokemonList";
+import { useAppSelector, useAppDispatch } from "../../store/hooks";
+import { setSelectedPokemon } from "../../store/slices/pokemonSlice";
+import { setLanguage } from "../../store/slices/uiSlice";
+import { useEffect, useState, useRef, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Pokemon } from "@/types/pokemon";
+import { Dictionary, Locale } from "@/lib/dictionaries";
+import { gsap } from "gsap";
 
 interface PokemonListClientProps {
   dictionary: Dictionary;
@@ -25,7 +25,7 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
   const { language: currentLanguage } = useAppSelector((state) => state.ui);
   // Initialize generation from URL parameter on first load
   const [currentGeneration, setCurrentGeneration] = useState(() => {
-    const generationParam = searchParams.get('generation');
+    const generationParam = searchParams.get("generation");
     if (generationParam) {
       const generation = parseInt(generationParam, 10);
       if (generation >= 1 && generation <= 9) {
@@ -34,9 +34,19 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
     }
     return 1;
   });
-  const { pokemons, loading, error, hasNextPage, loadMore, changeGeneration, generationRange, loadedCount, totalCount } = usePokemonList({ generation: currentGeneration });
+  const {
+    pokemons,
+    loading,
+    error,
+    hasNextPage,
+    loadMore,
+    changeGeneration,
+    generationRange,
+    loadedCount,
+    totalCount,
+  } = usePokemonList({ generation: currentGeneration });
   const { generationSwitching } = useAppSelector((state) => state.pokemon);
-  
+
   const [showLoadingScreen, setShowLoadingScreen] = useState(true);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const [showCompletionFooter, setShowCompletionFooter] = useState(true);
@@ -48,7 +58,6 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
       dispatch(setLanguage(lang));
     }
   }, [lang, currentLanguage, dispatch]);
-
 
   // Handle initial loading completion
   useEffect(() => {
@@ -68,7 +77,9 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
 
   const handlePokemonClick = (pokemon: Pokemon) => {
     dispatch(setSelectedPokemon(pokemon));
-    router.push(`/${lang}/pokemon/${pokemon.id}?from=generation-${currentGeneration}`);
+    router.push(
+      `/${lang}/pokemon/${pokemon.id}?from=generation-${currentGeneration}`,
+    );
   };
 
   const handleGenerationChange = (generation: number) => {
@@ -77,14 +88,19 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
     // Reset completion footer when generation changes
     setShowCompletionFooter(true);
     // Generation change doesn't show loading screen, only inline loading indicators
-    
+
     // Update URL with generation parameter
     router.replace(`/${lang}/?generation=${generation}`);
   };
 
   // Auto-hide completion footer after 5 seconds with fade animation
   useEffect(() => {
-    if (!loading && !hasNextPage && pokemons.length > 0 && showCompletionFooter) {
+    if (
+      !loading &&
+      !hasNextPage &&
+      pokemons.length > 0 &&
+      showCompletionFooter
+    ) {
       const timer = setTimeout(() => {
         // Animate footer fade out before hiding
         if (completionFooterRef.current) {
@@ -95,7 +111,7 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
             ease: "power2.inOut",
             onComplete: () => {
               setShowCompletionFooter(false);
-            }
+            },
           });
         } else {
           // Fallback if ref is not available
@@ -109,7 +125,13 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
 
   // Animate completion footer entrance
   useEffect(() => {
-    if (!loading && !hasNextPage && pokemons.length > 0 && showCompletionFooter && completionFooterRef.current) {
+    if (
+      !loading &&
+      !hasNextPage &&
+      pokemons.length > 0 &&
+      showCompletionFooter &&
+      completionFooterRef.current
+    ) {
       // Reset opacity and position for entrance animation
       gsap.set(completionFooterRef.current, { opacity: 0, y: 20 });
       gsap.to(completionFooterRef.current, {
@@ -117,22 +139,21 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
         y: 0,
         duration: 0.6,
         ease: "back.out(1.7)",
-        delay: 0.2 // Small delay for better UX
+        delay: 0.2, // Small delay for better UX
       });
     }
   }, [loading, hasNextPage, pokemons.length, showCompletionFooter]);
 
-
   // プリロード用のPreload Generation hook
   // usePreloadGeneration(currentGeneration);
-
-
 
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-red-500">
         <div className="text-6xl mb-4">⚠️</div>
-        <h3 className="text-xl font-semibold mb-2">{dictionary.ui.error.title}</h3>
+        <h3 className="text-xl font-semibold mb-2">
+          {dictionary.ui.error.title}
+        </h3>
         <p className="text-center max-w-md text-gray-600">{error}</p>
         <button
           onClick={() => window.location.reload()}
@@ -147,8 +168,8 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
   // Show loading screen until showLoadingScreen is false
   if (showLoadingScreen) {
     return (
-      <AnimatedLoadingScreen 
-        language={lang} 
+      <AnimatedLoadingScreen
+        language={lang}
         onComplete={handleLoadingComplete}
       />
     );
@@ -157,7 +178,7 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
   return (
     <>
       {/* Sidebar Navigation */}
-      <Sidebar 
+      <Sidebar
         lang={lang}
         currentGeneration={currentGeneration}
         onGenerationChange={handleGenerationChange}
@@ -168,11 +189,10 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
         {/* Sticky Generation Header */}
         <header className="flex-shrink-0 bg-gray-50 border-b border-gray-200 shadow-sm z-30">
           <div className="relative px-4 md:px-6 py-3">
-            <h1 className="text-sm md:text-base font-bold text-gray-700 text-center">
-              {lang === 'ja' 
+            <h1 className="text-sm md:text-base font-bold text-gray-700 text-center lg:text-left lg:ml-0">
+              {lang === "ja"
                 ? `${generationRange.region.ja} (第${currentGeneration}世代)`
-                : `${generationRange.region.en} (Generation ${currentGeneration})`
-              }
+                : `${generationRange.region.en} (Generation ${currentGeneration})`}
             </h1>
           </div>
         </header>
@@ -185,39 +205,38 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
               <div className="flex items-center space-x-3 mb-6">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                 <span className="text-lg font-medium text-gray-700">
-                  {lang === 'ja' 
+                  {lang === "ja"
                     ? `${generationRange.region.ja}のポケモンを読み込み中...`
-                    : `Loading ${generationRange.region.en} Pokémon...`
-                  }
+                    : `Loading ${generationRange.region.en} Pokémon...`}
                 </span>
               </div>
-              
+
               {/* Progress Bar for Generation Loading */}
               <div className="w-full max-w-md mb-4">
                 <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
                   <span>
-                    {lang === 'ja' 
+                    {lang === "ja"
                       ? `第${currentGeneration}世代`
-                      : `Generation ${currentGeneration}`
-                    }
+                      : `Generation ${currentGeneration}`}
                   </span>
                   <span className="font-medium">
-                    {lang === 'ja' 
+                    {lang === "ja"
                       ? `0/${totalCount}匹`
-                      : `0/${totalCount} Pokémon`
-                    }
+                      : `0/${totalCount} Pokémon`}
                   </span>
                 </div>
                 <div className="w-full bg-gray-300 rounded-full h-3 shadow-inner">
-                  <div className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full animate-pulse shadow-sm" style={{ width: '25%' }}></div>
+                  <div
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full animate-pulse shadow-sm"
+                    style={{ width: "25%" }}
+                  ></div>
                 </div>
               </div>
-              
+
               <p className="text-sm text-gray-500">
-                {lang === 'ja' 
+                {lang === "ja"
                   ? `範囲: #${generationRange.min}-#${generationRange.max}`
-                  : `Range: #${generationRange.min}-#${generationRange.max}`
-                }
+                  : `Range: #${generationRange.min}-#${generationRange.max}`}
               </p>
             </div>
           )}
@@ -244,23 +263,20 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
                 <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"></div>
                 <div className="text-center">
                   <p className="text-lg font-medium text-gray-700 mb-1">
-                    {lang === 'ja' 
+                    {lang === "ja"
                       ? `${generationRange.region.ja}に切り替え中...`
-                      : `Switching to ${generationRange.region.en}...`
-                    }
+                      : `Switching to ${generationRange.region.en}...`}
                   </p>
                   <p className="text-sm text-gray-500">
-                    {lang === 'ja' 
+                    {lang === "ja"
                       ? `第${currentGeneration}世代 (#${generationRange.min}-#${generationRange.max})`
-                      : `Generation ${currentGeneration} (#${generationRange.min}-#${generationRange.max})`
-                    }
+                      : `Generation ${currentGeneration} (#${generationRange.min}-#${generationRange.max})`}
                   </p>
                 </div>
               </div>
             </div>
           )}
         </div>
-
 
         {/* Progress Footer - Show based on loading state */}
         {pokemons.length > 0 && (
@@ -273,25 +289,25 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
                     <div className="flex items-center space-x-2 md:space-x-3">
                       <div className="animate-spin rounded-full h-4 w-4 md:h-5 md:w-5 border-b-2 border-blue-600"></div>
                       <span className="text-xs md:text-sm font-medium text-gray-700">
-                        {lang === 'ja' 
+                        {lang === "ja"
                           ? `さらに読み込み中...`
-                          : `Loading more...`
-                        }
+                          : `Loading more...`}
                       </span>
                     </div>
-                    
+
                     {/* Right side - Progress info */}
                     <div className="flex items-center space-x-2 md:space-x-3">
                       <span className="text-xs md:text-sm text-gray-600 hidden sm:block">
-                        {lang === 'ja' 
+                        {lang === "ja"
                           ? `${loadedCount}/${totalCount}匹`
-                          : `${loadedCount}/${totalCount}`
-                        }
+                          : `${loadedCount}/${totalCount}`}
                       </span>
                       <div className="w-16 md:w-20 bg-gray-200 rounded-full h-1.5 md:h-2">
-                        <div 
+                        <div
                           className="bg-blue-600 h-1.5 md:h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${(loadedCount / totalCount) * 100}%` }}
+                          style={{
+                            width: `${(loadedCount / totalCount) * 100}%`,
+                          }}
                         ></div>
                       </div>
                       <span className="text-xs font-medium text-blue-600 min-w-[2rem] md:min-w-[2.5rem]">
@@ -302,27 +318,28 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
                 </div>
               </footer>
             ) : !hasNextPage && showCompletionFooter ? (
-              <footer ref={completionFooterRef} className="fixed bottom-0 left-0 lg:left-80 right-0 bg-gradient-to-r from-green-50 to-emerald-50 border-t border-green-200 shadow-lg z-40">
+              <footer
+                ref={completionFooterRef}
+                className="fixed bottom-0 left-0 lg:left-80 right-0 bg-gradient-to-r from-green-50 to-emerald-50 border-t border-green-200 shadow-lg z-40"
+              >
                 <div className="px-4 md:px-6 py-3">
                   <div className="flex items-center justify-between">
                     {/* Left side - Success indicator and text */}
                     <div className="flex items-center space-x-2 md:space-x-3">
                       <div className="text-lg md:text-xl">🎉</div>
                       <span className="text-xs md:text-sm font-medium text-green-700">
-                        {lang === 'ja' 
+                        {lang === "ja"
                           ? `${generationRange.region.ja}の全ポケモンを表示完了！`
-                          : `All ${generationRange.region.en} Pokémon loaded!`
-                        }
+                          : `All ${generationRange.region.en} Pokémon loaded!`}
                       </span>
                     </div>
-                    
+
                     {/* Right side - Complete progress info and close button */}
                     <div className="flex items-center space-x-2 md:space-x-3">
                       <span className="text-xs md:text-sm text-green-600 hidden sm:block">
-                        {lang === 'ja' 
+                        {lang === "ja"
                           ? `${totalCount}/${totalCount}匹`
-                          : `${totalCount}/${totalCount}`
-                        }
+                          : `${totalCount}/${totalCount}`}
                       </span>
                       <div className="w-16 md:w-20 bg-green-200 rounded-full h-1.5 md:h-2">
                         <div className="bg-green-600 h-1.5 md:h-2 rounded-full w-full shadow-sm"></div>
@@ -340,17 +357,27 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
                               ease: "power2.inOut",
                               onComplete: () => {
                                 setShowCompletionFooter(false);
-                              }
+                              },
                             });
                           } else {
                             setShowCompletionFooter(false);
                           }
                         }}
                         className="ml-2 p-1 text-green-500 hover:text-green-700 hover:bg-green-100 rounded-full transition-colors duration-200"
-                        aria-label={lang === 'ja' ? '閉じる' : 'Close'}
+                        aria-label={lang === "ja" ? "閉じる" : "Close"}
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
                         </svg>
                       </button>
                     </div>
@@ -365,7 +392,10 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
   );
 }
 
-export function PokemonListClient({ dictionary, lang }: PokemonListClientProps) {
+export function PokemonListClient({
+  dictionary,
+  lang,
+}: PokemonListClientProps) {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <PokemonListContent dictionary={dictionary} lang={lang} />
