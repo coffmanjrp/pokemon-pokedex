@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, complete SSG implementation for all 1302+ Pokemon (including Mega, Gigantamax, and regional forms), performance optimizations, and sidebar-based generation navigation. All 2613 static pages generated successfully with zero build errors. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, complete SSG implementation for all 1302+ Pokemon (including Mega, Gigantamax, and regional forms), performance optimizations, and sidebar-based generation navigation. All 2613 static pages generated successfully with zero build errors. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes. **Ready for hybrid deployment** with frontend optimized for Vercel and backend prepared for Railway/Render deployment.
 
 ## Architecture
 
@@ -21,6 +21,7 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 ### Backend (GraphQL Server)
 - **Server**: Apollo Server with Express
 - **Language**: TypeScript
+- **Deployment**: Railway/Render with automatic CI/CD
 - **Data Source**: PokeAPI (https://pokeapi.co/api/v2/)
 - **Caching**: Redis-based intelligent caching system with selective data retention
 - **Architecture**: Layered caching strategy (PokeAPI → Redis Cache → GraphQL Server → Apollo Client → React Components)
@@ -93,6 +94,9 @@ cd server && npm run start    # Start production GraphQL server
   - Full test suite on Node.js 18.x and 20.x
   - Type checking and linting
   - Build verification
+- Deployment automation:
+  - Frontend: Vercel auto-deployment on main branch push
+  - Backend: Railway/Render auto-deployment with health checks
 
 ## Project Structure
 
@@ -240,9 +244,50 @@ pokemon-pokedex/
 - **Prettier**: Consistent code formatting across the codebase
 - **Pre-commit Hooks**: Automated quality checks before commits
 
+## Deployment Strategy
+
+### Hybrid Architecture (Recommended)
+- **Frontend**: Vercel (Next.js optimized platform)
+- **Backend**: Railway/Render (GraphQL + Redis)
+- **Benefits**: Best-in-class hosting for each component, cost-effective, scalable
+
+### Environment Configuration
+```bash
+# Frontend (Vercel)
+NEXT_PUBLIC_GRAPHQL_URL=https://your-backend.railway.app/graphql
+
+# Backend (Railway/Render)
+CORS_ORIGIN=https://your-app.vercel.app
+PORT=4000
+REDIS_URL=redis://localhost:6379
+```
+
+### Deployment Commands
+```bash
+# Frontend deployment (automatic via Vercel)
+git push origin main
+
+# Backend deployment (automatic via Railway)
+git push origin main  # Triggers Railway deployment
+
+# Manual backend deployment
+cd server && npm run build && npm start
+```
+
+### Production URLs
+- **Frontend**: `https://pokemon-pokedex.vercel.app`
+- **Backend**: `https://pokemon-pokedex-server.railway.app`
+- **GraphQL Playground**: `https://pokemon-pokedex-server.railway.app/graphql`
+
+### Monitoring & Health Checks
+- Frontend: Vercel Analytics and Web Vitals
+- Backend: Health endpoint at `/health`
+- Redis: Connection status monitoring
+- GraphQL: Apollo Server metrics
+
 ## External APIs
 
 - **PokeAPI**: Primary data source for Pokemon information (v2 API)
-- **Redis Cache**: Server-side caching with 5-minute TTL
-- **GraphQL Server**: Custom Apollo Server with intelligent caching
+- **Redis Cache**: Server-side caching with 5-minute TTL (Railway Redis or Upstash)
+- **GraphQL Server**: Custom Apollo Server with intelligent caching (Railway/Render)
 - **Apollo Client Cache**: Browser-side caching for efficient data management
