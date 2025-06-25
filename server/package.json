@@ -10,8 +10,7 @@
     "lint": "eslint src --ext .ts",
     "type-check": "tsc --noEmit",
     "railway:build": "npm run build",
-    "railway:start": "npm run start",
-    "postinstall": "npm run build"
+    "railway:start": "npm run start"
   },
   "keywords": [
     "pokemon",
