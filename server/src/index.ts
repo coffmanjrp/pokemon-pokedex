@@ -42,8 +42,39 @@ async function startServer() {
     })
   );
 
-  app.get('/health', (req, res) => {
-    res.json({ status: 'OK', timestamp: new Date().toISOString() });
+  app.get('/health', async (req, res) => {
+    try {
+      const health = {
+        status: 'OK',
+        timestamp: new Date().toISOString(),
+        environment: process.env['NODE_ENV'] || 'development',
+        port: PORT,
+        redis: {
+          connected: false,
+          error: null as string | null
+        },
+        graphql: {
+          status: 'running'
+        }
+      };
+
+      // Check Redis connection
+      try {
+        await cacheService.get('health-check');
+        health.redis.connected = true;
+      } catch (error) {
+        health.redis.connected = false;
+        health.redis.error = error instanceof Error ? error.message : 'Unknown error';
+      }
+
+      res.json(health);
+    } catch (error) {
+      res.status(500).json({
+        status: 'ERROR',
+        timestamp: new Date().toISOString(),
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
   });
 
   const httpServer = app.listen(Number(PORT), () => {
