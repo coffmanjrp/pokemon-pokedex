@@ -10,7 +10,24 @@ import { cacheService } from './services/cacheService';
 dotenv.config();
 
 const PORT = process.env['PORT'] || 4000;
-const CORS_ORIGIN = process.env['CORS_ORIGIN'] || 'http://localhost:3000';
+
+// Support multiple CORS origins
+const getAllowedOrigins = (): string[] => {
+  const corsOrigin = process.env['CORS_ORIGIN'];
+  const defaultOrigins = ['http://localhost:3000'];
+  
+  if (corsOrigin) {
+    // If multiple origins are provided (comma-separated)
+    if (corsOrigin.includes(',')) {
+      return corsOrigin.split(',').map(origin => origin.trim());
+    }
+    return [corsOrigin];
+  }
+  
+  return defaultOrigins;
+};
+
+const ALLOWED_ORIGINS = getAllowedOrigins();
 
 async function startServer() {
   // Initialize cache service
@@ -29,7 +46,18 @@ async function startServer() {
   app.use(
     '/graphql',
     cors({
-      origin: CORS_ORIGIN,
+      origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps, curl, etc.)
+        if (!origin) return callback(null, true);
+        
+        if (ALLOWED_ORIGINS.includes(origin)) {
+          return callback(null, true);
+        }
+        
+        // Log rejected origins for debugging
+        console.log(`CORS rejected origin: ${origin}`);
+        return callback(new Error('Not allowed by CORS'));
+      },
       credentials: true,
     }),
     express.json(),
@@ -81,6 +109,7 @@ async function startServer() {
     console.log(`🚀 Server ready at http://localhost:${PORT}/graphql`);
     console.log(`🏥 Health check at http://localhost:${PORT}/health`);
     console.log(`💾 Redis cache enabled`);
+    console.log(`🌐 CORS enabled for origins:`, ALLOWED_ORIGINS);
   });
 
   // Graceful shutdown
