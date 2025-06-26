@@ -14,7 +14,7 @@ const PORT = process.env['PORT'] || 4000;
 // Support multiple CORS origins
 const getAllowedOrigins = (): string[] => {
   const corsOrigin = process.env['CORS_ORIGIN'];
-  const defaultOrigins = ['http://localhost:3000'];
+  const defaultOrigins = ['http://localhost:3000', 'http://localhost:3001'];
   
   if (corsOrigin) {
     // If multiple origins are provided (comma-separated)
