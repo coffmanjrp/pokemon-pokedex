@@ -1,6 +1,6 @@
-import { getDictionary } from '@/lib/get-dictionary';
-import { Locale } from '@/lib/dictionaries';
-import { SandboxClient } from './client';
+import { getDictionary } from "@/lib/get-dictionary";
+import { Locale } from "@/lib/dictionaries";
+import { SandboxClient } from "./client";
 
 interface SandboxPageProps {
   params: Promise<{

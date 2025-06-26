@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
+import { NextRequest, NextResponse } from "next/server";
+import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 
 // GraphQL client setup
 const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql',
+  uri: "http://localhost:4000/graphql",
   cache: new InMemoryCache(),
 });
 
@@ -407,15 +407,15 @@ const GET_POKEMON_DETAIL = gql`
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
-    
+
     if (!id) {
       return NextResponse.json(
-        { error: 'Pokemon ID is required' },
-        { status: 400 }
+        { error: "Pokemon ID is required" },
+        { status: 400 },
       );
     }
 
@@ -423,22 +423,19 @@ export async function GET(
     const { data, error } = await client.query({
       query: GET_POKEMON_DETAIL,
       variables: { id },
-      errorPolicy: 'all',
+      errorPolicy: "all",
     });
 
     if (error) {
-      console.error('GraphQL Error:', error);
+      console.error("GraphQL Error:", error);
       return NextResponse.json(
-        { error: 'Failed to fetch Pokemon data', details: error.message },
-        { status: 500 }
+        { error: "Failed to fetch Pokemon data", details: error.message },
+        { status: 500 },
       );
     }
 
     if (!data?.pokemon) {
-      return NextResponse.json(
-        { error: 'Pokemon not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Pokemon not found" }, { status: 404 });
     }
 
     // Return the raw GraphQL data for debugging
@@ -448,18 +445,17 @@ export async function GET(
       metadata: {
         id,
         timestamp: new Date().toISOString(),
-        source: 'GraphQL API',
+        source: "GraphQL API",
       },
     });
-
   } catch (error) {
-    console.error('API Route Error:', error);
+    console.error("API Route Error:", error);
     return NextResponse.json(
-      { 
-        error: 'Internal server error', 
-        details: error instanceof Error ? error.message : 'Unknown error' 
+      {
+        error: "Internal server error",
+        details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

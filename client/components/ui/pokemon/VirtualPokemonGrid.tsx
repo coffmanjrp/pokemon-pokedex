@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useVirtualizer } from '@tanstack/react-virtual';
-import { useRef, useMemo, useState, useEffect } from 'react';
-import { Pokemon } from '@/types/pokemon';
-import { PokemonCard } from './PokemonCard';
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { useRef, useMemo, useState, useEffect } from "react";
+import { Pokemon } from "@/types/pokemon";
+import { PokemonCard } from "./PokemonCard";
 
 interface VirtualPokemonGridProps {
   pokemons: Pokemon[];
@@ -15,7 +15,7 @@ interface VirtualPokemonGridProps {
   overscan?: number;
   hasNextPage?: boolean;
   onLoadMore?: () => void;
-  language?: 'en' | 'ja';
+  language?: "en" | "ja";
   priority?: boolean;
 }
 
@@ -30,18 +30,18 @@ export function VirtualPokemonGrid({
   // hasNextPage = false,
   // onLoadMore,
   // language = 'en',
-  priority = false
+  priority = false,
 }: VirtualPokemonGridProps) {
   const parentRef = useRef<HTMLDivElement>(null);
   const [isMounted, setIsMounted] = useState(false);
-  
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
   // Calculate how many columns we can fit based on screen size
   const getColumns = () => {
-    if (typeof window === 'undefined') return 3;
+    if (typeof window === "undefined") return 3;
     const width = window.innerWidth;
     if (width < 640) return 1; // mobile
     if (width < 768) return 2; // sm
@@ -55,7 +55,7 @@ export function VirtualPokemonGrid({
   // Debounced resize handler for better performance
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
-    
+
     const handleResize = () => {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
@@ -63,9 +63,9 @@ export function VirtualPokemonGrid({
       }, 150); // 150ms debounce
     };
 
-    window.addEventListener('resize', handleResize, { passive: true });
+    window.addEventListener("resize", handleResize, { passive: true });
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
       clearTimeout(timeoutId);
     };
   }, []);
@@ -121,16 +121,16 @@ export function VirtualPokemonGrid({
       ref={parentRef}
       className="h-full w-full overflow-auto" // Full height and width
       style={{
-        contain: 'strict', // CSS containment for better performance
-        WebkitOverflowScrolling: 'touch', // iOS Safari smooth scrolling
+        contain: "strict", // CSS containment for better performance
+        WebkitOverflowScrolling: "touch", // iOS Safari smooth scrolling
       }}
     >
       <div
         style={{
           height: `${rowVirtualizer.getTotalSize()}px`,
-          width: '100%',
-          position: 'relative',
-          paddingBottom: '64px', // Footer height space
+          width: "100%",
+          position: "relative",
+          paddingBottom: "64px", // Footer height space
         }}
       >
         {rowVirtualizer.getVirtualItems().map((virtualRow) => {
@@ -141,10 +141,10 @@ export function VirtualPokemonGrid({
             <div
               key={virtualRow.index}
               style={{
-                position: 'absolute',
+                position: "absolute",
                 top: 0,
                 left: 0,
-                width: '100%',
+                width: "100%",
                 height: `${virtualRow.size}px`,
                 transform: `translateY(${virtualRow.start}px)`,
               }}
@@ -155,7 +155,7 @@ export function VirtualPokemonGrid({
                   const globalIndex = virtualRow.index * columns + cardIndex;
                   // Priority for first visible row only (faster initial load)
                   const shouldPrioritize = priority && globalIndex < columns;
-                  
+
                   return (
                     <PokemonCard
                       key={pokemon.id}
@@ -170,7 +170,6 @@ export function VirtualPokemonGrid({
             </div>
           );
         })}
-        
       </div>
 
       {/* Show message when filtering */}

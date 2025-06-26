@@ -1,15 +1,21 @@
-import { gsap } from 'gsap';
-import { POKEMON_TYPE_COLORS, PokemonTypeName } from '@/types/pokemon';
-import { AnimationConfig } from './types';
+import { gsap } from "gsap";
+import { POKEMON_TYPE_COLORS, PokemonTypeName } from "@/types/pokemon";
+import { AnimationConfig } from "./types";
 
-export function createRippleWave({ pokemon, clickEvent, targetElement }: AnimationConfig) {
+export function createRippleWave({
+  pokemon,
+  clickEvent,
+  targetElement,
+}: AnimationConfig) {
   const rect = targetElement.getBoundingClientRect();
   const x = clickEvent.clientX - rect.left;
   const y = clickEvent.clientY - rect.top;
-  const primaryColor = POKEMON_TYPE_COLORS[pokemon.types[0]?.type.name as PokemonTypeName] || '#68A090';
+  const primaryColor =
+    POKEMON_TYPE_COLORS[pokemon.types[0]?.type.name as PokemonTypeName] ||
+    "#68A090";
 
   // Create ripple element
-  const ripple = document.createElement('div');
+  const ripple = document.createElement("div");
   ripple.style.cssText = `
     position: absolute;
     left: ${x}px;
@@ -36,6 +42,6 @@ export function createRippleWave({ pokemon, clickEvent, targetElement }: Animati
       if (targetElement.contains(ripple)) {
         targetElement.removeChild(ripple);
       }
-    }
+    },
   });
 }

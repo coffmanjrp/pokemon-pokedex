@@ -1,95 +1,101 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import { getLanguageFromCookie } from '@/lib/languageStorage'
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { getLanguageFromCookie } from "@/lib/languageStorage";
 
-const locales = ['en', 'ja']
-const defaultLocale = 'en'
+const locales = ["en", "ja"];
+const defaultLocale = "en";
 
 // Check User-Agent for Japanese language indicators
 function getUserAgentLanguage(request: NextRequest): string | null {
-  const userAgent = request.headers.get('user-agent')
-  if (!userAgent) return null
+  const userAgent = request.headers.get("user-agent");
+  if (!userAgent) return null;
 
-  const userAgentLower = userAgent.toLowerCase()
-  
+  const userAgentLower = userAgent.toLowerCase();
+
   // Check for Japanese language indicators in User-Agent
   const japaneseIndicators = [
-    'ja', 'ja-jp', 'japanese', 'japan', 'jp',
-    'ＪＰ', 'ｊａ', '日本語'
-  ]
-  
+    "ja",
+    "ja-jp",
+    "japanese",
+    "japan",
+    "jp",
+    "ＪＰ",
+    "ｊａ",
+    "日本語",
+  ];
+
   for (const indicator of japaneseIndicators) {
     if (userAgentLower.includes(indicator.toLowerCase())) {
-      return 'ja'
+      return "ja";
     }
   }
-  
-  return null
+
+  return null;
 }
 
 // Get the preferred locale with priority: Cookie > User-Agent > Accept-Language > Default
 function getLocale(request: NextRequest): string {
   // Check if there is any supported locale in the pathname
-  const { pathname } = request.nextUrl
+  const { pathname } = request.nextUrl;
   const pathnameLocale = locales.find(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
-  )
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`,
+  );
 
-  if (pathnameLocale) return pathnameLocale
+  if (pathnameLocale) return pathnameLocale;
 
   // 1. Check cookie (localStorage backup) - HIGHEST PRIORITY
-  const cookieHeader = request.headers.get('cookie') || ''
-  const cookieLang = getLanguageFromCookie(cookieHeader)
+  const cookieHeader = request.headers.get("cookie") || "";
+  const cookieLang = getLanguageFromCookie(cookieHeader);
   if (cookieLang && locales.includes(cookieLang)) {
-    return cookieLang
+    return cookieLang;
   }
 
   // 2. Check User-Agent for Japanese detection
-  const userAgentLang = getUserAgentLanguage(request)
+  const userAgentLang = getUserAgentLanguage(request);
   if (userAgentLang && locales.includes(userAgentLang)) {
-    return userAgentLang
+    return userAgentLang;
   }
 
   // 3. Check the Accept-Language header
-  const acceptLanguage = request.headers.get('accept-language')
+  const acceptLanguage = request.headers.get("accept-language");
   if (acceptLanguage) {
     const preferredLocales = acceptLanguage
-      .split(',')
-      .map(lang => lang.split(';')[0]?.trim())
-      .filter((lang): lang is string => lang !== undefined)
-    
+      .split(",")
+      .map((lang) => lang.split(";")[0]?.trim())
+      .filter((lang): lang is string => lang !== undefined);
+
     for (const preferredLocale of preferredLocales) {
       if (locales.includes(preferredLocale)) {
-        return preferredLocale
+        return preferredLocale;
       }
       // Check for language prefix (e.g., 'ja' from 'ja-JP')
-      const langPrefix = preferredLocale.split('-')[0]
+      const langPrefix = preferredLocale.split("-")[0];
       if (langPrefix && locales.includes(langPrefix)) {
-        return langPrefix
+        return langPrefix;
       }
     }
   }
 
-  return defaultLocale
+  return defaultLocale;
 }
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
+  const { pathname } = request.nextUrl;
 
   // Check if there is any supported locale in the pathname
   const pathnameHasLocale = locales.some(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
-  )
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`,
+  );
 
   // Redirect if there is no locale
   if (!pathnameHasLocale) {
-    const locale = getLocale(request)
-    const newUrl = new URL(`/${locale}${pathname}`, request.url)
-    return NextResponse.redirect(newUrl)
+    const locale = getLocale(request);
+    const newUrl = new URL(`/${locale}${pathname}`, request.url);
+    return NextResponse.redirect(newUrl);
   }
 }
 
 export const config = {
   // Matcher ignoring `/_next/` and `/api/`
-  matcher: ['/((?!_next|api|favicon.ico|logo.png).*)']
-}
+  matcher: ["/((?!_next|api|favicon.ico|logo.png).*)"],
+};

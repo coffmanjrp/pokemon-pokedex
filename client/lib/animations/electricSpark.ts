@@ -1,10 +1,15 @@
-import { POKEMON_TYPE_COLORS, PokemonTypeName } from '@/types/pokemon';
-import { AnimationConfig } from './types';
+import { POKEMON_TYPE_COLORS, PokemonTypeName } from "@/types/pokemon";
+import { AnimationConfig } from "./types";
 
-export function createElectricSpark({ pokemon, targetElement }: AnimationConfig) {
-  const primaryColor = POKEMON_TYPE_COLORS[pokemon.types[0]?.type.name as PokemonTypeName] || '#68A090';
+export function createElectricSpark({
+  pokemon,
+  targetElement,
+}: AnimationConfig) {
+  const primaryColor =
+    POKEMON_TYPE_COLORS[pokemon.types[0]?.type.name as PokemonTypeName] ||
+    "#68A090";
 
-  const spark = document.createElement('div');
+  const spark = document.createElement("div");
   spark.style.cssText = `
     position: absolute;
     inset: -2px;
@@ -17,7 +22,7 @@ export function createElectricSpark({ pokemon, targetElement }: AnimationConfig)
   `;
 
   // Add keyframes for spark animation
-  const style = document.createElement('style');
+  const style = document.createElement("style");
   style.textContent = `
     @keyframes spark-border {
       0% { opacity: 0; transform: scale(1); }

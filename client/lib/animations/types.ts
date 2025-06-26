@@ -1,4 +1,4 @@
-import { Pokemon } from '@/types/pokemon';
+import { Pokemon } from "@/types/pokemon";
 
 export interface AnimationConfig {
   pokemon: Pokemon;
@@ -11,4 +11,6 @@ export interface AnimationCleanupFunction {
   (): void;
 }
 
-export type AnimationFunction = (config: AnimationConfig) => AnimationCleanupFunction | void;
+export type AnimationFunction = (
+  config: AnimationConfig,
+) => AnimationCleanupFunction | void;

@@ -1,17 +1,17 @@
 // Export all data files
-export { TYPE_EFFECTS } from './typeEffects';
-export type { TypeEffectKey } from './typeEffects';
+export { TYPE_EFFECTS } from "./typeEffects";
+export type { TypeEffectKey } from "./typeEffects";
 
-export { 
+export {
   GENERATIONS,
   getGenerationById,
   getGenerationByGame,
   getGenerationByPokemonId,
   getGenerationName,
   getGenerationRegion,
-  isRemakeGame
-} from './generations';
-export type { GenerationData } from './generations';
+  isRemakeGame,
+} from "./generations";
+export type { GenerationData } from "./generations";
 
 export {
   REGIONAL_FORM_TRANSLATIONS,
@@ -23,15 +23,19 @@ export {
   getFormTranslationByKey,
   getFormCategory,
   getFormBadgeColor,
-  getFormPriority
-} from './formTranslations';
-export type { FormTranslation, FormCategory, FormData } from './formTranslations';
+  getFormPriority,
+} from "./formTranslations";
+export type {
+  FormTranslation,
+  FormCategory,
+  FormData,
+} from "./formTranslations";
 
 export {
   TYPE_TRANSLATIONS,
   TYPE_COLORS,
   TYPE_DATA,
   getTypeName,
-  getTypeColor
-} from './typeTranslations';
-export type { TypeData } from './typeTranslations';
+  getTypeColor,
+} from "./typeTranslations";
+export type { TypeData } from "./typeTranslations";
