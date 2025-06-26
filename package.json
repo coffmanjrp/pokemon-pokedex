@@ -26,8 +26,7 @@
     "clean": "npm run clean:client && npm run clean:server",
     "clean:client": "cd client && rm -rf .next out",
     "clean:server": "cd server && rm -rf dist",
-    "install:all": "npm install",
-    "postinstall": "cd client && npm install && cd ../server && npm install"
+    "install:all": "npm install"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
