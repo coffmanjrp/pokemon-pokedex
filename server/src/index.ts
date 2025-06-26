@@ -11,7 +11,7 @@ dotenv.config();
 
 const PORT = process.env['PORT'] || 4000;
 
-// Support multiple CORS origins
+// Support multiple CORS origins with wildcard pattern matching
 const getAllowedOrigins = (): string[] => {
   const corsOrigin = process.env['CORS_ORIGIN'];
   const defaultOrigins = ['http://localhost:3000'];
@@ -25,6 +25,32 @@ const getAllowedOrigins = (): string[] => {
   }
   
   return defaultOrigins;
+};
+
+// Function to check if origin matches allowed patterns
+const isOriginAllowed = (origin: string, allowedOrigins: string[]): boolean => {
+  // Check exact matches first
+  if (allowedOrigins.includes(origin)) {
+    return true;
+  }
+  
+  // Check wildcard patterns
+  for (const allowedOrigin of allowedOrigins) {
+    if (allowedOrigin.includes('*')) {
+      // Convert wildcard pattern to regex
+      const regexPattern = allowedOrigin
+        .replace(/\./g, '\\.')  // Escape dots
+        .replace(/\*/g, '.*');  // Convert * to .*
+      
+      const regex = new RegExp(`^${regexPattern}$`);
+      
+      if (regex.test(origin)) {
+        return true;
+      }
+    }
+  }
+  
+  return false;
 };
 
 const ALLOWED_ORIGINS = getAllowedOrigins();
@@ -50,12 +76,14 @@ async function startServer() {
         // Allow requests with no origin (like mobile apps, curl, etc.)
         if (!origin) return callback(null, true);
         
-        if (ALLOWED_ORIGINS.includes(origin)) {
+        if (isOriginAllowed(origin, ALLOWED_ORIGINS)) {
+          console.log(`CORS allowed origin: ${origin}`);
           return callback(null, true);
         }
         
         // Log rejected origins for debugging
         console.log(`CORS rejected origin: ${origin}`);
+        console.log(`Allowed patterns: ${ALLOWED_ORIGINS.join(', ')}`);
         return callback(new Error('Not allowed by CORS'));
       },
       credentials: true,
