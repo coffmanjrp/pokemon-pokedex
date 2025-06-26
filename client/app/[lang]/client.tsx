@@ -159,7 +159,7 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
 
         {/* Main Content */}
         <div className="flex flex-col h-screen overflow-hidden">
-          <div className="flex-1 ml-0 lg:ml-64 transition-all duration-300 ease-in-out">
+          <div className="flex-1 transition-all duration-300 ease-in-out">
             <div className="flex flex-col items-center justify-center h-full py-16 text-red-500">
               <div className="text-6xl mb-4">⚠️</div>
               <h3 className="text-xl font-semibold mb-2">
@@ -200,7 +200,7 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
 
       {/* Main Content */}
       <div className="flex flex-col h-screen overflow-hidden">
-        <div className="flex-1 ml-0 lg:ml-64 transition-all duration-300 ease-in-out">
+        <div className="flex-1 transition-all duration-300 ease-in-out">
           {/* Sticky Generation Header */}
           <header className="flex-shrink-0 bg-gray-50 border-b border-gray-200 shadow-sm z-30">
             <div className="relative px-4 md:px-6 py-3">
@@ -258,22 +258,24 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
 
             {/* Pokemon Grid - show when we have Pokemon (overlay will handle generation switching) */}
             {pokemons.length > 0 && (
-              <VirtualPokemonGrid
-                pokemons={pokemons}
-                onPokemonClick={handlePokemonClick}
-                loading={loading}
-                isFiltering={false}
-                isAutoLoading={false}
-                hasNextPage={hasNextPage}
-                onLoadMore={loadMore}
-                language={lang}
-                priority={true}
-              />
+              <div className="flex-1 overflow-hidden">
+                <VirtualPokemonGrid
+                  pokemons={pokemons}
+                  onPokemonClick={handlePokemonClick}
+                  loading={loading}
+                  isFiltering={false}
+                  isAutoLoading={false}
+                  hasNextPage={hasNextPage}
+                  onLoadMore={loadMore}
+                  language={lang}
+                  priority={true}
+                />
+              </div>
             )}
 
             {/* Generation Switching Overlay */}
             {generationSwitching && (
-              <div className="absolute inset-0 bg-white/90 backdrop-blur-sm flex items-center justify-center z-50">
+              <div className="fixed top-0 left-0 lg:left-80 right-0 bottom-0 bg-white/90 backdrop-blur-sm flex items-center justify-center z-50">
                 <div className="flex flex-col items-center space-y-4">
                   <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"></div>
                   <div className="text-center">

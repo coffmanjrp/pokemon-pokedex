@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, complete SSG implementation for all 1302+ Pokemon (including Mega, Gigantamax, and regional forms), performance optimizations, and sidebar-based generation navigation. All 2613 static pages generated successfully with zero build errors. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes. **Ready for hybrid deployment** with frontend optimized for Vercel and backend prepared for Railway/Render deployment.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, complete SSG implementation for all 1302+ Pokemon (including Mega, Gigantamax, and regional forms), performance optimizations, and sidebar-based generation navigation. All 2613 static pages generated successfully with zero build errors. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes. **Hybrid deployment fully operational** with frontend deployed on Vercel and backend on Railway with CORS wildcard pattern matching for dynamic URLs. Layout optimization completed with proper sidebar-to-content spacing and overlay positioning.
 
 ## Architecture
 
@@ -21,11 +21,12 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 ### Backend (GraphQL Server)
 - **Server**: Apollo Server with Express
 - **Language**: TypeScript
-- **Deployment**: Railway/Render with automatic CI/CD
+- **Deployment**: Railway with automatic CI/CD and CORS wildcard pattern matching
 - **Data Source**: PokeAPI (https://pokeapi.co/api/v2/)
 - **Caching**: Redis-based intelligent caching system with selective data retention
 - **Architecture**: Layered caching strategy (PokeAPI → Redis Cache → GraphQL Server → Apollo Client → React Components)
 - **Data Loading**: Selective query optimization - SSG builds use full data, runtime browsing uses lightweight queries
+- **CORS Configuration**: Wildcard pattern support for dynamic Vercel deployment URLs
 
 ### Data Loading Strategy
 - **SSG Build Mode**: Complete Pokemon data for static generation of all 1302+ Pokemon
@@ -38,6 +39,8 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 - **Bundle Optimization**: Tree shaking, package optimization, code splitting
 - **Cache Strategy**: Long-term static asset caching, intelligent API response caching
 - **Build Performance**: Bundle analyzer integration, optimized webpack configuration
+- **Layout Optimization**: Sidebar-to-content spacing optimized, overlay positioning improved
+- **Grid Rendering**: Virtual scrolling replaced with optimized standard grid for better reliability
 
 ## Development Commands
 
@@ -246,18 +249,19 @@ pokemon-pokedex/
 
 ## Deployment Strategy
 
-### Hybrid Architecture (Recommended)
-- **Frontend**: Vercel (Next.js optimized platform)
-- **Backend**: Railway/Render (GraphQL + Redis)
+### Hybrid Architecture (Fully Operational)
+- **Frontend**: Vercel (Next.js optimized platform) - DEPLOYED
+- **Backend**: Railway (GraphQL + Redis) - DEPLOYED
 - **Benefits**: Best-in-class hosting for each component, cost-effective, scalable
+- **Status**: Production-ready with CORS wildcard pattern matching for dynamic URLs
 
 ### Environment Configuration
 ```bash
 # Frontend (Vercel)
 NEXT_PUBLIC_GRAPHQL_URL=https://your-backend.railway.app/graphql
 
-# Backend (Railway/Render)
-CORS_ORIGIN=https://your-app.vercel.app
+# Backend (Railway)
+CORS_ORIGIN=https://*.vercel.app
 PORT=4000
 REDIS_URL=redis://localhost:6379
 ```
