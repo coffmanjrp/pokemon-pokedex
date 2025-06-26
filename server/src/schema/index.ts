@@ -121,7 +121,7 @@ export const typeDefs = gql`
     id: ID!
     name: String!
     url: String!
-    names: [MoveName!]!
+    names: [MoveName!]
     type: Type!
     damageClass: MoveDamageClass!
     power: Int
@@ -130,7 +130,7 @@ export const typeDefs = gql`
     priority: Int
     target: MoveTarget!
     effectChance: Int
-    flavorTextEntries: [MoveFlavorTextEntry!]!
+    flavorTextEntries: [MoveFlavorTextEntry!]
   }
 
   type MoveDamageClass {
