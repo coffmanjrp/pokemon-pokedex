@@ -1,6 +1,6 @@
 "use client";
 
-import { VirtualPokemonGrid } from "../../components/ui/pokemon/VirtualPokemonGrid";
+import { PokemonGrid } from "../../components/ui/pokemon/PokemonGrid";
 import { AnimatedLoadingScreen } from "../../components/ui/animation/AnimatedLoadingScreen";
 import { Sidebar } from "../../components/layout/Sidebar";
 import { usePokemonList } from "../../hooks/usePokemonList";
@@ -199,7 +199,7 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
       />
 
       {/* Main Content */}
-      <div className="flex flex-col h-screen overflow-hidden">
+      <div className="flex flex-col h-screen overflow-auto">
         <div className="flex-1 transition-all duration-300 ease-in-out">
           {/* Sticky Generation Header */}
           <header className="flex-shrink-0 bg-gray-50 border-b border-gray-200 shadow-sm z-30">
@@ -258,8 +258,8 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
 
             {/* Pokemon Grid - show when we have Pokemon (overlay will handle generation switching) */}
             {pokemons.length > 0 && (
-              <div className="flex-1 overflow-hidden">
-                <VirtualPokemonGrid
+              <div className="flex-1 overflow-auto">
+                <PokemonGrid
                   pokemons={pokemons}
                   onPokemonClick={handlePokemonClick}
                   loading={loading}
