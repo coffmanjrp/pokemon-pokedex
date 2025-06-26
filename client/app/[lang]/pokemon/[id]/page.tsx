@@ -1,12 +1,17 @@
-import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { getClient } from '@/lib/apollo';
-import { GET_POKEMON, GET_POKEMONS_BASIC } from '@/graphql/queries';
-import { Pokemon } from '@/types/pokemon';
-import { Locale, interpolate } from '@/lib/dictionaries'
-import { getDictionary } from '@/lib/get-dictionary';
-import { getPokemonName, getTypeName, getPokemonDescription, getGenerationName } from '@/lib/pokemonUtils';
-import PokemonDetailClient from './client';
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { getClient } from "@/lib/apollo";
+import { GET_POKEMON, GET_POKEMONS_BASIC } from "@/graphql/queries";
+import { Pokemon } from "@/types/pokemon";
+import { Locale, interpolate } from "@/lib/dictionaries";
+import { getDictionary } from "@/lib/get-dictionary";
+import {
+  getPokemonName,
+  getTypeName,
+  getPokemonDescription,
+  getGenerationName,
+} from "@/lib/pokemonUtils";
+import PokemonDetailClient from "./client";
 
 interface PokemonDetailPageProps {
   params: Promise<{
@@ -19,29 +24,32 @@ interface PokemonDetailPageProps {
 export async function generateStaticParams() {
   // Generate paths for both languages and all existing Pokemon
   const paths = [];
-  const languages = ['en', 'ja'];
-  
+  const languages = ["en", "ja"];
+
   try {
     // Use GraphQL to get all existing Pokemon IDs
     const client = await getClient();
-    
+
     // First get total count to determine how many to fetch
     const { data: countData } = await client.query({
       query: GET_POKEMONS_BASIC,
-      variables: { limit: 1, offset: 0 }
+      variables: { limit: 1, offset: 0 },
     });
-    
+
     const totalPokemon = countData?.pokemonsBasic?.totalCount || 1302;
-    
+
     // Fetch all Pokemon to get valid IDs only
     const { data } = await client.query({
       query: GET_POKEMONS_BASIC,
-      variables: { limit: totalPokemon, offset: 0 }
+      variables: { limit: totalPokemon, offset: 0 },
     });
-    
+
     // Extract only valid Pokemon IDs that actually exist
-    const validPokemonIds = data?.pokemonsBasic?.edges?.map((edge: { node: { id: string } }) => edge.node.id) || [];
-    
+    const validPokemonIds =
+      data?.pokemonsBasic?.edges?.map(
+        (edge: { node: { id: string } }) => edge.node.id,
+      ) || [];
+
     // Generate paths only for valid Pokemon IDs
     for (const lang of languages) {
       for (const pokemonId of validPokemonIds) {
@@ -51,12 +59,19 @@ export async function generateStaticParams() {
         });
       }
     }
-    
-    console.log(`Generating ${paths.length} static paths for ${validPokemonIds.length} valid Pokemon in ${languages.length} languages`);
-    console.log(`Sample Pokemon IDs: ${validPokemonIds.slice(0, 10).join(', ')}...`);
+
+    console.log(
+      `Generating ${paths.length} static paths for ${validPokemonIds.length} valid Pokemon in ${languages.length} languages`,
+    );
+    console.log(
+      `Sample Pokemon IDs: ${validPokemonIds.slice(0, 10).join(", ")}...`,
+    );
     return paths;
   } catch (error) {
-    console.error('Error fetching Pokemon data from GraphQL, using sequential fallback:', error);
+    console.error(
+      "Error fetching Pokemon data from GraphQL, using sequential fallback:",
+      error,
+    );
     // Fallback: generate for known range and let individual pages handle errors
     const fallbackCount = 1025; // Use conservative count for basic Pokemon
     for (const lang of languages) {
@@ -67,20 +82,26 @@ export async function generateStaticParams() {
         });
       }
     }
-    console.log(`Using fallback: ${paths.length} paths for first ${fallbackCount} Pokemon`);
+    console.log(
+      `Using fallback: ${paths.length} paths for first ${fallbackCount} Pokemon`,
+    );
     return paths;
   }
 }
 
 // Generate metadata for each Pokemon page
-export async function generateMetadata({ params }: { params: PokemonDetailPageProps['params'] }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: PokemonDetailPageProps["params"];
+}): Promise<Metadata> {
   try {
     const { id, lang } = await params;
     const [dictionary, client] = await Promise.all([
       getDictionary(lang),
-      getClient()
+      getClient(),
     ]);
-    
+
     const { data } = await client.query({
       query: GET_POKEMON,
       variables: { id },
@@ -91,53 +112,61 @@ export async function generateMetadata({ params }: { params: PokemonDetailPagePr
     if (!pokemon) {
       return {
         title: dictionary.ui.error.pokemonNotFound,
-        description: 'The requested Pokemon could not be found.',
+        description: "The requested Pokemon could not be found.",
       };
     }
 
     const pokemonName = getPokemonName(pokemon, lang);
-    const types = pokemon.types.map(t => getTypeName(t.type.name, lang)).join('/');
+    const types = pokemon.types
+      .map((t) => getTypeName(t.type.name, lang))
+      .join("/");
     const pokemonDescription = getPokemonDescription(pokemon, lang);
-    
+
     // Get stats for meta description
-    const hpStat = pokemon.stats.find(s => s.stat.name === 'hp')?.baseStat || 0;
-    const attackStat = pokemon.stats.find(s => s.stat.name === 'attack')?.baseStat || 0;
-    const defenseStat = pokemon.stats.find(s => s.stat.name === 'defense')?.baseStat || 0;
-    
+    const hpStat =
+      pokemon.stats.find((s) => s.stat.name === "hp")?.baseStat || 0;
+    const attackStat =
+      pokemon.stats.find((s) => s.stat.name === "attack")?.baseStat || 0;
+    const defenseStat =
+      pokemon.stats.find((s) => s.stat.name === "defense")?.baseStat || 0;
+
     // Get generation info
-    const generation = pokemon.species?.generation?.name ? 
-      getGenerationName(pokemon.species.generation.name, lang) : '';
-    
+    const generation = pokemon.species?.generation?.name
+      ? getGenerationName(pokemon.species.generation.name, lang)
+      : "";
+
     // Enhanced title with ID and type
-    const title = interpolate(dictionary.meta.pokemonTitle, { 
+    const title = interpolate(dictionary.meta.pokemonTitle, {
       name: pokemonName,
-      id: pokemon.id.toString().padStart(3, '0'),
-      type: types
+      id: pokemon.id.toString().padStart(3, "0"),
+      type: types,
     });
-    
+
     // Rich description with stats and Pokemon description
-    const description = pokemonDescription ? 
-      interpolate(dictionary.meta.pokemonDescription, { 
-        name: pokemonName, 
-        type: types,
-        hp: hpStat,
-        attack: attackStat,
-        defense: defenseStat,
-        description: pokemonDescription.slice(0, 100) + (pokemonDescription.length > 100 ? '...' : '')
-      }) :
-      interpolate(dictionary.meta.pokemonDescriptionShort, { 
-        name: pokemonName, 
-        type: types,
-        generation: generation,
-        height: (pokemon.height / 10).toFixed(1),
-        weight: (pokemon.weight / 10).toFixed(1)
-      });
-    
+    const description = pokemonDescription
+      ? interpolate(dictionary.meta.pokemonDescription, {
+          name: pokemonName,
+          type: types,
+          hp: hpStat,
+          attack: attackStat,
+          defense: defenseStat,
+          description:
+            pokemonDescription.slice(0, 100) +
+            (pokemonDescription.length > 100 ? "..." : ""),
+        })
+      : interpolate(dictionary.meta.pokemonDescriptionShort, {
+          name: pokemonName,
+          type: types,
+          generation: generation,
+          height: (pokemon.height / 10).toFixed(1),
+          weight: (pokemon.weight / 10).toFixed(1),
+        });
+
     // Keywords for SEO
     const keywords = interpolate(dictionary.meta.pokemonKeywords, {
       name: pokemonName,
       type: types,
-      generation: generation
+      generation: generation,
     });
 
     return {
@@ -147,26 +176,33 @@ export async function generateMetadata({ params }: { params: PokemonDetailPagePr
       openGraph: {
         title,
         description,
-        type: 'website',
+        type: "website",
         url: `https://pokedex.example.com/${lang}/pokemon/${id}`,
-        siteName: lang === 'ja' ? 'ポケモン図鑑' : 'Pokédex',
+        siteName: lang === "ja" ? "ポケモン図鑑" : "Pokédex",
         images: [
           {
-            url: pokemon.sprites.other?.officialArtwork?.frontDefault || pokemon.sprites.frontDefault || '',
+            url:
+              pokemon.sprites.other?.officialArtwork?.frontDefault ||
+              pokemon.sprites.frontDefault ||
+              "",
             width: 475,
             height: 475,
             alt: `${pokemonName} official artwork`,
           },
         ],
-        locale: lang === 'ja' ? 'ja_JP' : 'en_US',
+        locale: lang === "ja" ? "ja_JP" : "en_US",
       },
       twitter: {
-        card: 'summary_large_image',
+        card: "summary_large_image",
         title,
         description,
-        images: [pokemon.sprites.other?.officialArtwork?.frontDefault || pokemon.sprites.frontDefault || ''],
-        creator: '@pokedex',
-        site: '@pokedex',
+        images: [
+          pokemon.sprites.other?.officialArtwork?.frontDefault ||
+            pokemon.sprites.frontDefault ||
+            "",
+        ],
+        creator: "@pokedex",
+        site: "@pokedex",
       },
       robots: {
         index: true,
@@ -174,9 +210,9 @@ export async function generateMetadata({ params }: { params: PokemonDetailPagePr
         googleBot: {
           index: true,
           follow: true,
-          'max-video-preview': -1,
-          'max-image-preview': 'large',
-          'max-snippet': -1,
+          "max-video-preview": -1,
+          "max-image-preview": "large",
+          "max-snippet": -1,
         },
       },
       alternates: {
@@ -188,25 +224,29 @@ export async function generateMetadata({ params }: { params: PokemonDetailPagePr
       },
     };
   } catch (error) {
-    console.error('Error generating metadata:', error);
+    console.error("Error generating metadata:", error);
     return {
-      title: 'Pokemon | Pokedex',
-      description: 'Pokemon information page',
+      title: "Pokemon | Pokedex",
+      description: "Pokemon information page",
     };
   }
 }
 
 // Server Component for SSG
-export default async function PokemonDetailPage({ params }: { params: PokemonDetailPageProps['params'] }) {
+export default async function PokemonDetailPage({
+  params,
+}: {
+  params: PokemonDetailPageProps["params"];
+}) {
   const { id, lang } = await params;
-  
+
   try {
     const client = await getClient();
-    
+
     const { data } = await client.query({
       query: GET_POKEMON,
       variables: { id },
-      errorPolicy: 'all' // Continue even if there are GraphQL errors
+      errorPolicy: "all", // Continue even if there are GraphQL errors
     });
 
     const pokemon: Pokemon = data?.pokemon;

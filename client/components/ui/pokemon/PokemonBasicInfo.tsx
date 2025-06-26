@@ -1,35 +1,35 @@
-'use client';
+"use client";
 
-import { useState, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { Pokemon } from '@/types/pokemon';
-import { 
-  getPokemonName, 
-  getPokemonDescription, 
-  getPokemonGenus, 
+import { useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { Pokemon } from "@/types/pokemon";
+import {
+  getPokemonName,
+  getPokemonDescription,
+  getPokemonGenus,
   getPokemonWeaknesses,
   isPokemonVariant,
-  getPrevNextPokemonId
-} from '@/lib/pokemonUtils';
-import { PokemonNavigation } from './PokemonNavigation';
-import { PokemonHeader } from './PokemonHeader';
-import { PokemonImageDisplay } from './PokemonImageDisplay';
-import { PokemonVersionToggle } from './PokemonVersionToggle';
-import { PokemonStorySection } from './PokemonStorySection';
-import { PokemonBasicInfoGrid } from './PokemonBasicInfoGrid';
-import { PokemonWeaknessSection } from './PokemonWeaknessSection';
-import { PokemonStatsSection } from './PokemonStatsSection';
+  getPrevNextPokemonId,
+} from "@/lib/pokemonUtils";
+import { PokemonNavigation } from "./PokemonNavigation";
+import { PokemonHeader } from "./PokemonHeader";
+import { PokemonImageDisplay } from "./PokemonImageDisplay";
+import { PokemonVersionToggle } from "./PokemonVersionToggle";
+import { PokemonStorySection } from "./PokemonStorySection";
+import { PokemonBasicInfoGrid } from "./PokemonBasicInfoGrid";
+import { PokemonWeaknessSection } from "./PokemonWeaknessSection";
+import { PokemonStatsSection } from "./PokemonStatsSection";
 
 interface PokemonBasicInfoProps {
   pokemon: Pokemon;
-  language: 'en' | 'ja';
+  language: "en" | "ja";
 }
 
 function PokemonBasicInfoContent({ pokemon, language }: PokemonBasicInfoProps) {
   const [isShiny, setIsShiny] = useState(false);
   const searchParams = useSearchParams();
-  const fromGeneration = searchParams.get('from');
-  
+  const fromGeneration = searchParams.get("from");
+
   const displayName = getPokemonName(pokemon, language);
   const isVariant = isPokemonVariant(pokemon);
   const description = getPokemonDescription(pokemon, language);
@@ -70,10 +70,7 @@ function PokemonBasicInfoContent({ pokemon, language }: PokemonBasicInfoProps) {
         {/* Right Side - Information Panel (2/5 columns) */}
         <div className="lg:col-span-2 bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 order-2 lg:order-2">
           {/* Story Section */}
-          <PokemonStorySection
-            description={description}
-            language={language}
-          />
+          <PokemonStorySection description={description} language={language} />
 
           {/* Versions Section - Normal/Shiny Toggle */}
           <PokemonVersionToggle
@@ -90,16 +87,10 @@ function PokemonBasicInfoContent({ pokemon, language }: PokemonBasicInfoProps) {
           />
 
           {/* Weaknesses Section */}
-          <PokemonWeaknessSection
-            weaknesses={weaknesses}
-            language={language}
-          />
+          <PokemonWeaknessSection weaknesses={weaknesses} language={language} />
 
           {/* Stats Section */}
-          <PokemonStatsSection
-            pokemon={pokemon}
-            language={language}
-          />
+          <PokemonStatsSection pokemon={pokemon} language={language} />
         </div>
       </div>
     </div>

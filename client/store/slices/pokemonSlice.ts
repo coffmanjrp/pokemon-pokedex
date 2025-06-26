@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Pokemon } from '@/types/pokemon';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Pokemon } from "@/types/pokemon";
 
 interface PokemonState {
   pokemons: Pokemon[];
@@ -24,7 +24,7 @@ const initialState: PokemonState = {
 };
 
 const pokemonSlice = createSlice({
-  name: 'pokemon',
+  name: "pokemon",
   initialState,
   reducers: {
     setLoading: (state, action: PayloadAction<boolean>) => {
@@ -38,9 +38,11 @@ const pokemonSlice = createSlice({
     },
     addPokemons: (state, action: PayloadAction<Pokemon[]>) => {
       // Filter out duplicates based on Pokemon ID
-      const existingIds = new Set(state.pokemons.map(p => p.id));
-      const newPokemons = action.payload.filter(pokemon => !existingIds.has(pokemon.id));
-      
+      const existingIds = new Set(state.pokemons.map((p) => p.id));
+      const newPokemons = action.payload.filter(
+        (pokemon) => !existingIds.has(pokemon.id),
+      );
+
       state.pokemons.push(...newPokemons);
     },
     setSelectedPokemon: (state, action: PayloadAction<Pokemon | null>) => {

@@ -1,9 +1,11 @@
-import { gsap } from 'gsap';
-import { POKEMON_TYPE_COLORS, PokemonTypeName } from '@/types/pokemon';
-import { AnimationConfig } from './types';
+import { gsap } from "gsap";
+import { POKEMON_TYPE_COLORS, PokemonTypeName } from "@/types/pokemon";
+import { AnimationConfig } from "./types";
 
 export function createScaleGlow({ pokemon, targetElement }: AnimationConfig) {
-  const primaryColor = POKEMON_TYPE_COLORS[pokemon.types[0]?.type.name as PokemonTypeName] || '#68A090';
+  const primaryColor =
+    POKEMON_TYPE_COLORS[pokemon.types[0]?.type.name as PokemonTypeName] ||
+    "#68A090";
 
   gsap.to(targetElement, {
     scale: 1.1,
@@ -11,6 +13,6 @@ export function createScaleGlow({ pokemon, targetElement }: AnimationConfig) {
     duration: 0.3,
     ease: "power2.out",
     yoyo: true,
-    repeat: 1
+    repeat: 1,
   });
 }

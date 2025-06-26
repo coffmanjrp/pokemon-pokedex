@@ -1,7 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getStoredLanguage, setStoredLanguage } from '@/lib/languageStorage';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { getStoredLanguage, setStoredLanguage } from "@/lib/languageStorage";
 
-export type Language = 'en' | 'ja';
+export type Language = "en" | "ja";
 
 interface UIState {
   language: Language;
@@ -9,7 +9,7 @@ interface UIState {
   isLoading: boolean;
   notifications: Array<{
     id: string;
-    type: 'success' | 'error' | 'warning' | 'info';
+    type: "success" | "error" | "warning" | "info";
     message: string;
     timestamp: number;
   }>;
@@ -17,14 +17,14 @@ interface UIState {
 
 // Server-side safe initial state - always use default for SSR
 const initialState: UIState = {
-  language: 'en', // Always start with 'en' for SSR compatibility
+  language: "en", // Always start with 'en' for SSR compatibility
   isMenuOpen: false,
   isLoading: false,
   notifications: [],
 };
 
 const uiSlice = createSlice({
-  name: 'ui',
+  name: "ui",
   initialState,
   reducers: {
     setLanguage: (state, action: PayloadAction<Language>) => {
@@ -49,7 +49,12 @@ const uiSlice = createSlice({
     setGlobalLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
-    addNotification: (state, action: PayloadAction<Omit<UIState['notifications'][0], 'id' | 'timestamp'>>) => {
+    addNotification: (
+      state,
+      action: PayloadAction<
+        Omit<UIState["notifications"][0], "id" | "timestamp">
+      >,
+    ) => {
       const notification = {
         ...action.payload,
         id: Date.now().toString(),
@@ -59,7 +64,7 @@ const uiSlice = createSlice({
     },
     removeNotification: (state, action: PayloadAction<string>) => {
       state.notifications = state.notifications.filter(
-        (notification) => notification.id !== action.payload
+        (notification) => notification.id !== action.payload,
       );
     },
     clearNotifications: (state) => {

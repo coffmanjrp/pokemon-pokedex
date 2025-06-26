@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useAppDispatch } from '@/store/hooks';
-import { initializeLanguageFromStorage } from '@/store/slices/uiSlice';
-import { getStoredLanguage, setStoredLanguage } from '@/lib/languageStorage';
+import { useEffect } from "react";
+import { useAppDispatch } from "@/store/hooks";
+import { initializeLanguageFromStorage } from "@/store/slices/uiSlice";
+import { getStoredLanguage, setStoredLanguage } from "@/lib/languageStorage";
 
 export function LanguageInitializer() {
   const dispatch = useAppDispatch();
@@ -11,7 +11,7 @@ export function LanguageInitializer() {
   useEffect(() => {
     // Initialize language from localStorage after client-side hydration
     dispatch(initializeLanguageFromStorage());
-    
+
     // Ensure cookie is set if localStorage has a value but cookie doesn't exist
     const storedLang = getStoredLanguage();
     if (storedLang) {

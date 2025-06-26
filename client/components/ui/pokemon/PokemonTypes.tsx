@@ -1,29 +1,34 @@
-'use client';
+"use client";
 
-import { Pokemon } from '@/types/pokemon';
-import { getTypeName } from '@/lib/pokemonUtils';
-import { useAppSelector } from '@/store/hooks';
-import { TypeBadge } from '../common/Badge';
+import { Pokemon } from "@/types/pokemon";
+import { getTypeName } from "@/lib/pokemonUtils";
+import { useAppSelector } from "@/store/hooks";
+import { TypeBadge } from "../common/Badge";
 
 interface PokemonTypesProps {
-  types: Pokemon['types'];
-  size?: 'sm' | 'md' | 'lg';
+  types: Pokemon["types"];
+  size?: "sm" | "md" | "lg";
   className?: string;
-  language?: 'en' | 'ja';
+  language?: "en" | "ja";
 }
 
-export function PokemonTypes({ types, size = 'md', className, language: propLanguage }: PokemonTypesProps) {
+export function PokemonTypes({
+  types,
+  size = "md",
+  className,
+  language: propLanguage,
+}: PokemonTypesProps) {
   const { language: storeLanguage } = useAppSelector((state) => state.ui);
   const language = propLanguage || storeLanguage;
 
   const getSizeClass = () => {
     switch (size) {
-      case 'sm':
-        return 'flex gap-1 justify-center mb-2';
-      case 'lg':
-        return 'flex gap-2 justify-center mb-4';
+      case "sm":
+        return "flex gap-1 justify-center mb-2";
+      case "lg":
+        return "flex gap-2 justify-center mb-4";
       default:
-        return 'flex gap-1 justify-center mb-3';
+        return "flex gap-1 justify-center mb-3";
     }
   };
 

@@ -1,5 +1,5 @@
-import { gsap } from 'gsap';
-import { AnimationConfig } from './types';
+import { gsap } from "gsap";
+import { AnimationConfig } from "./types";
 
 export function createCardFlip({ targetElement }: AnimationConfig) {
   gsap.to(targetElement, {
@@ -11,8 +11,8 @@ export function createCardFlip({ targetElement }: AnimationConfig) {
         rotationY: 0,
         duration: 0.6,
         ease: "power2.inOut",
-        delay: 0.5
+        delay: 0.5,
       });
-    }
+    },
   });
 }

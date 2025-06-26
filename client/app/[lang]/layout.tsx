@@ -1,25 +1,21 @@
-import { Locale } from '@/lib/dictionaries'
-import ConditionalLayout from './ConditionalLayout'
+import { Locale } from "@/lib/dictionaries";
+import ConditionalLayout from "./ConditionalLayout";
 
 export async function generateStaticParams() {
-  return [{ lang: 'en' }, { lang: 'ja' }]
+  return [{ lang: "en" }, { lang: "ja" }];
 }
 
 interface LangLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
   params: Promise<{
-    lang: Locale
-  }>
+    lang: Locale;
+  }>;
 }
 
-export default async function LangLayout({
-  children,
-}: LangLayoutProps) {
+export default async function LangLayout({ children }: LangLayoutProps) {
   return (
     <div className="min-h-screen bg-gray-50">
-      <ConditionalLayout>
-        {children}
-      </ConditionalLayout>
+      <ConditionalLayout>{children}</ConditionalLayout>
     </div>
-  )
+  );
 }

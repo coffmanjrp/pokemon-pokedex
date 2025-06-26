@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { PokemonStat } from '@/types/pokemon';
-import { getStatName } from '@/lib/pokemonUtils';
-import { useAppSelector } from '@/store/hooks';
+import { PokemonStat } from "@/types/pokemon";
+import { getStatName } from "@/lib/pokemonUtils";
+import { useAppSelector } from "@/store/hooks";
 
 interface PokemonStatsProps {
   stats: PokemonStat[];
@@ -10,33 +10,33 @@ interface PokemonStatsProps {
 
 // Individual stat colors for better visual distinction
 const statColors: Record<string, string> = {
-  hp: 'bg-red-500',           // HP: Red (health/life)
-  attack: 'bg-orange-500',    // Attack: Orange (physical power)
-  defense: 'bg-blue-500',     // Defense: Blue (protection/stability)
-  'special-attack': 'bg-purple-500',   // Sp. Attack: Purple (magical power)
-  'special-defense': 'bg-green-500',   // Sp. Defense: Green (resilience)
-  speed: 'bg-yellow-500',     // Speed: Yellow (lightning/quickness)
+  hp: "bg-red-500", // HP: Red (health/life)
+  attack: "bg-orange-500", // Attack: Orange (physical power)
+  defense: "bg-blue-500", // Defense: Blue (protection/stability)
+  "special-attack": "bg-purple-500", // Sp. Attack: Purple (magical power)
+  "special-defense": "bg-green-500", // Sp. Defense: Green (resilience)
+  speed: "bg-yellow-500", // Speed: Yellow (lightning/quickness)
 };
 
 export function PokemonStats({ stats }: PokemonStatsProps) {
   const { language } = useAppSelector((state) => state.ui);
-  
+
   if (!stats || stats.length === 0) {
     return (
       <div className="text-gray-500 text-center py-4">
-        {language === 'en' ? 'No stats available' : 'ステータスがありません'}
+        {language === "en" ? "No stats available" : "ステータスがありません"}
       </div>
     );
   }
 
-  const maxBaseStat = Math.max(...stats.map(stat => stat.baseStat));
+  const maxBaseStat = Math.max(...stats.map((stat) => stat.baseStat));
 
   return (
     <div className="space-y-4">
       {stats.map((pokemonStat, index) => {
         const statName = pokemonStat.stat.name;
         const percentage = (pokemonStat.baseStat / maxBaseStat) * 100;
-        
+
         return (
           <div key={index} className="flex items-center gap-4">
             <div className="w-24 text-sm font-medium text-gray-700">
@@ -47,7 +47,7 @@ export function PokemonStats({ stats }: PokemonStatsProps) {
                 <div className="flex-1 bg-gray-200 rounded-full h-2">
                   <div
                     className={`h-2 rounded-full transition-all duration-500 ${
-                      statColors[statName] || 'bg-gray-400'
+                      statColors[statName] || "bg-gray-400"
                     }`}
                     style={{ width: `${percentage}%` }}
                   />
@@ -60,12 +60,12 @@ export function PokemonStats({ stats }: PokemonStatsProps) {
           </div>
         );
       })}
-      
+
       {/* Total stats */}
       <div className="pt-4 border-t border-gray-200">
         <div className="flex items-center gap-4">
           <div className="w-24 text-sm font-bold text-gray-900">
-            {language === 'en' ? 'Total' : '合計'}
+            {language === "en" ? "Total" : "合計"}
           </div>
           <div className="flex-1">
             <span className="text-lg font-bold text-gray-900">
