@@ -103,7 +103,7 @@ export function usePokemonList({
     variables: { limit: generationLimit, offset: generationOffset },
     skip: !autoFetch,
     notifyOnNetworkStatusChange: true,
-    errorPolicy: "ignore",
+    errorPolicy: "all",
   });
 
   // Direct fetch function to bypass Apollo Client circular reference issues
@@ -249,19 +249,36 @@ export function usePokemonList({
       }
     `;
 
-    const response = await fetch(
-      process.env.NEXT_PUBLIC_GRAPHQL_URL || "http://localhost:4000/graphql",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: queryString,
-          variables,
-        }),
+    // Dynamic GraphQL URL based on server mode
+    const getGraphQLURL = () => {
+      const serverMode = process.env.NEXT_PUBLIC_SERVER_MODE || "development";
+
+      if (serverMode === "production") {
+        return (
+          process.env.NEXT_PUBLIC_GRAPHQL_URL_PROD ||
+          "https://pokemon-pokedex-production.up.railway.app/graphql"
+        );
+      } else {
+        return (
+          process.env.NEXT_PUBLIC_GRAPHQL_URL_DEV ||
+          "http://localhost:4000/graphql"
+        );
+      }
+    };
+
+    const graphqlUrl = getGraphQLURL();
+    console.log("Using GraphQL URL:", graphqlUrl);
+
+    const response = await fetch(graphqlUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify({
+        query: queryString,
+        variables,
+      }),
+    });
 
     if (!response.ok) {
       throw new Error("Failed to fetch Pokemon data");
@@ -463,8 +480,11 @@ export function usePokemonList({
         return newPokemon.length;
       }
       return 0;
-    } catch {
-      dispatch(setError("Failed to load more Pokemon"));
+    } catch (error) {
+      console.error("LoadMore error:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to load more Pokemon";
+      dispatch(setError(errorMessage));
       return 0;
     } finally {
       dispatch(setLoading(false));

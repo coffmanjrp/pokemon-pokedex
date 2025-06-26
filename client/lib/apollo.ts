@@ -1,7 +1,23 @@
-import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
+import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
+
+// Dynamic GraphQL URL based on server mode
+const getGraphQLURL = () => {
+  const serverMode = process.env.NEXT_PUBLIC_SERVER_MODE || "development";
+
+  if (serverMode === "production") {
+    return (
+      process.env.NEXT_PUBLIC_GRAPHQL_URL_PROD ||
+      "https://pokemon-pokedex-production.up.railway.app/graphql"
+    );
+  } else {
+    return (
+      process.env.NEXT_PUBLIC_GRAPHQL_URL_DEV || "http://localhost:4000/graphql"
+    );
+  }
+};
 
 const httpLink = createHttpLink({
-  uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:4000/graphql',
+  uri: getGraphQLURL(),
 });
 
 export const apolloClient = new ApolloClient({
@@ -11,12 +27,12 @@ export const apolloClient = new ApolloClient({
   }),
   defaultOptions: {
     watchQuery: {
-      errorPolicy: 'ignore',
-      fetchPolicy: 'no-cache', // Disable cache until issues are resolved
+      errorPolicy: "all",
+      fetchPolicy: "cache-first",
     },
     query: {
-      errorPolicy: 'ignore', 
-      fetchPolicy: 'no-cache', // Disable cache until issues are resolved
+      errorPolicy: "all",
+      fetchPolicy: "cache-first",
     },
   },
 });
@@ -25,11 +41,11 @@ export const apolloClient = new ApolloClient({
 export function getClient() {
   return new ApolloClient({
     link: createHttpLink({
-      uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:4000/graphql',
+      uri: getGraphQLURL(),
     }),
     cache: new InMemoryCache({
       addTypename: false, // Disable __typename for SSR consistency
     }),
-    ssrMode: typeof window === 'undefined',
+    ssrMode: typeof window === "undefined",
   });
 }
