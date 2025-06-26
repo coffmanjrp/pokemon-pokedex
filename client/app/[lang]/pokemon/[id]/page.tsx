@@ -177,7 +177,7 @@ export async function generateMetadata({
         title,
         description,
         type: "website",
-        url: `https://pokedex.example.com/${lang}/pokemon/${id}`,
+        url: `https://pokemon-pokedex-client.vercel.app/${lang}/pokemon/${id}`,
         siteName: lang === "ja" ? "ポケモン図鑑" : "Pokédex",
         images: [
           {
@@ -216,10 +216,10 @@ export async function generateMetadata({
         },
       },
       alternates: {
-        canonical: `https://pokedex.example.com/${lang}/pokemon/${id}`,
+        canonical: `https://pokemon-pokedex-client.vercel.app/${lang}/pokemon/${id}`,
         languages: {
-          en: `https://pokedex.example.com/en/pokemon/${id}`,
-          ja: `https://pokedex.example.com/ja/pokemon/${id}`,
+          en: `https://pokemon-pokedex-client.vercel.app/en/pokemon/${id}`,
+          ja: `https://pokemon-pokedex-client.vercel.app/ja/pokemon/${id}`,
         },
       },
     };
