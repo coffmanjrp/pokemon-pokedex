@@ -1,6 +1,13 @@
 "use client";
 
 import { useQuery } from "@apollo/client";
+
+// Type extension for window object to handle timeout IDs
+declare global {
+  interface Window {
+    generationSwitchingTimeout?: NodeJS.Timeout;
+  }
+}
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import {
   setLoading,
@@ -326,13 +333,13 @@ export function usePokemonList({
           } as Pokemon;
         })
         .filter((pokemon: Pokemon) => {
-          // 厳格な世代範囲チェック - 現在の世代範囲内のPokemonのみを含める
+          // Strict generation range check - only include Pokemon within current generation range
           const pokemonId = parseInt(pokemon.id);
           const isInCurrentGeneration =
             pokemonId >= generationRange.min &&
             pokemonId <= generationRange.max;
 
-          // デバッグ用ログ（本番では削除）
+          // Debug log (remove in production)
           if (!isInCurrentGeneration) {
             console.warn(
               `Filtered out Pokemon #${pokemonId} (${pokemon.name}) - not in current generation range ${generationRange.min}-${generationRange.max}`,
@@ -346,9 +353,6 @@ export function usePokemonList({
       if (pokemonList.length > 0) {
         dispatch(setPokemons(pokemonList));
 
-        // End generation switching overlay when first Pokemon is loaded
-        dispatch(setGenerationSwitching(false));
-
         // Check if we've loaded all Pokemon in this generation
         const totalPokemonInGeneration =
           generationRange.max - generationRange.min + 1;
@@ -357,6 +361,15 @@ export function usePokemonList({
 
         dispatch(setHasNextPage(hasMoreInGeneration));
         dispatch(setEndCursor(pageInfo.endCursor));
+
+        // Successfully loaded Pokemon - end generation switching overlay
+        dispatch(setGenerationSwitching(false));
+
+        // Clear generation switching timeout (successful completion)
+        if (window.generationSwitchingTimeout) {
+          clearTimeout(window.generationSwitchingTimeout);
+          delete window.generationSwitchingTimeout;
+        }
       } else if (edges.length > 0) {
         // If we got data but no Pokemon match the generation range, something is wrong
         console.warn(
@@ -365,9 +378,30 @@ export function usePokemonList({
         dispatch(setError("No Pokemon found for this generation"));
         dispatch(setLoading(false));
         dispatch(setGenerationSwitching(false));
+
+        // Clear timeout since we're handling the error
+        if (window.generationSwitchingTimeout) {
+          clearTimeout(window.generationSwitchingTimeout);
+          delete window.generationSwitchingTimeout;
+        }
+      } else {
+        // No data received at all - this could happen if the query returns empty results
+        console.warn(
+          "No Pokemon data received for generation",
+          currentGeneration,
+        );
+        dispatch(setError("Failed to load Pokemon for this generation"));
+        dispatch(setLoading(false));
+        dispatch(setGenerationSwitching(false));
+
+        // Clear timeout since we're handling the error
+        if (window.generationSwitchingTimeout) {
+          clearTimeout(window.generationSwitchingTimeout);
+          delete window.generationSwitchingTimeout;
+        }
       }
     }
-  }, [data, dispatch, generationRange]);
+  }, [data, dispatch, generationRange, currentGeneration]);
 
   // Calculate unique Pokemon for counting (move this before loadMore function)
   const uniquePokemons = pokemons.reduce((acc: Pokemon[], current) => {
@@ -523,6 +557,10 @@ export function usePokemonList({
       // Check if we need to clear current data
       const shouldClear = needsClearForGeneration(pokemons, newGeneration);
 
+      // Calculate new parameters first to use in timeout error message
+      const newRange =
+        GENERATION_RANGES[newGeneration as keyof typeof GENERATION_RANGES];
+
       if (shouldClear) {
         // Start generation switching overlay
         dispatch(setGenerationSwitching(true));
@@ -532,6 +570,22 @@ export function usePokemonList({
         dispatch(setHasNextPage(true));
         dispatch(setEndCursor(null));
         dispatch(setError(null));
+
+        // Failsafe: Handle timeout after 15 seconds with proper error state
+        // This prevents infinite loading but provides user feedback
+        const timeoutId = setTimeout(() => {
+          console.warn("Generation switching timeout - data loading failed");
+          dispatch(setGenerationSwitching(false));
+          dispatch(setLoading(false));
+          dispatch(
+            setError(
+              `Failed to load ${newRange.region.en} Pokémon. Please try again or refresh the page.`,
+            ),
+          );
+        }, 15000);
+
+        // Store timeout ID to clear it when generation switching completes normally
+        window.generationSwitchingTimeout = timeoutId;
       }
 
       // Always set loading state for new generation
@@ -541,9 +595,7 @@ export function usePokemonList({
       setCurrentGeneration(newGeneration);
       dispatch(setReduxCurrentGeneration(newGeneration));
 
-      // Calculate new parameters and refetch immediately
-      const newRange =
-        GENERATION_RANGES[newGeneration as keyof typeof GENERATION_RANGES];
+      // Calculate refetch parameters
       const newOffset = newRange.min - 1;
       const newLimit = initialBatchSize;
 
@@ -552,6 +604,7 @@ export function usePokemonList({
         limit: newLimit,
         offset: newOffset,
       }).catch((error) => {
+        console.error("Generation change refetch failed:", error);
         dispatch(
           setError(
             error.message || "Failed to load Pokemon for this generation",
@@ -559,6 +612,12 @@ export function usePokemonList({
         );
         dispatch(setLoading(false));
         dispatch(setGenerationSwitching(false));
+
+        // Clear timeout since we're handling the error
+        if (window.generationSwitchingTimeout) {
+          clearTimeout(window.generationSwitchingTimeout);
+          delete window.generationSwitchingTimeout;
+        }
       });
     }
   };
