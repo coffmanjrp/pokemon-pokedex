@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, complete SSG implementation for all 1302+ Pokemon (including Mega, Gigantamax, and regional forms), performance optimizations, and sidebar-based generation navigation. All 2613 static pages generated successfully with zero build errors. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes. **Hybrid deployment fully operational** with frontend deployed on Vercel and backend on Railway with CORS wildcard pattern matching for dynamic URLs. Layout optimization completed with proper sidebar-to-content spacing and overlay positioning.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, complete SSG implementation for all 1302+ Pokemon (including Mega, Gigantamax, and regional forms), performance optimizations, and sidebar-based generation navigation. All 2613 static pages generated successfully with zero build errors. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes. **Hybrid deployment fully operational** with frontend deployed on Vercel and backend on Railway with CORS wildcard pattern matching for dynamic URLs. **Layout and scrolling optimization completed** with proper sidebar-to-content spacing, overlay positioning, and Pokemon grid scrolling functionality restored.
 
 ## Architecture
 
@@ -40,7 +40,8 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 - **Cache Strategy**: Long-term static asset caching, intelligent API response caching
 - **Build Performance**: Bundle analyzer integration, optimized webpack configuration
 - **Layout Optimization**: Sidebar-to-content spacing optimized, overlay positioning improved
-- **Grid Rendering**: Virtual scrolling replaced with optimized standard grid for better reliability
+- **Grid Rendering**: Virtual scrolling replaced with optimized standard grid for better reliability and scrolling functionality
+- **Component Architecture**: PokemonGrid component refactored from VirtualPokemonGrid with proper container overflow management
 
 ## Development Commands
 
@@ -123,7 +124,7 @@ pokemon-pokedex/
 │   │   └── ui/                   # Organized UI components
 │   │       ├── animation/         # Animation components (PageTransition, AnimatedLoadingScreen)
 │   │       ├── common/           # Common UI components (Badge, LoadingSpinner, ToastProvider, etc.)
-│   │       └── pokemon/          # Pokemon-specific UI components (20+ modular components)
+│   │       └── pokemon/          # Pokemon-specific UI components (PokemonGrid, PokemonCard, etc.)
 │   ├── lib/                      # Utility functions and configurations
 │   │   ├── data/                 # Centralized data files for better organization
 │   │   │   ├── formTranslations.ts    # Pokemon form translations and utilities
@@ -161,7 +162,7 @@ pokemon-pokedex/
 - **Multilingual Support**: Complete English/Japanese localization with middleware-based routing
 - **Responsive Design**: Mobile-first with tablet and desktop optimizations
 - **Mobile/Tablet Experience**: Hamburger menu navigation, touch-optimized UI, responsive grid layouts
-- **Performance**: Virtual scrolling, smart caching, image optimization, iOS Safari scroll optimization
+- **Performance**: Optimized grid rendering, smart caching, image optimization, iOS Safari scroll optimization
 - **Detail Pages**: Comprehensive Pokemon information with evolution chains and form variants
 - **Type System**: Official Pokemon type colors and effectiveness calculations
 
@@ -228,6 +229,11 @@ pokemon-pokedex/
 - Hamburger menu with `bg-black/30` overlay for optimal visibility
 - Tab count indicators hidden on mobile with `hidden sm:inline-flex`
 - iOS Safari scroll optimization with `WebkitOverflowScrolling: 'touch'`
+
+### Container Overflow Management
+- Main content containers use `overflow-auto` for proper scrolling
+- Pokemon grid containers avoid `min-h-full` classes that prevent natural height
+- Flex layouts with `flex-1` allow proper content distribution and scrolling
 
 ### Performance Best Practices
 - Run `npm run analyze` for bundle analysis before major releases
