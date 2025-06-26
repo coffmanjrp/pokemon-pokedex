@@ -82,6 +82,8 @@ export interface Dictionary {
   meta: {
     title: string;
     description: string;
+    homeTitle: string;
+    homeDescription: string;
     pokemonTitle: string;
     pokemonDescription: string;
     pokemonDescriptionShort: string;

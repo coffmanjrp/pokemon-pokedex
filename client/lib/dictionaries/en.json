@@ -87,6 +87,8 @@
   "meta": {
     "title": "Pokédex - Discover the World of Pokémon",
     "description": "Discover and explore the wonderful world of Pokémon. Search, filter, and learn about your favorite creatures!",
+    "homeTitle": "Pokemon Pokedex | Complete Multi-Generation Pokemon Database",
+    "homeDescription": "Comprehensive Pokemon database featuring 1302+ Pokemon with detailed stats, official artwork, type effectiveness, evolution chains, and move sets. Complete coverage from Generation 1 to 9 with advanced search and filtering capabilities.",
     "pokemonTitle": "{{name}} (#{{id}}) - {{type}} Pokémon | Pokédex",
     "pokemonDescription": "{{name}} is a {{type}} type Pokémon with {{hp}} HP, {{attack}} Attack, and {{defense}} Defense. {{description}}",
     "pokemonDescriptionShort": "{{name}} - {{type}} type Pokémon from Generation {{generation}}. Height: {{height}}m, Weight: {{weight}}kg.",

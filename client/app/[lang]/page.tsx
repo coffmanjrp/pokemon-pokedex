@@ -36,19 +36,19 @@ export async function generateMetadata({
     (today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) /
       86400000,
   );
-  const selectedPokemon = featuredPokemon[dayOfYear % featuredPokemon.length];
+  const selectedPokemon = featuredPokemon[dayOfYear % featuredPokemon.length]!;
 
   // High-quality official artwork URL
   const pokemonImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${selectedPokemon.id}.png`;
 
   const title =
-    dictionary.meta?.homeTitle ||
+    dictionary.meta.homeTitle ||
     (lang === "ja"
       ? "ポケモン図鑑 | 全世代ポケモン完全データベース"
       : "Pokemon Pokedex | Complete Multi-Generation Pokemon Database");
 
   const description =
-    dictionary.meta?.homeDescription ||
+    dictionary.meta.homeDescription ||
     (lang === "ja"
       ? `全1302匹以上のポケモンの詳細情報を網羅。公式アートワーク、ステータス、タイプ相性、進化チェーン、技一覧など充実した機能を提供する最新のポケモン図鑑。第1世代から第9世代まで完全対応。`
       : `Comprehensive Pokemon database featuring 1302+ Pokemon with detailed stats, official artwork, type effectiveness, evolution chains, and move sets. Complete coverage from Generation 1 to 9 with advanced search and filtering capabilities.`);
