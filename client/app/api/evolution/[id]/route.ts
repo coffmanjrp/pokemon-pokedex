@@ -260,6 +260,16 @@ export async function GET(
 
       return evolutionDetails.map((detail: unknown, index) => {
         const detailObj = detail as Record<string, unknown>; // Type assertion for accessing properties
+
+        // Helper function to safely extract name property
+        const getName = (val: unknown): string | undefined => {
+          if (typeof val === "object" && val !== null && "name" in val) {
+            const nameValue = (val as Record<string, unknown>).name;
+            return typeof nameValue === "string" ? nameValue : undefined;
+          }
+          return undefined;
+        };
+
         const analysis = {
           index,
           raw: detail,
@@ -268,8 +278,8 @@ export async function GET(
             detailObj.minLevel !== null && detailObj.minLevel !== undefined,
           minLevelValue: detailObj.minLevel,
           hasItem: !!detailObj.item,
-          itemName: detailObj.item?.name,
-          trigger: detailObj.trigger?.name,
+          itemName: getName(detailObj.item),
+          trigger: getName(detailObj.trigger),
           hasTimeOfDay: !!detailObj.timeOfDay,
           timeOfDay: detailObj.timeOfDay,
           hasHappiness:
@@ -277,16 +287,16 @@ export async function GET(
             detailObj.minHappiness !== undefined,
           minHappiness: detailObj.minHappiness,
           hasKnownMove: !!detailObj.knownMove,
-          knownMove: detailObj.knownMove?.name,
+          knownMove: getName(detailObj.knownMove),
         };
 
         // Determine what conditions would be displayed
         if (analysis.hasMinLevel) {
           analysis.conditions.push(`Level ${detailObj.minLevel}`);
         }
-        if (analysis.hasItem) {
+        if (analysis.hasItem && analysis.itemName) {
           analysis.conditions.push(
-            `Use ${detailObj.item.name.replace(/-/g, " ")}`,
+            `Use ${analysis.itemName.replace(/-/g, " ")}`,
           );
         }
         if (analysis.trigger === "trade") {
@@ -301,9 +311,9 @@ export async function GET(
         if (analysis.hasTimeOfDay) {
           analysis.conditions.push(`Time: ${detailObj.timeOfDay}`);
         }
-        if (analysis.hasKnownMove) {
+        if (analysis.hasKnownMove && analysis.knownMove) {
           analysis.conditions.push(
-            `Learn ${detailObj.knownMove.name.replace(/-/g, " ")}`,
+            `Learn ${analysis.knownMove.replace(/-/g, " ")}`,
           );
         }
 
