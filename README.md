@@ -45,10 +45,14 @@ REDIS_URL=your_redis_server_url
 
 # Server Configuration
 PORT=4000
-NODE_ENV=development
+NODE_ENV=production
+# For development: NODE_ENV=development
 
-# CORS Configuration
-CORS_ORIGIN=your_client_url
+# CORS Configuration - Supports wildcard patterns for dynamic URLs
+# For deployments with dynamic preview URLs
+CORS_ORIGIN=https://*.your-hosting-provider.app,https://your-production-domain.com
+# For development
+# CORS_ORIGIN=http://localhost:3000
 ```
 
 ### Client Configuration
@@ -57,16 +61,32 @@ Create `client/.env.local`:
 
 ```bash
 # GraphQL Server Configuration
-NEXT_PUBLIC_GRAPHQL_URL=your_graphql_server_url
+# Production
+NEXT_PUBLIC_GRAPHQL_URL=https://your-graphql-server.your-hosting-provider.app/graphql
+# Development
+# NEXT_PUBLIC_GRAPHQL_URL=http://localhost:4000/graphql
 
-# App Configuration
-NEXT_PUBLIC_APP_NAME=Pokemon Pokedex
-NEXT_PUBLIC_APP_VERSION=1.0.0
+# Server Mode Configuration
+NEXT_PUBLIC_SERVER_MODE=production
+# For development: NEXT_PUBLIC_SERVER_MODE=development
 
 # Build Mode Configuration (for selective data loading)
 # Set to 'ssg' during SSG build time, 'runtime' for client browsing
 NEXT_PUBLIC_BUILD_MODE=runtime
 BUILD_MODE=runtime
+
+# App Configuration
+NEXT_PUBLIC_APP_NAME=Pokemon Pokedex
+NEXT_PUBLIC_APP_VERSION=1.0.0
+```
+
+### Production Deployment URLs
+
+```bash
+# Example production configuration
+# Frontend: https://your-app-name.your-hosting-provider.app
+# Backend: https://your-backend-name.your-hosting-provider.app
+# GraphQL: https://your-backend-name.your-hosting-provider.app/graphql
 ```
 
 ## 📝 Scripts
