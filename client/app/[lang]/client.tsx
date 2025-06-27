@@ -63,13 +63,13 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
   useEffect(() => {
     if (!loading && pokemons.length > 0 && !initialLoadComplete) {
       setInitialLoadComplete(true);
-      // データ取得完了後、すぐにローディング終了
+      // End loading immediately after data fetch completion
       setShowLoadingScreen(false);
     }
   }, [loading, pokemons.length, initialLoadComplete]);
 
   const handleLoadingComplete = () => {
-    // データがまだの場合のフォールバック
+    // Fallback when data is not ready yet
     if (initialLoadComplete) {
       setShowLoadingScreen(false);
     }
@@ -144,7 +144,7 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
     }
   }, [loading, hasNextPage, pokemons.length, showCompletionFooter]);
 
-  // プリロード用のPreload Generation hook
+  // Preload Generation hook for background loading
   // usePreloadGeneration(currentGeneration);
 
   if (error) {

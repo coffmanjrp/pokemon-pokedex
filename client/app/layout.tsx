@@ -15,9 +15,65 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pokemon Pokedex",
+  title: {
+    default: "Pokemon Pokedex | Complete Multi-Generation Pokemon Database",
+    template: "%s | Pokemon Pokedex",
+  },
   description:
-    "A modern Pokemon Pokedex built with Next.js, GraphQL, and TypeScript",
+    "Comprehensive Pokemon database featuring 1302+ Pokemon from all generations. Explore detailed stats, official artwork, evolution chains, type effectiveness, and move sets. Built with modern web technologies for the best Pokemon experience.",
+  keywords:
+    "pokemon, pokedex, pokemon database, pokemon stats, pokemon search, evolution chain, type effectiveness, official artwork, generation, nintendo, game freak",
+  authors: [{ name: "Pokemon Pokedex Team" }],
+  creator: "Pokemon Pokedex",
+  publisher: "Pokemon Pokedex",
+  metadataBase: new URL("https://pokemon-pokedex-client.vercel.app"),
+  openGraph: {
+    title: "Pokemon Pokedex | Complete Multi-Generation Pokemon Database",
+    description:
+      "Comprehensive Pokemon database featuring 1302+ Pokemon with detailed stats, official artwork, evolution chains, and more. Explore all generations in one place.",
+    type: "website",
+    url: "https://pokemon-pokedex-client.vercel.app",
+    siteName: "Pokemon Pokedex",
+    images: [
+      {
+        url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png",
+        width: 475,
+        height: 475,
+        alt: "Pikachu - Pokemon Pokedex",
+      },
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Pokemon Pokedex - Comprehensive Pokemon Database",
+      },
+    ],
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pokemon Pokedex | Complete Multi-Generation Pokemon Database",
+    description:
+      "Comprehensive Pokemon database featuring 1302+ Pokemon with detailed stats, official artwork, evolution chains, and more.",
+    images: [
+      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png",
+    ],
+    creator: "@pokemon",
+    site: "@pokemon",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  category: "entertainment",
+  classification: "Pokemon Database",
 };
 
 export default function RootLayout({

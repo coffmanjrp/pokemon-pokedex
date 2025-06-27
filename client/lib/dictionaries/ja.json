@@ -91,6 +91,8 @@
   "meta": {
     "title": "ポケモン図鑑 - ポケモンの世界を発見しよう",
     "description": "ポケモンの素晴らしい世界を発見し、探検しましょう。お気に入りのポケモンを検索、フィルタリング、学習しましょう！",
+    "homeTitle": "ポケモン図鑑 | 全世代ポケモン完全データベース",
+    "homeDescription": "全1302匹以上のポケモンの詳細情報を網羅。公式アートワーク、ステータス、タイプ相性、進化チェーン、技一覧など充実した機能を提供する最新のポケモン図鑑。第1世代から第9世代まで完全対応。",
     "pokemonTitle": "{{name}} (No.{{id}}) - {{type}}タイプ | ポケモン図鑑",
     "pokemonDescription": "{{name}}は{{type}}タイプのポケモンです。HP {{hp}}、こうげき {{attack}}、ぼうぎょ {{defense}}。{{description}}",
     "pokemonDescriptionShort": "{{name}} - 第{{generation}}世代の{{type}}タイプポケモン。高さ {{height}}m、重さ {{weight}}kg。",
