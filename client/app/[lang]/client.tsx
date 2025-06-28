@@ -16,9 +16,14 @@ import { gsap } from "gsap";
 interface PokemonListClientProps {
   dictionary: Dictionary;
   lang: Locale;
+  initialPokemon?: Pokemon[];
 }
 
-function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
+function PokemonListContent({
+  dictionary,
+  lang,
+  initialPokemon = [],
+}: PokemonListClientProps) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -44,11 +49,18 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
     generationRange,
     loadedCount,
     totalCount,
-  } = usePokemonList({ generation: currentGeneration });
+  } = usePokemonList({
+    generation: currentGeneration,
+    initialPokemon: initialPokemon,
+  });
   const { generationSwitching } = useAppSelector((state) => state.pokemon);
 
-  const [showLoadingScreen, setShowLoadingScreen] = useState(true);
-  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+  const [showLoadingScreen, setShowLoadingScreen] = useState(
+    initialPokemon.length === 0,
+  );
+  const [initialLoadComplete, setInitialLoadComplete] = useState(
+    initialPokemon.length > 0,
+  );
   const [showCompletionFooter, setShowCompletionFooter] = useState(true);
   const completionFooterRef = useRef<HTMLElement>(null);
 
@@ -413,10 +425,15 @@ function PokemonListContent({ dictionary, lang }: PokemonListClientProps) {
 export function PokemonListClient({
   dictionary,
   lang,
+  initialPokemon = [],
 }: PokemonListClientProps) {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <PokemonListContent dictionary={dictionary} lang={lang} />
+      <PokemonListContent
+        dictionary={dictionary}
+        lang={lang}
+        initialPokemon={initialPokemon}
+      />
     </Suspense>
   );
 }

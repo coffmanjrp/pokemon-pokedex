@@ -57,11 +57,13 @@ const needsClearForGeneration = (
 
 interface UsePokemonListOptions {
   generation?: number;
+  initialPokemon?: Pokemon[];
   autoFetch?: boolean;
 }
 
 export function usePokemonList({
   generation = 1,
+  initialPokemon = [],
   autoFetch = true,
 }: UsePokemonListOptions = {}) {
   const dispatch = useAppDispatch();
@@ -86,6 +88,18 @@ export function usePokemonList({
       setCurrentGeneration(generation);
     }
   }, [generation, currentGeneration]);
+
+  // Initialize with server-side data (ISR)
+  useEffect(() => {
+    if (initialPokemon.length > 0 && pokemons.length === 0) {
+      console.log(
+        `Initializing with ${initialPokemon.length} server-side Pokemon for ISR`,
+      );
+      dispatch(setPokemons(initialPokemon));
+      dispatch(setHasNextPage(initialPokemon.length >= initialBatchSize));
+      dispatch(setLoading(false));
+    }
+  }, [initialPokemon, pokemons.length, dispatch]);
 
   // Use appropriate query based on build mode
   const selectedQuery = getListQuery();
