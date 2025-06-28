@@ -35,6 +35,11 @@ export interface Dictionary {
       pokemonNotFound: string;
       goHome: string;
     };
+    notFound: {
+      title: string;
+      description: string;
+      returnHome: string;
+    };
     pokemonDetails: {
       height: string;
       weight: string;

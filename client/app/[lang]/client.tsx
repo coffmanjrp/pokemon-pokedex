@@ -9,7 +9,7 @@ import { GenerationSwitchingOverlay } from "../../components/ui/pokemon/Generati
 import { usePokemonList } from "../../hooks/usePokemonList";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { setSelectedPokemon } from "../../store/slices/pokemonSlice";
-import { setLanguage } from "../../store/slices/uiSlice";
+import { setLanguage, setDictionary } from "../../store/slices/uiSlice";
 import { useEffect, useState, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Pokemon } from "@/types/pokemon";
@@ -30,7 +30,8 @@ function PokemonListContent({
   const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { language: currentLanguage } = useAppSelector((state) => state.ui);
+  const { language: currentLanguage, dictionary: currentDictionary } =
+    useAppSelector((state) => state.ui);
   // Initialize generation from URL parameter on first load
   const [currentGeneration, setCurrentGeneration] = useState(() => {
     const generationParam = searchParams.get("generation");
@@ -67,12 +68,15 @@ function PokemonListContent({
   const [showCompletionFooter, setShowCompletionFooter] = useState(true);
   const completionFooterRef = useRef<HTMLElement>(null);
 
-  // Sync language from server props to Redux store
+  // Sync language and dictionary from server props to Redux store
   useEffect(() => {
     if (currentLanguage !== lang) {
       dispatch(setLanguage(lang));
     }
-  }, [lang, currentLanguage, dispatch]);
+    if (!currentDictionary) {
+      dispatch(setDictionary(dictionary));
+    }
+  }, [lang, currentLanguage, dictionary, currentDictionary, dispatch]);
 
   // Handle initial loading completion
   useEffect(() => {

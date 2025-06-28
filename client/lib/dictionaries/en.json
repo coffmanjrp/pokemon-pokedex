@@ -32,6 +32,11 @@
       "pokemonNotFound": "Pokémon not found",
       "goHome": "Go Home"
     },
+    "notFound": {
+      "title": "Pokemon Not Found",
+      "description": "Could not find the requested Pokemon.",
+      "returnHome": "← Return Home"
+    },
     "pokemonDetails": {
       "height": "Height",
       "weight": "Weight",

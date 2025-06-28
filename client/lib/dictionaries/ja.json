@@ -32,6 +32,11 @@
       "pokemonNotFound": "ポケモンが見つかりません",
       "goHome": "ホームに戻る"
     },
+    "notFound": {
+      "title": "ポケモンが見つかりません",
+      "description": "リクエストされたポケモンが見つかりませんでした。",
+      "returnHome": "← ホームに戻る"
+    },
     "pokemonDetails": {
       "height": "高さ",
       "weight": "重さ",
