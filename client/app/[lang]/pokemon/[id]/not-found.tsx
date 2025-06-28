@@ -4,20 +4,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getLocaleFromPathname } from "@/lib/dictionaries";
 import { useAppSelector } from "@/store/hooks";
+import { getFallbackText } from "@/lib/fallbackText";
 
 export default function NotFound() {
   const pathname = usePathname();
   const lang = getLocaleFromPathname(pathname);
   const { dictionary } = useAppSelector((state) => state.ui);
 
-  // Fallback text if dictionary is not yet loaded
+  const fallback = getFallbackText(lang);
   const fallbackText = {
-    title: lang === "en" ? "Pokemon Not Found" : "ポケモンが見つかりません",
-    description:
-      lang === "en"
-        ? "Could not find the requested Pokemon."
-        : "リクエストされたポケモンが見つかりませんでした。",
-    returnHome: lang === "en" ? "← Return Home" : "← ホームに戻る",
+    title: fallback,
+    description: fallback,
+    returnHome: fallback,
   };
 
   const text = dictionary?.ui.notFound || fallbackText;

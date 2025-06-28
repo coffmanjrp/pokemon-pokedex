@@ -93,7 +93,13 @@
       "noDescriptionsInLanguage": "No descriptions available in this language",
       "weaknesses": "Weaknesses",
       "noMajorWeaknesses": "No major weaknesses",
-      "story": "Story"
+      "story": "Story",
+      "level": "Level",
+      "use": "Use",
+      "learn": "Learn",
+      "at": "At",
+      "with": "with",
+      "happiness": "Happiness"
     },
     "stats": {
       "hp": "HP",
@@ -132,6 +138,11 @@
       "english": "English",
       "japanese": "Japanese",
       "toggle": "Toggle language"
+    },
+    "sandbox": {
+      "title": "Animation Sandbox",
+      "subtitle": "Test different Pokemon card click animations",
+      "instructions": "Click on each card to test the animation effects"
     }
   },
   "meta": {

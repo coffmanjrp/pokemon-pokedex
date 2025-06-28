@@ -96,6 +96,12 @@ export interface Dictionary {
       weaknesses: string;
       noMajorWeaknesses: string;
       story: string;
+      level: string;
+      use: string;
+      learn: string;
+      at: string;
+      with: string;
+      happiness: string;
     };
     stats: {
       hp: string;
@@ -126,6 +132,11 @@ export interface Dictionary {
       english: string;
       japanese: string;
       toggle: string;
+    };
+    sandbox: {
+      title: string;
+      subtitle: string;
+      instructions: string;
     };
   };
   meta: {

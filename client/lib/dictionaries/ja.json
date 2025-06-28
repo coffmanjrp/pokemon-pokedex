@@ -93,7 +93,13 @@
       "noDescriptionsInLanguage": "この言語での説明がありません",
       "weaknesses": "弱点",
       "noMajorWeaknesses": "特に弱点なし",
-      "story": "説明"
+      "story": "説明",
+      "level": "レベル",
+      "use": "使用",
+      "learn": "触える",
+      "at": "で",
+      "with": "で",
+      "happiness": "なつき度"
     },
     "stats": {
       "hp": "HP",
@@ -132,6 +138,11 @@
       "english": "English",
       "japanese": "日本語",
       "toggle": "言語の切り替え"
+    },
+    "sandbox": {
+      "title": "アニメーション サンドボックス",
+      "subtitle": "様々なポケモンカードクリックアニメーションをテスト",
+      "instructions": "各カードをクリックしてアニメーション効果をテストしてください"
     }
   },
   "meta": {

@@ -334,11 +334,8 @@ function PokemonEvolutionChainContent({
       trigger.minLevel !== undefined &&
       typeof trigger.minLevel === "number"
     ) {
-      conditions.push(
-        lang === "en"
-          ? `Level ${trigger.minLevel}`
-          : `レベル${trigger.minLevel}`,
-      );
+      const levelText = dictionary?.ui.pokemonDetails.level || fallback;
+      conditions.push(`${levelText} ${trigger.minLevel}`);
     }
 
     if (trigger.item) {
@@ -347,8 +344,9 @@ function PokemonEvolutionChainContent({
 
       if (itemTranslation) {
         const itemName = itemTranslation[lang === "en" ? "en" : "ja"];
+        const useText = dictionary?.ui.pokemonDetails.use || fallback;
         conditions.push(
-          lang === "en" ? `Use ${itemName}` : `${itemName}を使用`,
+          lang === "en" ? `${useText} ${itemName}` : `${itemName}を${useText}`,
         );
       } else {
         // Fallback to formatted item name
@@ -357,8 +355,11 @@ function PokemonEvolutionChainContent({
           .split(" ")
           .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
           .join(" ");
+        const useText = dictionary?.ui.pokemonDetails.use || fallback;
         conditions.push(
-          lang === "en" ? `Use ${capitalizedName}` : `${capitalizedName}を使用`,
+          lang === "en"
+            ? `${useText} ${capitalizedName}`
+            : `${capitalizedName}を${useText}`,
         );
       }
     }
@@ -372,10 +373,11 @@ function PokemonEvolutionChainContent({
     }
 
     if (trigger.minHappiness) {
+      const happinessText = dictionary?.ui.pokemonDetails.happiness || fallback;
       conditions.push(
         lang === "en"
-          ? `Happiness ${trigger.minHappiness}+`
-          : `なつき度${trigger.minHappiness}以上`,
+          ? `${happinessText} ${trigger.minHappiness}+`
+          : `${happinessText}${trigger.minHappiness}以上`,
       );
     }
 
@@ -391,15 +393,21 @@ function PokemonEvolutionChainContent({
 
     if (trigger.location) {
       const locationName = trigger.location.name.replace(/-/g, " ");
+      const atText = dictionary?.ui.pokemonDetails.at || fallback;
       conditions.push(
-        lang === "en" ? `At ${locationName}` : `${locationName}で`,
+        lang === "en"
+          ? `${atText} ${locationName}`
+          : `${locationName}${atText}`,
       );
     }
 
     if (trigger.knownMove) {
       const moveName = trigger.knownMove.name.replace(/-/g, " ");
+      const learnText = dictionary?.ui.pokemonDetails.learn || fallback;
       conditions.push(
-        lang === "en" ? `Learn ${moveName}` : `${moveName}を覚える`,
+        lang === "en"
+          ? `${learnText} ${moveName}`
+          : `${moveName}を${learnText}`,
       );
     }
 
