@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAppDispatch } from "@/store/hooks";
 import { setLanguage } from "@/store/slices/uiSlice";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Locale, generateAlternateLanguageUrl } from "@/lib/dictionaries";
 import { setStoredLanguage } from "@/lib/languageStorage";
 import { GENERATIONS } from "@/lib/data/generations";
@@ -24,11 +24,16 @@ export function Sidebar({
   const dispatch = useAppDispatch();
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLanguageToggle = () => {
     const newLang = lang === "en" ? "ja" : "en";
     const newUrl = generateAlternateLanguageUrl(pathname, newLang);
+
+    // Preserve URL parameters (query string)
+    const currentParams = searchParams.toString();
+    const urlWithParams = currentParams ? `${newUrl}?${currentParams}` : newUrl;
 
     // Save to localStorage first
     setStoredLanguage(newLang);
@@ -36,8 +41,8 @@ export function Sidebar({
     // Update Redux state
     dispatch(setLanguage(newLang));
 
-    // Navigate to new URL
-    router.push(newUrl);
+    // Navigate to new URL with preserved parameters
+    router.push(urlWithParams);
   };
 
   const handleGenerationClick = (generationId: number) => {

@@ -1,5 +1,8 @@
 "use client";
 
+import { useAppSelector } from "@/store/hooks";
+import { getFallbackText } from "@/lib/fallbackText";
+
 interface PokemonVersionToggleProps {
   isShiny: boolean;
   onToggle: (isShiny: boolean) => void;
@@ -11,10 +14,19 @@ export function PokemonVersionToggle({
   onToggle,
   language,
 }: PokemonVersionToggleProps) {
+  const { dictionary } = useAppSelector((state) => state.ui);
+
+  const fallback = getFallbackText(language);
+
+  const text = {
+    versions: dictionary?.ui.pokemonDetails.versions || fallback,
+    normal: dictionary?.ui.pokemonDetails.normal || fallback,
+    shiny: dictionary?.ui.pokemonDetails.shiny || fallback,
+  };
   return (
     <div className="mb-6">
       <h3 className="text-lg font-semibold text-gray-900 mb-3">
-        {language === "en" ? "Versions" : "バージョン"}
+        {text.versions}
       </h3>
       <div className="flex gap-2">
         <button
@@ -25,7 +37,7 @@ export function PokemonVersionToggle({
               : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100 hover:shadow-sm"
           }`}
         >
-          {language === "en" ? "Normal" : "通常"}
+          {text.normal}
         </button>
         <button
           onClick={() => onToggle(true)}
@@ -35,7 +47,7 @@ export function PokemonVersionToggle({
               : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100 hover:shadow-sm"
           }`}
         >
-          {language === "en" ? "Shiny" : "色違い"}
+          {text.shiny}
         </button>
       </div>
     </div>

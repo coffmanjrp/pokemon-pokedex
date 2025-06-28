@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. **Pokemon detail pages use SSG** for optimal performance with individual Pokemon data pre-generated at build time. **Pokemon generation pages fully implemented** with SSG support for all 9 generations (Kanto through Paldea) featuring comprehensive stats, navigation, and metadata optimization. **List pages use client-side rendering** with progressive loading for better user experience and faster builds. **Intelligent generational build system** with automatic detection and memory-efficient processing by Pokemon generation. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes. **Hybrid deployment fully operational** with frontend deployed on Vercel and backend on Railway with CORS wildcard pattern matching for dynamic URLs. **Layout and scrolling optimization completed** with proper sidebar-to-content spacing, overlay positioning, and Pokemon grid scrolling functionality restored. **usePokemonList hook fully refactored** with Apollo Client standard patterns, eliminated code duplication, enhanced error handling with silent failover, and improved loadedCount-based loading management.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. **Pokemon detail pages use SSG** for optimal performance with individual Pokemon data pre-generated at build time. **Pokemon list pages use ISR (Incremental Static Regeneration)** for optimal SEO and performance while maintaining full interactivity with progressive loading and generation filtering. **Intelligent generational build system** with automatic detection and memory-efficient processing by Pokemon generation. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes. **Hybrid deployment fully operational** with frontend deployed on Vercel and backend on Railway with CORS wildcard pattern matching for dynamic URLs. **Layout and scrolling optimization completed** with proper sidebar-to-content spacing, overlay positioning, and Pokemon grid scrolling functionality restored. **usePokemonList hook fully refactored** with Apollo Client standard patterns, eliminated code duplication, enhanced error handling with silent failover, and improved loadedCount-based loading management. **Comprehensive Redux dictionary support implemented** across all Pokemon detail child components with unified translation system using shared getFallbackText utility and complete i18n coverage for evolution conditions and sandbox components.
 
 ## Architecture
 
@@ -30,11 +30,11 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 
 ### Data Loading Strategy
 - **Pokemon Detail Pages**: Static Site Generation (SSG) with generational batch processing for optimal build performance
-- **Pokemon Generation Pages**: Full SSG implementation for all 9 generations with individual generation builds support
-- **Pokemon List Pages**: Client-Side Rendering (CSR) with progressive loading and Apollo Client caching
+- **Pokemon List Pages**: Incremental Static Regeneration (ISR) with server-side initial rendering and client-side progressive enhancement
 - **Generational Build System**: SSG builds are processed by Pokemon generation (1-9) to reduce memory usage and improve stability
-- **Smart Caching**: Multi-level caching strategy (Redis backend + Apollo Client frontend) for optimal performance
-- **Selective Query Optimization**: Lightweight queries for browsing, full data for detail pages
+- **ISR Caching**: 1-hour revalidation for Pokemon list pages with immediate static serving and background updates
+- **Smart Caching**: Multi-level caching strategy (Redis backend + Apollo Client frontend + ISR static cache) for optimal performance
+- **Hybrid Rendering**: Server Components for initial content, Client Components for interactive features
 
 ### Performance Optimizations
 - **Image Optimization**: AVIF/WebP formats, 1-year caching, dynamic quality settings
@@ -44,9 +44,11 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 - **Layout Optimization**: Sidebar-to-content spacing optimized, overlay positioning improved
 - **Grid Rendering**: Virtual scrolling replaced with optimized standard grid for better reliability and scrolling functionality
 - **Component Architecture**: PokemonGrid component refactored from VirtualPokemonGrid with proper container overflow management
-- **Generation Switching**: Enhanced reliability with silent timeout handling and seamless data preservation
+- **Generation Switching**: Enhanced reliability with 8-second timeout handling and seamless data preservation
 - **Apollo Client Integration**: Fully migrated to standard fetchMore() patterns with automatic cache management
 - **SEO & Metadata**: Comprehensive Open Graph, Twitter Cards, and multilingual metadata implementation
+- **Internationalization**: Redux-based dictionary system with shared getFallbackText utility across all components
+- **UX Optimization**: Reduced generation switching timeout from 15 seconds to 8 seconds for improved responsiveness
 
 ## Development Commands
 
@@ -117,13 +119,10 @@ pokemon-pokedex/
 │   │   │   ├── page.tsx           # Main Pokemon grid page (client wrapper)
 │   │   │   ├── client.tsx         # Client-side Pokemon list logic
 │   │   │   ├── layout.tsx         # Language-aware layout
-│   │   │   ├── pokemon/[id]/      # Pokemon detail pages
-│   │   │   │   ├── page.tsx       # Server component with metadata
-│   │   │   │   ├── client.tsx     # Client-side detail logic
-│   │   │   │   └── not-found.tsx  # 404 page for missing Pokemon
-│   │   │   └── generation/[id]/   # Pokemon generation pages (SSG)
-│   │   │       ├── page.tsx       # Server component with generation metadata
-│   │   │       └── client.tsx     # Client-side generation page logic
+│   │   │   └── pokemon/[id]/      # Pokemon detail pages
+│   │   │       ├── page.tsx       # Server component with metadata
+│   │   │       ├── client.tsx     # Client-side detail logic
+│   │   │       └── not-found.tsx  # 404 page for missing Pokemon
 │   │   └── layout.tsx             # Root layout with providers
 │   ├── middleware.ts               # Language detection and routing
 │   ├── components/                # React components (fully multilingual)
@@ -166,12 +165,12 @@ pokemon-pokedex/
 ## Key Features
 
 - **Pokemon Display**: Card-based layout with official artwork and sprites
-- **Generation Navigation**: Sidebar with generation buttons (1-9) and progressive loading
-- **Generation Pages**: Dedicated SSG pages for all 9 Pokemon generations with comprehensive stats, region information, and featured Pokemon
+- **Generation Navigation**: Sidebar with generation buttons (1-9) and intelligent filtering
+- **ISR Performance**: Server-side initial rendering with 1-hour cache and progressive client-side enhancement
 - **Multilingual Support**: Complete English/Japanese localization with middleware-based routing
 - **Responsive Design**: Mobile-first with tablet and desktop optimizations
 - **Mobile/Tablet Experience**: Hamburger menu navigation, touch-optimized UI, responsive grid layouts
-- **Performance**: Optimized grid rendering, smart caching, image optimization, iOS Safari scroll optimization
+- **Performance**: ISR caching, optimized grid rendering, smart caching, image optimization, iOS Safari scroll optimization
 - **Detail Pages**: Comprehensive Pokemon information with evolution chains and form variants
 - **Type System**: Official Pokemon type colors and effectiveness calculations
 - **SEO Optimization**: Enhanced metadata with Open Graph, Twitter Cards, and multilingual support
@@ -210,19 +209,20 @@ pokemon-pokedex/
 
 ### Navigation System
 - **Sidebar Navigation**: Fixed sidebar with generation buttons (1-9), hamburger menu for mobile
-- **Generation Switching**: Intelligent navigation - filters Pokemon list on main page, navigates to generation pages when viewing generations
+- **Generation Filtering**: Intelligent generation-based filtering system for Pokemon list
 - **Generation Ranges**: Kanto (1-151), Johto (152-251), Hoenn (252-386), etc.
-- **Progressive Loading**: Initial 20 Pokemon load immediately, background loading for remainder
+- **Progressive Loading**: Initial Pokemon rendered server-side, progressive loading for additional content
 - **Mobile Navigation**: Touch-optimized hamburger menu with overlay and logo positioning
 
-### Static Site Generation & Generational Build System
+### Static Site Generation & ISR System
 - **Pokemon Detail Pages**: Built in 9 separate batches by generation for optimal memory usage (2600+ pages total)
-- **Pokemon Generation Pages**: Full SSG implementation for all 9 generations (18 pages total: 9 generations × 2 languages)
+- **Pokemon List Pages**: ISR implementation with 1-hour revalidation for optimal performance and SEO
 - **Environment-Controlled**: Build strategy controlled via environment variables for flexibility
 - **Memory Efficiency**: Reduces build memory usage by ~90% (2600→300 pages per generation)
 - **Smart ID Validation**: GraphQL-based detection of valid Pokemon IDs for detail pages
 - **Build Performance**: Improved stability and reduced timeout errors with generation-based batching
 - **Individual Generation Builds**: Support for building specific generations (build:gen-1 through build:gen-9)
+- **ISR Benefits**: Server-side rendering for SEO + client-side interactivity + automatic background updates
 
 #### Build Commands & Automatic Detection
 ```bash
@@ -288,9 +288,9 @@ npm run build:generational  # Generational
 
 ### Generation Navigation State
 - Use Redux state for current generation: `useAppSelector((state) => state.pokemon.currentGeneration)`
-- Sidebar handles generation switching and updates Redux state
-- **Generation Pages**: Use `/[lang]/generation/[id]` routes for dedicated generation views
-- **Intelligent Navigation**: Sidebar detects current page type and switches between filtering (main page) and navigation (generation pages)
+- Sidebar handles generation filtering and updates Redux state
+- **Generation Filtering**: Client-side filtering of Pokemon based on generation selection
+- **ISR Integration**: Server-rendered initial content with client-side filtering enhancement
 
 ### Language Navigation
 - Use `href="{/${language}/}"` instead of `href="/"` in navigation components

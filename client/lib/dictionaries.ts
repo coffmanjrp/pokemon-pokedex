@@ -34,6 +34,15 @@ export interface Dictionary {
       tryAgain: string;
       pokemonNotFound: string;
       goHome: string;
+      unknown: string;
+    };
+    common: {
+      loading: string;
+    };
+    notFound: {
+      title: string;
+      description: string;
+      returnHome: string;
     };
     pokemonDetails: {
       height: string;
@@ -47,6 +56,52 @@ export interface Dictionary {
       gameHistory: string;
       sprites: string;
       evolutionChain: string;
+      type: string;
+      category: string;
+      power: string;
+      accuracy: string;
+      physical: string;
+      special: string;
+      status: string;
+      noMovesFound: string;
+      forms: string;
+      trade: string;
+      levelUp: string;
+      day: string;
+      night: string;
+      versions: string;
+      normal: string;
+      shiny: string;
+      artwork: string;
+      officialArtwork: string;
+      pokemonHome: string;
+      gameSprites: string;
+      animated: string;
+      dreamWorld: string;
+      showdown: string;
+      icons: string;
+      noSpritesAvailable: string;
+      noMovesData: string;
+      noGameHistoryData: string;
+      originGeneration: string;
+      gameAppearances: string;
+      remakes: string;
+      otherGames: string;
+      totalAppearances: string;
+      generations: string;
+      latestDescription: string;
+      allDescriptions: string;
+      version: string;
+      noDescriptionsInLanguage: string;
+      weaknesses: string;
+      noMajorWeaknesses: string;
+      story: string;
+      level: string;
+      use: string;
+      learn: string;
+      at: string;
+      with: string;
+      happiness: string;
     };
     stats: {
       hp: string;
@@ -77,6 +132,11 @@ export interface Dictionary {
       english: string;
       japanese: string;
       toggle: string;
+    };
+    sandbox: {
+      title: string;
+      subtitle: string;
+      instructions: string;
     };
   };
   meta: {

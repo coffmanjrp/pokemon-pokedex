@@ -2,11 +2,14 @@
 
 import { Dictionary, Locale } from "@/lib/dictionaries";
 import { POKEMON_TYPE_COLORS, PokemonTypeName } from "@/types/pokemon";
-import { useRef, Suspense } from "react";
+import { useRef, Suspense, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ANIMATIONS, AnimationType } from "@/lib/animations";
+import { getFallbackText } from "@/lib/fallbackText";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { setLanguage, setDictionary } from "@/store/slices/uiSlice";
 
 interface SandboxClientProps {
   dictionary: Dictionary;
@@ -381,6 +384,15 @@ function TestCard({
 function SandboxContent({ lang }: { lang: Locale }) {
   const searchParams = useSearchParams();
   const fromGeneration = searchParams.get("from");
+  const { dictionary } = useAppSelector((state) => state.ui);
+  const fallback = getFallbackText(lang);
+
+  const text = {
+    backButton: dictionary?.ui.navigation.home || fallback,
+    title: dictionary?.ui.sandbox?.title || fallback,
+    subtitle: dictionary?.ui.sandbox?.subtitle || fallback,
+    instructions: dictionary?.ui.sandbox?.instructions || fallback,
+  };
 
   // Create back URL based on generation parameter
   const backUrl =
@@ -499,21 +511,15 @@ function SandboxContent({ lang }: { lang: Locale }) {
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            {lang === "en" ? "Pokedex" : "ポケモン図鑑"}
+            {text.backButton}
           </Link>
         </div>
 
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">
-            {lang === "en"
-              ? "Animation Sandbox"
-              : "アニメーション サンドボックス"}
+            {text.title}
           </h1>
-          <p className="text-lg text-gray-600">
-            {lang === "en"
-              ? "Test different Pokemon card click animations"
-              : "様々なポケモンカードクリックアニメーションをテスト"}
-          </p>
+          <p className="text-lg text-gray-600">{text.subtitle}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 relative">
@@ -531,20 +537,30 @@ function SandboxContent({ lang }: { lang: Locale }) {
         </div>
 
         <div className="mt-12 text-center">
-          <p className="text-sm text-gray-500">
-            {lang === "en"
-              ? "Click on each card to test the animation effects"
-              : "各カードをクリックしてアニメーション効果をテストしてください"}
-          </p>
+          <p className="text-sm text-gray-500">{text.instructions}</p>
         </div>
       </div>
     </div>
   );
 }
 
-export function SandboxClient({ lang }: SandboxClientProps) {
+export function SandboxClient({ dictionary, lang }: SandboxClientProps) {
+  const dispatch = useAppDispatch();
+  const { language: currentLanguage, dictionary: currentDictionary } =
+    useAppSelector((state) => state.ui);
+
+  // Sync language and dictionary from server props to Redux store
+  useEffect(() => {
+    if (currentLanguage !== lang) {
+      dispatch(setLanguage(lang));
+    }
+    if (!currentDictionary) {
+      dispatch(setDictionary(dictionary));
+    }
+  }, [lang, currentLanguage, dictionary, currentDictionary, dispatch]);
+
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div>{getFallbackText(lang)}</div>}>
       <SandboxContent lang={lang} />
     </Suspense>
   );

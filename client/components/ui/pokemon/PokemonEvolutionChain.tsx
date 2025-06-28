@@ -20,6 +20,8 @@ import {
 import { ITEM_TRANSLATIONS } from "@/lib/data/itemTranslations";
 import { POKEMON_TYPE_COLORS } from "@/types/pokemon";
 import { createParticleEchoCombo, AnimationConfig } from "@/lib/animations";
+import { useAppSelector } from "@/store/hooks";
+import { getFallbackText } from "@/lib/fallbackText";
 
 interface PokemonEvolutionChainProps {
   evolutionChain: EvolutionDetail;
@@ -33,6 +35,8 @@ function PokemonEvolutionChainContent({
   const containerRef = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
   const fromGeneration = searchParams.get("from");
+  const { dictionary } = useAppSelector((state) => state.ui);
+  const fallback = getFallbackText(lang);
 
   // Helper function to create Pokemon URL with generation parameter
   const createPokemonUrl = (pokemonId: string) => {
@@ -187,7 +191,7 @@ function PokemonEvolutionChainContent({
             currentEvolution.forms.length > 0 && (
               <div className="mt-4 space-y-2">
                 <div className="text-xs text-gray-600 font-medium text-center">
-                  {lang === "en" ? "Forms" : "すがた"}
+                  {dictionary?.ui.pokemonDetails.forms || fallback}
                 </div>
                 <div className="flex flex-wrap gap-2 justify-center max-w-xs">
                   {currentEvolution.forms.map((form: FormVariant) => (
@@ -296,10 +300,9 @@ function PokemonEvolutionChainContent({
                   ? renderEvolutionCondition(
                       nextEvolution.evolutionDetails[0],
                       lang,
+                      fallback,
                     )
-                  : lang === "en"
-                    ? "Unknown"
-                    : "不明"}
+                  : dictionary?.ui.error.unknown || fallback}
               </div>
             </div>,
           );
@@ -317,9 +320,10 @@ function PokemonEvolutionChainContent({
   const renderEvolutionCondition = (
     trigger: EvolutionTrigger,
     lang: Locale,
+    fallback: string,
   ): string => {
     if (!trigger || typeof trigger !== "object") {
-      return lang === "en" ? "Unknown" : "不明";
+      return dictionary?.ui.error.unknown || fallback;
     }
 
     const conditions = [];
@@ -330,11 +334,8 @@ function PokemonEvolutionChainContent({
       trigger.minLevel !== undefined &&
       typeof trigger.minLevel === "number"
     ) {
-      conditions.push(
-        lang === "en"
-          ? `Level ${trigger.minLevel}`
-          : `レベル${trigger.minLevel}`,
-      );
+      const levelText = dictionary?.ui.pokemonDetails.level || fallback;
+      conditions.push(`${levelText} ${trigger.minLevel}`);
     }
 
     if (trigger.item) {
@@ -343,8 +344,9 @@ function PokemonEvolutionChainContent({
 
       if (itemTranslation) {
         const itemName = itemTranslation[lang === "en" ? "en" : "ja"];
+        const useText = dictionary?.ui.pokemonDetails.use || fallback;
         conditions.push(
-          lang === "en" ? `Use ${itemName}` : `${itemName}を使用`,
+          lang === "en" ? `${useText} ${itemName}` : `${itemName}を${useText}`,
         );
       } else {
         // Fallback to formatted item name
@@ -353,32 +355,36 @@ function PokemonEvolutionChainContent({
           .split(" ")
           .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
           .join(" ");
+        const useText = dictionary?.ui.pokemonDetails.use || fallback;
         conditions.push(
-          lang === "en" ? `Use ${capitalizedName}` : `${capitalizedName}を使用`,
+          lang === "en"
+            ? `${useText} ${capitalizedName}`
+            : `${capitalizedName}を${useText}`,
         );
       }
     }
 
     if (trigger.trigger?.name === "trade") {
-      conditions.push(lang === "en" ? "Trade" : "通信交換");
+      conditions.push(dictionary?.ui.pokemonDetails.trade || fallback);
     }
 
     if (trigger.trigger?.name === "level-up" && !trigger.minLevel) {
-      conditions.push(lang === "en" ? "Level up" : "レベルアップ");
+      conditions.push(dictionary?.ui.pokemonDetails.levelUp || fallback);
     }
 
     if (trigger.minHappiness) {
+      const happinessText = dictionary?.ui.pokemonDetails.happiness || fallback;
       conditions.push(
         lang === "en"
-          ? `Happiness ${trigger.minHappiness}+`
-          : `なつき度${trigger.minHappiness}以上`,
+          ? `${happinessText} ${trigger.minHappiness}+`
+          : `${happinessText}${trigger.minHappiness}以上`,
       );
     }
 
     if (trigger.timeOfDay) {
       const timeMap = {
-        day: lang === "en" ? "Day" : "昼",
-        night: lang === "en" ? "Night" : "夜",
+        day: dictionary?.ui.pokemonDetails.day || fallback,
+        night: dictionary?.ui.pokemonDetails.night || fallback,
       };
       conditions.push(
         timeMap[trigger.timeOfDay as keyof typeof timeMap] || trigger.timeOfDay,
@@ -387,23 +393,27 @@ function PokemonEvolutionChainContent({
 
     if (trigger.location) {
       const locationName = trigger.location.name.replace(/-/g, " ");
+      const atText = dictionary?.ui.pokemonDetails.at || fallback;
       conditions.push(
-        lang === "en" ? `At ${locationName}` : `${locationName}で`,
+        lang === "en"
+          ? `${atText} ${locationName}`
+          : `${locationName}${atText}`,
       );
     }
 
     if (trigger.knownMove) {
       const moveName = trigger.knownMove.name.replace(/-/g, " ");
+      const learnText = dictionary?.ui.pokemonDetails.learn || fallback;
       conditions.push(
-        lang === "en" ? `Learn ${moveName}` : `${moveName}を覚える`,
+        lang === "en"
+          ? `${learnText} ${moveName}`
+          : `${moveName}を${learnText}`,
       );
     }
 
     return conditions.length > 0
       ? conditions.join(lang === "en" ? " + " : " + ")
-      : lang === "en"
-        ? "Special"
-        : "特殊";
+      : dictionary?.ui.pokemonDetails.special || fallback;
   };
 
   if (!evolutionChain) {
@@ -413,7 +423,7 @@ function PokemonEvolutionChainContent({
   return (
     <div ref={containerRef}>
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        {lang === "en" ? "Evolution Chain" : "進化の流れ"}
+        {dictionary?.ui.pokemonDetails.evolutionChain || fallback}
       </h2>
       {/* Mobile: Vertical layout, Desktop: Horizontal layout */}
       <div className="flex justify-center">

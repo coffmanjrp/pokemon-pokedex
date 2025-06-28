@@ -10,6 +10,8 @@ import {
 import { TabNavigation } from "../common/TabNavigation";
 import { DataEmptyState } from "../common/DataEmptyState";
 import { TypeBadge, LevelBadge } from "../common/Badge";
+import { useAppSelector } from "@/store/hooks";
+import { getFallbackText } from "@/lib/fallbackText";
 
 interface PokemonMovesProps {
   moves?: PokemonMove[];
@@ -20,6 +22,7 @@ type LearnMethod = "level-up" | "machine" | "egg" | "tutor" | "other";
 
 export function PokemonMoves({ moves, language }: PokemonMovesProps) {
   const [selectedMethod, setSelectedMethod] = useState<LearnMethod>("level-up");
+  const { dictionary } = useAppSelector((state) => state.ui);
   if (!moves || moves.length === 0) {
     return <DataEmptyState type="moves" language={language} />;
   }
@@ -57,12 +60,25 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
     {} as Record<LearnMethod, PokemonMove[]>,
   );
 
+  const fallback = getFallbackText(language);
+
+  const text = {
+    type: dictionary?.ui.pokemonDetails.type || fallback,
+    category: dictionary?.ui.pokemonDetails.category || fallback,
+    power: dictionary?.ui.pokemonDetails.power || fallback,
+    accuracy: dictionary?.ui.pokemonDetails.accuracy || fallback,
+    physical: dictionary?.ui.pokemonDetails.physical || fallback,
+    special: dictionary?.ui.pokemonDetails.special || fallback,
+    status: dictionary?.ui.pokemonDetails.status || fallback,
+    noMovesFound: dictionary?.ui.pokemonDetails.noMovesFound || fallback,
+  };
+
   // Get damage class display name
   const getDamageClassName = (damageClass: string) => {
     const damageClassMap = {
-      physical: language === "en" ? "Physical" : "物理",
-      special: language === "en" ? "Special" : "特殊",
-      status: language === "en" ? "Status" : "変化",
+      physical: text.physical,
+      special: text.special,
+      status: text.status,
     };
     return (
       damageClassMap[damageClass as keyof typeof damageClassMap] || damageClass
@@ -133,7 +149,7 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
                     {/* Type */}
                     <div className="flex items-center gap-2">
                       <span className="text-gray-500 font-medium">
-                        {language === "en" ? "Type:" : "タイプ:"}
+                        {text.type}
                       </span>
                       <TypeBadge
                         type={move.move.type.name}
@@ -145,7 +161,7 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
                     {/* Damage Class */}
                     <div className="flex items-center gap-2">
                       <span className="text-gray-500 font-medium">
-                        {language === "en" ? "Category:" : "分類:"}
+                        {text.category}
                       </span>
                       <span className="text-gray-900 font-medium">
                         {getDamageClassName(move.move.damageClass.name)}
@@ -155,7 +171,7 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
                     {/* Power */}
                     <div className="flex items-center gap-2">
                       <span className="text-gray-500 font-medium">
-                        {language === "en" ? "Power:" : "威力:"}
+                        {text.power}
                       </span>
                       <span className="text-gray-900 font-medium">
                         {move.move.power || "-"}
@@ -165,7 +181,7 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
                     {/* Accuracy */}
                     <div className="flex items-center gap-2">
                       <span className="text-gray-500 font-medium">
-                        {language === "en" ? "Accuracy:" : "命中:"}
+                        {text.accuracy}
                       </span>
                       <span className="text-gray-900 font-medium">
                         {move.move.accuracy || "-"}

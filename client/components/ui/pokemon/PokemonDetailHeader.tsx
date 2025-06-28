@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { useAppSelector } from "@/store/hooks";
+import { getFallbackText } from "@/lib/fallbackText";
 
 interface PokemonDetailHeaderProps {
   language: "en" | "ja";
@@ -11,6 +13,10 @@ interface PokemonDetailHeaderProps {
 function PokemonDetailHeaderContent({ language }: PokemonDetailHeaderProps) {
   const searchParams = useSearchParams();
   const fromGeneration = searchParams.get("from");
+  const { dictionary } = useAppSelector((state) => state.ui);
+
+  const fallback = getFallbackText(language);
+  const headerText = dictionary?.ui.navigation.home || fallback;
 
   // If we have a generation parameter, construct the URL to go back to that generation
   const backUrl =
@@ -38,7 +44,7 @@ function PokemonDetailHeaderContent({ language }: PokemonDetailHeaderProps) {
             d="M15 19l-7-7 7-7"
           />
         </svg>
-        {language === "en" ? "Pokedex" : "ポケモン図鑑"}
+        {headerText}
       </Link>
     </div>
   );

@@ -243,10 +243,7 @@ export async function generateMetadata({
         siteName: lang === "ja" ? "ポケモン図鑑" : "Pokédex",
         images: [
           {
-            url:
-              pokemon.sprites.other?.officialArtwork?.frontDefault ||
-              pokemon.sprites.frontDefault ||
-              "",
+            url: `https://pokemon-pokedex-client.vercel.app/api/images/pokemon/${pokemon.id}`,
             width: 475,
             height: 475,
             alt: `${pokemonName} official artwork`,
@@ -259,9 +256,7 @@ export async function generateMetadata({
         title,
         description,
         images: [
-          pokemon.sprites.other?.officialArtwork?.frontDefault ||
-            pokemon.sprites.frontDefault ||
-            "",
+          `https://pokemon-pokedex-client.vercel.app/api/images/pokemon/${pokemon.id}`,
         ],
         creator: "@pokedex",
         site: "@pokedex",
@@ -303,7 +298,10 @@ export default async function PokemonDetailPage({
   const { id, lang } = await params;
 
   try {
-    const client = await getClient();
+    const [dictionary, client] = await Promise.all([
+      getDictionary(lang),
+      getClient(),
+    ]);
 
     const { data } = await client.query({
       query: GET_POKEMON,
@@ -318,7 +316,13 @@ export default async function PokemonDetailPage({
       notFound();
     }
 
-    return <PokemonDetailClient pokemon={pokemon} lang={lang} />;
+    return (
+      <PokemonDetailClient
+        pokemon={pokemon}
+        lang={lang}
+        dictionary={dictionary}
+      />
+    );
   } catch (error) {
     console.error(`Error fetching Pokemon with ID ${id}:`, error);
     // For invalid IDs that shouldn't have been generated, return 404

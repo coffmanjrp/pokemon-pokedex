@@ -57,11 +57,13 @@ const needsClearForGeneration = (
 
 interface UsePokemonListOptions {
   generation?: number;
+  initialPokemon?: Pokemon[];
   autoFetch?: boolean;
 }
 
 export function usePokemonList({
   generation = 1,
+  initialPokemon = [],
   autoFetch = true,
 }: UsePokemonListOptions = {}) {
   const dispatch = useAppDispatch();
@@ -86,6 +88,18 @@ export function usePokemonList({
       setCurrentGeneration(generation);
     }
   }, [generation, currentGeneration]);
+
+  // Initialize with server-side data (ISR)
+  useEffect(() => {
+    if (initialPokemon.length > 0 && pokemons.length === 0) {
+      console.log(
+        `Initializing with ${initialPokemon.length} server-side Pokemon for ISR`,
+      );
+      dispatch(setPokemons(initialPokemon));
+      dispatch(setHasNextPage(initialPokemon.length >= initialBatchSize));
+      dispatch(setLoading(false));
+    }
+  }, [initialPokemon, pokemons.length, dispatch]);
 
   // Use appropriate query based on build mode
   const selectedQuery = getListQuery();
@@ -403,7 +417,7 @@ export function usePokemonList({
         dispatch(setEndCursor(null));
         dispatch(setError(null));
 
-        // Failsafe: Handle timeout after 15 seconds with silent fallback
+        // Failsafe: Handle timeout after 8 seconds with silent fallback
         // This prevents infinite loading and maintains current Pokemon data
         const timeoutId = setTimeout(() => {
           console.warn(
@@ -412,7 +426,7 @@ export function usePokemonList({
           dispatch(setGenerationSwitching(false));
           dispatch(setLoading(false));
           // No error dispatch - maintain current Pokemon data display
-        }, 15000);
+        }, 8000);
 
         // Store timeout ID to clear it when generation switching completes normally
         window.generationSwitchingTimeout = timeoutId;

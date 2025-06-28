@@ -3,6 +3,8 @@
 import { Pokemon } from "@/types/pokemon";
 import { getPokemonDescription, getVersionName } from "@/lib/pokemonUtils";
 import { DataEmptyState } from "../common/DataEmptyState";
+import { useAppSelector } from "@/store/hooks";
+import { getFallbackText } from "@/lib/fallbackText";
 
 interface PokemonDescriptionProps {
   pokemon: Pokemon;
@@ -14,6 +16,19 @@ export function PokemonDescription({
   language,
 }: PokemonDescriptionProps) {
   const description = getPokemonDescription(pokemon, language);
+  const { dictionary } = useAppSelector((state) => state.ui);
+
+  const fallback = getFallbackText(language);
+
+  const text = {
+    latestDescription:
+      dictionary?.ui.pokemonDetails.latestDescription || fallback,
+    allDescriptions: dictionary?.ui.pokemonDetails.allDescriptions || fallback,
+    versions: dictionary?.ui.pokemonDetails.versions || fallback,
+    version: dictionary?.ui.pokemonDetails.version || fallback,
+    noDescriptionsInLanguage:
+      dictionary?.ui.pokemonDetails.noDescriptionsInLanguage || fallback,
+  };
 
   if (
     !pokemon.species?.flavorTextEntries ||
@@ -36,11 +51,7 @@ export function PokemonDescription({
       <DataEmptyState
         type="descriptions"
         language={language}
-        customMessage={
-          language === "en"
-            ? "No descriptions available in this language"
-            : "この言語での説明がありません"
-        }
+        customMessage={text.noDescriptionsInLanguage}
       />
     );
   }
@@ -54,7 +65,7 @@ export function PokemonDescription({
             <div className="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
             <div>
               <div className="text-sm font-medium text-blue-800 mb-2">
-                {language === "en" ? "Latest Description" : "最新の説明"}
+                {text.latestDescription}
               </div>
               <blockquote className="text-gray-700 leading-relaxed">
                 &ldquo;{description}&rdquo;
@@ -67,9 +78,7 @@ export function PokemonDescription({
       {/* All Historical Descriptions */}
       <div>
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          {language === "en"
-            ? `All Descriptions (${languageEntries.length} versions)`
-            : `すべての説明 (${languageEntries.length} バージョン)`}
+          {`${text.allDescriptions} (${languageEntries.length} ${text.versions})`}
         </h3>
         <div className="space-y-3">
           {languageEntries.map((entry, index) => (
@@ -85,7 +94,7 @@ export function PokemonDescription({
                   {getVersionName(entry.version.name, language)}
                 </span>
                 <span className="text-gray-400 text-xs">
-                  {language === "en" ? "Version" : "バージョン"} {index + 1}
+                  {text.version} {index + 1}
                 </span>
               </footer>
             </div>

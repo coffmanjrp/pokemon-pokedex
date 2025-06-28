@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     siteName: "Pokemon Pokedex",
     images: [
       {
-        url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png",
+        url: "https://pokemon-pokedex-client.vercel.app/api/images/pokemon/25",
         width: 475,
         height: 475,
         alt: "Pikachu - Pokemon Pokedex",
@@ -55,9 +55,7 @@ export const metadata: Metadata = {
     title: "Pokemon Pokedex | Complete Multi-Generation Pokemon Database",
     description:
       "Comprehensive Pokemon database featuring 1302+ Pokemon with detailed stats, official artwork, evolution chains, and more.",
-    images: [
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png",
-    ],
+    images: ["https://pokemon-pokedex-client.vercel.app/api/images/pokemon/25"],
     creator: "@pokemon",
     site: "@pokemon",
   },
@@ -99,21 +97,9 @@ export default function RootLayout({
         />
 
         {/* Preload critical Pokemon images for faster initial render */}
-        <link
-          rel="prefetch"
-          href="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
-          as="image"
-        />
-        <link
-          rel="prefetch"
-          href="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png"
-          as="image"
-        />
-        <link
-          rel="prefetch"
-          href="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png"
-          as="image"
-        />
+        <link rel="prefetch" href="/api/images/pokemon/1" as="image" />
+        <link rel="prefetch" href="/api/images/pokemon/4" as="image" />
+        <link rel="prefetch" href="/api/images/pokemon/7" as="image" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

@@ -1,20 +1,39 @@
 "use client";
 
+import { useEffect } from "react";
 import { Pokemon } from "@/types/pokemon";
-import { Locale } from "@/lib/dictionaries";
+import { Dictionary, Locale } from "@/lib/dictionaries";
 import { PokemonDetailHeader } from "@/components/ui/pokemon/PokemonDetailHeader";
 import { PokemonTopNavigationTabs } from "@/components/ui/pokemon/PokemonTopNavigationTabs";
 import { useBackgroundPreload } from "@/hooks/useBackgroundPreload";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { setLanguage, setDictionary } from "@/store/slices/uiSlice";
 
 interface PokemonDetailClientProps {
   pokemon: Pokemon;
   lang: Locale;
+  dictionary: Dictionary;
 }
 
 export default function PokemonDetailClient({
   pokemon,
   lang,
+  dictionary,
 }: PokemonDetailClientProps) {
+  const dispatch = useAppDispatch();
+  const { language: currentLanguage, dictionary: currentDictionary } =
+    useAppSelector((state) => state.ui);
+
+  // Sync language and dictionary from server props to Redux store
+  useEffect(() => {
+    if (currentLanguage !== lang) {
+      dispatch(setLanguage(lang));
+    }
+    if (!currentDictionary) {
+      dispatch(setDictionary(dictionary));
+    }
+  }, [lang, currentLanguage, dictionary, currentDictionary, dispatch]);
+
   // Background preload nearby Pokemon
   const { preloadStatus, isPreloading } = useBackgroundPreload({
     currentPokemonId: parseInt(pokemon.id),

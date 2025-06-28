@@ -3,6 +3,7 @@
 import { PokemonStat } from "@/types/pokemon";
 import { getStatName } from "@/lib/pokemonUtils";
 import { useAppSelector } from "@/store/hooks";
+import { getFallbackText } from "@/lib/fallbackText";
 
 interface PokemonStatsProps {
   stats: PokemonStat[];
@@ -19,14 +20,13 @@ const statColors: Record<string, string> = {
 };
 
 export function PokemonStats({ stats }: PokemonStatsProps) {
-  const { language } = useAppSelector((state) => state.ui);
+  const { language, dictionary } = useAppSelector((state) => state.ui);
+
+  const fallback = getFallbackText(language);
+  const noStatsText = dictionary?.ui.error.pokemonNotFound || fallback;
 
   if (!stats || stats.length === 0) {
-    return (
-      <div className="text-gray-500 text-center py-4">
-        {language === "en" ? "No stats available" : "ステータスがありません"}
-      </div>
-    );
+    return <div className="text-gray-500 text-center py-4">{noStatsText}</div>;
   }
 
   const maxBaseStat = Math.max(...stats.map((stat) => stat.baseStat));
