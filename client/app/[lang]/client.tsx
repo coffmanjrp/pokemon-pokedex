@@ -7,6 +7,7 @@ import { PokemonLoadingIndicator } from "../../components/ui/pokemon/PokemonLoad
 import { PokemonProgressFooter } from "../../components/ui/pokemon/PokemonProgressFooter";
 import { GenerationSwitchingOverlay } from "../../components/ui/pokemon/GenerationSwitchingOverlay";
 import { usePokemonList } from "../../hooks/usePokemonList";
+import { useNavigationCache } from "../../hooks/useNavigationCache";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { setSelectedPokemon } from "../../store/slices/pokemonSlice";
 import { setLanguage, setDictionary } from "../../store/slices/uiSlice";
@@ -32,12 +33,22 @@ function PokemonListContent({
   const searchParams = useSearchParams();
   const { language: currentLanguage, dictionary: currentDictionary } =
     useAppSelector((state) => state.ui);
-  // Initialize generation from URL parameter on first load
+
+  // Navigation cache restoration
+  const { restoreFromURL } = useNavigationCache();
+
+  // Initialize generation from URL parameter on first load with cache restoration
   const [currentGeneration, setCurrentGeneration] = useState(() => {
     const generationParam = searchParams.get("generation");
     if (generationParam) {
       const generation = parseInt(generationParam, 10);
       if (generation >= 1 && generation <= 9) {
+        // Try to restore from cache first
+        if (restoreFromURL()) {
+          console.log(
+            `Generation ${generation} restored from cache on initial load`,
+          );
+        }
         return generation;
       }
     }

@@ -13,11 +13,19 @@ import {
   setLoading,
   setError,
   setPokemons,
+  addPokemons,
   setHasNextPage,
   setEndCursor,
   setCurrentGeneration as setReduxCurrentGeneration,
   setGenerationSwitching,
+  cacheGenerationData,
+  addPokemonsToGeneration,
 } from "@/store/slices/pokemonSlice";
+import {
+  cacheGenerationData as persistCacheData,
+  getCachedGenerationData,
+  isGenerationCached,
+} from "@/lib/pokemonCache";
 import { getListQuery, isSSGBuild } from "@/lib/querySelector";
 import { Pokemon } from "@/types/pokemon";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
@@ -67,7 +75,7 @@ export function usePokemonList({
   autoFetch = true,
 }: UsePokemonListOptions = {}) {
   const dispatch = useAppDispatch();
-  const { pokemons, loading, error, hasNextPage } = useAppSelector(
+  const { pokemons, loading, error, hasNextPage, endCursor } = useAppSelector(
     (state) => state.pokemon,
   );
   const isLoadingMore = useRef(false);
@@ -98,8 +106,36 @@ export function usePokemonList({
       dispatch(setPokemons(initialPokemon));
       dispatch(setHasNextPage(initialPokemon.length >= initialBatchSize));
       dispatch(setLoading(false));
+
+      // Cache initial data
+      const totalInGeneration = generationRange.max - generationRange.min + 1;
+      const hasMore = initialPokemon.length < totalInGeneration;
+
+      dispatch(
+        cacheGenerationData({
+          generation: currentGeneration,
+          pokemons: initialPokemon,
+          hasNextPage: hasMore,
+          endCursor: null,
+          loadedCount: initialPokemon.length,
+        }),
+      );
+
+      persistCacheData(
+        currentGeneration,
+        initialPokemon,
+        hasMore,
+        null,
+        initialPokemon.length,
+      );
     }
-  }, [initialPokemon, pokemons.length, dispatch]);
+  }, [
+    initialPokemon,
+    pokemons.length,
+    dispatch,
+    currentGeneration,
+    generationRange,
+  ]);
 
   // Use appropriate query based on build mode
   const selectedQuery = getListQuery();
@@ -195,6 +231,33 @@ export function usePokemonList({
         dispatch(setGenerationSwitching(false));
         dispatch(setLoading(false));
 
+        // Cache the loaded data
+        if (pokemonList.length > 0) {
+          // Cache in Redux store
+          dispatch(
+            cacheGenerationData({
+              generation: currentGeneration,
+              pokemons: pokemonList,
+              hasNextPage: hasMoreInGeneration,
+              endCursor: pageInfo.endCursor,
+              loadedCount: pokemonList.length,
+            }),
+          );
+
+          // Cache in localStorage
+          persistCacheData(
+            currentGeneration,
+            pokemonList,
+            hasMoreInGeneration,
+            pageInfo.endCursor,
+            pokemonList.length,
+          );
+
+          console.log(
+            `Cached ${pokemonList.length} Pokemon for generation ${currentGeneration}`,
+          );
+        }
+
         // Clear generation switching timeout (successful completion)
         if (window.generationSwitchingTimeout) {
           clearTimeout(window.generationSwitchingTimeout);
@@ -231,15 +294,19 @@ export function usePokemonList({
     }
   }, [data, dispatch, generationRange, currentGeneration, getDataFieldName]);
 
-  // Calculate unique Pokemon for counting from Apollo Client cache
+  // Calculate unique Pokemon for counting - prioritize Redux state for cache system
   const uniquePokemons = useMemo(() => {
+    // When using cache system, prioritize Redux state (pokemons) as it contains the most up-to-date data
+    if (pokemons.length > 0) {
+      return pokemons;
+    }
+
+    // Fallback to Apollo Client data if Redux state is empty
     const fieldName = getDataFieldName();
     const apolloData =
       data?.[fieldName]?.edges?.map((edge: PokemonEdge) => edge.node) || [];
 
-    // Combine with Redux state and deduplicate
-    const allPokemons = [...apolloData, ...pokemons];
-    return allPokemons.reduce((acc: Pokemon[], current) => {
+    return apolloData.reduce((acc: Pokemon[], current: Pokemon) => {
       const exists = acc.find((pokemon) => pokemon.id === current.id);
       if (!exists) {
         acc.push(current);
@@ -274,12 +341,14 @@ export function usePokemonList({
       dispatch(setLoading(true));
 
       // Calculate current loaded Pokemon count in this generation only
-      const currentGenerationPokemons = uniquePokemons.filter((pokemon) => {
-        const pokemonId = parseInt(pokemon.id);
-        return (
-          pokemonId >= generationRange.min && pokemonId <= generationRange.max
-        );
-      });
+      const currentGenerationPokemons = uniquePokemons.filter(
+        (pokemon: Pokemon) => {
+          const pokemonId = parseInt(pokemon.id);
+          return (
+            pokemonId >= generationRange.min && pokemonId <= generationRange.max
+          );
+        },
+      );
 
       const currentLoadedInGeneration = currentGenerationPokemons.length;
       const nextOffset = generationRange.min - 1 + currentLoadedInGeneration;
@@ -357,6 +426,38 @@ export function usePokemonList({
 
         dispatch(setHasNextPage(hasMoreInGeneration));
 
+        // Update Redux state and cache with new Pokemon data
+        if (newPokemon.length > 0) {
+          // First, update the main Pokemon list in Redux state
+          dispatch(addPokemons(newPokemon));
+
+          // Get current updated Pokemon list
+          const updatedPokemons = [...pokemons, ...newPokemon];
+
+          // Update generation cache in Redux store
+          dispatch(
+            addPokemonsToGeneration({
+              generation: currentGeneration,
+              pokemons: newPokemon,
+              hasNextPage: hasMoreInGeneration,
+              endCursor: newData.pageInfo?.endCursor || null,
+            }),
+          );
+
+          // Update localStorage cache
+          persistCacheData(
+            currentGeneration,
+            updatedPokemons,
+            hasMoreInGeneration,
+            newData.pageInfo?.endCursor || null,
+            updatedPokemons.length,
+          );
+
+          console.log(
+            `Added ${newPokemon.length} Pokemon to generation ${currentGeneration}. Total: ${updatedPokemons.length}`,
+          );
+        }
+
         return newPokemon.length;
       }
       return 0;
@@ -377,6 +478,8 @@ export function usePokemonList({
     uniquePokemons,
     fetchMore,
     getDataFieldName,
+    currentGeneration,
+    pokemons,
   ]);
 
   const refresh = async () => {
@@ -397,15 +500,69 @@ export function usePokemonList({
     }
   };
 
-  // Generation change handler
+  // Generation change handler with cache integration
   const changeGeneration = (newGeneration: number) => {
     if (newGeneration !== currentGeneration) {
-      // Check if we need to clear current data
-      const shouldClear = needsClearForGeneration(pokemons, newGeneration);
+      // First, cache current generation data if we have any
+      if (pokemons.length > 0 && currentGeneration) {
+        // Cache in Redux store
+        dispatch(
+          cacheGenerationData({
+            generation: currentGeneration,
+            pokemons,
+            hasNextPage,
+            endCursor,
+            loadedCount: pokemons.length,
+          }),
+        );
 
-      // Calculate new parameters first to use in timeout error message
-      const newRange =
-        GENERATION_RANGES[newGeneration as keyof typeof GENERATION_RANGES];
+        // Cache in localStorage
+        persistCacheData(
+          currentGeneration,
+          pokemons,
+          hasNextPage,
+          endCursor,
+          pokemons.length,
+        );
+
+        console.log(
+          `Cached ${pokemons.length} Pokemon for generation ${currentGeneration}`,
+        );
+      }
+
+      // Check if target generation is already cached
+      const isCached = isGenerationCached(newGeneration);
+      const cachedData = getCachedGenerationData(newGeneration);
+
+      if (isCached && cachedData) {
+        console.log(`Loading cached data for generation ${newGeneration}`);
+
+        // Load from cache immediately - no loading state needed
+        dispatch(setPokemons(cachedData.pokemons));
+        dispatch(setHasNextPage(cachedData.hasNextPage));
+        dispatch(setEndCursor(cachedData.endCursor));
+        dispatch(setReduxCurrentGeneration(newGeneration));
+        dispatch(setError(null));
+        dispatch(setLoading(false));
+        dispatch(setGenerationSwitching(false));
+
+        // Also cache in Redux store for consistency
+        dispatch(
+          cacheGenerationData({
+            generation: newGeneration,
+            pokemons: cachedData.pokemons,
+            hasNextPage: cachedData.hasNextPage,
+            endCursor: cachedData.endCursor,
+            loadedCount: cachedData.loadedCount,
+          }),
+        );
+
+        setCurrentGeneration(newGeneration);
+        return;
+      }
+
+      // If not cached, proceed with normal loading flow
+      const shouldClear = needsClearForGeneration(pokemons, newGeneration);
 
       if (shouldClear) {
         // Start generation switching overlay
@@ -418,7 +575,6 @@ export function usePokemonList({
         dispatch(setError(null));
 
         // Failsafe: Handle timeout after 8 seconds with silent fallback
-        // This prevents infinite loading and maintains current Pokemon data
         const timeoutId = setTimeout(() => {
           console.warn(
             "Generation switching timeout - silently ending loading state",
@@ -432,7 +588,7 @@ export function usePokemonList({
         window.generationSwitchingTimeout = timeoutId;
       }
 
-      // Always set loading state for new generation
+      // Set loading state for new generation
       dispatch(setLoading(true));
 
       // Update generation in both local state and Redux store
@@ -440,6 +596,8 @@ export function usePokemonList({
       dispatch(setReduxCurrentGeneration(newGeneration));
 
       // Calculate refetch parameters
+      const newRange =
+        GENERATION_RANGES[newGeneration as keyof typeof GENERATION_RANGES];
       const newOffset = newRange.min - 1;
       const newLimit = initialBatchSize;
 
@@ -487,7 +645,7 @@ export function usePokemonList({
     pokemons: uniquePokemons,
     loading,
     error,
-    hasNextPage: canLoadMore,
+    hasNextPage: hasNextPage && canLoadMore, // Use both Redux state and local calculation
     loadMore,
     refresh,
     currentGeneration,
