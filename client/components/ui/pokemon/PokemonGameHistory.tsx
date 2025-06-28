@@ -5,6 +5,8 @@ import { getGenerationName } from "@/lib/pokemonUtils";
 import { VERSION_TRANSLATIONS } from "@/lib/data/versionTranslations";
 import { getGenerationByGame } from "@/lib/data/generations";
 import { DataEmptyState } from "../common/DataEmptyState";
+import { useAppSelector } from "@/store/hooks";
+import { getFallbackText } from "@/lib/fallbackText";
 
 interface PokemonGameHistoryProps {
   gameIndices?: GameIndex[];
@@ -17,6 +19,20 @@ export function PokemonGameHistory({
   generation,
   language,
 }: PokemonGameHistoryProps) {
+  const { dictionary } = useAppSelector((state) => state.ui);
+
+  const fallback = getFallbackText(language);
+
+  const text = {
+    originGeneration:
+      dictionary?.ui.pokemonDetails.originGeneration || fallback,
+    gameAppearances: dictionary?.ui.pokemonDetails.gameAppearances || fallback,
+    remakes: dictionary?.ui.pokemonDetails.remakes || fallback,
+    otherGames: dictionary?.ui.pokemonDetails.otherGames || fallback,
+    totalAppearances:
+      dictionary?.ui.pokemonDetails.totalAppearances || fallback,
+    generations: dictionary?.ui.pokemonDetails.generations || fallback,
+  };
   if (!gameIndices || gameIndices.length === 0) {
     return <DataEmptyState type="games" language={language} />;
   }
@@ -47,16 +63,13 @@ export function PokemonGameHistory({
         // Check if it's a remake
         const isRemake = generationData.remakes?.includes(version);
         if (isRemake) {
-          era =
-            language === "en"
-              ? `${genName} (Remakes)`
-              : `${genName} (リメイク)`;
+          era = `${genName} (${text.remakes})`;
         } else {
           era = `${genName} (${regionName})`;
         }
       } else {
         // Fallback for unrecognized games
-        era = language === "en" ? "Other Games" : "その他のゲーム";
+        era = text.otherGames;
       }
 
       if (!eras[era]) {
@@ -76,7 +89,7 @@ export function PokemonGameHistory({
       {generation && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <h4 className="font-medium text-blue-900 mb-2">
-            {language === "en" ? "Origin Generation" : "初出世代"}
+            {text.originGeneration}
           </h4>
           <p className="text-blue-800">
             {getGenerationName(generation.name, language)}
@@ -86,9 +99,7 @@ export function PokemonGameHistory({
 
       {/* Game Appearances by Era */}
       <div className="space-y-4">
-        <h4 className="font-semibold text-gray-900">
-          {language === "en" ? "Game Appearances" : "ゲーム出現履歴"}
-        </h4>
+        <h4 className="font-semibold text-gray-900">{text.gameAppearances}</h4>
 
         {Object.entries(gamesByEra).map(([era, games]) => (
           <div
@@ -122,13 +133,9 @@ export function PokemonGameHistory({
       {/* Summary */}
       <div className="bg-gray-50 rounded-lg p-4">
         <div className="text-sm text-gray-600">
-          <span className="font-medium">
-            {language === "en" ? "Total Appearances:" : "総出現回数:"}
-          </span>
+          <span className="font-medium">{text.totalAppearances}</span>
           <span className="ml-2">{gameIndices.length}</span>
-          <span className="ml-4 font-medium">
-            {language === "en" ? "Generations:" : "世代:"}
-          </span>
+          <span className="ml-4 font-medium">{text.generations}</span>
           <span className="ml-2">{Object.keys(gamesByEra).length}</span>
         </div>
       </div>

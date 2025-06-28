@@ -298,7 +298,10 @@ export default async function PokemonDetailPage({
   const { id, lang } = await params;
 
   try {
-    const client = await getClient();
+    const [dictionary, client] = await Promise.all([
+      getDictionary(lang),
+      getClient(),
+    ]);
 
     const { data } = await client.query({
       query: GET_POKEMON,
@@ -313,7 +316,13 @@ export default async function PokemonDetailPage({
       notFound();
     }
 
-    return <PokemonDetailClient pokemon={pokemon} lang={lang} />;
+    return (
+      <PokemonDetailClient
+        pokemon={pokemon}
+        lang={lang}
+        dictionary={dictionary}
+      />
+    );
   } catch (error) {
     console.error(`Error fetching Pokemon with ID ${id}:`, error);
     // For invalid IDs that shouldn't have been generated, return 404

@@ -9,6 +9,8 @@ import { InfoCard } from "../common/InfoCard";
 import { TabNavigation } from "../common/TabNavigation";
 import { DataEmptyState } from "../common/DataEmptyState";
 import Image from "next/image";
+import { useAppSelector } from "@/store/hooks";
+import { getFallbackText } from "@/lib/fallbackText";
 
 interface PokemonSpritesGalleryProps {
   pokemon: Pokemon;
@@ -30,28 +32,50 @@ export function PokemonSpritesGallery({
   const [selectedCategory, setSelectedCategory] = useState<string>("official");
   const [activeContentTab, setActiveContentTab] =
     useState<ContentTabType>("sprites");
+  const { dictionary } = useAppSelector((state) => state.ui);
+
+  const fallback = getFallbackText(language);
+
+  const text = {
+    artwork: dictionary?.ui.pokemonDetails.artwork || fallback,
+    description: dictionary?.ui.pokemonDetails.description || fallback,
+    moves: dictionary?.ui.pokemonDetails.moves || fallback,
+    gameHistory: dictionary?.ui.pokemonDetails.gameHistory || fallback,
+    officialArtwork: dictionary?.ui.pokemonDetails.officialArtwork || fallback,
+    pokemonHome: dictionary?.ui.pokemonDetails.pokemonHome || fallback,
+    gameSprites: dictionary?.ui.pokemonDetails.gameSprites || fallback,
+    animated: dictionary?.ui.pokemonDetails.animated || fallback,
+    dreamWorld: dictionary?.ui.pokemonDetails.dreamWorld || fallback,
+    showdown: dictionary?.ui.pokemonDetails.showdown || fallback,
+    icons: dictionary?.ui.pokemonDetails.icons || fallback,
+    noSpritesAvailable:
+      dictionary?.ui.pokemonDetails.noSpritesAvailable || fallback,
+    noMovesData: dictionary?.ui.pokemonDetails.noMovesData || fallback,
+    noGameHistoryData:
+      dictionary?.ui.pokemonDetails.noGameHistoryData || fallback,
+  };
 
   // Define content tabs
   const contentTabs = [
     {
       id: "sprites" as ContentTabType,
-      label: language === "en" ? "Artwork" : "アートワーク",
+      label: text.artwork,
       icon: "🖼️",
     },
     {
       id: "description" as ContentTabType,
-      label: language === "en" ? "Description" : "説明",
+      label: text.description,
       icon: "📖",
     },
     {
       id: "moves" as ContentTabType,
-      label: language === "en" ? "Moves" : "わざ",
+      label: text.moves,
       icon: "⚔️",
       count: pokemon.moves ? pokemon.moves.length : 0,
     },
     {
       id: "gameHistory" as ContentTabType,
-      label: language === "en" ? "Game History" : "ゲーム履歴",
+      label: text.gameHistory,
       icon: "🎮",
       count: pokemon.gameIndices ? pokemon.gameIndices.length : 0,
     },
@@ -385,28 +409,27 @@ export function PokemonSpritesGallery({
   const categories = [
     {
       id: "official",
-      label: language === "en" ? "Official Artwork" : "公式アートワーク",
+      label: text.officialArtwork,
     },
-    { id: "home", label: language === "en" ? "Pokémon HOME" : "ポケモンHOME" },
+    { id: "home", label: text.pokemonHome },
     {
       id: "game",
-      label: language === "en" ? "Game Sprites" : "ゲームスプライト",
+      label: text.gameSprites,
     },
     {
       id: "animated",
-      label:
-        language === "en" ? "Animated (Gen V)" : "アニメーション (第5世代)",
+      label: text.animated,
     },
     {
       id: "dreamWorld",
-      label: language === "en" ? "Dream World" : "ポケモンドリームワールド",
+      label: text.dreamWorld,
     },
     {
       id: "showdown",
-      label: language === "en" ? "Pokémon Showdown" : "ポケモンShowdown",
+      label: text.showdown,
     },
     { id: "xy", label: language === "en" ? "X/Y" : "X/Y" },
-    { id: "icons", label: language === "en" ? "Icons" : "アイコン" },
+    { id: "icons", label: text.icons },
   ].filter((category) =>
     allSprites.some((sprite) => sprite.category === category.id),
   );
@@ -490,11 +513,7 @@ export function PokemonSpritesGallery({
               <DataEmptyState
                 type="sprites"
                 language={language}
-                customMessage={
-                  language === "en"
-                    ? "No sprites available for this category"
-                    : "このカテゴリーには利用可能なスプライトがありません"
-                }
+                customMessage={text.noSpritesAvailable}
               />
             )}
           </div>
@@ -508,9 +527,7 @@ export function PokemonSpritesGallery({
           <PokemonMoves moves={pokemon.moves} language={language} />
         ) : (
           <div className="text-center py-8 text-gray-500">
-            {language === "en"
-              ? "No moves data available"
-              : "わざデータがありません"}
+            {text.noMovesData}
           </div>
         );
 
@@ -523,9 +540,7 @@ export function PokemonSpritesGallery({
           />
         ) : (
           <div className="text-center py-8 text-gray-500">
-            {language === "en"
-              ? "No game history data available"
-              : "ゲーム履歴データがありません"}
+            {text.noGameHistoryData}
           </div>
         );
 
