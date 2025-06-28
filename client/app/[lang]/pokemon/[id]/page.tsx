@@ -11,6 +11,7 @@ import {
   getPokemonDescription,
   getGenerationName,
 } from "@/lib/pokemonUtils";
+import { GENERATIONS } from "@/lib/data/generations";
 import PokemonDetailClient from "./client";
 
 interface PokemonDetailPageProps {
@@ -20,11 +21,24 @@ interface PokemonDetailPageProps {
   }>;
 }
 
-// Generate static params for SSG
+// Generate static params for SSG with generational build support
 export async function generateStaticParams() {
-  // Generate paths for both languages and all existing Pokemon
   const paths = [];
   const languages = ["en", "ja"];
+
+  // Check environment variables for generational build control
+  const enableGenerationalBuild =
+    process.env.ENABLE_GENERATIONAL_BUILD === "true";
+  const targetGeneration = process.env.BUILD_GENERATION
+    ? parseInt(process.env.BUILD_GENERATION)
+    : null;
+
+  console.log(
+    `Build mode: ${enableGenerationalBuild ? "Generational" : "Standard"}`,
+  );
+  if (targetGeneration) {
+    console.log(`Target generation: ${targetGeneration}`);
+  }
 
   try {
     // Use GraphQL to get all existing Pokemon IDs
@@ -45,12 +59,30 @@ export async function generateStaticParams() {
     });
 
     // Extract only valid Pokemon IDs that actually exist
-    const validPokemonIds =
+    let validPokemonIds =
       data?.pokemonsBasic?.edges?.map(
         (edge: { node: { id: string } }) => edge.node.id,
       ) || [];
 
-    // Generate paths only for valid Pokemon IDs
+    // Filter Pokemon IDs based on generation if specified
+    if (targetGeneration) {
+      const generation = GENERATIONS.find((gen) => gen.id === targetGeneration);
+      if (generation) {
+        const { start, end } = generation.pokemonRange;
+        validPokemonIds = validPokemonIds.filter((id: string) => {
+          const pokemonId = parseInt(id);
+          return pokemonId >= start && pokemonId <= end;
+        });
+        console.log(
+          `Filtered to generation ${targetGeneration} (${generation.name.en}): ${validPokemonIds.length} Pokemon (ID ${start}-${end})`,
+        );
+      } else {
+        console.warn(`Invalid generation: ${targetGeneration}`);
+        return [];
+      }
+    }
+
+    // Generate paths for valid Pokemon IDs
     for (const lang of languages) {
       for (const pokemonId of validPokemonIds) {
         paths.push({
@@ -60,30 +92,60 @@ export async function generateStaticParams() {
       }
     }
 
+    const generationInfo = targetGeneration
+      ? ` for Generation ${targetGeneration}`
+      : "";
     console.log(
-      `Generating ${paths.length} static paths for ${validPokemonIds.length} valid Pokemon in ${languages.length} languages`,
+      `Generating ${paths.length} static paths for ${validPokemonIds.length} valid Pokemon${generationInfo} in ${languages.length} languages`,
     );
-    console.log(
-      `Sample Pokemon IDs: ${validPokemonIds.slice(0, 10).join(", ")}...`,
-    );
+
+    if (validPokemonIds.length > 0) {
+      console.log(
+        `Pokemon ID range: ${Math.min(...validPokemonIds.map((id: string) => parseInt(id)))}-${Math.max(...validPokemonIds.map((id: string) => parseInt(id)))}`,
+      );
+    }
+
     return paths;
   } catch (error) {
     console.error(
-      "Error fetching Pokemon data from GraphQL, using sequential fallback:",
+      "Error fetching Pokemon data from GraphQL, using generation-based fallback:",
       error,
     );
-    // Fallback: generate for known range and let individual pages handle errors
-    const fallbackCount = 1025; // Use conservative count for basic Pokemon
-    for (const lang of languages) {
-      for (let i = 1; i <= fallbackCount; i++) {
-        paths.push({
-          lang,
-          id: i.toString(),
-        });
+
+    // Generation-based fallback
+    if (targetGeneration) {
+      const generation = GENERATIONS.find((gen) => gen.id === targetGeneration);
+      if (generation) {
+        const { start, end } = generation.pokemonRange;
+        for (const lang of languages) {
+          for (let i = start; i <= end; i++) {
+            paths.push({
+              lang,
+              id: i.toString(),
+            });
+          }
+        }
+        console.log(
+          `Using generation ${targetGeneration} fallback: ${paths.length} paths (ID ${start}-${end})`,
+        );
+        return paths;
+      }
+    }
+
+    // Standard fallback: all generations
+    for (const generation of GENERATIONS) {
+      const { start, end } = generation.pokemonRange;
+      for (const lang of languages) {
+        for (let i = start; i <= end; i++) {
+          paths.push({
+            lang,
+            id: i.toString(),
+          });
+        }
       }
     }
     console.log(
-      `Using fallback: ${paths.length} paths for first ${fallbackCount} Pokemon`,
+      `Using full fallback: ${paths.length} paths for all generations`,
     );
     return paths;
   }

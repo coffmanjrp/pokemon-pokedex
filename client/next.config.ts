@@ -40,9 +40,8 @@ const nextConfig: NextConfig = {
     // Enable aggressive tree shaking
     esmExternals: true,
   },
-  // Build timeout and worker configurations for SSG
+  // Build timeout configurations for SSG
   staticPageGenerationTimeout: 120, // 2 minutes per page
-  workerThreads: false, // Disable worker threads to avoid memory issues
   turbopack: {
     rules: {
       "*.svg": {

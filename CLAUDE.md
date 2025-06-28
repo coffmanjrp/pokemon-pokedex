@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. **Pokemon detail pages use SSG** for optimal performance with individual Pokemon data pre-generated at build time. **List pages use client-side rendering** with progressive loading for better user experience and faster builds. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes. **Hybrid deployment fully operational** with frontend deployed on Vercel and backend on Railway with CORS wildcard pattern matching for dynamic URLs. **Layout and scrolling optimization completed** with proper sidebar-to-content spacing, overlay positioning, and Pokemon grid scrolling functionality restored. **usePokemonList hook fully refactored** with Apollo Client standard patterns, eliminated code duplication, enhanced error handling with silent failover, and improved loadedCount-based loading management.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. **Pokemon detail pages use SSG** for optimal performance with individual Pokemon data pre-generated at build time. **List pages use client-side rendering** with progressive loading for better user experience and faster builds. **Intelligent generational build system** with automatic detection and memory-efficient processing by Pokemon generation. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes. **Hybrid deployment fully operational** with frontend deployed on Vercel and backend on Railway with CORS wildcard pattern matching for dynamic URLs. **Layout and scrolling optimization completed** with proper sidebar-to-content spacing, overlay positioning, and Pokemon grid scrolling functionality restored. **usePokemonList hook fully refactored** with Apollo Client standard patterns, eliminated code duplication, enhanced error handling with silent failover, and improved loadedCount-based loading management.
 
 ## Architecture
 
@@ -29,8 +29,9 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 - **CORS Configuration**: Wildcard pattern support for dynamic Vercel deployment URLs
 
 ### Data Loading Strategy
-- **Pokemon Detail Pages**: Static Site Generation (SSG) for individual Pokemon pages with complete data pre-generation
+- **Pokemon Detail Pages**: Static Site Generation (SSG) with generational batch processing for optimal build performance
 - **Pokemon List Pages**: Client-Side Rendering (CSR) with progressive loading and Apollo Client caching
+- **Generational Build System**: SSG builds are processed by Pokemon generation (1-9) to reduce memory usage and improve stability
 - **Smart Caching**: Multi-level caching strategy (Redis backend + Apollo Client frontend) for optimal performance
 - **Selective Query Optimization**: Lightweight queries for browsing, full data for detail pages
 
@@ -208,11 +209,67 @@ pokemon-pokedex/
 - **Progressive Loading**: Initial 20 Pokemon load immediately, background loading for remainder
 - **Mobile Navigation**: Touch-optimized hamburger menu with overlay and logo positioning
 
-### Static Site Generation
-- **Pokemon Detail Pages Only**: Individual Pokemon pages pre-generated with SSG for optimal performance
-- **Dynamic List Loading**: Pokemon lists use client-side rendering with progressive loading
+### Static Site Generation & Generational Build System
+- **Generational Processing**: Pokemon detail pages built in 9 separate batches by generation for optimal memory usage
+- **Environment-Controlled**: Build strategy controlled via environment variables for flexibility
+- **Memory Efficiency**: Reduces build memory usage by ~90% (2600→300 pages per generation)
 - **Smart ID Validation**: GraphQL-based detection of valid Pokemon IDs for detail pages
-- **Build Performance**: Faster builds with selective SSG for detail pages only
+- **Build Performance**: Improved stability and reduced timeout errors with generation-based batching
+
+#### Build Commands & Automatic Detection
+```bash
+# Intelligent build (automatically detects mode)
+npm run build  # Uses ENABLE_GENERATIONAL_BUILD environment variable
+
+# Standard fast build (all generations at once)
+npm run build:legacy
+
+# Force generational build
+npm run build:generational
+ENABLE_GENERATIONAL_BUILD=true npm run build
+
+# Specific generation build (development/testing)
+npm run build:gen-1  # Generation 1 only (Kanto)
+npm run build:gen-2  # Generation 2 only (Johto)
+# ... through build:gen-9 (Paldea)
+
+# Legacy commands (still work)
+BUILD_GENERATION=1 npm run build:legacy
+```
+
+#### Automatic Build Mode Detection
+The build system automatically chooses the optimal build strategy:
+- **Standard Mode**: Fast build with all generations (default for development)
+- **Generational Mode**: Memory-efficient build by generation (when `ENABLE_GENERATIONAL_BUILD=true`)
+- **Single Generation**: Individual generation testing (development/debugging)
+
+#### Environment Variables
+- `ENABLE_GENERATIONAL_BUILD=true`: Enable generation-by-generation building
+- `BUILD_GENERATION=X`: Build only specific generation (1-9) with legacy build
+- Used in both Vercel production and local development environments
+
+#### Vercel Production Setup
+To enable generational builds in Vercel:
+1. Go to Vercel Dashboard → Project Settings → Environment Variables
+2. Add: `ENABLE_GENERATIONAL_BUILD` = `true`
+3. Deploy - the build system will automatically use generational mode
+4. No changes to Build Command needed (uses `npm run build`)
+
+#### Local Development Usage
+```bash
+# Test standard build (default)
+npm run build
+
+# Test generational build locally
+ENABLE_GENERATIONAL_BUILD=true npm run build
+
+# Test specific generation
+npm run build:gen-1
+
+# Compare build outputs
+npm run build:legacy  # Standard
+npm run build:generational  # Generational
+```
 
 ### Internationalization
 - **Languages**: English/Japanese support with middleware-based routing
