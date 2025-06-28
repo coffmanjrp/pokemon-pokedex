@@ -243,10 +243,7 @@ export async function generateMetadata({
         siteName: lang === "ja" ? "ポケモン図鑑" : "Pokédex",
         images: [
           {
-            url:
-              pokemon.sprites.other?.officialArtwork?.frontDefault ||
-              pokemon.sprites.frontDefault ||
-              "",
+            url: `https://pokemon-pokedex-client.vercel.app/api/images/pokemon/${pokemon.id}`,
             width: 475,
             height: 475,
             alt: `${pokemonName} official artwork`,
@@ -259,9 +256,7 @@ export async function generateMetadata({
         title,
         description,
         images: [
-          pokemon.sprites.other?.officialArtwork?.frontDefault ||
-            pokemon.sprites.frontDefault ||
-            "",
+          `https://pokemon-pokedex-client.vercel.app/api/images/pokemon/${pokemon.id}`,
         ],
         creator: "@pokedex",
         site: "@pokedex",

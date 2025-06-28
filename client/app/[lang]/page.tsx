@@ -44,8 +44,8 @@ export async function generateMetadata({
   );
   const selectedPokemon = featuredPokemon[dayOfYear % featuredPokemon.length]!;
 
-  // High-quality official artwork URL
-  const pokemonImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${selectedPokemon.id}.png`;
+  // High-quality official artwork URL from our own domain
+  const pokemonImageUrl = `https://pokemon-pokedex-client.vercel.app/api/images/pokemon/${selectedPokemon.id}`;
 
   const title =
     dictionary.meta.homeTitle ||
