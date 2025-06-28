@@ -13,7 +13,6 @@ import {
   setLoading,
   setError,
   setPokemons,
-  addPokemons,
   setHasNextPage,
   setEndCursor,
   setCurrentGeneration as setReduxCurrentGeneration,
@@ -21,23 +20,13 @@ import {
 } from "@/store/slices/pokemonSlice";
 import { getListQuery, isSSGBuild } from "@/lib/querySelector";
 import { Pokemon } from "@/types/pokemon";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 
 interface PokemonEdge {
   node: Pokemon;
 }
 
-const GENERATION_RANGES = {
-  1: { min: 1, max: 151, region: { en: "Kanto", ja: "カントー地方" } },
-  2: { min: 152, max: 251, region: { en: "Johto", ja: "ジョウト地方" } },
-  3: { min: 252, max: 386, region: { en: "Hoenn", ja: "ホウエン地方" } },
-  4: { min: 387, max: 493, region: { en: "Sinnoh", ja: "シンオウ地方" } },
-  5: { min: 494, max: 649, region: { en: "Unova", ja: "イッシュ地方" } },
-  6: { min: 650, max: 721, region: { en: "Kalos", ja: "カロス地方" } },
-  7: { min: 722, max: 809, region: { en: "Alola", ja: "アローラ地方" } },
-  8: { min: 810, max: 905, region: { en: "Galar", ja: "ガラル地方" } },
-  9: { min: 906, max: 1025, region: { en: "Paldea", ja: "パルデア地方" } },
-};
+import { GENERATION_RANGES } from "@/lib/data/generations";
 
 // Smart clear logic: Check if current Pokemon data belongs to the new generation
 const needsClearForGeneration = (
@@ -106,6 +95,7 @@ export function usePokemonList({
     loading: queryLoading,
     error: queryError,
     refetch,
+    fetchMore,
   } = useQuery(selectedQuery, {
     variables: { limit: generationLimit, offset: generationOffset },
     skip: !autoFetch,
@@ -113,186 +103,10 @@ export function usePokemonList({
     errorPolicy: "all",
   });
 
-  // Direct fetch function to bypass Apollo Client circular reference issues
-  const fetchMorePokemons = async (variables: {
-    limit: number;
-    offset: number;
-  }) => {
-    // Use appropriate query based on build mode
-    const queryString = isSSGBuild()
-      ? `
-      query GetPokemonsFull($limit: Int, $offset: Int) {
-        pokemons(limit: $limit, offset: $offset) {
-          edges {
-            node {
-              id
-              name
-              height
-              weight
-              baseExperience
-              types {
-                slot
-                type {
-                  id
-                  name
-                  url
-                }
-              }
-              sprites {
-                frontDefault
-                frontShiny
-                other {
-                  officialArtwork {
-                    frontDefault
-                    frontShiny
-                  }
-                  home {
-                    frontDefault
-                    frontShiny
-                  }
-                }
-              }
-              stats {
-                baseStat
-                effort
-                stat {
-                  id
-                  name
-                  url
-                }
-              }
-              abilities {
-                isHidden
-                slot
-                ability {
-                  id
-                  name
-                  url
-                  names {
-                    name
-                    language {
-                      name
-                      url
-                    }
-                  }
-                }
-              }
-              species {
-                id
-                name
-                names {
-                  name
-                  language {
-                    name
-                    url
-                  }
-                }
-                genera {
-                  genus
-                  language {
-                    name
-                    url
-                  }
-                }
-              }
-            }
-            cursor
-          }
-          pageInfo {
-            hasNextPage
-            hasPreviousPage
-            startCursor
-            endCursor
-          }
-          totalCount
-        }
-      }
-    `
-      : `
-      query GetPokemonsBasic($limit: Int, $offset: Int) {
-        pokemonsBasic(limit: $limit, offset: $offset) {
-          edges {
-            node {
-              id
-              name
-              types {
-                type {
-                  name
-                }
-              }
-              sprites {
-                frontDefault
-                other {
-                  officialArtwork {
-                    frontDefault
-                  }
-                }
-              }
-              species {
-                names {
-                  name
-                  language {
-                    name
-                  }
-                }
-                genera {
-                  genus
-                  language {
-                    name
-                  }
-                }
-              }
-            }
-            cursor
-          }
-          pageInfo {
-            hasNextPage
-            hasPreviousPage
-            startCursor
-            endCursor
-          }
-          totalCount
-        }
-      }
-    `;
-
-    // Dynamic GraphQL URL based on server mode
-    const getGraphQLURL = () => {
-      const serverMode = process.env.NEXT_PUBLIC_SERVER_MODE || "development";
-
-      if (serverMode === "production") {
-        return (
-          process.env.NEXT_PUBLIC_GRAPHQL_URL_PROD ||
-          "https://pokemon-pokedex-production.up.railway.app/graphql"
-        );
-      } else {
-        return (
-          process.env.NEXT_PUBLIC_GRAPHQL_URL_DEV ||
-          "http://localhost:4000/graphql"
-        );
-      }
-    };
-
-    const graphqlUrl = getGraphQLURL();
-    console.log("Using GraphQL URL:", graphqlUrl);
-
-    const response = await fetch(graphqlUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        query: queryString,
-        variables,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch Pokemon data");
-    }
-
-    return response.json();
-  };
+  // Helper function to get field name based on query type
+  const getDataFieldName = useCallback(() => {
+    return isSSGBuild() ? "pokemons" : "pokemonsBasic";
+  }, []);
 
   useEffect(() => {
     if (!isLoadingMore.current) {
@@ -310,7 +124,8 @@ export function usePokemonList({
 
   useEffect(() => {
     // Handle both pokemonsBasic and pokemons response formats
-    const pokemonData = data?.pokemonsBasic || data?.pokemons;
+    const fieldName = getDataFieldName();
+    const pokemonData = data?.[fieldName];
     if (pokemonData && !isLoadingMore.current) {
       const { edges, pageInfo } = pokemonData;
       const pokemonList = edges
@@ -362,8 +177,9 @@ export function usePokemonList({
         dispatch(setHasNextPage(hasMoreInGeneration));
         dispatch(setEndCursor(pageInfo.endCursor));
 
-        // Successfully loaded Pokemon - end generation switching overlay
+        // Successfully loaded Pokemon - end generation switching overlay and loading
         dispatch(setGenerationSwitching(false));
+        dispatch(setLoading(false));
 
         // Clear generation switching timeout (successful completion)
         if (window.generationSwitchingTimeout) {
@@ -371,46 +187,52 @@ export function usePokemonList({
           delete window.generationSwitchingTimeout;
         }
       } else if (edges.length > 0) {
-        // If we got data but no Pokemon match the generation range, something is wrong
+        // If we got data but no Pokemon match the generation range, silently continue with current data
         console.warn(
           "Received Pokemon data but none match the current generation range",
         );
-        dispatch(setError("No Pokemon found for this generation"));
         dispatch(setLoading(false));
         dispatch(setGenerationSwitching(false));
 
-        // Clear timeout since we're handling the error
+        // Clear timeout since we're handling the situation
         if (window.generationSwitchingTimeout) {
           clearTimeout(window.generationSwitchingTimeout);
           delete window.generationSwitchingTimeout;
         }
       } else {
-        // No data received at all - this could happen if the query returns empty results
+        // No data received at all - silently end loading without error
         console.warn(
           "No Pokemon data received for generation",
           currentGeneration,
         );
-        dispatch(setError("Failed to load Pokemon for this generation"));
         dispatch(setLoading(false));
         dispatch(setGenerationSwitching(false));
 
-        // Clear timeout since we're handling the error
+        // Clear timeout since we're handling the situation
         if (window.generationSwitchingTimeout) {
           clearTimeout(window.generationSwitchingTimeout);
           delete window.generationSwitchingTimeout;
         }
       }
     }
-  }, [data, dispatch, generationRange, currentGeneration]);
+  }, [data, dispatch, generationRange, currentGeneration, getDataFieldName]);
 
-  // Calculate unique Pokemon for counting (move this before loadMore function)
-  const uniquePokemons = pokemons.reduce((acc: Pokemon[], current) => {
-    const exists = acc.find((pokemon) => pokemon.id === current.id);
-    if (!exists) {
-      acc.push(current);
-    }
-    return acc;
-  }, []);
+  // Calculate unique Pokemon for counting from Apollo Client cache
+  const uniquePokemons = useMemo(() => {
+    const fieldName = getDataFieldName();
+    const apolloData =
+      data?.[fieldName]?.edges?.map((edge: PokemonEdge) => edge.node) || [];
+
+    // Combine with Redux state and deduplicate
+    const allPokemons = [...apolloData, ...pokemons];
+    return allPokemons.reduce((acc: Pokemon[], current) => {
+      const exists = acc.find((pokemon) => pokemon.id === current.id);
+      if (!exists) {
+        acc.push(current);
+      }
+      return acc;
+    }, []);
+  }, [data, pokemons, getDataFieldName]);
 
   // Refetch when generation changes
   useEffect(() => {
@@ -462,45 +284,56 @@ export function usePokemonList({
         return 0;
       }
 
-      const result = await fetchMorePokemons({
-        limit: loadLimit,
-        offset: nextOffset,
-      });
+      // Use Apollo Client fetchMore instead of direct fetch
+      const result = await fetchMore({
+        variables: {
+          limit: loadLimit,
+          offset: nextOffset,
+        },
+        updateQuery: (previousResult, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return previousResult;
 
-      const moreData = result.data;
+          const fieldName = getDataFieldName();
+          const previousData = previousResult[fieldName];
+          const newData = fetchMoreResult[fieldName];
 
-      const morePokemonData = moreData?.pokemons || moreData?.pokemonsBasic;
-      if (morePokemonData) {
-        const { edges, pageInfo } = morePokemonData;
-        const newPokemon = edges
-          .map((edge: PokemonEdge) => {
-            // Clean Pokemon data to remove any potential circular references
-            const pokemon = edge.node;
-            return {
-              id: pokemon.id,
-              name: pokemon.name,
-              height: pokemon.height,
-              weight: pokemon.weight,
-              baseExperience: pokemon.baseExperience,
-              types: pokemon.types,
-              sprites: pokemon.sprites,
-              stats: pokemon.stats,
-              abilities: pokemon.abilities,
-              moves: pokemon.moves,
-              species: pokemon.species,
-              gameIndices: pokemon.gameIndices,
-            } as Pokemon;
-          })
-          .filter((pokemon: Pokemon) => {
-            // Only include Pokemon within generation range
-            const pokemonId = parseInt(pokemon.id);
+          if (!newData || !newData.edges.length) {
+            return previousResult;
+          }
+
+          // Filter new Pokemon to only include those in current generation
+          const filteredEdges = newData.edges.filter((edge: PokemonEdge) => {
+            const pokemonId = parseInt(edge.node.id);
             return (
               pokemonId >= generationRange.min &&
               pokemonId <= generationRange.max
             );
           });
 
-        dispatch(addPokemons(newPokemon));
+          return {
+            ...previousResult,
+            [fieldName]: {
+              ...newData,
+              edges: [...previousData.edges, ...filteredEdges],
+            },
+          };
+        },
+      });
+
+      const fieldName = getDataFieldName();
+      const newData = result.data[fieldName];
+
+      if (newData) {
+        const newPokemon = newData.edges
+          .slice(-loadLimit) // Get only the newly added Pokemon
+          .map((edge: PokemonEdge) => edge.node as Pokemon)
+          .filter((pokemon: Pokemon) => {
+            const pokemonId = parseInt(pokemon.id);
+            return (
+              pokemonId >= generationRange.min &&
+              pokemonId <= generationRange.max
+            );
+          });
 
         // Check if we've reached the end of the generation
         const totalLoadedAfterAdd =
@@ -509,16 +342,13 @@ export function usePokemonList({
           totalLoadedAfterAdd < totalPokemonInGeneration;
 
         dispatch(setHasNextPage(hasMoreInGeneration));
-        dispatch(setEndCursor(pageInfo.endCursor));
 
         return newPokemon.length;
       }
       return 0;
     } catch (error) {
       console.error("LoadMore error:", error);
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to load more Pokemon";
-      dispatch(setError(errorMessage));
+      // Silently handle errors - no error message to user
       return 0;
     } finally {
       dispatch(setLoading(false));
@@ -531,6 +361,8 @@ export function usePokemonList({
     generationRange.min,
     generationRange.max,
     uniquePokemons,
+    fetchMore,
+    getDataFieldName,
   ]);
 
   const refresh = async () => {
@@ -571,17 +403,15 @@ export function usePokemonList({
         dispatch(setEndCursor(null));
         dispatch(setError(null));
 
-        // Failsafe: Handle timeout after 15 seconds with proper error state
-        // This prevents infinite loading but provides user feedback
+        // Failsafe: Handle timeout after 15 seconds with silent fallback
+        // This prevents infinite loading and maintains current Pokemon data
         const timeoutId = setTimeout(() => {
-          console.warn("Generation switching timeout - data loading failed");
+          console.warn(
+            "Generation switching timeout - silently ending loading state",
+          );
           dispatch(setGenerationSwitching(false));
           dispatch(setLoading(false));
-          dispatch(
-            setError(
-              `Failed to load ${newRange.region.en} Pokémon. Please try again or refresh the page.`,
-            ),
-          );
+          // No error dispatch - maintain current Pokemon data display
         }, 15000);
 
         // Store timeout ID to clear it when generation switching completes normally
@@ -605,15 +435,11 @@ export function usePokemonList({
         offset: newOffset,
       }).catch((error) => {
         console.error("Generation change refetch failed:", error);
-        dispatch(
-          setError(
-            error.message || "Failed to load Pokemon for this generation",
-          ),
-        );
+        // Silently handle refetch failure - no error message to user
         dispatch(setLoading(false));
         dispatch(setGenerationSwitching(false));
 
-        // Clear timeout since we're handling the error
+        // Clear timeout since we're handling the situation
         if (window.generationSwitchingTimeout) {
           clearTimeout(window.generationSwitchingTimeout);
           delete window.generationSwitchingTimeout;

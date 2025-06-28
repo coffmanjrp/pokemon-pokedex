@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, complete SSG implementation for all 1302+ Pokemon (including Mega, Gigantamax, and regional forms), performance optimizations, and sidebar-based generation navigation. All 2613 static pages generated successfully with zero build errors. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes. **Hybrid deployment fully operational** with frontend deployed on Vercel and backend on Railway with CORS wildcard pattern matching for dynamic URLs. **Layout and scrolling optimization completed** with proper sidebar-to-content spacing, overlay positioning, and Pokemon grid scrolling functionality restored.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, complete SSG implementation for all 1302+ Pokemon (including Mega, Gigantamax, and regional forms), performance optimizations, and sidebar-based generation navigation. All 2613 static pages generated successfully with zero build errors. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes. **Hybrid deployment fully operational** with frontend deployed on Vercel and backend on Railway with CORS wildcard pattern matching for dynamic URLs. **Layout and scrolling optimization completed** with proper sidebar-to-content spacing, overlay positioning, and Pokemon grid scrolling functionality restored. **usePokemonList hook fully refactored** with Apollo Client standard patterns, eliminated code duplication, enhanced error handling with silent failover, and improved loadedCount-based loading management.
 
 ## Architecture
 
@@ -42,7 +42,8 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 - **Layout Optimization**: Sidebar-to-content spacing optimized, overlay positioning improved
 - **Grid Rendering**: Virtual scrolling replaced with optimized standard grid for better reliability and scrolling functionality
 - **Component Architecture**: PokemonGrid component refactored from VirtualPokemonGrid with proper container overflow management
-- **Generation Switching**: Enhanced reliability with timeout protection and proper error handling
+- **Generation Switching**: Enhanced reliability with silent timeout handling and seamless data preservation
+- **Apollo Client Integration**: Fully migrated to standard fetchMore() patterns with automatic cache management
 - **SEO & Metadata**: Comprehensive Open Graph, Twitter Cards, and multilingual metadata implementation
 
 ## Development Commands
@@ -142,7 +143,7 @@ pokemon-pokedex/
 │   │   ├── formUtils.ts          # Pokemon form variation utilities
 │   │   └── querySelector.ts      # GraphQL query selection based on build mode
 │   ├── hooks/                    # Optimized React hooks (cleaned up from 12 to 2 active hooks)
-│   │   ├── usePokemonList.ts     # Pokemon list management with selective loading
+│   │   ├── usePokemonList.ts     # Pokemon list management with Apollo Client fetchMore() integration
 │   │   └── useBackgroundPreload.ts # Background data preloading optimization
 │   ├── store/                    # Redux Toolkit configuration
 │   └── types/                    # TypeScript type definitions
@@ -239,11 +240,12 @@ pokemon-pokedex/
 - Pokemon grid containers avoid `min-h-full` classes that prevent natural height
 - Flex layouts with `flex-1` allow proper content distribution and scrolling
 
-### Generation Switching Reliability
-- **Timeout Protection**: 15-second failsafe prevents infinite loading states
-- **Data Validation**: Generation switching only completes when Pokemon data is successfully loaded
-- **Error Handling**: Proper error messages displayed when data loading fails
-- **User Feedback**: Clear indication of loading failures with retry guidance
+### Generation Switching Reliability & Error Handling
+- **Silent Timeout Protection**: 15-second failsafe with silent recovery, no user interruption
+- **Data Preservation**: Current Pokemon data maintained during failed generation switches
+- **LoadedCount-Based Loading**: Immediate loading state resolution when Pokemon data arrives
+- **Apollo Client Integration**: Standard fetchMore() patterns with automatic cache management
+- **Error Recovery**: Silent error handling maintains user experience without error dialogs
 
 ### SEO & Social Media Optimization
 - **Enhanced Metadata**: Comprehensive Open Graph and Twitter Card implementation
