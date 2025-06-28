@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/conditional-build.js",
+    "build:legacy": "next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
@@ -14,9 +15,19 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "pre-commit": "lint-staged",
-    "analyze": "ANALYZE=true npm run build",
-    "analyze:server": "BUNDLE_ANALYZE=server npm run build",
-    "analyze:browser": "BUNDLE_ANALYZE=browser npm run build"
+    "analyze": "ANALYZE=true npm run build:legacy",
+    "analyze:server": "BUNDLE_ANALYZE=server npm run build:legacy",
+    "analyze:browser": "BUNDLE_ANALYZE=browser npm run build:legacy",
+    "build:generational": "ENABLE_GENERATIONAL_BUILD=true npm run build",
+    "build:gen-1": "BUILD_GENERATION=1 npm run build:legacy",
+    "build:gen-2": "BUILD_GENERATION=2 npm run build:legacy",
+    "build:gen-3": "BUILD_GENERATION=3 npm run build:legacy",
+    "build:gen-4": "BUILD_GENERATION=4 npm run build:legacy",
+    "build:gen-5": "BUILD_GENERATION=5 npm run build:legacy",
+    "build:gen-6": "BUILD_GENERATION=6 npm run build:legacy",
+    "build:gen-7": "BUILD_GENERATION=7 npm run build:legacy",
+    "build:gen-8": "BUILD_GENERATION=8 npm run build:legacy",
+    "build:gen-9": "BUILD_GENERATION=9 npm run build:legacy"
   },
   "dependencies": {
     "@apollo/client": "^3.13.8",
