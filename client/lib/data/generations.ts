@@ -119,3 +119,16 @@ export const getGenerationRegion = (
 export const isRemakeGame = (gameName: string): boolean => {
   return GENERATIONS.some((gen) => gen.remakes?.includes(gameName));
 };
+
+// usePokemonList compatible format with min/max properties
+export const GENERATION_RANGES = {
+  1: { min: 1, max: 151, region: { en: "Kanto", ja: "カントー地方" } },
+  2: { min: 152, max: 251, region: { en: "Johto", ja: "ジョウト地方" } },
+  3: { min: 252, max: 386, region: { en: "Hoenn", ja: "ホウエン地方" } },
+  4: { min: 387, max: 493, region: { en: "Sinnoh", ja: "シンオウ地方" } },
+  5: { min: 494, max: 649, region: { en: "Unova", ja: "イッシュ地方" } },
+  6: { min: 650, max: 721, region: { en: "Kalos", ja: "カロス地方" } },
+  7: { min: 722, max: 809, region: { en: "Alola", ja: "アローラ地方" } },
+  8: { min: 810, max: 905, region: { en: "Galar", ja: "ガラル地方" } },
+  9: { min: 906, max: 1025, region: { en: "Paldea", ja: "パルデア地方" } },
+} as const;
