@@ -163,11 +163,13 @@ function PokemonListContent({
     return (
       <>
         {/* Sidebar Navigation */}
-        <Sidebar
-          lang={lang}
-          currentGeneration={currentGeneration}
-          onGenerationChange={handleGenerationChange}
-        />
+        <Suspense fallback={<div>Loading sidebar...</div>}>
+          <Sidebar
+            lang={lang}
+            currentGeneration={currentGeneration}
+            onGenerationChange={handleGenerationChange}
+          />
+        </Suspense>
 
         {/* Main Content */}
         <div className="flex flex-col h-screen overflow-hidden">
@@ -204,11 +206,13 @@ function PokemonListContent({
   return (
     <>
       {/* Sidebar Navigation */}
-      <Sidebar
-        lang={lang}
-        currentGeneration={currentGeneration}
-        onGenerationChange={handleGenerationChange}
-      />
+      <Suspense fallback={<div>Loading sidebar...</div>}>
+        <Sidebar
+          lang={lang}
+          currentGeneration={currentGeneration}
+          onGenerationChange={handleGenerationChange}
+        />
+      </Suspense>
 
       {/* Main Content */}
       <div className="flex flex-col h-screen overflow-auto">
