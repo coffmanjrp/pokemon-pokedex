@@ -417,7 +417,7 @@ export function usePokemonList({
         dispatch(setEndCursor(null));
         dispatch(setError(null));
 
-        // Failsafe: Handle timeout after 15 seconds with silent fallback
+        // Failsafe: Handle timeout after 8 seconds with silent fallback
         // This prevents infinite loading and maintains current Pokemon data
         const timeoutId = setTimeout(() => {
           console.warn(
@@ -426,7 +426,7 @@ export function usePokemonList({
           dispatch(setGenerationSwitching(false));
           dispatch(setLoading(false));
           // No error dispatch - maintain current Pokemon data display
-        }, 15000);
+        }, 8000);
 
         // Store timeout ID to clear it when generation switching completes normally
         window.generationSwitchingTimeout = timeoutId;
