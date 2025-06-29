@@ -1,7 +1,7 @@
 import { Pokemon } from "@/types/pokemon";
 
 // Cache configuration
-const CACHE_VERSION = "1.1.0"; // Updated to include species.names data
+const CACHE_VERSION = "1.2.0"; // Updated to fix UTF-8 encoding for Japanese characters
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 const MAX_CACHED_GENERATIONS = 5; // Limit to prevent excessive storage usage
 
@@ -94,7 +94,7 @@ const decompressPokemon = (cached: CachedPokemon): Pokemon =>
 const getCacheKey = (): string => "pokemon_generation_cache";
 
 /**
- * Get current cache from localStorage
+ * Get current cache from localStorage with proper UTF-8 decoding
  */
 const getCurrentCache = (): PokemonCacheStorage => {
   try {
@@ -108,7 +108,18 @@ const getCurrentCache = (): PokemonCacheStorage => {
       };
     }
 
-    return JSON.parse(cached);
+    // Check if cache is base64 encoded (new format)
+    let cacheString: string;
+
+    try {
+      // Try to decode as base64 first (new format with UTF-8 preservation)
+      cacheString = decodeURIComponent(escape(atob(cached)));
+    } catch {
+      // Fallback to direct parsing (old format - may have encoding issues)
+      cacheString = cached;
+    }
+
+    return JSON.parse(cacheString);
   } catch (error) {
     console.warn(
       "Failed to parse Pokemon cache, initializing new cache:",
@@ -124,12 +135,16 @@ const getCurrentCache = (): PokemonCacheStorage => {
 };
 
 /**
- * Save cache to localStorage
+ * Save cache to localStorage with proper UTF-8 encoding
  */
 const saveCache = (cache: PokemonCacheStorage): void => {
   try {
-    const cacheString = JSON.stringify(cache);
-    localStorage.setItem(getCacheKey(), cacheString);
+    // Ensure proper UTF-8 encoding for Japanese characters
+    const cacheString = JSON.stringify(cache, null, 0);
+
+    // Use base64 encoding to preserve UTF-8 characters during localStorage operations
+    const encodedCache = btoa(unescape(encodeURIComponent(cacheString)));
+    localStorage.setItem(getCacheKey(), encodedCache);
 
     // Update total size in meta
     cache.meta.totalSize = new Blob([cacheString]).size;
@@ -138,7 +153,9 @@ const saveCache = (cache: PokemonCacheStorage): void => {
     // If storage is full, clear oldest caches and retry
     clearOldestCaches(2);
     try {
-      localStorage.setItem(getCacheKey(), JSON.stringify(cache));
+      const cacheString = JSON.stringify(cache, null, 0);
+      const encodedCache = btoa(unescape(encodeURIComponent(cacheString)));
+      localStorage.setItem(getCacheKey(), encodedCache);
     } catch (retryError) {
       console.error("Failed to save cache after cleanup:", retryError);
     }
@@ -223,10 +240,6 @@ export const cacheGenerationData = (
     cache.meta.lastAccessed[generation] = Date.now();
 
     saveCache(cache);
-
-    console.log(
-      `Cached ${pokemons.length} Pokemon for generation ${generation}`,
-    );
   } catch (error) {
     console.error("Failed to cache generation data:", error);
   }
@@ -253,7 +266,6 @@ export const getCachedGenerationData = (
 
     // Check if cache is still valid
     if (!isCacheValid(generationData.timestamp)) {
-      console.log(`Cache expired for generation ${generation}, removing...`);
       delete cache[generation];
       delete cache.meta.lastAccessed[generation];
       saveCache(cache);
@@ -262,9 +274,6 @@ export const getCachedGenerationData = (
 
     // Check version compatibility
     if (generationData.version !== CACHE_VERSION) {
-      console.log(
-        `Cache version mismatch for generation ${generation}, removing...`,
-      );
       delete cache[generation];
       delete cache.meta.lastAccessed[generation];
       saveCache(cache);
@@ -277,10 +286,6 @@ export const getCachedGenerationData = (
 
     // Decompress Pokemon data
     const pokemons = generationData.pokemons.map(decompressPokemon);
-
-    console.log(
-      `Retrieved ${pokemons.length} cached Pokemon for generation ${generation}`,
-    );
 
     return {
       pokemons,
@@ -322,8 +327,6 @@ export const clearGenerationCache = (generation: number): void => {
     delete cache[generation];
     delete cache.meta.lastAccessed[generation];
     saveCache(cache);
-
-    console.log(`Cleared cache for generation ${generation}`);
   } catch (error) {
     console.error("Failed to clear generation cache:", error);
   }
@@ -335,7 +338,6 @@ export const clearGenerationCache = (generation: number): void => {
 export const clearAllCache = (): void => {
   try {
     localStorage.removeItem(getCacheKey());
-    console.log("Cleared all Pokemon cache");
   } catch (error) {
     console.error("Failed to clear all cache:", error);
   }

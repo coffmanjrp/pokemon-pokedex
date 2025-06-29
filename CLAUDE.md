@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. **Pokemon detail pages use SSG** for optimal performance with individual Pokemon data pre-generated at build time. **Pokemon list pages now use full client-side rendering** with intelligent cache system for seamless generation switching - ISR removed to prevent generation data conflicts. **Intelligent generational build system** with automatic detection and memory-efficient processing by Pokemon generation. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes. **Hybrid deployment fully operational** with frontend deployed on Vercel and backend on Railway with CORS wildcard pattern matching for dynamic URLs. **Layout and scrolling optimization completed** with proper sidebar-to-content spacing, overlay positioning, and Pokemon grid scrolling functionality restored. **Generation switching completely fixed** - implemented full cache system with localStorage persistence, eliminated generation data mixing issues, and restored seamless Pokemon list loading across all generations. **Comprehensive Redux dictionary support implemented** across all Pokemon detail child components with unified translation system using shared getFallbackText utility and complete i18n coverage for evolution conditions and sandbox components.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. **Pokemon detail pages use SSG** for optimal performance with individual Pokemon data pre-generated at build time. **Pokemon list pages now use full client-side rendering** with intelligent cache system for seamless generation switching - ISR removed to prevent generation data conflicts. **Intelligent generational build system** with automatic detection and memory-efficient processing by Pokemon generation. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes. **Hybrid deployment fully operational** with frontend deployed on Vercel and backend on Railway with CORS wildcard pattern matching for dynamic URLs. **Layout and scrolling optimization completed** with proper sidebar-to-content spacing, overlay positioning, and Pokemon grid scrolling functionality restored. **Generation switching completely fixed** - implemented full cache system with localStorage persistence, eliminated generation data mixing issues, and restored seamless Pokemon list loading across all generations. **UTF-8 character encoding issue fixed** - resolved Japanese Pokemon name corruption in card lists through base64 localStorage encoding with backward compatibility. **Comprehensive Redux dictionary support implemented** across all Pokemon detail child components with unified translation system using shared getFallbackText utility and complete i18n coverage for evolution conditions and sandbox components.
 
 ## Architecture
 
@@ -33,7 +33,7 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 - **Pokemon List Pages**: Client-side rendering with intelligent cache system - ISR removed to prevent generation data conflicts
 - **Generational Build System**: SSG builds are processed by Pokemon generation (1-9) to reduce memory usage and improve stability
 - **Client-side Caching**: Multi-level caching strategy (Redis backend + Apollo Client frontend + localStorage persistence) for optimal performance
-- **Generation Cache System**: Full localStorage cache with 24-hour TTL, automatic compression, and smart cache management
+- **Generation Cache System**: Full localStorage cache with 24-hour TTL, base64 UTF-8 encoding for Japanese character preservation, automatic compression, and smart cache management
 - **Data Loading Flow**: Empty initial data → Client-side generation-aware fetching → Intelligent cache fallback → Progressive loading
 - **Hybrid Rendering**: Server Components for metadata and layout, Client Components for all Pokemon data interaction
 
@@ -313,9 +313,12 @@ npm run build:generational  # Generational
 - **Cache-First Strategy**: Check localStorage cache before API requests for instant loading
 - **Data Integrity**: Generation-aware data fetching prevents data mixing between generations  
 - **Cache Persistence**: 24-hour TTL with automatic compression and smart cleanup
+- **UTF-8 Encoding**: Base64 localStorage encoding preserves Japanese Pokemon names and prevents character corruption
+- **Character Encoding**: Resolved `���シャマリ` → `オシャマリ` corruption in Japanese card lists through proper UTF-8 handling
 - **Silent Failover**: Timeout protection with graceful fallback to ensure seamless UX
 - **Apollo Client Integration**: Standard fetchMore() patterns with automatic cache management
 - **Cache Restoration**: Instant generation switching with cached data preservation
+- **Backward Compatibility**: Automatic detection of legacy cache format with graceful migration
 
 ### SEO & Social Media Optimization
 - **Enhanced Metadata**: Comprehensive Open Graph and Twitter Card implementation

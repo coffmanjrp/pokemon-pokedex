@@ -56,11 +56,7 @@ const PokemonCard = memo(
     const handleClick = (e: React.MouseEvent) => {
       e.preventDefault();
       triggerAnimation(e);
-
-      // Small delay for visual feedback before navigation
-      setTimeout(() => {
-        onClick?.(pokemon);
-      }, 200);
+      onClick?.(pokemon);
     };
 
     const formatPokemonId = (id: string) => {

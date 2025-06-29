@@ -34,17 +34,11 @@ export const useNavigationCache = () => {
         const generation = parseInt(generationParam);
 
         if (!isNaN(generation) && generation >= 1 && generation <= 9) {
-          console.log(
-            `Navigation detected: attempting to restore generation ${generation}`,
-          );
-
           // Check if we have cached data for this generation
           if (isGenerationCached(generation)) {
             const cachedData = getCachedGenerationData(generation);
 
             if (cachedData) {
-              console.log(`Restoring cached data for generation ${generation}`);
-
               // Dispatch Redux actions to restore state
               dispatch(loadCachedGeneration(generation));
 
@@ -83,8 +77,6 @@ export const useNavigationCache = () => {
         const cachedData = getCachedGenerationData(generation);
 
         if (cachedData) {
-          console.log(`Loading cached generation ${generation} for navigation`);
-
           // Load cached data immediately
           dispatch(loadCachedGeneration(generation));
 
@@ -121,9 +113,6 @@ export const useNavigationCache = () => {
           const cachedData = getCachedGenerationData(generation);
 
           if (cachedData) {
-            console.log(
-              `Restoring generation ${generation} from URL with cache`,
-            );
             dispatch(loadCachedGeneration(generation));
             return true;
           }
