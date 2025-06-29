@@ -99,7 +99,11 @@
       "learn": "Learn",
       "at": "At",
       "with": "with",
-      "happiness": "Happiness"
+      "happiness": "Happiness",
+      "gender": "Gender",
+      "genderless": "Genderless",
+      "male": "Male",
+      "female": "Female"
     },
     "stats": {
       "hp": "HP",

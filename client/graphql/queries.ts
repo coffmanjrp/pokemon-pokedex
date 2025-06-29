@@ -34,6 +34,8 @@ export const GET_POKEMONS_BASIC = gql`
                 name
               }
             }
+            genderRate
+            hasGenderDifferences
           }
         }
         cursor
@@ -80,6 +82,8 @@ export const GET_POKEMON_BASIC = gql`
             name
           }
         }
+        genderRate
+        hasGenderDifferences
       }
     }
   }
@@ -119,6 +123,8 @@ export const GET_POKEMONS = gql`
                 name
               }
             }
+            genderRate
+            hasGenderDifferences
           }
         }
         cursor
@@ -350,6 +356,8 @@ export const GET_POKEMON = gql`
           name
           url
         }
+        genderRate
+        hasGenderDifferences
         evolutionChain {
           id
           url

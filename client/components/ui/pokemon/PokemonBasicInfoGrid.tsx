@@ -1,7 +1,7 @@
 "use client";
 
 import { Pokemon } from "@/types/pokemon";
-import { getAbilityName } from "@/lib/pokemonUtils";
+import { getAbilityName, getGenderDisplayString } from "@/lib/pokemonUtils";
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
 
@@ -49,7 +49,11 @@ export function PokemonBasicInfoGrid({
         <div className="text-xs text-gray-500 mb-1">
           {language === "en" ? "Gender" : "性別"}
         </div>
-        <div className="text-sm font-semibold">♂ ♀</div>
+        <div className="text-sm font-semibold">
+          {pokemon.species?.genderRate !== undefined
+            ? getGenderDisplayString(pokemon.species.genderRate, language)
+            : "♂ ♀"}
+        </div>
       </div>
 
       <div className="text-center">
