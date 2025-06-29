@@ -519,8 +519,6 @@ export function usePokemonList({
       const cachedData = getCachedGenerationData(newGeneration);
 
       if (isCached && cachedData) {
-        console.log(`Loading cached data for generation ${newGeneration}`);
-
         // Restore cached data immediately
         dispatch(setPokemons(cachedData.pokemons));
         dispatch(setHasNextPage(cachedData.hasNextPage));
