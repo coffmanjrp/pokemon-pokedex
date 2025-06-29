@@ -23,7 +23,7 @@ export async function GET(
     }
 
     // Debug: Log the exact query and variables being sent
-    console.log("Sending GraphQL query:", {
+    console.log("Sending basic GraphQL query:", {
       query: GET_POKEMON_BASIC.loc?.source?.body,
       variables: { id },
     });

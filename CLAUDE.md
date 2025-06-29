@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. **Pokemon detail pages use SSG** for optimal performance with individual Pokemon data pre-generated at build time. **Pokemon list pages now use full client-side rendering** with intelligent cache system for seamless generation switching - ISR removed to prevent generation data conflicts. **Intelligent generational build system** with automatic detection and memory-efficient processing by Pokemon generation. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes. **Hybrid deployment fully operational** with frontend deployed on Vercel and backend on Railway with CORS wildcard pattern matching for dynamic URLs. **Layout and scrolling optimization completed** with proper sidebar-to-content spacing, overlay positioning, and Pokemon grid scrolling functionality restored. **Generation switching completely fixed** - implemented full cache system with localStorage persistence, eliminated generation data mixing issues, and restored seamless Pokemon list loading across all generations. **UTF-8 character encoding issue fixed** - resolved Japanese Pokemon name corruption in card lists through base64 localStorage encoding with backward compatibility. **Comprehensive Redux dictionary support implemented** across all Pokemon detail child components with unified translation system using shared getFallbackText utility and complete i18n coverage for evolution conditions and sandbox components.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. **Pokemon detail pages use SSG** for optimal performance with individual Pokemon data pre-generated at build time. **Pokemon list pages now use full client-side rendering** with intelligent cache system for seamless generation switching - ISR removed to prevent generation data conflicts. **Intelligent generational build system** with automatic detection and memory-efficient processing by Pokemon generation. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes. **Hybrid deployment fully operational** with frontend deployed on Vercel and backend on Railway with CORS wildcard pattern matching for dynamic URLs. **Layout and scrolling optimization completed** with proper sidebar-to-content spacing, overlay positioning, and Pokemon grid scrolling functionality restored. **Generation switching completely fixed** - implemented full cache system with localStorage persistence, eliminated generation data mixing issues, and restored seamless Pokemon list loading across all generations. **UTF-8 character encoding issue fixed** - resolved Japanese Pokemon name corruption in card lists through base64 localStorage encoding with backward compatibility. **Comprehensive Redux dictionary support implemented** across all Pokemon detail child components with unified translation system using shared getFallbackText utility and complete i18n coverage for evolution conditions and sandbox components. **Next.js API Routes implementation in progress** - comprehensive REST API endpoints for Pokemon data access with GraphQL integration, multiple query types (basic/full), evolution chain analysis, and debug capabilities.
 
 ## Architecture
 
@@ -116,6 +116,16 @@ cd server && npm run start    # Start production GraphQL server
 pokemon-pokedex/
 ├── client/                          # Frontend Next.js application
 │   ├── app/                        # App Router with i18n structure
+│   │   ├── api/                   # Next.js API Routes for REST endpoints
+│   │   │   ├── route.ts           # API documentation and route listing
+│   │   │   ├── pokemon/
+│   │   │   │   ├── route.ts       # Pokemon list API endpoint
+│   │   │   │   └── [id]/          # Pokemon detail API routes
+│   │   │   │       ├── route.ts   # Basic Pokemon detail endpoint
+│   │   │   │       ├── basic/     # Explicit basic Pokemon data
+│   │   │   │       ├── full/      # Complete Pokemon data with evolution
+│   │   │   │       └── evolution/ # Evolution chain analysis
+│   │   │   └── graphql/           # GraphQL debug and testing endpoints
 │   │   ├── [lang]/                # Language-based routing
 │   │   │   ├── page.tsx           # Main Pokemon grid page (client wrapper)
 │   │   │   ├── client.tsx         # Client-side Pokemon list logic
@@ -176,6 +186,7 @@ pokemon-pokedex/
 - **Type System**: Official Pokemon type colors and effectiveness calculations
 - **SEO Optimization**: Enhanced metadata with Open Graph, Twitter Cards, and multilingual support
 - **Social Sharing**: Dynamic Pokemon images for attractive social media previews
+- **API Routes**: Comprehensive REST API endpoints for Pokemon data access with multiple query types (basic/full/evolution) and GraphQL integration
 
 ## Development Workflow
 
@@ -285,6 +296,20 @@ npm run build:generational  # Generational
 - **Languages**: English/Japanese support with middleware-based routing
 - **Structure**: `/[lang]/` routes with server-side dictionary loading
 - **Translation**: Pokemon names, types, abilities, moves via PokeAPI integration
+
+### API Routes System
+- **REST API Integration**: Next.js API Routes providing REST endpoints alongside GraphQL backend
+- **Multiple Query Types**: Basic, Full, and Evolution-specific endpoints for optimized data fetching
+- **Debug Capabilities**: GraphQL debug endpoints for testing and development
+- **Endpoint Structure**:
+  - `/api/pokemon` - Pokemon list with query parameters
+  - `/api/pokemon/[id]` - Basic Pokemon detail data
+  - `/api/pokemon/[id]/basic` - Explicit basic Pokemon data endpoint
+  - `/api/pokemon/[id]/full` - Complete Pokemon data with evolution chains
+  - `/api/pokemon/[id]/evolution` - Dedicated evolution chain analysis
+  - `/api/graphql/debug` - GraphQL query testing and debugging
+- **GraphQL Integration**: API Routes serve as REST layer over existing GraphQL backend
+- **Environment Configuration**: Automatic GraphQL endpoint detection with fallback to localhost
 
 ## Common Issues & Solutions
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-import { GET_POKEMON_BASIC } from "@/graphql/queries";
+import { GET_POKEMON } from "@/graphql/queries";
 
 // GraphQL client setup
 const client = new ApolloClient({
@@ -23,14 +23,14 @@ export async function GET(
     }
 
     // Debug: Log the exact query and variables being sent
-    console.log("Sending GraphQL query:", {
-      query: GET_POKEMON_BASIC.loc?.source?.body,
+    console.log("Sending full GraphQL query:", {
+      query: GET_POKEMON.loc?.source?.body,
       variables: { id },
     });
 
-    // Fetch data from GraphQL server using the basic GET_POKEMON_BASIC query
+    // Fetch data from GraphQL server using the full GET_POKEMON query
     const { data, error } = await client.query({
-      query: GET_POKEMON_BASIC,
+      query: GET_POKEMON,
       variables: { id },
       errorPolicy: "all",
       fetchPolicy: "no-cache", // Same as debug endpoint
@@ -87,19 +87,19 @@ export async function GET(
       );
     }
 
-    if (!data?.pokemonBasic) {
+    if (!data?.pokemon) {
       return NextResponse.json({ error: "Pokemon not found" }, { status: 404 });
     }
 
     // Return the raw GraphQL data for debugging
     return NextResponse.json({
       success: true,
-      pokemon: data.pokemonBasic,
+      pokemon: data.pokemon,
       metadata: {
         id,
         timestamp: new Date().toISOString(),
-        source: "GraphQL API (Basic Detail)",
-        query: "GET_POKEMON_BASIC",
+        source: "GraphQL API (Full Detail)",
+        query: "GET_POKEMON",
       },
     });
   } catch (error) {
