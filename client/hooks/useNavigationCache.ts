@@ -19,6 +19,11 @@ export const useNavigationCache = () => {
   const router = useRouter();
 
   useEffect(() => {
+    // Only run in browser environment
+    if (typeof window === "undefined") {
+      return;
+    }
+
     // Handle browser navigation events (back/forward buttons)
     const handlePopState = (event: PopStateEvent) => {
       // Extract generation from current URL
@@ -71,20 +76,23 @@ export const useNavigationCache = () => {
   const navigateToGeneration = (generation: number, pathname: string = "/") => {
     const url = `${pathname}?generation=${generation}`;
 
-    // Check if we have cached data for this generation
-    if (isGenerationCached(generation)) {
-      const cachedData = getCachedGenerationData(generation);
+    // Only use cache navigation in browser environment
+    if (typeof window !== "undefined") {
+      // Check if we have cached data for this generation
+      if (isGenerationCached(generation)) {
+        const cachedData = getCachedGenerationData(generation);
 
-      if (cachedData) {
-        console.log(`Loading cached generation ${generation} for navigation`);
+        if (cachedData) {
+          console.log(`Loading cached generation ${generation} for navigation`);
 
-        // Load cached data immediately
-        dispatch(loadCachedGeneration(generation));
+          // Load cached data immediately
+          dispatch(loadCachedGeneration(generation));
 
-        // Update URL without triggering a reload
-        window.history.pushState({ generation }, "", url);
+          // Update URL without triggering a reload
+          window.history.pushState({ generation }, "", url);
 
-        return;
+          return;
+        }
       }
     }
 
@@ -96,6 +104,11 @@ export const useNavigationCache = () => {
    * Restore generation state from URL on initial load
    */
   const restoreFromURL = () => {
+    // Check if running in browser (not SSR)
+    if (typeof window === "undefined") {
+      return false;
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const generationParam = urlParams.get("generation");
 

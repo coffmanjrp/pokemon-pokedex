@@ -1,9 +1,6 @@
 import { Metadata } from "next";
 import { Locale } from "@/lib/dictionaries";
 import { getDictionary } from "@/lib/get-dictionary";
-import { getClient } from "@/lib/apollo";
-import { GET_POKEMONS } from "@/graphql/queries";
-import { Pokemon } from "@/types/pokemon";
 import { PokemonListClient } from "./client";
 
 // ISR configuration: revalidate every hour
@@ -132,45 +129,13 @@ export default async function HomePage({ params }: HomePageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang);
 
-  try {
-    // Server-side initial data fetch for ISR
-    console.log("Fetching initial Pokemon data for ISR...");
-    const client = await getClient();
-
-    // Fetch initial Pokemon (first 50 for immediate display)
-    const { data } = await client.query({
-      query: GET_POKEMONS,
-      variables: {
-        limit: 50,
-        offset: 0,
-      },
-      errorPolicy: "all",
-    });
-
-    const initialPokemon: Pokemon[] =
-      data?.pokemons?.edges?.map((edge: { node: Pokemon }) => edge.node) || [];
-
-    console.log(
-      `Successfully fetched ${initialPokemon.length} initial Pokemon for ISR`,
-    );
-
-    return (
-      <PokemonListClient
-        dictionary={dictionary}
-        lang={lang}
-        initialPokemon={initialPokemon}
-      />
-    );
-  } catch (error) {
-    console.error("Error fetching initial Pokemon data for ISR:", error);
-
-    // Fallback to CSR if server-side fetch fails
-    return (
-      <PokemonListClient
-        dictionary={dictionary}
-        lang={lang}
-        initialPokemon={[]}
-      />
-    );
-  }
+  // For ISR, only provide empty initial data to prevent generation mismatch issues
+  // Let client-side handle all Pokemon loading based on current generation
+  return (
+    <PokemonListClient
+      dictionary={dictionary}
+      lang={lang}
+      initialPokemon={[]}
+    />
+  );
 }

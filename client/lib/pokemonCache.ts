@@ -1,7 +1,7 @@
 import { Pokemon } from "@/types/pokemon";
 
 // Cache configuration
-const CACHE_VERSION = "1.0.0";
+const CACHE_VERSION = "1.1.0"; // Updated to include species.names data
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 const MAX_CACHED_GENERATIONS = 5; // Limit to prevent excessive storage usage
 
@@ -11,6 +11,9 @@ interface CachedPokemon {
   name: string;
   types: string[];
   sprite: string;
+  // Essential species data for multilingual support
+  speciesNames?: { name: string; language: { name: string } }[];
+  speciesId?: string;
 }
 
 interface GenerationCacheData {
@@ -42,6 +45,9 @@ const compressPokemon = (pokemon: Pokemon): CachedPokemon => ({
     pokemon.sprites?.other?.officialArtwork?.frontDefault ||
     pokemon.sprites?.frontDefault ||
     "",
+  // Preserve essential species data for Japanese name translation
+  ...(pokemon.species?.names && { speciesNames: pokemon.species.names }),
+  ...(pokemon.species?.id && { speciesId: pokemon.species.id }),
 });
 
 /**
@@ -63,13 +69,24 @@ const decompressPokemon = (cached: CachedPokemon): Pokemon =>
         },
       },
     },
+    // Restore species data if available
+    ...(cached.speciesNames && {
+      species: {
+        id: cached.speciesId || cached.id,
+        name: cached.name.split("-")[0],
+        names: cached.speciesNames,
+        flavorTextEntries: [],
+        genera: [],
+        generation: { id: "1", name: "generation-i" },
+      },
+    }),
     height: 0,
     weight: 0,
     baseExperience: 0,
     abilities: [],
     stats: [],
     moves: [],
-  }) as Pokemon;
+  }) as unknown as Pokemon;
 
 /**
  * Get cache storage key

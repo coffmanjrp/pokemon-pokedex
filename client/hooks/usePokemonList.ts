@@ -25,6 +25,7 @@ import {
   cacheGenerationData as persistCacheData,
   getCachedGenerationData,
   isGenerationCached,
+  clearGenerationCache,
 } from "@/lib/pokemonCache";
 import { getListQuery, isSSGBuild } from "@/lib/querySelector";
 import { Pokemon } from "@/types/pokemon";
@@ -35,33 +36,6 @@ interface PokemonEdge {
 }
 
 import { GENERATION_RANGES } from "@/lib/data/generations";
-
-// Smart clear logic: Check if current Pokemon data belongs to the new generation
-const needsClearForGeneration = (
-  currentPokemons: Pokemon[],
-  newGeneration: number,
-): boolean => {
-  if (currentPokemons.length === 0) {
-    return false; // No data to clear
-  }
-
-  const newGenerationRange =
-    GENERATION_RANGES[newGeneration as keyof typeof GENERATION_RANGES];
-  const currentFirstPokemon = currentPokemons[0];
-
-  if (!currentFirstPokemon) {
-    return true; // If no current Pokemon, we need to switch
-  }
-
-  const currentFirstId = parseInt(currentFirstPokemon.id);
-
-  // Check if current first Pokemon is outside the new generation range
-  const isOutsideRange =
-    currentFirstId < newGenerationRange.min ||
-    currentFirstId > newGenerationRange.max;
-
-  return isOutsideRange;
-};
 
 interface UsePokemonListOptions {
   generation?: number;
@@ -176,8 +150,10 @@ export function usePokemonList({
     // Handle both pokemonsBasic and pokemons response formats
     const fieldName = getDataFieldName();
     const pokemonData = data?.[fieldName];
+
     if (pokemonData && !isLoadingMore.current) {
       const { edges, pageInfo } = pokemonData;
+
       const pokemonList = edges
         .map((edge: PokemonEdge) => {
           // Clean Pokemon data to remove any potential circular references
@@ -204,18 +180,11 @@ export function usePokemonList({
             pokemonId >= generationRange.min &&
             pokemonId <= generationRange.max;
 
-          // Debug log (remove in production)
-          if (!isInCurrentGeneration) {
-            console.warn(
-              `Filtered out Pokemon #${pokemonId} (${pokemon.name}) - not in current generation range ${generationRange.min}-${generationRange.max}`,
-            );
-          }
-
           return isInCurrentGeneration;
         });
 
-      // Only update state if we have valid Pokemon in the correct generation
-      if (pokemonList.length > 0) {
+      // Only update state if we have MORE Pokemon than currently loaded (prevent overwriting loadMore results)
+      if (pokemonList.length > 0 && pokemonList.length > pokemons.length) {
         dispatch(setPokemons(pokemonList));
 
         // Check if we've loaded all Pokemon in this generation
@@ -252,10 +221,6 @@ export function usePokemonList({
             pageInfo.endCursor,
             pokemonList.length,
           );
-
-          console.log(
-            `Cached ${pokemonList.length} Pokemon for generation ${currentGeneration}`,
-          );
         }
 
         // Clear generation switching timeout (successful completion)
@@ -264,10 +229,6 @@ export function usePokemonList({
           delete window.generationSwitchingTimeout;
         }
       } else if (edges.length > 0) {
-        // If we got data but no Pokemon match the generation range, silently continue with current data
-        console.warn(
-          "Received Pokemon data but none match the current generation range",
-        );
         dispatch(setLoading(false));
         dispatch(setGenerationSwitching(false));
 
@@ -277,11 +238,6 @@ export function usePokemonList({
           delete window.generationSwitchingTimeout;
         }
       } else {
-        // No data received at all - silently end loading without error
-        console.warn(
-          "No Pokemon data received for generation",
-          currentGeneration,
-        );
         dispatch(setLoading(false));
         dispatch(setGenerationSwitching(false));
 
@@ -292,13 +248,32 @@ export function usePokemonList({
         }
       }
     }
-  }, [data, dispatch, generationRange, currentGeneration, getDataFieldName]);
+  }, [
+    data,
+    dispatch,
+    generationRange,
+    currentGeneration,
+    getDataFieldName,
+    pokemons.length,
+  ]);
 
-  // Calculate unique Pokemon for counting - prioritize Redux state for cache system
+  // Calculate unique Pokemon for counting - filter by current generation
   const uniquePokemons = useMemo(() => {
+    // Always filter Pokemon to only include current generation
+    const filterByGeneration = (pokemonList: Pokemon[]) => {
+      const filtered = pokemonList.filter((pokemon: Pokemon) => {
+        const pokemonId = parseInt(pokemon.id);
+        return (
+          pokemonId >= generationRange.min && pokemonId <= generationRange.max
+        );
+      });
+
+      return filtered;
+    };
+
     // When using cache system, prioritize Redux state (pokemons) as it contains the most up-to-date data
     if (pokemons.length > 0) {
-      return pokemons;
+      return filterByGeneration(pokemons);
     }
 
     // Fallback to Apollo Client data if Redux state is empty
@@ -306,14 +281,19 @@ export function usePokemonList({
     const apolloData =
       data?.[fieldName]?.edges?.map((edge: PokemonEdge) => edge.node) || [];
 
-    return apolloData.reduce((acc: Pokemon[], current: Pokemon) => {
-      const exists = acc.find((pokemon) => pokemon.id === current.id);
-      if (!exists) {
-        acc.push(current);
-      }
-      return acc;
-    }, []);
-  }, [data, pokemons, getDataFieldName]);
+    const deduplicatedData = apolloData.reduce(
+      (acc: Pokemon[], current: Pokemon) => {
+        const exists = acc.find((pokemon) => pokemon.id === current.id);
+        if (!exists) {
+          acc.push(current);
+        }
+        return acc;
+      },
+      [],
+    );
+
+    return filterByGeneration(deduplicatedData);
+  }, [data, pokemons, getDataFieldName, generationRange]);
 
   // Refetch when generation changes
   useEffect(() => {
@@ -407,8 +387,8 @@ export function usePokemonList({
       const newData = result.data[fieldName];
 
       if (newData) {
-        const newPokemon = newData.edges
-          .slice(-loadLimit) // Get only the newly added Pokemon
+        // Get all Pokemon from the response and filter out already loaded ones
+        const allPokemonFromResponse = newData.edges
           .map((edge: PokemonEdge) => edge.node as Pokemon)
           .filter((pokemon: Pokemon) => {
             const pokemonId = parseInt(pokemon.id);
@@ -417,6 +397,12 @@ export function usePokemonList({
               pokemonId <= generationRange.max
             );
           });
+
+        // Filter out Pokemon we already have to get only new ones
+        const existingIds = new Set(pokemons.map((p: Pokemon) => p.id));
+        const newPokemon = allPokemonFromResponse.filter(
+          (pokemon: Pokemon) => !existingIds.has(pokemon.id),
+        );
 
         // Check if we've reached the end of the generation
         const totalLoadedAfterAdd =
@@ -452,10 +438,6 @@ export function usePokemonList({
             newData.pageInfo?.endCursor || null,
             updatedPokemons.length,
           );
-
-          console.log(
-            `Added ${newPokemon.length} Pokemon to generation ${currentGeneration}. Total: ${updatedPokemons.length}`,
-          );
         }
 
         return newPokemon.length;
@@ -467,7 +449,11 @@ export function usePokemonList({
       return 0;
     } finally {
       dispatch(setLoading(false));
-      isLoadingMore.current = false;
+
+      // Small delay before resetting isLoadingMore to prevent data processing useEffect from overwriting results
+      setTimeout(() => {
+        isLoadingMore.current = false;
+      }, 100);
     }
   }, [
     hasNextPage,
@@ -485,6 +471,8 @@ export function usePokemonList({
   const refresh = async () => {
     try {
       dispatch(setLoading(true));
+      // Clear cache for current generation to ensure fresh data
+      clearGenerationCache(currentGeneration);
       await refetch({
         limit: generationLimit,
         offset: generationOffset,
@@ -524,69 +512,45 @@ export function usePokemonList({
           endCursor,
           pokemons.length,
         );
-
-        console.log(
-          `Cached ${pokemons.length} Pokemon for generation ${currentGeneration}`,
-        );
       }
 
-      // Check if target generation is already cached
+      // Check cache before loading new generation
       const isCached = isGenerationCached(newGeneration);
       const cachedData = getCachedGenerationData(newGeneration);
 
       if (isCached && cachedData) {
         console.log(`Loading cached data for generation ${newGeneration}`);
 
-        // Load from cache immediately - no loading state needed
+        // Restore cached data immediately
         dispatch(setPokemons(cachedData.pokemons));
         dispatch(setHasNextPage(cachedData.hasNextPage));
         dispatch(setEndCursor(cachedData.endCursor));
-        dispatch(setReduxCurrentGeneration(newGeneration));
-        dispatch(setError(null));
         dispatch(setLoading(false));
         dispatch(setGenerationSwitching(false));
 
-        // Also cache in Redux store for consistency
-        dispatch(
-          cacheGenerationData({
-            generation: newGeneration,
-            pokemons: cachedData.pokemons,
-            hasNextPage: cachedData.hasNextPage,
-            endCursor: cachedData.endCursor,
-            loadedCount: cachedData.loadedCount,
-          }),
-        );
-
-        setCurrentGeneration(newGeneration);
         return;
       }
 
       // If not cached, proceed with normal loading flow
-      const shouldClear = needsClearForGeneration(pokemons, newGeneration);
+      // Always clear Pokemon list when switching generations to prevent mixing
+      dispatch(setGenerationSwitching(true));
+      dispatch(setPokemons([]));
+      dispatch(setHasNextPage(true));
+      dispatch(setEndCursor(null));
+      dispatch(setError(null));
 
-      if (shouldClear) {
-        // Start generation switching overlay
-        dispatch(setGenerationSwitching(true));
+      // Failsafe: Handle timeout after 8 seconds with silent fallback
+      const timeoutId = setTimeout(() => {
+        console.warn(
+          "Generation switching timeout - silently ending loading state",
+        );
+        dispatch(setGenerationSwitching(false));
+        dispatch(setLoading(false));
+        // No error dispatch - maintain current Pokemon data display
+      }, 8000);
 
-        // Clear Pokemon list and state
-        dispatch(setPokemons([]));
-        dispatch(setHasNextPage(true));
-        dispatch(setEndCursor(null));
-        dispatch(setError(null));
-
-        // Failsafe: Handle timeout after 8 seconds with silent fallback
-        const timeoutId = setTimeout(() => {
-          console.warn(
-            "Generation switching timeout - silently ending loading state",
-          );
-          dispatch(setGenerationSwitching(false));
-          dispatch(setLoading(false));
-          // No error dispatch - maintain current Pokemon data display
-        }, 8000);
-
-        // Store timeout ID to clear it when generation switching completes normally
-        window.generationSwitchingTimeout = timeoutId;
-      }
+      // Store timeout ID to clear it when generation switching completes normally
+      window.generationSwitchingTimeout = timeoutId;
 
       // Set loading state for new generation
       dispatch(setLoading(true));
@@ -602,11 +566,11 @@ export function usePokemonList({
       const newLimit = initialBatchSize;
 
       // Immediate refetch without setTimeout to prevent race conditions
+
       refetch({
         limit: newLimit,
         offset: newOffset,
-      }).catch((error) => {
-        console.error("Generation change refetch failed:", error);
+      }).catch(() => {
         // Silently handle refetch failure - no error message to user
         dispatch(setLoading(false));
         dispatch(setGenerationSwitching(false));
@@ -630,22 +594,34 @@ export function usePokemonList({
       !loading &&
       uniquePokemons.length > 0 &&
       canLoadMore &&
-      uniquePokemons.length >= initialBatchSize
+      uniquePokemons.length >= initialBatchSize &&
+      uniquePokemons.length < totalPokemonInGeneration
     ) {
       // Start loading more after a short delay to show initial Pokemon first
       const timer = setTimeout(() => {
         loadMore();
       }, 1500);
 
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+      };
     }
-  }, [loading, uniquePokemons.length, canLoadMore, initialBatchSize, loadMore]);
+  }, [
+    loading,
+    uniquePokemons.length,
+    canLoadMore,
+    initialBatchSize,
+    loadMore,
+    totalPokemonInGeneration,
+  ]);
+
+  const finalHasNextPage = hasNextPage && canLoadMore;
 
   return {
     pokemons: uniquePokemons,
     loading,
     error,
-    hasNextPage: hasNextPage && canLoadMore, // Use both Redux state and local calculation
+    hasNextPage: finalHasNextPage, // Use both Redux state and local calculation
     loadMore,
     refresh,
     currentGeneration,
