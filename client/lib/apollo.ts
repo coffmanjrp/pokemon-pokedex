@@ -24,15 +24,80 @@ export const apolloClient = new ApolloClient({
   link: httpLink,
   cache: new InMemoryCache({
     addTypename: false, // Disable __typename to prevent cache issues
+    typePolicies: {
+      Query: {
+        fields: {
+          // Generation-specific cache management for Pokemon lists
+          pokemonsBasic: {
+            keyArgs: ["limit", "offset"], // Cache by generation parameters
+            merge(existing = { edges: [], pageInfo: {} }, incoming) {
+              // Prevent duplicates by checking Pokemon IDs
+              const existingIds = new Set(
+                existing.edges.map(
+                  (edge: { node: { id: string } }) => edge.node.id,
+                ),
+              );
+              const newEdges = incoming.edges.filter(
+                (edge: { node: { id: string } }) =>
+                  !existingIds.has(edge.node.id),
+              );
+
+              return {
+                edges: [...existing.edges, ...newEdges],
+                pageInfo: incoming.pageInfo,
+              };
+            },
+          },
+          pokemons: {
+            keyArgs: ["limit", "offset"], // Cache by generation parameters
+            merge(existing = { edges: [], pageInfo: {} }, incoming) {
+              // Prevent duplicates by checking Pokemon IDs
+              const existingIds = new Set(
+                existing.edges.map(
+                  (edge: { node: { id: string } }) => edge.node.id,
+                ),
+              );
+              const newEdges = incoming.edges.filter(
+                (edge: { node: { id: string } }) =>
+                  !existingIds.has(edge.node.id),
+              );
+
+              return {
+                edges: [...existing.edges, ...newEdges],
+                pageInfo: incoming.pageInfo,
+              };
+            },
+          },
+        },
+      },
+      Pokemon: {
+        keyFields: ["id"], // Use Pokemon ID as cache key
+        fields: {
+          types: {
+            merge: true, // Always replace types array completely
+          },
+          stats: {
+            merge: true, // Always replace stats array completely
+          },
+          abilities: {
+            merge: true, // Always replace abilities array completely
+          },
+          moves: {
+            merge: true, // Always replace moves array completely
+          },
+        },
+      },
+    },
   }),
   defaultOptions: {
     watchQuery: {
       errorPolicy: "all",
-      fetchPolicy: "cache-first",
+      fetchPolicy: "cache-first", // Prioritize cache for faster generation switching
+      nextFetchPolicy: "cache-first", // Maintain cache-first after initial query
     },
     query: {
       errorPolicy: "all",
-      fetchPolicy: "cache-first",
+      fetchPolicy: "cache-first", // Prioritize cache for faster generation switching
     },
   },
 });
