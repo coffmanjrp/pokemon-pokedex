@@ -163,6 +163,7 @@
     "pokemonTitle": "{{name}} - 宝可梦图鉴",
     "pokemonDescription": "查看{{name}}的详细信息，包括属性、能力值、招式、进化链和更多内容。",
     "pokemonDescriptionShort": "{{name}}的完整宝可梦信息。",
-    "pokemonKeywords": "宝可梦, {{name}}, 图鉴, 属性, 能力值, 招式, 进化"
+    "pokemonKeywords": "宝可梦, {{name}}, 图鉴, 属性, 能力值, 招式, 进化",
+    "locale": "zh_CN"
   }
 }

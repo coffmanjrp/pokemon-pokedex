@@ -159,6 +159,7 @@ export interface Dictionary {
     pokemonDescription: string;
     pokemonDescriptionShort: string;
     pokemonKeywords: string;
+    locale: string;
   };
 }
 

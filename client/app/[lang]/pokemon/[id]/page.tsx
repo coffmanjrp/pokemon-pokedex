@@ -249,14 +249,7 @@ export async function generateMetadata({
             alt: `${pokemonName} official artwork`,
           },
         ],
-        locale:
-          lang === "ja"
-            ? "ja_JP"
-            : lang === "zh-Hant"
-              ? "zh_TW"
-              : lang === "zh-Hans"
-                ? "zh_CN"
-                : "en_US",
+        locale: dictionary.meta.locale,
       },
       twitter: {
         card: "summary_large_image",

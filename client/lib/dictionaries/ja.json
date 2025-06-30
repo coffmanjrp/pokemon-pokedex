@@ -163,6 +163,7 @@
     "pokemonTitle": "{{name}} (No.{{id}}) - {{type}}タイプ | ポケモン図鑑",
     "pokemonDescription": "{{name}}は{{type}}タイプのポケモンです。HP {{hp}}、こうげき {{attack}}、ぼうぎょ {{defense}}。{{description}}",
     "pokemonDescriptionShort": "{{name}} - 第{{generation}}世代の{{type}}タイプポケモン。高さ {{height}}m、重さ {{weight}}kg。",
-    "pokemonKeywords": "{{name}}, ポケモン, {{type}}, 第{{generation}}世代, ステータス, わざ, 特性, 進化"
+    "pokemonKeywords": "{{name}}, ポケモン, {{type}}, 第{{generation}}世代, ステータス, わざ, 特性, 進化",
+    "locale": "ja_JP"
   }
 }

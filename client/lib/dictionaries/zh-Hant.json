@@ -163,6 +163,7 @@
     "pokemonTitle": "{{name}} - 寶可夢圖鑑",
     "pokemonDescription": "查看{{name}}的詳細資訊，包括屬性、能力值、招式、進化鏈和更多內容。",
     "pokemonDescriptionShort": "{{name}}的完整寶可夢資訊。",
-    "pokemonKeywords": "寶可夢, {{name}}, 圖鑑, 屬性, 能力值, 招式, 進化"
+    "pokemonKeywords": "寶可夢, {{name}}, 圖鑑, 屬性, 能力值, 招式, 進化",
+    "locale": "zh_TW"
   }
 }

@@ -163,6 +163,7 @@
     "pokemonTitle": "{{name}} (#{{id}}) - {{type}} Pokémon | Pokédex",
     "pokemonDescription": "{{name}} is a {{type}} type Pokémon with {{hp}} HP, {{attack}} Attack, and {{defense}} Defense. {{description}}",
     "pokemonDescriptionShort": "{{name}} - {{type}} type Pokémon from Generation {{generation}}. Height: {{height}}m, Weight: {{weight}}kg.",
-    "pokemonKeywords": "{{name}}, Pokemon, {{type}}, Generation {{generation}}, stats, moves, abilities, evolution"
+    "pokemonKeywords": "{{name}}, Pokemon, {{type}}, Generation {{generation}}, stats, moves, abilities, evolution",
+    "locale": "en_US"
   }
 }
