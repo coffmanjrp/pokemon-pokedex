@@ -27,26 +27,7 @@ export function Sidebar({
   const searchParams = useSearchParams();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const handleLanguageToggle = () => {
-    // Cycle through 4 languages: en -> ja -> zh-Hant -> zh-Hans -> en
-    let newLang: Locale;
-    switch (lang) {
-      case "en":
-        newLang = "ja";
-        break;
-      case "ja":
-        newLang = "zh-Hant";
-        break;
-      case "zh-Hant":
-        newLang = "zh-Hans";
-        break;
-      case "zh-Hans":
-        newLang = "en";
-        break;
-      default:
-        newLang = "en";
-    }
-
+  const handleLanguageChange = (newLang: Locale) => {
     const newUrl = generateAlternateLanguageUrl(pathname, newLang);
 
     // Preserve URL parameters (query string)
@@ -170,7 +151,10 @@ export function Sidebar({
 
           {/* Language Toggle at Bottom */}
           <div className="p-6 border-t border-gray-200">
-            <LanguageToggle language={lang} onToggle={handleLanguageToggle} />
+            <LanguageToggle
+              language={lang}
+              onLanguageChange={handleLanguageChange}
+            />
           </div>
         </div>
       </nav>
