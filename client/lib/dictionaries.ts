@@ -69,6 +69,7 @@ export interface Dictionary {
       levelUp: string;
       day: string;
       night: string;
+      specialCondition: string;
       versions: string;
       normal: string;
       shiny: string;

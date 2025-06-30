@@ -87,7 +87,7 @@ export function LanguageToggle({
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
-            d="M19 9l-7 7-7-7"
+            d={isOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
           />
         </svg>
       </button>
@@ -102,7 +102,7 @@ export function LanguageToggle({
           />
 
           {/* Dropdown Options */}
-          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 overflow-hidden">
+          <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 overflow-hidden">
             {LANGUAGE_OPTIONS.map((option) => (
               <button
                 key={option.value}
