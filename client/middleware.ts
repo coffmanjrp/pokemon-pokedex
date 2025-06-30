@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getLanguageFromCookie } from "@/lib/languageStorage";
 
-const locales = ["en", "ja"];
+const locales = ["en", "ja", "zh-Hant", "zh-Hans"];
 const defaultLocale = "en";
 
 // Check User-Agent for Japanese language indicators
@@ -68,8 +68,25 @@ function getLocale(request: NextRequest): string {
       if (locales.includes(preferredLocale)) {
         return preferredLocale;
       }
+
+      // Handle specific Chinese language variants
+      if (
+        preferredLocale === "zh-TW" ||
+        preferredLocale === "zh-HK" ||
+        preferredLocale === "zh-MO"
+      ) {
+        return "zh-Hant";
+      }
+      if (preferredLocale === "zh-CN" || preferredLocale === "zh-SG") {
+        return "zh-Hans";
+      }
+
       // Check for language prefix (e.g., 'ja' from 'ja-JP')
       const langPrefix = preferredLocale.split("-")[0];
+      if (langPrefix === "zh") {
+        // Default to Simplified Chinese for generic 'zh'
+        return "zh-Hans";
+      }
       if (langPrefix && locales.includes(langPrefix)) {
         return langPrefix;
       }

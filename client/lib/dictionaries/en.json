@@ -142,6 +142,8 @@
     "language": {
       "english": "English",
       "japanese": "Japanese",
+      "traditionalChinese": "Traditional Chinese",
+      "simplifiedChinese": "Simplified Chinese",
       "toggle": "Toggle language"
     },
     "sandbox": {

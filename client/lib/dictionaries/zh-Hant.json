@@ -1,0 +1,164 @@
+{
+  "ui": {
+    "search": {
+      "placeholder": "搜尋寶可夢名稱或編號...",
+      "noResults": "找不到寶可夢",
+      "noResultsDescription": "請調整搜尋條件或篩選器"
+    },
+    "filters": {
+      "title": "篩選器",
+      "type": "屬性",
+      "generation": "世代",
+      "clear": "全部清除",
+      "apply": "套用篩選器",
+      "showingResults": "顯示 {{count}} 個結果",
+      "totalPokemon": "總計：{{total}} 隻寶可夢"
+    },
+    "navigation": {
+      "home": "首頁",
+      "back": "返回",
+      "next": "下一個",
+      "previous": "上一個"
+    },
+    "loading": {
+      "loadingPokemon": "載入寶可夢中...",
+      "loadingMore": "載入更多寶可夢中...",
+      "loadingGeneration": "載入第{{generation}}世代寶可夢中...",
+      "loadingDetails": "載入寶可夢詳細資料中..."
+    },
+    "error": {
+      "title": "寶可夢載入錯誤",
+      "tryAgain": "重試",
+      "pokemonNotFound": "找不到寶可夢",
+      "goHome": "返回首頁",
+      "unknown": "未知"
+    },
+    "common": {
+      "loading": "載入中"
+    },
+    "notFound": {
+      "title": "找不到寶可夢",
+      "description": "找不到您請求的寶可夢。",
+      "returnHome": "← 返回首頁"
+    },
+    "pokemonDetails": {
+      "height": "身高",
+      "weight": "體重",
+      "baseExperience": "基礎經驗值",
+      "abilities": "特性",
+      "stats": "能力值",
+      "types": "屬性",
+      "moves": "招式",
+      "description": "描述",
+      "gameHistory": "遊戲歷史",
+      "sprites": "圖片集",
+      "evolutionChain": "進化鏈",
+      "type": "類型",
+      "category": "分類",
+      "power": "威力",
+      "accuracy": "命中率",
+      "physical": "物理",
+      "special": "特殊",
+      "status": "變化",
+      "noMovesFound": "找不到招式",
+      "forms": "形態",
+      "trade": "交換",
+      "levelUp": "等級提升",
+      "day": "白天",
+      "night": "夜晚",
+      "versions": "版本",
+      "normal": "普通",
+      "shiny": "異色",
+      "artwork": "美術圖",
+      "officialArtwork": "官方美術圖",
+      "pokemonHome": "Pokémon HOME",
+      "gameSprites": "遊戲圖片",
+      "animated": "動畫",
+      "dreamWorld": "夢境世界",
+      "showdown": "Showdown",
+      "icons": "圖示",
+      "noSpritesAvailable": "無可用圖片",
+      "noMovesData": "無招式資料",
+      "noGameHistoryData": "無遊戲歷史資料",
+      "originGeneration": "起源世代",
+      "gameAppearances": "遊戲登場",
+      "remakes": "重製版",
+      "otherGames": "其他遊戲",
+      "totalAppearances": "總登場次數",
+      "generations": "世代",
+      "latestDescription": "最新描述",
+      "allDescriptions": "所有描述",
+      "version": "版本",
+      "noDescriptionsInLanguage": "該語言無可用描述",
+      "weaknesses": "弱點",
+      "noMajorWeaknesses": "無主要弱點",
+      "story": "劇情",
+      "level": "等級",
+      "use": "使用",
+      "learn": "學習",
+      "at": "在",
+      "with": "與",
+      "happiness": "親密度",
+      "gender": "性別",
+      "genderless": "無性別",
+      "male": "雄性",
+      "female": "雌性",
+      "hidden": "隱藏"
+    },
+    "stats": {
+      "hp": "HP",
+      "attack": "攻擊",
+      "defense": "防禦",
+      "specialAttack": "特攻",
+      "specialDefense": "特防",
+      "speed": "速度",
+      "total": "總和"
+    },
+    "moves": {
+      "levelUp": "等級提升",
+      "machine": "招式學習器",
+      "egg": "蛋招式",
+      "tutor": "招式教學",
+      "level": "等級",
+      "learnedAt": "學習時機"
+    },
+    "generations": {
+      "1": "第一世代",
+      "2": "第二世代",
+      "3": "第三世代",
+      "4": "第四世代",
+      "5": "第五世代",
+      "6": "第六世代",
+      "7": "第七世代",
+      "8": "第八世代",
+      "9": "第九世代"
+    },
+    "theme": {
+      "light": "淺色主題",
+      "dark": "深色主題",
+      "toggle": "切換主題"
+    },
+    "language": {
+      "english": "English",
+      "japanese": "日本語",
+      "traditionalChinese": "繁體中文",
+      "simplifiedChinese": "简体中文",
+      "toggle": "切換語言"
+    },
+    "sandbox": {
+      "title": "寶可夢沙盒",
+      "subtitle": "實驗性功能",
+      "instructions": "在這裡測試新功能和實驗性內容。"
+    }
+  },
+  "meta": {
+    "title": "寶可夢圖鑑",
+    "description": "完整的寶可夢圖鑑，包含所有世代的寶可夢詳細資訊、屬性、能力值和進化鏈。",
+    "homeTitle": "寶可夢圖鑑 - 探索所有世代的寶可夢",
+    "homeDescription": "瀏覽完整的寶可夢圖鑑，查看來自所有世代的寶可夢詳細資訊、屬性、能力值、招式和進化鏈。",
+    "pokemonTitle": "{{name}} - 寶可夢圖鑑",
+    "pokemonDescription": "查看{{name}}的詳細資訊，包括屬性、能力值、招式、進化鏈和更多內容。",
+    "pokemonDescriptionShort": "{{name}}的完整寶可夢資訊。",
+    "pokemonKeywords": "寶可夢, {{name}}, 圖鑑, 屬性, 能力值, 招式, 進化"
+  }
+}

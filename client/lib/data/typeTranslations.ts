@@ -4,25 +4,48 @@ export interface TypeData {
   color: string;
 }
 
-export const TYPE_TRANSLATIONS: Record<string, { en: string; ja: string }> = {
-  normal: { en: "Normal", ja: "ノーマル" },
-  fire: { en: "Fire", ja: "ほのお" },
-  water: { en: "Water", ja: "みず" },
-  electric: { en: "Electric", ja: "でんき" },
-  grass: { en: "Grass", ja: "くさ" },
-  ice: { en: "Ice", ja: "こおり" },
-  fighting: { en: "Fighting", ja: "かくとう" },
-  poison: { en: "Poison", ja: "どく" },
-  ground: { en: "Ground", ja: "じめん" },
-  flying: { en: "Flying", ja: "ひこう" },
-  psychic: { en: "Psychic", ja: "エスパー" },
-  bug: { en: "Bug", ja: "むし" },
-  rock: { en: "Rock", ja: "いわ" },
-  ghost: { en: "Ghost", ja: "ゴースト" },
-  dragon: { en: "Dragon", ja: "ドラゴン" },
-  dark: { en: "Dark", ja: "あく" },
-  steel: { en: "Steel", ja: "はがね" },
-  fairy: { en: "Fairy", ja: "フェアリー" },
+export const TYPE_TRANSLATIONS: Record<
+  string,
+  { en: string; ja: string; "zh-Hant": string; "zh-Hans": string }
+> = {
+  normal: {
+    en: "Normal",
+    ja: "ノーマル",
+    "zh-Hant": "一般",
+    "zh-Hans": "一般",
+  },
+  fire: { en: "Fire", ja: "ほのお", "zh-Hant": "火", "zh-Hans": "火" },
+  water: { en: "Water", ja: "みず", "zh-Hant": "水", "zh-Hans": "水" },
+  electric: { en: "Electric", ja: "でんき", "zh-Hant": "電", "zh-Hans": "电" },
+  grass: { en: "Grass", ja: "くさ", "zh-Hant": "草", "zh-Hans": "草" },
+  ice: { en: "Ice", ja: "こおり", "zh-Hant": "冰", "zh-Hans": "冰" },
+  fighting: {
+    en: "Fighting",
+    ja: "かくとう",
+    "zh-Hant": "格鬥",
+    "zh-Hans": "格斗",
+  },
+  poison: { en: "Poison", ja: "どく", "zh-Hant": "毒", "zh-Hans": "毒" },
+  ground: { en: "Ground", ja: "じめん", "zh-Hant": "地面", "zh-Hans": "地面" },
+  flying: { en: "Flying", ja: "ひこう", "zh-Hant": "飛行", "zh-Hans": "飞行" },
+  psychic: {
+    en: "Psychic",
+    ja: "エスパー",
+    "zh-Hant": "超能力",
+    "zh-Hans": "超能力",
+  },
+  bug: { en: "Bug", ja: "むし", "zh-Hant": "蟲", "zh-Hans": "虫" },
+  rock: { en: "Rock", ja: "いわ", "zh-Hant": "岩石", "zh-Hans": "岩石" },
+  ghost: { en: "Ghost", ja: "ゴースト", "zh-Hant": "幽靈", "zh-Hans": "幽灵" },
+  dragon: { en: "Dragon", ja: "ドラゴン", "zh-Hant": "龍", "zh-Hans": "龙" },
+  dark: { en: "Dark", ja: "あく", "zh-Hant": "惡", "zh-Hans": "恶" },
+  steel: { en: "Steel", ja: "はがね", "zh-Hant": "鋼", "zh-Hans": "钢" },
+  fairy: {
+    en: "Fairy",
+    ja: "フェアリー",
+    "zh-Hant": "妖精",
+    "zh-Hans": "妖精",
+  },
 };
 
 // Pokemon type colors (official Pokemon game colors)
