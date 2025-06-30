@@ -123,6 +123,9 @@
       "level": "等級",
       "learnedAt": "學習時機"
     },
+    "generation": {
+      "displayTemplate": "{{region}} (第{{number}}世代)"
+    },
     "generations": {
       "1": "第一世代",
       "2": "第二世代",

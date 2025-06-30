@@ -123,6 +123,9 @@
       "level": "レベル{{level}}",
       "learnedAt": "レベル{{level}}で習得"
     },
+    "generation": {
+      "displayTemplate": "{{region}} (第{{number}}世代)"
+    },
     "generations": {
       "1": "カントー",
       "2": "ジョウト",

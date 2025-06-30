@@ -126,6 +126,9 @@ export interface Dictionary {
       level: string;
       learnedAt: string;
     };
+    generation: {
+      displayTemplate: string;
+    };
     generations: {
       [key: string]: string;
     };

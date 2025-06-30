@@ -240,7 +240,7 @@ export async function generateMetadata({
         description,
         type: "website",
         url: `https://pokemon-pokedex-client.vercel.app/${lang}/pokemon/${id}`,
-        siteName: lang === "ja" ? "ポケモン図鑑" : "Pokédex",
+        siteName: dictionary.meta.title,
         images: [
           {
             url: `https://pokemon-pokedex-client.vercel.app/api/images/pokemon/${pokemon.id}`,
@@ -249,7 +249,14 @@ export async function generateMetadata({
             alt: `${pokemonName} official artwork`,
           },
         ],
-        locale: lang === "ja" ? "ja_JP" : "en_US",
+        locale:
+          lang === "ja"
+            ? "ja_JP"
+            : lang === "zh-Hant"
+              ? "zh_TW"
+              : lang === "zh-Hans"
+                ? "zh_CN"
+                : "en_US",
       },
       twitter: {
         card: "summary_large_image",
@@ -277,6 +284,8 @@ export async function generateMetadata({
         languages: {
           en: `https://pokemon-pokedex-client.vercel.app/en/pokemon/${id}`,
           ja: `https://pokemon-pokedex-client.vercel.app/ja/pokemon/${id}`,
+          "zh-Hant": `https://pokemon-pokedex-client.vercel.app/zh-Hant/pokemon/${id}`,
+          "zh-Hans": `https://pokemon-pokedex-client.vercel.app/zh-Hans/pokemon/${id}`,
         },
       },
     };

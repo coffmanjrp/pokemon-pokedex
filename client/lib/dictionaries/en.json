@@ -123,6 +123,9 @@
       "level": "Level {{level}}",
       "learnedAt": "Learned at level {{level}}"
     },
+    "generation": {
+      "displayTemplate": "{{region}} (Generation {{number}})"
+    },
     "generations": {
       "1": "Kanto",
       "2": "Johto",
