@@ -235,7 +235,7 @@ function PokemonEvolutionChainContent({
                           {(() => {
                             const badgeName = getFormBadgeName(
                               form.formName,
-                              lang as "en" | "ja",
+                              lang,
                             );
                             const badgeColor = getFormBadgeColor(form.formName);
                             return badgeName ? (
