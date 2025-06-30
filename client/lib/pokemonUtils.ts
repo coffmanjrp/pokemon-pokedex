@@ -40,7 +40,9 @@ function getFormTranslation(
       console.log(
         `[getFormTranslation] Found regional form: ${key} -> ${translation[language]}`,
       );
-      return translation[language];
+      return (
+        translation[language as keyof typeof translation] || translation.en
+      );
     }
   }
 
@@ -50,7 +52,9 @@ function getFormTranslation(
       console.log(
         `[getFormTranslation] Found exact mega form: ${key} -> ${translation[language]}`,
       );
-      return translation[language];
+      return (
+        translation[language as keyof typeof translation] || translation.en
+      );
     }
   }
   // Check mega forms - partial match as fallback
@@ -59,7 +63,9 @@ function getFormTranslation(
       console.log(
         `[getFormTranslation] Found partial mega form: ${key} -> ${translation[language]}`,
       );
-      return translation[language];
+      return (
+        translation[language as keyof typeof translation] || translation.en
+      );
     }
   }
 
@@ -69,7 +75,9 @@ function getFormTranslation(
       console.log(
         `[getFormTranslation] Found gigantamax form: ${key} -> ${translation[language]}`,
       );
-      return translation[language];
+      return (
+        translation[language as keyof typeof translation] || translation.en
+      );
     }
   }
 
@@ -79,7 +87,9 @@ function getFormTranslation(
       console.log(
         `[getFormTranslation] Found special form: ${key} -> ${translation[language]}`,
       );
-      return translation[language];
+      return (
+        translation[language as keyof typeof translation] || translation.en
+      );
     }
   }
 

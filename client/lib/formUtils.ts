@@ -29,14 +29,18 @@ export function getFormDisplayName(
   // Check for regional variants
   for (const [key, translation] of Object.entries(REGIONAL_FORM_TRANSLATIONS)) {
     if (formName.includes(key)) {
-      return `${translation[language]} ${capitalizedPokemonName}`;
+      const translatedForm =
+        translation[language as keyof typeof translation] || translation.en;
+      return `${translatedForm} ${capitalizedPokemonName}`;
     }
   }
 
   // Check for Mega Evolution
   for (const [key, translation] of Object.entries(MEGA_FORM_TRANSLATIONS)) {
     if (formName.includes(key)) {
-      return `${translation[language]} ${capitalizedPokemonName}`;
+      const translatedForm =
+        translation[language as keyof typeof translation] || translation.en;
+      return `${translatedForm} ${capitalizedPokemonName}`;
     }
   }
 
@@ -45,14 +49,18 @@ export function getFormDisplayName(
     GIGANTAMAX_FORM_TRANSLATIONS,
   )) {
     if (formName.includes(key)) {
-      return `${translation[language]} ${capitalizedPokemonName}`;
+      const translatedForm =
+        translation[language as keyof typeof translation] || translation.en;
+      return `${translatedForm} ${capitalizedPokemonName}`;
     }
   }
 
   // Check for special forms
   for (const [key, translation] of Object.entries(SPECIAL_FORM_TRANSLATIONS)) {
     if (formName.includes(key)) {
-      return `${capitalizedPokemonName} (${translation[language]})`;
+      const translatedForm =
+        translation[language as keyof typeof translation] || translation.en;
+      return `${capitalizedPokemonName} (${translatedForm})`;
     }
   }
 

@@ -1,6 +1,8 @@
 export interface FormTranslation {
   en: string;
   ja: string;
+  "zh-Hant"?: string;
+  "zh-Hans"?: string;
 }
 
 export type FormCategory = "regional" | "mega" | "gigantamax" | "special";

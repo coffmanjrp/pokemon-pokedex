@@ -4,12 +4,13 @@ import { Pokemon } from "@/types/pokemon";
 import { getTypeName } from "@/lib/pokemonUtils";
 import { useAppSelector } from "@/store/hooks";
 import { TypeBadge } from "../common/Badge";
+import { Locale } from "@/lib/dictionaries";
 
 interface PokemonTypesProps {
   types: Pokemon["types"];
   size?: "sm" | "md" | "lg";
   className?: string;
-  language?: "en" | "ja";
+  language?: Locale;
 }
 
 export function PokemonTypes({

@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { getStoredLanguage, setStoredLanguage } from "@/lib/languageStorage";
-import { Dictionary } from "@/lib/dictionaries";
+import { Dictionary, Locale } from "@/lib/dictionaries";
 
-export type Language = "en" | "ja";
+export type Language = Locale;
 
 interface UIState {
   language: Language;
