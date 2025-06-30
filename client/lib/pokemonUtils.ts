@@ -799,7 +799,7 @@ export function getGenderDisplayString(
 
   switch (genderInfo.type) {
     case "genderless":
-      return language === "ja" ? "性別不明" : "Genderless";
+      return language === "ja" ? "不明" : "Genderless";
     case "male":
       if (genderInfo.maleRatio === 100) {
         return "♂";
@@ -816,5 +816,85 @@ export function getGenderDisplayString(
       }
     default:
       return "♂ ♀";
+  }
+}
+
+/**
+ * Get gender display JSX element with colored symbols
+ * @param genderRate - PokeAPI gender_rate value
+ * @param language - Target language
+ * @returns JSX element with colored gender symbols
+ */
+export function getGenderDisplayElement(
+  genderRate: number,
+  language: "en" | "ja",
+): React.ReactElement {
+  const genderInfo = getPokemonGender(genderRate);
+
+  switch (genderInfo.type) {
+    case "genderless":
+      return React.createElement(
+        "span",
+        { className: "text-gray-500" },
+        language === "ja" ? "不明" : "Genderless",
+      );
+    case "male":
+      if (genderInfo.maleRatio === 100) {
+        return React.createElement(
+          "span",
+          { className: "text-blue-600 font-bold" },
+          "♂",
+        );
+      } else {
+        return React.createElement("span", null, [
+          React.createElement(
+            "span",
+            { key: "male", className: "text-blue-600 font-bold" },
+            "♂",
+          ),
+          React.createElement("span", { key: "space" }, " "),
+          React.createElement(
+            "span",
+            { key: "female", className: "text-pink-600 font-bold" },
+            "♀",
+          ),
+        ]);
+      }
+    case "female":
+      if (genderInfo.femaleRatio === 100) {
+        return React.createElement(
+          "span",
+          { className: "text-pink-600 font-bold" },
+          "♀",
+        );
+      } else {
+        return React.createElement("span", null, [
+          React.createElement(
+            "span",
+            { key: "male", className: "text-blue-600 font-bold" },
+            "♂",
+          ),
+          React.createElement("span", { key: "space" }, " "),
+          React.createElement(
+            "span",
+            { key: "female", className: "text-pink-600 font-bold" },
+            "♀",
+          ),
+        ]);
+      }
+    default:
+      return React.createElement("span", null, [
+        React.createElement(
+          "span",
+          { key: "male", className: "text-blue-600 font-bold" },
+          "♂",
+        ),
+        React.createElement("span", { key: "space" }, " "),
+        React.createElement(
+          "span",
+          { key: "female", className: "text-pink-600 font-bold" },
+          "♀",
+        ),
+      ]);
   }
 }
