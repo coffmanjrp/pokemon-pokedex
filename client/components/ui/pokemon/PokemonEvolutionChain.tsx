@@ -413,7 +413,7 @@ function PokemonEvolutionChainContent({
 
     return conditions.length > 0
       ? conditions.join(lang === "en" ? " + " : " + ")
-      : dictionary?.ui.pokemonDetails.special || fallback;
+      : dictionary?.ui.pokemonDetails.specialCondition || fallback;
   };
 
   if (!evolutionChain) {
