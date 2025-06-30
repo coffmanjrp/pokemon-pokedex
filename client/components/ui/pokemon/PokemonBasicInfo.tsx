@@ -19,10 +19,11 @@ import { PokemonStorySection } from "./PokemonStorySection";
 import { PokemonBasicInfoGrid } from "./PokemonBasicInfoGrid";
 import { PokemonWeaknessSection } from "./PokemonWeaknessSection";
 import { PokemonStatsSection } from "./PokemonStatsSection";
+import { Locale } from "@/lib/dictionaries";
 
 interface PokemonBasicInfoProps {
   pokemon: Pokemon;
-  language: "en" | "ja";
+  language: Locale;
 }
 
 function PokemonBasicInfoContent({ pokemon, language }: PokemonBasicInfoProps) {

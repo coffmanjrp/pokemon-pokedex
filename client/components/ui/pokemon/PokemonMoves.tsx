@@ -12,10 +12,11 @@ import { DataEmptyState } from "../common/DataEmptyState";
 import { TypeBadge, LevelBadge } from "../common/Badge";
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
+import { Locale } from "@/lib/dictionaries";
 
 interface PokemonMovesProps {
   moves?: PokemonMove[];
-  language: "en" | "ja";
+  language: Locale;
 }
 
 type LearnMethod = "level-up" | "machine" | "egg" | "tutor" | "other";

@@ -3,10 +3,11 @@
 import { getTypeColorFromName, getTypeName } from "@/lib/pokemonUtils";
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
+import { Locale } from "@/lib/dictionaries";
 
 interface PokemonWeaknessSectionProps {
   weaknesses: string[];
-  language: "en" | "ja";
+  language: Locale;
 }
 
 export function PokemonWeaknessSection({

@@ -130,11 +130,11 @@ export function PokemonDetailTabs({
       {/* Tab Content */}
       <div className="p-8">
         {activeTab === "description" && pokemon.species?.flavorTextEntries && (
-          <PokemonDescription pokemon={pokemon} language={language} />
+          <PokemonDescription pokemon={pokemon} language={language as Locale} />
         )}
 
         {activeTab === "moves" && pokemon.moves && (
-          <PokemonMoves moves={pokemon.moves} language={language} />
+          <PokemonMoves moves={pokemon.moves} language={language as Locale} />
         )}
 
         {activeTab === "gameHistory" &&
@@ -143,7 +143,7 @@ export function PokemonDetailTabs({
             <PokemonGameHistory
               gameIndices={pokemon.gameIndices}
               generation={pokemon.species.generation}
-              language={language}
+              language={language as Locale}
             />
           )}
       </div>

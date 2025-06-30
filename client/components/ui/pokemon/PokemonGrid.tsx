@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import { Pokemon } from "@/types/pokemon";
 import { PokemonCard } from "./PokemonCard";
+import { Locale } from "@/lib/dictionaries";
 
 interface PokemonGridProps {
   pokemons: Pokemon[];
@@ -14,7 +15,7 @@ interface PokemonGridProps {
   overscan?: number;
   hasNextPage?: boolean;
   onLoadMore?: () => void;
-  language?: "en" | "ja";
+  language?: Locale;
   priority?: boolean;
 }
 

@@ -5,9 +5,10 @@ import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
+import { Locale } from "@/lib/dictionaries";
 
 interface PokemonDetailHeaderProps {
-  language: "en" | "ja";
+  language: Locale;
 }
 
 function PokemonDetailHeaderContent({ language }: PokemonDetailHeaderProps) {

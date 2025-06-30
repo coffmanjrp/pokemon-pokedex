@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { Locale } from "@/lib/dictionaries";
 
 interface PokemonNavigationProps {
   prevId: number | null;
   nextId: number | null;
-  language: "en" | "ja";
+  language: Locale;
   fromGeneration?: string | null;
   isVariant: boolean;
 }

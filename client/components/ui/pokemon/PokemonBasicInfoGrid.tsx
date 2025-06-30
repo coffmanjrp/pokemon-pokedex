@@ -4,11 +4,12 @@ import { Pokemon } from "@/types/pokemon";
 import { getAbilityName, getGenderDisplayElement } from "@/lib/pokemonUtils";
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
+import { Locale } from "@/lib/dictionaries";
 
 interface PokemonBasicInfoGridProps {
   pokemon: Pokemon;
   genus: string | null;
-  language: "en" | "ja";
+  language: Locale;
 }
 
 export function PokemonBasicInfoGrid({
@@ -38,16 +39,35 @@ export function PokemonBasicInfoGrid({
 
       <div className="text-center">
         <div className="text-xs text-gray-500 mb-1">
-          {language === "en" ? "Category" : "分類"}
+          {language === "en"
+            ? "Category"
+            : language === "ja"
+              ? "分類"
+              : language === "zh-Hant"
+                ? "分類"
+                : "分类"}
         </div>
         <div className="text-sm font-semibold">
-          {genus || (language === "en" ? "Lizard" : "とかげ")}
+          {genus ||
+            (language === "en"
+              ? "Lizard"
+              : language === "ja"
+                ? "とかげ"
+                : language === "zh-Hant"
+                  ? "蜥蜴"
+                  : "蜥蜴")}
         </div>
       </div>
 
       <div className="text-center">
         <div className="text-xs text-gray-500 mb-1">
-          {language === "en" ? "Gender" : "性別"}
+          {language === "en"
+            ? "Gender"
+            : language === "ja"
+              ? "性別"
+              : language === "zh-Hant"
+                ? "性別"
+                : "性别"}
         </div>
         <div className="text-sm font-semibold">
           {pokemon.species?.genderRate !== undefined &&

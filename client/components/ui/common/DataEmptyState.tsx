@@ -1,4 +1,5 @@
 import React from "react";
+import { Locale } from "@/lib/dictionaries";
 
 interface DataEmptyStateProps {
   type:
@@ -9,40 +10,57 @@ interface DataEmptyStateProps {
     | "evolution"
     | "abilities"
     | "general";
-  language: "en" | "ja";
+  language: Locale;
   customMessage?: string;
   icon?: string;
   size?: "sm" | "md" | "lg";
 }
 
-const emptyStateMessages = {
+const emptyStateMessages: Record<
+  DataEmptyStateProps["type"],
+  Record<Locale, string>
+> = {
   moves: {
     en: "No move data available",
     ja: "技データがありません",
+    "zh-Hant": "無招式數據",
+    "zh-Hans": "无招式数据",
   },
   descriptions: {
     en: "No descriptions available",
     ja: "説明がありません",
+    "zh-Hant": "無說明可用",
+    "zh-Hans": "无说明可用",
   },
   games: {
     en: "No game data available",
     ja: "ゲームデータがありません",
+    "zh-Hant": "無遊戲數據",
+    "zh-Hans": "无游戏数据",
   },
   sprites: {
     en: "No sprites available",
     ja: "スプライトがありません",
+    "zh-Hant": "無圖像可用",
+    "zh-Hans": "无图像可用",
   },
   evolution: {
     en: "No evolution data available",
     ja: "進化データがありません",
+    "zh-Hant": "無進化數據",
+    "zh-Hans": "无进化数据",
   },
   abilities: {
     en: "No abilities available",
     ja: "特性データがありません",
+    "zh-Hant": "無特性數據",
+    "zh-Hans": "无特性数据",
   },
   general: {
     en: "No data available",
     ja: "データがありません",
+    "zh-Hant": "無數據可用",
+    "zh-Hans": "无数据可用",
   },
 };
 

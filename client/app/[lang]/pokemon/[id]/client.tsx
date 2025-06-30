@@ -45,7 +45,7 @@ export default function PokemonDetailClient({
 
   return (
     <>
-      <PokemonDetailHeader language={lang} />
+      <PokemonDetailHeader language={lang as Locale} />
 
       {/* Top Navigation Tabs with Content */}
       <PokemonTopNavigationTabs pokemon={pokemon} lang={lang} />

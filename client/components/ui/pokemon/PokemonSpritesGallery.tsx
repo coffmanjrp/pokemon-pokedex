@@ -11,10 +11,11 @@ import { DataEmptyState } from "../common/DataEmptyState";
 import Image from "next/image";
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
+import { Locale } from "@/lib/dictionaries";
 
 interface PokemonSpritesGalleryProps {
   pokemon: Pokemon;
-  language: "en" | "ja";
+  language: Locale;
 }
 
 interface SpriteInfo {

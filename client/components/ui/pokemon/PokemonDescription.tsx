@@ -5,10 +5,11 @@ import { getPokemonDescription, getVersionName } from "@/lib/pokemonUtils";
 import { DataEmptyState } from "../common/DataEmptyState";
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
+import { Locale } from "@/lib/dictionaries";
 
 interface PokemonDescriptionProps {
   pokemon: Pokemon;
-  language: "en" | "ja";
+  language: Locale;
 }
 
 export function PokemonDescription({
@@ -39,11 +40,16 @@ export function PokemonDescription({
 
   // Filter entries for the current language
   const languageEntries = pokemon.species.flavorTextEntries
-    .filter(
-      (entry) =>
-        entry.language.name === (language === "en" ? "en" : "ja") ||
-        (language === "ja" && entry.language.name === "ja-Hrkt"),
-    )
+    .filter((entry) => {
+      if (language === "en") return entry.language.name === "en";
+      if (language === "ja")
+        return (
+          entry.language.name === "ja" || entry.language.name === "ja-Hrkt"
+        );
+      if (language === "zh-Hant") return entry.language.name === "zh-Hant";
+      if (language === "zh-Hans") return entry.language.name === "zh-Hans";
+      return entry.language.name === "en"; // fallback to English
+    })
     .filter((entry) => entry.flavorText && entry.flavorText.trim().length > 0);
 
   if (languageEntries.length === 0) {

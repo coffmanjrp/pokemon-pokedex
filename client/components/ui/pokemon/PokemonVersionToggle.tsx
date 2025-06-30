@@ -2,11 +2,12 @@
 
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
+import { Locale } from "@/lib/dictionaries";
 
 interface PokemonVersionToggleProps {
   isShiny: boolean;
   onToggle: (isShiny: boolean) => void;
-  language: "en" | "ja";
+  language: Locale;
 }
 
 export function PokemonVersionToggle({

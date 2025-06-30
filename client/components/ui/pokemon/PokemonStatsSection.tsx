@@ -5,10 +5,11 @@ import { PokemonStatBar } from "./PokemonStatBar";
 import { getPokemonDisplayId } from "@/lib/pokemonUtils";
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
+import { Locale } from "@/lib/dictionaries";
 
 interface PokemonStatsSectionProps {
   pokemon: Pokemon;
-  language: "en" | "ja";
+  language: Locale;
 }
 
 export function PokemonStatsSection({
@@ -54,7 +55,13 @@ export function PokemonStatsSection({
         </div>
       ) : (
         <div className="text-gray-500 text-center py-4 text-sm">
-          {language === "en" ? "No stats available" : "ステータスがありません"}
+          {language === "en"
+            ? "No stats available"
+            : language === "ja"
+              ? "ステータスがありません"
+              : language === "zh-Hant"
+                ? "無可用數據"
+                : "无可用数据"}
         </div>
       )}
 

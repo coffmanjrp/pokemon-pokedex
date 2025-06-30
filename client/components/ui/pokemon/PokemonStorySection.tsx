@@ -2,10 +2,11 @@
 
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
+import { Locale } from "@/lib/dictionaries";
 
 interface PokemonStorySectionProps {
   description: string | null;
-  language: "en" | "ja";
+  language: Locale;
 }
 
 export function PokemonStorySection({

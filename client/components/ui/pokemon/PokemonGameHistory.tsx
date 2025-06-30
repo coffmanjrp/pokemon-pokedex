@@ -7,11 +7,12 @@ import { getGenerationByGame } from "@/lib/data/generations";
 import { DataEmptyState } from "../common/DataEmptyState";
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
+import { Locale } from "@/lib/dictionaries";
 
 interface PokemonGameHistoryProps {
   gameIndices?: GameIndex[];
   generation?: Generation;
-  language: "en" | "ja";
+  language: Locale;
 }
 
 export function PokemonGameHistory({

@@ -8,11 +8,12 @@ import {
   getPokemonFormName,
 } from "@/lib/pokemonUtils";
 import { PokemonTypes } from "./PokemonTypes";
+import { Locale } from "@/lib/dictionaries";
 
 interface PokemonHeaderProps {
   pokemon: Pokemon;
   displayName: string;
-  language: "en" | "ja";
+  language: Locale;
 }
 
 export function PokemonHeader({

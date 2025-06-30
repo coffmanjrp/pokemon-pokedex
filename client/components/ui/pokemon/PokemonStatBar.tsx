@@ -1,11 +1,12 @@
 "use client";
 
 import { getStatName } from "@/lib/pokemonUtils";
+import { Locale } from "@/lib/dictionaries";
 
 interface PokemonStatBarProps {
   statName: string;
   baseStat: number;
-  language: "en" | "ja";
+  language: Locale;
   maxBaseStat?: number;
 }
 

@@ -215,7 +215,7 @@ function PokemonListContent({
   if (showLoadingScreen) {
     return (
       <AnimatedLoadingScreen
-        language={lang}
+        language={lang as Locale}
         onComplete={handleLoadingComplete}
       />
     );
@@ -269,7 +269,7 @@ function PokemonListContent({
                   isAutoLoading={false}
                   hasNextPage={hasNextPage}
                   onLoadMore={loadMore}
-                  language={lang}
+                  language={lang as Locale}
                   priority={true}
                 />
               </div>
