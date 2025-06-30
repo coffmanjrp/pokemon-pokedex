@@ -174,6 +174,8 @@ export interface PokemonSpecies {
   generation: Generation;
   evolutionChain?: EvolutionChain | undefined;
   varieties?: PokemonVariety[];
+  genderRate?: number;
+  hasGenderDifferences?: boolean;
 }
 
 export interface PokemonVariety {

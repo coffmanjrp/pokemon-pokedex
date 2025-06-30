@@ -99,7 +99,12 @@
       "learn": "触える",
       "at": "で",
       "with": "で",
-      "happiness": "なつき度"
+      "happiness": "なつき度",
+      "gender": "性別",
+      "genderless": "不明",
+      "male": "オス",
+      "female": "メス",
+      "hidden": "隠れ特性"
     },
     "stats": {
       "hp": "HP",

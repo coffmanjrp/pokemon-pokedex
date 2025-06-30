@@ -297,6 +297,8 @@ class PokemonService {
             url: genus.language.url,
           },
         })),
+        genderRate: speciesData.gender_rate ?? 4, // Default to 50/50 ratio if not available
+        hasGenderDifferences: speciesData.has_gender_differences ?? false,
       } : null,
     };
   }
@@ -383,6 +385,8 @@ class PokemonService {
           name: speciesData.generation.name,
           url: speciesData.generation.url,
         },
+        genderRate: speciesData.gender_rate ?? 4, // Default to 50/50 ratio if not available
+        hasGenderDifferences: speciesData.has_gender_differences ?? false,
         evolutionChain: speciesData.evolution_chain ? 
           await this.getEvolutionChain(speciesData.evolution_chain.url) : undefined,
       } : null,

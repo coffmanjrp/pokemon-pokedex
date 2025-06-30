@@ -345,6 +345,15 @@ export type PokemonTypeName =
   | "steel"
   | "fairy";
 
+// Pokemon gender types
+export type PokemonGender = "male" | "female" | "genderless";
+
+export interface GenderInfo {
+  type: PokemonGender;
+  maleRatio?: number;
+  femaleRatio?: number;
+}
+
 export interface PokemonMove {
   move: Move;
   versionGroupDetails: MoveVersionGroupDetail[];
@@ -424,6 +433,8 @@ export interface PokemonSpecies {
   generation: Generation;
   evolutionChain?: EvolutionChain;
   varieties?: PokemonVariety[];
+  genderRate?: number;
+  hasGenderDifferences?: boolean;
 }
 
 export interface PokemonVariety {

@@ -102,6 +102,11 @@ export interface Dictionary {
       at: string;
       with: string;
       happiness: string;
+      gender: string;
+      genderless: string;
+      male: string;
+      female: string;
+      hidden: string;
     };
     stats: {
       hp: string;
