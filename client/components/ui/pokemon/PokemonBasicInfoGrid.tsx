@@ -50,7 +50,8 @@ export function PokemonBasicInfoGrid({
           {language === "en" ? "Gender" : "性別"}
         </div>
         <div className="text-sm font-semibold">
-          {pokemon.species?.genderRate !== undefined
+          {pokemon.species?.genderRate !== undefined &&
+          pokemon.species.genderRate !== null
             ? getGenderDisplayString(pokemon.species.genderRate, language)
             : "♂ ♀"}
         </div>

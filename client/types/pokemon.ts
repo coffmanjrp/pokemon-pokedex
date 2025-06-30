@@ -433,8 +433,8 @@ export interface PokemonSpecies {
   generation: Generation;
   evolutionChain?: EvolutionChain;
   varieties?: PokemonVariety[];
-  genderRate: number;
-  hasGenderDifferences: boolean;
+  genderRate?: number;
+  hasGenderDifferences?: boolean;
 }
 
 export interface PokemonVariety {

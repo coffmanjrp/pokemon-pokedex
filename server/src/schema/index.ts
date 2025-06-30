@@ -191,8 +191,8 @@ export const typeDefs = gql`
     generation: Generation!
     evolutionChain: EvolutionChain
     varieties: [PokemonVariety!]!
-    genderRate: Int!
-    hasGenderDifferences: Boolean!
+    genderRate: Int
+    hasGenderDifferences: Boolean
   }
 
   type PokemonVariety {
@@ -323,8 +323,8 @@ export const typeDefs = gql`
     name: String!
     names: [SpeciesName!]!
     genera: [Genus!]!
-    genderRate: Int!
-    hasGenderDifferences: Boolean!
+    genderRate: Int
+    hasGenderDifferences: Boolean
   }
 
   # Connection type for PokemonBasic pagination
