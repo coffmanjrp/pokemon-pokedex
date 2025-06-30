@@ -28,7 +28,25 @@ export function Sidebar({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLanguageToggle = () => {
-    const newLang = lang === "en" ? "ja" : "en";
+    // Cycle through 4 languages: en -> ja -> zh-Hant -> zh-Hans -> en
+    let newLang: Locale;
+    switch (lang) {
+      case "en":
+        newLang = "ja";
+        break;
+      case "ja":
+        newLang = "zh-Hant";
+        break;
+      case "zh-Hant":
+        newLang = "zh-Hans";
+        break;
+      case "zh-Hans":
+        newLang = "en";
+        break;
+      default:
+        newLang = "en";
+    }
+
     const newUrl = generateAlternateLanguageUrl(pathname, newLang);
 
     // Preserve URL parameters (query string)
@@ -112,7 +130,13 @@ export function Sidebar({
           >
             <div className="px-4">
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
-                {lang === "ja" ? "世代選択" : "Generations"}
+                {lang === "ja"
+                  ? "世代選択"
+                  : lang === "zh-Hant"
+                    ? "世代選擇"
+                    : lang === "zh-Hans"
+                      ? "世代选择"
+                      : "Generations"}
               </h3>
               <div className="space-y-2">
                 {GENERATIONS.map((generation) => (
@@ -130,10 +154,13 @@ export function Sidebar({
                     style={{ minHeight: "56px" }} // Larger touch target for mobile
                   >
                     <div className="font-medium text-sm">
-                      {generation.name[lang]}
+                      {generation.name[lang as keyof typeof generation.name] ||
+                        generation.name.en}
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
-                      {generation.region[lang]}
+                      {generation.region[
+                        lang as keyof typeof generation.region
+                      ] || generation.region.en}
                     </div>
                   </button>
                 ))}

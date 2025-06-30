@@ -17,7 +17,13 @@ export function LanguageToggle({
   return (
     <div className="w-full">
       <label className="text-sm font-medium text-gray-700 mb-2 block">
-        {language === "ja" ? "言語" : "Language"}
+        {language === "ja"
+          ? "言語"
+          : language === "zh-Hant"
+            ? "語言"
+            : language === "zh-Hans"
+              ? "语言"
+              : "Language"}
       </label>
       <button
         onClick={onToggle}
@@ -29,7 +35,15 @@ export function LanguageToggle({
           className,
         )}
       >
-        <span>{language === "en" ? "🇺🇸 English" : "🇯🇵 日本語"}</span>
+        <span>
+          {language === "en"
+            ? "🇺🇸 English"
+            : language === "ja"
+              ? "🇯🇵 日本語"
+              : language === "zh-Hant"
+                ? "🇹🇼 繁體中文"
+                : "🇨🇳 简体中文"}
+        </span>
         <svg
           className="w-4 h-4"
           fill="none"

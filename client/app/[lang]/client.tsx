@@ -241,7 +241,11 @@ function PokemonListContent({
               <h1 className="text-sm md:text-base font-bold text-gray-700 text-center lg:text-left lg:ml-0">
                 {lang === "ja"
                   ? `${generationRange.region.ja} (第${currentGeneration}世代)`
-                  : `${generationRange.region.en} (Generation ${currentGeneration})`}
+                  : lang === "zh-Hant"
+                    ? `${generationRange.region["zh-Hant"]} (第${currentGeneration}世代)`
+                    : lang === "zh-Hans"
+                      ? `${generationRange.region["zh-Hans"]} (第${currentGeneration}世代)`
+                      : `${generationRange.region.en} (Generation ${currentGeneration})`}
               </h1>
             </div>
           </header>
