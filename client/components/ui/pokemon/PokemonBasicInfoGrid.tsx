@@ -24,7 +24,7 @@ export function PokemonBasicInfoGrid({
     height: dictionary?.ui.pokemonDetails.height || fallback,
     weight: dictionary?.ui.pokemonDetails.weight || fallback,
     abilities: dictionary?.ui.pokemonDetails.abilities || fallback,
-    hidden: fallback,
+    hidden: dictionary?.ui.pokemonDetails.hidden || fallback,
   };
 
   return (

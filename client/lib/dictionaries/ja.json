@@ -103,7 +103,8 @@
       "gender": "性別",
       "genderless": "不明",
       "male": "オス",
-      "female": "メス"
+      "female": "メス",
+      "hidden": "隠れ特性"
     },
     "stats": {
       "hp": "HP",

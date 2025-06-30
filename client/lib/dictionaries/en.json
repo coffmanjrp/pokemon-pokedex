@@ -103,7 +103,8 @@
       "gender": "Gender",
       "genderless": "Genderless",
       "male": "Male",
-      "female": "Female"
+      "female": "Female",
+      "hidden": "Hidden Ability"
     },
     "stats": {
       "hp": "HP",
