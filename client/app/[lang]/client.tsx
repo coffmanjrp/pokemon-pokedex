@@ -185,6 +185,7 @@ function PokemonListContent({
         <Suspense fallback={<div>Loading sidebar...</div>}>
           <Sidebar
             lang={lang}
+            dictionary={dictionary}
             currentGeneration={currentGeneration}
             onGenerationChange={handleGenerationChange}
           />
@@ -216,7 +217,7 @@ function PokemonListContent({
   if (showLoadingScreen) {
     return (
       <AnimatedLoadingScreen
-        language={lang as Locale}
+        dictionary={dictionary}
         onComplete={handleLoadingComplete}
       />
     );
@@ -228,6 +229,7 @@ function PokemonListContent({
       <Suspense fallback={<div>Loading sidebar...</div>}>
         <Sidebar
           lang={lang}
+          dictionary={dictionary}
           currentGeneration={currentGeneration}
           onGenerationChange={handleGenerationChange}
         />

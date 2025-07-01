@@ -19,7 +19,8 @@
       "home": "Inicio",
       "back": "Atrás",
       "next": "Siguiente",
-      "previous": "Anterior"
+      "previous": "Anterior",
+      "generationsTitle": "Generaciones"
     },
     "loading": {
       "loadingPokemon": "Cargando Pokémon...",
@@ -28,12 +29,13 @@
       "loadingDetails": "Cargando detalles del Pokémon...",
       "loadingRegion": "Cargando Pokémon de {{region}}...",
       "generationLabel": "Generación {{number}}",
-      "pokemonCount": "{{count}} Pokémon",
+      "pokemonCount": "{{current}}/{{total}} Pokémon",
       "rangeLabel": "{{min}} - {{max}}",
-      "loadingMoreProgress": "Cargando... {{loaded}} de {{total}}",
+      "loadingMoreProgress": "Cargando más...",
       "allRegionPokemonLoaded": "¡Todos los Pokémon de {{region}} cargados!",
-      "generationInfo": "Generación {{generation}} - {{region}}",
-      "close": "Cerrar"
+      "generationInfo": "Generación {{number}} - {{region}}",
+      "close": "Cerrar",
+      "loadingPokedex": "Cargando Pokédex..."
     },
     "error": {
       "title": "Algo salió mal",
@@ -169,7 +171,7 @@
       "noMovesFoundForMethod": "No se encontraron movimientos para {{method}}"
     },
     "generation": {
-      "displayTemplate": "Generación {{generation}} - {{region}}"
+      "displayTemplate": "Generación {{number}} - {{region}}"
     },
     "generations": {
       "1": "I",
@@ -219,9 +221,9 @@
     "description": "Descubre todos los Pokémon con nuestro Pokédex completo. Explora estadísticas, tipos, habilidades, movimientos y cadenas evolutivas de todas las generaciones.",
     "homeTitle": "Pokédex - Base de Datos Completa de Pokémon",
     "homeDescription": "Tu Pokédex definitiva con información completa de todas las generaciones. Explora estadísticas detalladas, tipos, habilidades y evoluciones de más de 1000 Pokémon.",
-    "pokemonTitle": "{{name}} - Pokédex",
-    "pokemonDescription": "Información detallada sobre {{name}}, incluyendo estadísticas, tipos, habilidades, movimientos y cadena evolutiva. Aprende todo sobre este Pokémon {{type}}.",
-    "pokemonDescriptionShort": "Estadísticas, tipos y información evolutiva de {{name}}",
+    "pokemonTitle": "{{name}} (#{{id}}) - Pokémon {{type}} | Pokédex",
+    "pokemonDescription": "{{name}} es un Pokémon tipo {{type}} con {{hp}} PS, {{attack}} de Ataque y {{defense}} de Defensa. {{description}}",
+    "pokemonDescriptionShort": "{{name}} - Pokémon tipo {{type}} de la Generación {{generation}}. Altura: {{height}}m, Peso: {{weight}}kg.",
     "pokemonKeywords": "{{name}}, Pokémon, estadísticas, tipos, habilidades, movimientos, evolución, {{type}}, Pokédex",
     "homeKeywords": "Pokédex, Pokémon, estadísticas, tipos, habilidades, movimientos, evolución, generaciones, base de datos",
     "pokemonImageAlt": "Arte oficial de {{name}} - Pokémon {{type}}",

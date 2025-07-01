@@ -19,7 +19,8 @@
       "home": "Home",
       "back": "Back",
       "next": "Next",
-      "previous": "Previous"
+      "previous": "Previous",
+      "generationsTitle": "Generations"
     },
     "loading": {
       "loadingPokemon": "Loading Pokémon...",
@@ -33,7 +34,8 @@
       "loadingMoreProgress": "Loading more...",
       "allRegionPokemonLoaded": "All {{region}} Pokémon loaded!",
       "generationInfo": "Generation {{number}} (#{{min}}-#{{max}})",
-      "close": "Close"
+      "close": "Close",
+      "loadingPokedex": "Loading Pokédex..."
     },
     "error": {
       "title": "Error loading Pokémon",
