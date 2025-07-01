@@ -104,7 +104,8 @@
       "genderless": "不明",
       "male": "オス",
       "female": "メス",
-      "hidden": "隠れ特性"
+      "hidden": "隠れ特性",
+      "defaultSpecies": "不明な種族"
     },
     "stats": {
       "hp": "HP",

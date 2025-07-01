@@ -104,7 +104,8 @@
       "genderless": "無性別",
       "male": "雄性",
       "female": "雌性",
-      "hidden": "隱藏"
+      "hidden": "隱藏",
+      "defaultSpecies": "未知種族"
     },
     "stats": {
       "hp": "HP",

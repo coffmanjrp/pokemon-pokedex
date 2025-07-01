@@ -104,7 +104,8 @@
       "genderless": "无性别",
       "male": "雄性",
       "female": "雌性",
-      "hidden": "隐藏"
+      "hidden": "隐藏",
+      "defaultSpecies": "未知种族"
     },
     "stats": {
       "hp": "HP",

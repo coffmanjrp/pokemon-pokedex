@@ -26,6 +26,9 @@ export function PokemonBasicInfoGrid({
     weight: dictionary?.ui.pokemonDetails.weight || fallback,
     abilities: dictionary?.ui.pokemonDetails.abilities || fallback,
     hidden: dictionary?.ui.pokemonDetails.hidden || fallback,
+    category: dictionary?.ui.pokemonDetails.category || fallback,
+    gender: dictionary?.ui.pokemonDetails.gender || fallback,
+    defaultSpecies: dictionary?.ui.pokemonDetails.defaultSpecies || fallback,
   };
 
   return (
@@ -38,37 +41,14 @@ export function PokemonBasicInfoGrid({
       </div>
 
       <div className="text-center">
-        <div className="text-xs text-gray-500 mb-1">
-          {language === "en"
-            ? "Category"
-            : language === "ja"
-              ? "分類"
-              : language === "zh-Hant"
-                ? "分類"
-                : "分类"}
-        </div>
+        <div className="text-xs text-gray-500 mb-1">{text.category}</div>
         <div className="text-sm font-semibold">
-          {genus ||
-            (language === "en"
-              ? "Lizard"
-              : language === "ja"
-                ? "とかげ"
-                : language === "zh-Hant"
-                  ? "蜥蜴"
-                  : "蜥蜴")}
+          {genus || text.defaultSpecies}
         </div>
       </div>
 
       <div className="text-center">
-        <div className="text-xs text-gray-500 mb-1">
-          {language === "en"
-            ? "Gender"
-            : language === "ja"
-              ? "性別"
-              : language === "zh-Hant"
-                ? "性別"
-                : "性别"}
-        </div>
+        <div className="text-xs text-gray-500 mb-1">{text.gender}</div>
         <div className="text-sm font-semibold">
           {pokemon.species?.genderRate !== undefined &&
           pokemon.species.genderRate !== null ? (

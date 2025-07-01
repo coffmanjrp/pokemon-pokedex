@@ -104,7 +104,8 @@
       "genderless": "Genderless",
       "male": "Male",
       "female": "Female",
-      "hidden": "Hidden Ability"
+      "hidden": "Hidden Ability",
+      "defaultSpecies": "Unknown Species"
     },
     "stats": {
       "hp": "HP",

@@ -108,6 +108,7 @@ export interface Dictionary {
       male: string;
       female: string;
       hidden: string;
+      defaultSpecies: string;
     };
     stats: {
       hp: string;
