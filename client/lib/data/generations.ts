@@ -1,7 +1,19 @@
 export interface GenerationData {
   id: number;
-  name: { en: string; ja: string; "zh-Hant": string; "zh-Hans": string };
-  region: { en: string; ja: string; "zh-Hant": string; "zh-Hans": string };
+  name: {
+    en: string;
+    ja: string;
+    "zh-Hant": string;
+    "zh-Hans": string;
+    es: string;
+  };
+  region: {
+    en: string;
+    ja: string;
+    "zh-Hant": string;
+    "zh-Hans": string;
+    es: string;
+  };
   pokemonRange: { start: number; end: number };
   games: string[];
   remakes?: string[];
@@ -15,12 +27,14 @@ export const GENERATIONS: GenerationData[] = [
       ja: "第1世代",
       "zh-Hant": "第一世代",
       "zh-Hans": "第一世代",
+      es: "Generación I",
     },
     region: {
       en: "Kanto",
       ja: "カントー地方",
       "zh-Hant": "關都地區",
       "zh-Hans": "关都地区",
+      es: "Kanto",
     },
     pokemonRange: { start: 1, end: 151 },
     games: ["red", "blue", "yellow"],
@@ -33,12 +47,14 @@ export const GENERATIONS: GenerationData[] = [
       ja: "第2世代",
       "zh-Hant": "第二世代",
       "zh-Hans": "第二世代",
+      es: "Generación II",
     },
     region: {
       en: "Johto",
       ja: "ジョウト地方",
       "zh-Hant": "城都地區",
       "zh-Hans": "城都地区",
+      es: "Johto",
     },
     pokemonRange: { start: 152, end: 251 },
     games: ["gold", "silver", "crystal"],
@@ -51,12 +67,14 @@ export const GENERATIONS: GenerationData[] = [
       ja: "第3世代",
       "zh-Hant": "第三世代",
       "zh-Hans": "第三世代",
+      es: "Generación III",
     },
     region: {
       en: "Hoenn",
       ja: "ホウエン地方",
       "zh-Hant": "豐緣地區",
       "zh-Hans": "丰缘地区",
+      es: "Hoenn",
     },
     pokemonRange: { start: 252, end: 386 },
     games: ["ruby", "sapphire", "emerald"],
@@ -69,12 +87,14 @@ export const GENERATIONS: GenerationData[] = [
       ja: "第4世代",
       "zh-Hant": "第四世代",
       "zh-Hans": "第四世代",
+      es: "Generación IV",
     },
     region: {
       en: "Sinnoh",
       ja: "シンオウ地方",
       "zh-Hant": "神奧地區",
       "zh-Hans": "神奥地区",
+      es: "Sinnoh",
     },
     pokemonRange: { start: 387, end: 493 },
     games: ["diamond", "pearl", "platinum"],
@@ -87,12 +107,14 @@ export const GENERATIONS: GenerationData[] = [
       ja: "第5世代",
       "zh-Hant": "第五世代",
       "zh-Hans": "第五世代",
+      es: "Generación V",
     },
     region: {
       en: "Unova",
       ja: "イッシュ地方",
       "zh-Hant": "合眾地區",
       "zh-Hans": "合众地区",
+      es: "Teselia",
     },
     pokemonRange: { start: 494, end: 649 },
     games: ["black", "white", "black-2", "white-2"],
@@ -104,12 +126,14 @@ export const GENERATIONS: GenerationData[] = [
       ja: "第6世代",
       "zh-Hant": "第六世代",
       "zh-Hans": "第六世代",
+      es: "Generación VI",
     },
     region: {
       en: "Kalos",
       ja: "カロス地方",
       "zh-Hant": "卡洛斯地區",
       "zh-Hans": "卡洛斯地区",
+      es: "Kalos",
     },
     pokemonRange: { start: 650, end: 721 },
     games: ["x", "y"],
@@ -121,12 +145,14 @@ export const GENERATIONS: GenerationData[] = [
       ja: "第7世代",
       "zh-Hant": "第七世代",
       "zh-Hans": "第七世代",
+      es: "Generación VII",
     },
     region: {
       en: "Alola",
       ja: "アローラ地方",
       "zh-Hant": "阿羅拉地區",
       "zh-Hans": "阿罗拉地区",
+      es: "Alola",
     },
     pokemonRange: { start: 722, end: 809 },
     games: ["sun", "moon", "ultra-sun", "ultra-moon"],
@@ -138,12 +164,14 @@ export const GENERATIONS: GenerationData[] = [
       ja: "第8世代",
       "zh-Hant": "第八世代",
       "zh-Hans": "第八世代",
+      es: "Generación VIII",
     },
     region: {
       en: "Galar",
       ja: "ガラル地方",
       "zh-Hant": "伽勒爾地區",
       "zh-Hans": "伽勒尔地区",
+      es: "Galar",
     },
     pokemonRange: { start: 810, end: 905 },
     games: ["sword", "shield"],
@@ -156,12 +184,14 @@ export const GENERATIONS: GenerationData[] = [
       ja: "第9世代",
       "zh-Hant": "第九世代",
       "zh-Hans": "第九世代",
+      es: "Generación IX",
     },
     region: {
       en: "Paldea",
       ja: "パルデア地方",
       "zh-Hant": "帕德亞地區",
       "zh-Hans": "帕德亚地区",
+      es: "Paldea",
     },
     pokemonRange: { start: 906, end: 1025 },
     games: ["scarlet", "violet"],
@@ -194,14 +224,14 @@ export const getGenerationByPokemonId = (
 
 export const getGenerationName = (
   generation: GenerationData,
-  language: "en" | "ja" | "zh-Hant" | "zh-Hans",
+  language: "en" | "ja" | "zh-Hant" | "zh-Hans" | "es",
 ): string => {
   return generation.name[language];
 };
 
 export const getGenerationRegion = (
   generation: GenerationData,
-  language: "en" | "ja" | "zh-Hant" | "zh-Hans",
+  language: "en" | "ja" | "zh-Hant" | "zh-Hans" | "es",
 ): string => {
   return generation.region[language];
 };
@@ -220,6 +250,7 @@ export const GENERATION_RANGES = {
       ja: "カントー地方",
       "zh-Hant": "關都地區",
       "zh-Hans": "关都地区",
+      es: "Kanto",
     },
   },
   2: {
@@ -230,6 +261,7 @@ export const GENERATION_RANGES = {
       ja: "ジョウト地方",
       "zh-Hant": "城都地區",
       "zh-Hans": "城都地区",
+      es: "Johto",
     },
   },
   3: {
@@ -240,6 +272,7 @@ export const GENERATION_RANGES = {
       ja: "ホウエン地方",
       "zh-Hant": "豐緣地區",
       "zh-Hans": "丰缘地区",
+      es: "Hoenn",
     },
   },
   4: {
@@ -250,6 +283,7 @@ export const GENERATION_RANGES = {
       ja: "シンオウ地方",
       "zh-Hant": "神奧地區",
       "zh-Hans": "神奥地区",
+      es: "Sinnoh",
     },
   },
   5: {
@@ -260,6 +294,7 @@ export const GENERATION_RANGES = {
       ja: "イッシュ地方",
       "zh-Hant": "合眾地區",
       "zh-Hans": "合众地区",
+      es: "Teselia",
     },
   },
   6: {
@@ -270,6 +305,7 @@ export const GENERATION_RANGES = {
       ja: "カロス地方",
       "zh-Hant": "卡洛斯地區",
       "zh-Hans": "卡洛斯地区",
+      es: "Kalos",
     },
   },
   7: {
@@ -280,6 +316,7 @@ export const GENERATION_RANGES = {
       ja: "アローラ地方",
       "zh-Hant": "阿羅拉地區",
       "zh-Hans": "阿罗拉地区",
+      es: "Alola",
     },
   },
   8: {
@@ -290,6 +327,7 @@ export const GENERATION_RANGES = {
       ja: "ガラル地方",
       "zh-Hant": "伽勒爾地區",
       "zh-Hans": "伽勒尔地区",
+      es: "Galar",
     },
   },
   9: {
@@ -300,6 +338,7 @@ export const GENERATION_RANGES = {
       ja: "パルデア地方",
       "zh-Hant": "帕德亞地區",
       "zh-Hans": "帕德亚地区",
+      es: "Paldea",
     },
   },
 } as const;

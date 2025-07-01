@@ -8,7 +8,13 @@ interface GenerationSwitchingOverlayProps {
   lang: Locale;
   currentGeneration: number;
   generationRange: {
-    region: { en: string; ja: string; "zh-Hant": string; "zh-Hans": string };
+    region: {
+      en: string;
+      ja: string;
+      "zh-Hant": string;
+      "zh-Hans": string;
+      es: string;
+    };
     min: number;
     max: number;
   };

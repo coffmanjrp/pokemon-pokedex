@@ -22,7 +22,7 @@ import React from "react";
  */
 function getFormTranslation(
   formName: string,
-  language: "en" | "ja" | "zh-Hant" | "zh-Hans",
+  language: "en" | "ja" | "zh-Hant" | "zh-Hans" | "es",
 ): string | null {
   console.log(
     `[getFormTranslation] Looking for translation of "${formName}" in language "${language}"`,
@@ -168,7 +168,10 @@ export function getPokemonBaseName(pokemon: Pokemon, language: Locale): string {
 
   // For forms that should be displayed separately, return just the base name
   if (
-    (language === "ja" || language === "zh-Hant" || language === "zh-Hans") &&
+    (language === "ja" ||
+      language === "zh-Hant" ||
+      language === "zh-Hans" ||
+      language === "es") &&
     pokemon.species?.names
   ) {
     // Map language codes for PokeAPI
@@ -176,6 +179,7 @@ export function getPokemonBaseName(pokemon: Pokemon, language: Locale): string {
       ja: ["ja", "ja-Hrkt"],
       "zh-Hant": ["zh-Hant"],
       "zh-Hans": ["zh-Hans"],
+      es: ["es"],
     };
 
     const targetCodes = languageCodes[
@@ -239,7 +243,10 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
 
     // Handle non-English languages with species names
     if (
-      (language === "ja" || language === "zh-Hant" || language === "zh-Hans") &&
+      (language === "ja" ||
+        language === "zh-Hant" ||
+        language === "zh-Hans" ||
+        language === "es") &&
       pokemon.species?.names
     ) {
       // Map language codes for PokeAPI
@@ -247,6 +254,7 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
         ja: ["ja", "ja-Hrkt"],
         "zh-Hant": ["zh-Hant"],
         "zh-Hans": ["zh-Hans"],
+        es: ["es"],
       };
 
       const targetCodes = languageCodes[
@@ -297,7 +305,7 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
               return result;
             }
           } else {
-            // For Chinese languages: "ポケモン名（フォーム名）" format
+            // For Chinese and Spanish languages: "ポケモン名（フォーム名）" format
             const result = `${speciesName.name}（${formTranslation}）`;
             console.log(
               `[getPokemonName] ${language} variant: ${pokemon.name} -> ${result}`,
@@ -316,7 +324,10 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
 
   // For non-variant Pokemon
   if (
-    (language === "ja" || language === "zh-Hant" || language === "zh-Hans") &&
+    (language === "ja" ||
+      language === "zh-Hant" ||
+      language === "zh-Hans" ||
+      language === "es") &&
     pokemon.species?.names
   ) {
     // Map language codes for PokeAPI
@@ -324,6 +335,7 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
       ja: ["ja", "ja-Hrkt"],
       "zh-Hant": ["zh-Hant"],
       "zh-Hans": ["zh-Hans"],
+      es: ["es"],
     };
 
     const targetCodes = languageCodes[
@@ -363,7 +375,10 @@ export function getEvolutionPokemonName(
 
     // Handle non-English languages with species names
     if (
-      (language === "ja" || language === "zh-Hant" || language === "zh-Hans") &&
+      (language === "ja" ||
+        language === "zh-Hant" ||
+        language === "zh-Hans" ||
+        language === "es") &&
       evolutionDetail.species?.names
     ) {
       // Map language codes for PokeAPI
@@ -371,6 +386,7 @@ export function getEvolutionPokemonName(
         ja: ["ja", "ja-Hrkt"],
         "zh-Hant": ["zh-Hant"],
         "zh-Hans": ["zh-Hans"],
+        es: ["es"],
       };
 
       const targetCodes = languageCodes[
@@ -421,7 +437,7 @@ export function getEvolutionPokemonName(
               return result;
             }
           } else {
-            // For Chinese languages: "ポケモン名（フォーム名）" format
+            // For Chinese and Spanish languages: "ポケモン名（フォーム名）" format
             const result = `${speciesName.name}（${formTranslation}）`;
             console.log(
               `[getEvolutionPokemonName] ${language} variant: ${evolutionDetail.name} -> ${result}`,
@@ -444,7 +460,10 @@ export function getEvolutionPokemonName(
 
   // For non-variant Pokemon
   if (
-    (language === "ja" || language === "zh-Hant" || language === "zh-Hans") &&
+    (language === "ja" ||
+      language === "zh-Hant" ||
+      language === "zh-Hans" ||
+      language === "es") &&
     evolutionDetail.species?.names
   ) {
     // Map language codes for PokeAPI
@@ -452,6 +471,7 @@ export function getEvolutionPokemonName(
       ja: ["ja", "ja-Hrkt"],
       "zh-Hant": ["zh-Hant"],
       "zh-Hans": ["zh-Hans"],
+      es: ["es"],
     };
 
     const targetCodes = languageCodes[
@@ -493,6 +513,7 @@ export function getPokemonDescription(
     ja: ["ja", "ja-Hrkt"],
     "zh-Hant": ["zh-Hant"],
     "zh-Hans": ["zh-Hans"],
+    es: ["es"],
   };
 
   const targetCodes = languageMap[language] || ["en"];
@@ -538,6 +559,7 @@ export function getPokemonGenus(pokemon: Pokemon, language: Locale): string {
     ja: ["ja", "ja-Hrkt"],
     "zh-Hant": ["zh-Hant"],
     "zh-Hans": ["zh-Hans"],
+    es: ["es"],
   };
 
   const targetCodes = languageMap[language] || ["en"];
@@ -625,6 +647,7 @@ export function getAbilityName(
       ja: ["ja", "ja-Hrkt"],
       "zh-Hant": ["zh-Hant"],
       "zh-Hans": ["zh-Hans"],
+      es: ["es"],
     };
     const targetLanguage = languageMap[language] || ["en"];
 
@@ -865,6 +888,7 @@ export function getMoveName(move: Move, language: Locale): string {
       ja: ["ja", "ja-Hrkt"],
       "zh-Hant": ["zh-Hant"],
       "zh-Hans": ["zh-Hans"],
+      es: ["es"],
     };
     const targetLanguage = languageMap[language] || ["en"];
 
@@ -990,6 +1014,8 @@ export function getGenderDisplayElement(
         genderlessText = "不明";
       } else if (language === "zh-Hant" || language === "zh-Hans") {
         genderlessText = "無性別";
+      } else if (language === "es") {
+        genderlessText = "Sin género";
       } else {
         genderlessText = "Genderless";
       }

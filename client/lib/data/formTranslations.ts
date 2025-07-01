@@ -3,6 +3,7 @@ export interface FormTranslation {
   ja: string;
   "zh-Hant"?: string;
   "zh-Hans"?: string;
+  es?: string;
 }
 
 export type FormCategory = "regional" | "mega" | "gigantamax" | "special";
@@ -15,59 +16,107 @@ export interface FormData extends FormTranslation {
 
 // Regional form translations
 export const REGIONAL_FORM_TRANSLATIONS: Record<string, FormTranslation> = {
-  alola: { en: "Alolan", ja: "アローラのすがた" },
-  alolan: { en: "Alolan", ja: "アローラのすがた" },
-  galar: { en: "Galarian", ja: "ガラルのすがた" },
-  galarian: { en: "Galarian", ja: "ガラルのすがた" },
-  hisui: { en: "Hisuian", ja: "ヒスイのすがた" },
-  hisuian: { en: "Hisuian", ja: "ヒスイのすがた" },
-  paldea: { en: "Paldean", ja: "パルデアのすがた" },
-  paldean: { en: "Paldean", ja: "パルデアのすがた" },
+  alola: { en: "Alolan", ja: "アローラのすがた", es: "de Alola" },
+  alolan: { en: "Alolan", ja: "アローラのすがた", es: "de Alola" },
+  galar: { en: "Galarian", ja: "ガラルのすがた", es: "de Galar" },
+  galarian: { en: "Galarian", ja: "ガラルのすがた", es: "de Galar" },
+  hisui: { en: "Hisuian", ja: "ヒスイのすがた", es: "de Hisui" },
+  hisuian: { en: "Hisuian", ja: "ヒスイのすがた", es: "de Hisui" },
+  paldea: { en: "Paldean", ja: "パルデアのすがた", es: "de Paldea" },
+  paldean: { en: "Paldean", ja: "パルデアのすがた", es: "de Paldea" },
 };
 
 // Mega Evolution form translations
 // Note: Order matters! More specific forms (mega-x, mega-y) must come before general forms (mega)
 export const MEGA_FORM_TRANSLATIONS: Record<string, FormTranslation> = {
-  "mega-x": { en: "Mega X", ja: "メガX" },
-  "mega-y": { en: "Mega Y", ja: "メガY" },
-  mega: { en: "Mega", ja: "メガ" },
+  "mega-x": { en: "Mega X", ja: "メガX", es: "Mega X" },
+  "mega-y": { en: "Mega Y", ja: "メガY", es: "Mega Y" },
+  mega: { en: "Mega", ja: "メガ", es: "Mega" },
 };
 
 // Gigantamax form translations
 export const GIGANTAMAX_FORM_TRANSLATIONS: Record<string, FormTranslation> = {
-  gmax: { en: "Gigantamax", ja: "キョダイマックスのすがた" },
+  gmax: { en: "Gigantamax", ja: "キョダイマックスのすがた", es: "Gigantamax" },
 };
 
 // Special form translations
 export const SPECIAL_FORM_TRANSLATIONS: Record<string, FormTranslation> = {
-  primal: { en: "Primal", ja: "ゲンシ" },
-  origin: { en: "Origin Forme", ja: "オリジンフォルム" },
-  altered: { en: "Altered Forme", ja: "アナザーフォルム" },
-  sky: { en: "Sky Forme", ja: "スカイフォルム" },
-  land: { en: "Land Forme", ja: "ランドフォルム" },
-  therian: { en: "Therian Forme", ja: "れいじゅうフォルム" },
-  incarnate: { en: "Incarnate Forme", ja: "けしんフォルム" },
-  resolute: { en: "Resolute Forme", ja: "かくごのすがた" },
-  ordinary: { en: "Ordinary Forme", ja: "いつものすがた" },
-  zen: { en: "Zen Mode", ja: "ダルマモード" },
-  standard: { en: "Standard Mode", ja: "ノーマルモード" },
-  blade: { en: "Blade Forme", ja: "ブレードフォルム" },
-  shield: { en: "Shield Forme", ja: "シールドフォルム" },
-  unbound: { en: "Unbound", ja: "ときはなたれし" },
-  confined: { en: "Confined", ja: "いましめられし" },
-  complete: { en: "Complete Forme", ja: "パーフェクトフォルム" },
-  "10-percent": { en: "10% Forme", ja: "10%フォルム" },
-  "50-percent": { en: "50% Forme", ja: "50%フォルム" },
-  "dusk-mane": { en: "Dusk Mane", ja: "たそがれのたてがみ" },
-  "dawn-wings": { en: "Dawn Wings", ja: "あかつきのつばさ" },
-  ultra: { en: "Ultra", ja: "ウルトラ" },
-  "red-meteor": { en: "Red Meteor", ja: "あかいいんせき" },
-  "blue-meteor": { en: "Blue Meteor", ja: "あおいいんせき" },
-  "yellow-meteor": { en: "Yellow Meteor", ja: "きいろいいんせき" },
-  "green-meteor": { en: "Green Meteor", ja: "みどりのいんせき" },
-  "orange-meteor": { en: "Orange Meteor", ja: "オレンジいんせき" },
-  "indigo-meteor": { en: "Indigo Meteor", ja: "あいいろのいんせき" },
-  "violet-meteor": { en: "Violet Meteor", ja: "むらさきのいんせき" },
+  primal: { en: "Primal", ja: "ゲンシ", es: "Primigenio" },
+  origin: { en: "Origin Forme", ja: "オリジンフォルム", es: "Forma Origen" },
+  altered: {
+    en: "Altered Forme",
+    ja: "アナザーフォルム",
+    es: "Forma Alterada",
+  },
+  sky: { en: "Sky Forme", ja: "スカイフォルム", es: "Forma Cielo" },
+  land: { en: "Land Forme", ja: "ランドフォルム", es: "Forma Tierra" },
+  therian: { en: "Therian Forme", ja: "れいじゅうフォルム", es: "Forma Tótem" },
+  incarnate: {
+    en: "Incarnate Forme",
+    ja: "けしんフォルム",
+    es: "Forma Avatar",
+  },
+  resolute: {
+    en: "Resolute Forme",
+    ja: "かくごのすがた",
+    es: "Forma Decidida",
+  },
+  ordinary: { en: "Ordinary Forme", ja: "いつものすがた", es: "Forma Normal" },
+  zen: { en: "Zen Mode", ja: "ダルマモード", es: "Modo Daruma" },
+  standard: { en: "Standard Mode", ja: "ノーマルモード", es: "Modo Estándar" },
+  blade: { en: "Blade Forme", ja: "ブレードフォルム", es: "Forma Filo" },
+  shield: { en: "Shield Forme", ja: "シールドフォルム", es: "Forma Escudo" },
+  unbound: { en: "Unbound", ja: "ときはなたれし", es: "Desatado" },
+  confined: { en: "Confined", ja: "いましめられし", es: "Contenido" },
+  complete: {
+    en: "Complete Forme",
+    ja: "パーフェクトフォルム",
+    es: "Forma Completa",
+  },
+  "10-percent": { en: "10% Forme", ja: "10%フォルム", es: "Forma 10%" },
+  "50-percent": { en: "50% Forme", ja: "50%フォルム", es: "Forma 50%" },
+  "dusk-mane": {
+    en: "Dusk Mane",
+    ja: "たそがれのたてがみ",
+    es: "Melena Crepuscular",
+  },
+  "dawn-wings": {
+    en: "Dawn Wings",
+    ja: "あかつきのつばさ",
+    es: "Alas del Alba",
+  },
+  ultra: { en: "Ultra", ja: "ウルトラ", es: "Ultra" },
+  "red-meteor": { en: "Red Meteor", ja: "あかいいんせき", es: "Meteoro Rojo" },
+  "blue-meteor": {
+    en: "Blue Meteor",
+    ja: "あおいいんせき",
+    es: "Meteoro Azul",
+  },
+  "yellow-meteor": {
+    en: "Yellow Meteor",
+    ja: "きいろいいんせき",
+    es: "Meteoro Amarillo",
+  },
+  "green-meteor": {
+    en: "Green Meteor",
+    ja: "みどりのいんせき",
+    es: "Meteoro Verde",
+  },
+  "orange-meteor": {
+    en: "Orange Meteor",
+    ja: "オレンジいんせき",
+    es: "Meteoro Naranja",
+  },
+  "indigo-meteor": {
+    en: "Indigo Meteor",
+    ja: "あいいろのいんせき",
+    es: "Meteoro Índigo",
+  },
+  "violet-meteor": {
+    en: "Violet Meteor",
+    ja: "むらさきのいんせき",
+    es: "Meteoro Violeta",
+  },
 };
 
 // Badge colors for different form categories
