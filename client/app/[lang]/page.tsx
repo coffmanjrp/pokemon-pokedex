@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { Locale, interpolate } from "@/lib/dictionaries";
 import { getDictionary } from "@/lib/get-dictionary";
+import { getFallbackMetadata } from "@/lib/fallbackText";
 import { PokemonListClient } from "./client";
 
 // ISR configuration: revalidate every hour
@@ -45,16 +46,11 @@ export async function generateMetadata({
   const pokemonImageUrl = `https://pokemon-pokedex-client.vercel.app/api/images/pokemon/${selectedPokemon.id}`;
 
   const title =
-    dictionary.meta.homeTitle ||
-    (lang === "ja"
-      ? "ポケモン図鑑 | 全世代ポケモン完全データベース"
-      : "Pokemon Pokedex | Complete Multi-Generation Pokemon Database");
+    dictionary.meta.homeTitle || getFallbackMetadata(lang, "homeTitle");
 
   const description =
     dictionary.meta.homeDescription ||
-    (lang === "ja"
-      ? `全1302匹以上のポケモンの詳細情報を網羅。公式アートワーク、ステータス、タイプ相性、進化チェーン、技一覧など充実した機能を提供する最新のポケモン図鑑。第1世代から第9世代まで完全対応。`
-      : `Comprehensive Pokemon database featuring 1302+ Pokemon with detailed stats, official artwork, type effectiveness, evolution chains, and move sets. Complete coverage from Generation 1 to 9 with advanced search and filtering capabilities.`);
+    getFallbackMetadata(lang, "homeDescription");
 
   const keywords = dictionary.meta.homeKeywords;
 
