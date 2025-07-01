@@ -159,6 +159,9 @@ export interface Dictionary {
     pokemonDescription: string;
     pokemonDescriptionShort: string;
     pokemonKeywords: string;
+    homeKeywords: string;
+    pokemonImageAlt: string;
+    fallbackImageAlt: string;
     locale: string;
   };
 }

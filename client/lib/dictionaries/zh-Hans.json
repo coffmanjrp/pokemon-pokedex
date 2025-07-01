@@ -164,6 +164,9 @@
     "pokemonDescription": "查看{{name}}的详细信息，包括属性、能力值、招式、进化链和更多内容。",
     "pokemonDescriptionShort": "{{name}}的完整宝可梦信息。",
     "pokemonKeywords": "宝可梦, {{name}}, 图鉴, 属性, 能力值, 招式, 进化",
+    "homeKeywords": "宝可梦图鉴,宝可梦数据库,宝可梦列表,宝可梦能力值,宝可梦搜索,进化链,属性相克,官方美术图,第1世代,第2世代,第3世代,第4世代,第5世代,第6世代,第7世代,第8世代,第9世代",
+    "pokemonImageAlt": "{{name}} - 宝可梦图鉴",
+    "fallbackImageAlt": "宝可梦图鉴 - 完整的宝可梦数据库",
     "locale": "zh_CN"
   }
 }

@@ -164,6 +164,9 @@
     "pokemonDescription": "查看{{name}}的詳細資訊，包括屬性、能力值、招式、進化鏈和更多內容。",
     "pokemonDescriptionShort": "{{name}}的完整寶可夢資訊。",
     "pokemonKeywords": "寶可夢, {{name}}, 圖鑑, 屬性, 能力值, 招式, 進化",
+    "homeKeywords": "寶可夢圖鑑,寶可夢資料庫,寶可夢列表,寶可夢能力值,寶可夢搜尋,進化鏈,屬性相剋,官方美術圖,第1世代,第2世代,第3世代,第4世代,第5世代,第6世代,第7世代,第8世代,第9世代",
+    "pokemonImageAlt": "{{name}} - 寶可夢圖鑑",
+    "fallbackImageAlt": "寶可夢圖鑑 - 完整的寶可夢資料庫",
     "locale": "zh_TW"
   }
 }

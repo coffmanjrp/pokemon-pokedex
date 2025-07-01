@@ -164,6 +164,9 @@
     "pokemonDescription": "{{name}} is a {{type}} type Pokémon with {{hp}} HP, {{attack}} Attack, and {{defense}} Defense. {{description}}",
     "pokemonDescriptionShort": "{{name}} - {{type}} type Pokémon from Generation {{generation}}. Height: {{height}}m, Weight: {{weight}}kg.",
     "pokemonKeywords": "{{name}}, Pokemon, {{type}}, Generation {{generation}}, stats, moves, abilities, evolution",
+    "homeKeywords": "pokemon pokedex,pokemon database,pokemon list,pokemon stats,pokemon search,evolution chain,type effectiveness,official artwork,generation 1,generation 2,generation 3,generation 4,generation 5,generation 6,generation 7,generation 8,generation 9",
+    "pokemonImageAlt": "{{name}} - Pokemon Pokedex",
+    "fallbackImageAlt": "Pokemon Pokedex - Comprehensive Pokemon Database",
     "locale": "en_US"
   }
 }
