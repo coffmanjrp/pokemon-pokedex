@@ -198,6 +198,15 @@ export interface Dictionary {
       switchingTo: string;
       generationRange: string;
     };
+    emptyStates: {
+      moves: string;
+      descriptions: string;
+      games: string;
+      sprites: string;
+      evolution: string;
+      abilities: string;
+      general: string;
+    };
   };
   meta: {
     title: string;

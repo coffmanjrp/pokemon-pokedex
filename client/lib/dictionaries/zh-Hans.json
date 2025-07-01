@@ -202,6 +202,15 @@
     "generationSwitching": {
       "switchingTo": "正在切换至{{region}}...",
       "generationRange": "第{{number}}世代 (#{{min}}-#{{max}})"
+    },
+    "emptyStates": {
+      "moves": "无招式数据",
+      "descriptions": "无说明可用",
+      "games": "无游戏数据",
+      "sprites": "无图像可用",
+      "evolution": "无进化数据",
+      "abilities": "无特性数据",
+      "general": "无数据可用"
     }
   },
   "meta": {

@@ -202,6 +202,15 @@
     "generationSwitching": {
       "switchingTo": "Switching to {{region}}...",
       "generationRange": "Generation {{number}} (#{{min}}-#{{max}})"
+    },
+    "emptyStates": {
+      "moves": "No move data available",
+      "descriptions": "No descriptions available",
+      "games": "No game data available",
+      "sprites": "No sprites available",
+      "evolution": "No evolution data available",
+      "abilities": "No abilities available",
+      "general": "No data available"
     }
   },
   "meta": {
