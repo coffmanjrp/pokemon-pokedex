@@ -1,12 +1,14 @@
 "use client";
 
-import { Locale } from "@/lib/dictionaries";
+import { Locale, interpolate } from "@/lib/dictionaries";
+import { useAppSelector } from "@/store/hooks";
+import { getFallbackText } from "@/lib/fallbackText";
 
 interface GenerationSwitchingOverlayProps {
   lang: Locale;
   currentGeneration: number;
   generationRange: {
-    region: { en: string; ja: string };
+    region: { en: string; ja: string; "zh-Hant": string; "zh-Hans": string };
     min: number;
     max: number;
   };
@@ -19,6 +21,9 @@ export function GenerationSwitchingOverlay({
   generationRange,
   isVisible,
 }: GenerationSwitchingOverlayProps) {
+  const { dictionary } = useAppSelector((state) => state.ui);
+  const fallback = getFallbackText(lang);
+
   if (!isVisible) {
     return null;
   }
@@ -29,14 +34,23 @@ export function GenerationSwitchingOverlay({
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"></div>
         <div className="text-center">
           <p className="text-lg font-medium text-gray-700 mb-1">
-            {lang === "ja"
-              ? `${generationRange.region.ja}に切り替え中...`
-              : `Switching to ${generationRange.region.en}...`}
+            {interpolate(
+              dictionary?.ui.generationSwitching.switchingTo || fallback,
+              {
+                region:
+                  generationRange.region[lang] || generationRange.region.en,
+              },
+            )}
           </p>
           <p className="text-sm text-gray-500">
-            {lang === "ja"
-              ? `第${currentGeneration}世代 (#${generationRange.min}-#${generationRange.max})`
-              : `Generation ${currentGeneration} (#${generationRange.min}-#${generationRange.max})`}
+            {interpolate(
+              dictionary?.ui.generationSwitching.generationRange || fallback,
+              {
+                number: currentGeneration,
+                min: generationRange.min,
+                max: generationRange.max,
+              },
+            )}
           </p>
         </div>
       </div>

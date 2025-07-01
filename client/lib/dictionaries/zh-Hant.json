@@ -153,6 +153,10 @@
       "title": "寶可夢沙盒",
       "subtitle": "實驗性功能",
       "instructions": "在這裡測試新功能和實驗性內容。"
+    },
+    "generationSwitching": {
+      "switchingTo": "正在切換至{{region}}...",
+      "generationRange": "第{{number}}世代 (#{{min}}-#{{max}})"
     }
   },
   "meta": {

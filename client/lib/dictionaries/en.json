@@ -153,6 +153,10 @@
       "title": "Animation Sandbox",
       "subtitle": "Test different Pokemon card click animations",
       "instructions": "Click on each card to test the animation effects"
+    },
+    "generationSwitching": {
+      "switchingTo": "Switching to {{region}}...",
+      "generationRange": "Generation {{number}} (#{{min}}-#{{max}})"
     }
   },
   "meta": {

@@ -153,6 +153,10 @@
       "title": "宝可梦沙盒",
       "subtitle": "实验性功能",
       "instructions": "在这里测试新功能和实验性内容。"
+    },
+    "generationSwitching": {
+      "switchingTo": "正在切换至{{region}}...",
+      "generationRange": "第{{number}}世代 (#{{min}}-#{{max}})"
     }
   },
   "meta": {

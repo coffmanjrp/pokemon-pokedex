@@ -153,6 +153,10 @@
       "title": "アニメーション サンドボックス",
       "subtitle": "様々なポケモンカードクリックアニメーションをテスト",
       "instructions": "各カードをクリックしてアニメーション効果をテストしてください"
+    },
+    "generationSwitching": {
+      "switchingTo": "{{region}}に切り替え中...",
+      "generationRange": "第{{number}}世代 (#{{min}}-#{{max}})"
     }
   },
   "meta": {

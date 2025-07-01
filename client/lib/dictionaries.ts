@@ -149,6 +149,10 @@ export interface Dictionary {
       subtitle: string;
       instructions: string;
     };
+    generationSwitching: {
+      switchingTo: string;
+      generationRange: string;
+    };
   };
   meta: {
     title: string;
