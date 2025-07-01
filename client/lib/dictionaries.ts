@@ -7,6 +7,7 @@ export interface Dictionary {
       placeholder: string;
       noResults: string;
       noResultsDescription: string;
+      noFilterResults: string;
     };
     filters: {
       title: string;
@@ -28,6 +29,14 @@ export interface Dictionary {
       loadingMore: string;
       loadingGeneration: string;
       loadingDetails: string;
+      loadingRegion: string;
+      generationLabel: string;
+      pokemonCount: string;
+      rangeLabel: string;
+      loadingMoreProgress: string;
+      allRegionPokemonLoaded: string;
+      generationInfo: string;
+      close: string;
     };
     error: {
       title: string;
@@ -82,6 +91,34 @@ export interface Dictionary {
       showdown: string;
       icons: string;
       noSpritesAvailable: string;
+      spriteLabels: {
+        officialArtwork: string;
+        shinyOfficialArtwork: string;
+        homeFront: string;
+        homeShinyFront: string;
+        homeFemale: string;
+        homeShinyFemale: string;
+        dreamWorld: string;
+        dreamWorldFemale: string;
+        showdownFront: string;
+        showdownBack: string;
+        showdownShinyFront: string;
+        showdownShinyBack: string;
+        gameFront: string;
+        gameBack: string;
+        gameShinyFront: string;
+        gameShinyBack: string;
+        gameFemaleFront: string;
+        gameFemaleBack: string;
+        animatedFrontGenV: string;
+        animatedBackGenV: string;
+        animatedShinyFrontGenV: string;
+        animatedShinyBackGenV: string;
+        iconGenVII: string;
+        femaleIconGenVII: string;
+        xyFront: string;
+        xyShinyFront: string;
+      };
       noMovesData: string;
       noGameHistoryData: string;
       originGeneration: string;
@@ -113,6 +150,8 @@ export interface Dictionary {
       noImage: string;
       noFormImage: string;
       loadingEvolutionChain: string;
+      noStatsData: string;
+      noStatsAvailable: string;
     };
     stats: {
       hp: string;
@@ -130,6 +169,7 @@ export interface Dictionary {
       tutor: string;
       level: string;
       learnedAt: string;
+      noMovesFoundForMethod: string;
     };
     generation: {
       displayTemplate: string;

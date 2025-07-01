@@ -3,7 +3,8 @@
     "search": {
       "placeholder": "Search Pokémon by name or ID...",
       "noResults": "No Pokémon found",
-      "noResultsDescription": "Try adjusting your search terms or filters"
+      "noResultsDescription": "Try adjusting your search terms or filters",
+      "noFilterResults": "No Pokémon match the current filters"
     },
     "filters": {
       "title": "Filters",
@@ -24,7 +25,15 @@
       "loadingPokemon": "Loading Pokémon...",
       "loadingMore": "Loading more Pokémon...",
       "loadingGeneration": "Loading Pokémon for Generation {{generation}}...",
-      "loadingDetails": "Loading Pokémon details..."
+      "loadingDetails": "Loading Pokémon details...",
+      "loadingRegion": "Loading {{region}} Pokémon...",
+      "generationLabel": "Generation {{number}}",
+      "pokemonCount": "{{current}}/{{total}} Pokémon",
+      "rangeLabel": "Range: #{{min}}-#{{max}}",
+      "loadingMoreProgress": "Loading more...",
+      "allRegionPokemonLoaded": "All {{region}} Pokémon loaded!",
+      "generationInfo": "Generation {{number}} (#{{min}}-#{{max}})",
+      "close": "Close"
     },
     "error": {
       "title": "Error loading Pokémon",
@@ -79,6 +88,34 @@
       "showdown": "Pokémon Showdown",
       "icons": "Icons",
       "noSpritesAvailable": "No sprites available for this category",
+      "spriteLabels": {
+        "officialArtwork": "Official Artwork",
+        "shinyOfficialArtwork": "Shiny Official Artwork",
+        "homeFront": "Home Front",
+        "homeShinyFront": "Home Shiny Front",
+        "homeFemale": "Home Female",
+        "homeShinyFemale": "Home Shiny Female",
+        "dreamWorld": "Dream World",
+        "dreamWorldFemale": "Dream World Female",
+        "showdownFront": "Showdown Front",
+        "showdownBack": "Showdown Back",
+        "showdownShinyFront": "Showdown Shiny Front",
+        "showdownShinyBack": "Showdown Shiny Back",
+        "gameFront": "Game Front",
+        "gameBack": "Game Back",
+        "gameShinyFront": "Game Shiny Front",
+        "gameShinyBack": "Game Shiny Back",
+        "gameFemaleFront": "Game Female Front",
+        "gameFemaleBack": "Game Female Back",
+        "animatedFrontGenV": "Animated Front (Gen V)",
+        "animatedBackGenV": "Animated Back (Gen V)",
+        "animatedShinyFrontGenV": "Animated Shiny Front (Gen V)",
+        "animatedShinyBackGenV": "Animated Shiny Back (Gen V)",
+        "iconGenVII": "Icon (Gen VII)",
+        "femaleIconGenVII": "Female Icon (Gen VII)",
+        "xyFront": "X/Y Front",
+        "xyShinyFront": "X/Y Shiny Front"
+      },
       "noMovesData": "No moves data available",
       "noGameHistoryData": "No game history data available",
       "originGeneration": "Origin Generation",
@@ -109,7 +146,9 @@
       "noAdditionalInfo": "No additional information available",
       "noImage": "No Image",
       "noFormImage": "?",
-      "loadingEvolutionChain": "Loading evolution chain..."
+      "loadingEvolutionChain": "Loading evolution chain...",
+      "noStatsData": "No stats data available",
+      "noStatsAvailable": "No stats available"
     },
     "stats": {
       "hp": "HP",
@@ -126,7 +165,8 @@
       "egg": "Egg Moves",
       "tutor": "Move Tutor",
       "level": "Level {{level}}",
-      "learnedAt": "Learned at level {{level}}"
+      "learnedAt": "Learned at level {{level}}",
+      "noMovesFoundForMethod": "No {{method}} moves found"
     },
     "generation": {
       "displayTemplate": "{{region}} (Generation {{number}})"

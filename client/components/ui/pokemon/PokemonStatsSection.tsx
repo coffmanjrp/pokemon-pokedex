@@ -55,13 +55,7 @@ export function PokemonStatsSection({
         </div>
       ) : (
         <div className="text-gray-500 text-center py-4 text-sm">
-          {language === "en"
-            ? "No stats available"
-            : language === "ja"
-              ? "ステータスがありません"
-              : language === "zh-Hant"
-                ? "無可用數據"
-                : "无可用数据"}
+          {dictionary?.ui.pokemonDetails.noStatsAvailable || fallback}
         </div>
       )}
 

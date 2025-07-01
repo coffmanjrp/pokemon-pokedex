@@ -3,7 +3,8 @@
     "search": {
       "placeholder": "搜尋寶可夢名稱或編號...",
       "noResults": "找不到寶可夢",
-      "noResultsDescription": "請調整搜尋條件或篩選器"
+      "noResultsDescription": "請調整搜尋條件或篩選器",
+      "noFilterResults": "沒有寶可夢符合目前的篩選條件"
     },
     "filters": {
       "title": "篩選器",
@@ -24,7 +25,15 @@
       "loadingPokemon": "載入寶可夢中...",
       "loadingMore": "載入更多寶可夢中...",
       "loadingGeneration": "載入第{{generation}}世代寶可夢中...",
-      "loadingDetails": "載入寶可夢詳細資料中..."
+      "loadingDetails": "載入寶可夢詳細資料中...",
+      "loadingRegion": "載入{{region}}寶可夢中...",
+      "generationLabel": "第{{number}}世代",
+      "pokemonCount": "{{current}}/{{total}}隻",
+      "rangeLabel": "範圍: #{{min}}-#{{max}}",
+      "loadingMoreProgress": "載入更多...",
+      "allRegionPokemonLoaded": "所有{{region}}寶可夢載入完成！",
+      "generationInfo": "第{{number}}世代 (#{{min}}-#{{max}})",
+      "close": "關閉"
     },
     "error": {
       "title": "寶可夢載入錯誤",
@@ -79,6 +88,34 @@
       "showdown": "Showdown",
       "icons": "圖示",
       "noSpritesAvailable": "無可用圖片",
+      "spriteLabels": {
+        "officialArtwork": "官方美術圖",
+        "shinyOfficialArtwork": "異色官方美術圖",
+        "homeFront": "HOME正面",
+        "homeShinyFront": "HOME異色正面",
+        "homeFemale": "HOME♀",
+        "homeShinyFemale": "HOME異色♀",
+        "dreamWorld": "夢境世界",
+        "dreamWorldFemale": "夢境世界♀",
+        "showdownFront": "Showdown正面",
+        "showdownBack": "Showdown背面",
+        "showdownShinyFront": "Showdown異色正面",
+        "showdownShinyBack": "Showdown異色背面",
+        "gameFront": "遊戲正面",
+        "gameBack": "遊戲背面",
+        "gameShinyFront": "遊戲異色正面",
+        "gameShinyBack": "遊戲異色背面",
+        "gameFemaleFront": "遊戲♀正面",
+        "gameFemaleBack": "遊戲♀背面",
+        "animatedFrontGenV": "動態正面 (第5世代)",
+        "animatedBackGenV": "動態背面 (第5世代)",
+        "animatedShinyFrontGenV": "動態異色正面 (第5世代)",
+        "animatedShinyBackGenV": "動態異色背面 (第5世代)",
+        "iconGenVII": "圖示 (第7世代)",
+        "femaleIconGenVII": "♀圖示 (第7世代)",
+        "xyFront": "X/Y正面",
+        "xyShinyFront": "X/Y異色正面"
+      },
       "noMovesData": "無招式資料",
       "noGameHistoryData": "無遊戲歷史資料",
       "originGeneration": "起源世代",
@@ -109,7 +146,9 @@
       "noAdditionalInfo": "沒有其他可用資訊",
       "noImage": "無圖片",
       "noFormImage": "？",
-      "loadingEvolutionChain": "載入進化鏈中..."
+      "loadingEvolutionChain": "載入進化鏈中...",
+      "noStatsData": "無能力值資料",
+      "noStatsAvailable": "無可用數據"
     },
     "stats": {
       "hp": "HP",
@@ -126,7 +165,8 @@
       "egg": "蛋招式",
       "tutor": "招式教學",
       "level": "等級",
-      "learnedAt": "學習時機"
+      "learnedAt": "學習時機",
+      "noMovesFoundForMethod": "找不到{{method}}招式"
     },
     "generation": {
       "displayTemplate": "{{region}} (第{{number}}世代)"

@@ -3,7 +3,8 @@
     "search": {
       "placeholder": "ポケモンの名前やIDで検索...",
       "noResults": "ポケモンが見つかりません",
-      "noResultsDescription": "検索条件やフィルターを調整してください"
+      "noResultsDescription": "検索条件やフィルターを調整してください",
+      "noFilterResults": "フィルター条件に一致するポケモンが見つかりません"
     },
     "filters": {
       "title": "フィルター",
@@ -24,7 +25,15 @@
       "loadingPokemon": "ポケモンを読み込み中...",
       "loadingMore": "もっとポケモンを読み込み中...",
       "loadingGeneration": "第{{generation}}世代のポケモンを読み込み中...",
-      "loadingDetails": "ポケモンの詳細を読み込み中..."
+      "loadingDetails": "ポケモンの詳細を読み込み中...",
+      "loadingRegion": "{{region}}のポケモンを読み込み中...",
+      "generationLabel": "第{{number}}世代",
+      "pokemonCount": "{{current}}/{{total}}匹",
+      "rangeLabel": "範囲: #{{min}}-#{{max}}",
+      "loadingMoreProgress": "さらに読み込み中...",
+      "allRegionPokemonLoaded": "{{region}}の全ポケモンを表示完了！",
+      "generationInfo": "第{{number}}世代 (#{{min}}-#{{max}})",
+      "close": "閉じる"
     },
     "error": {
       "title": "ポケモンの読み込みエラー",
@@ -79,6 +88,34 @@
       "showdown": "ポケモンShowdown",
       "icons": "アイコン",
       "noSpritesAvailable": "このカテゴリーには利用可能なスプライトがありません",
+      "spriteLabels": {
+        "officialArtwork": "公式アートワーク",
+        "shinyOfficialArtwork": "色違い公式アートワーク",
+        "homeFront": "HOME正面",
+        "homeShinyFront": "HOME色違い正面",
+        "homeFemale": "HOME♀",
+        "homeShinyFemale": "HOME色違い♀",
+        "dreamWorld": "ポケモンドリームワールド",
+        "dreamWorldFemale": "ポケモンドリームワールド♀",
+        "showdownFront": "Showdown正面",
+        "showdownBack": "Showdown背面",
+        "showdownShinyFront": "Showdown色違い正面",
+        "showdownShinyBack": "Showdown色違い背面",
+        "gameFront": "ゲーム正面",
+        "gameBack": "ゲーム背面",
+        "gameShinyFront": "ゲーム色違い正面",
+        "gameShinyBack": "ゲーム色違い背面",
+        "gameFemaleFront": "ゲーム♀正面",
+        "gameFemaleBack": "ゲーム♀背面",
+        "animatedFrontGenV": "アニメーション正面 (第5世代)",
+        "animatedBackGenV": "アニメーション背面 (第5世代)",
+        "animatedShinyFrontGenV": "アニメーション色違い正面 (第5世代)",
+        "animatedShinyBackGenV": "アニメーション色違い背面 (第5世代)",
+        "iconGenVII": "アイコン (第7世代)",
+        "femaleIconGenVII": "♀アイコン (第7世代)",
+        "xyFront": "X/Y正面",
+        "xyShinyFront": "X/Y色違い正面"
+      },
       "noMovesData": "わざデータがありません",
       "noGameHistoryData": "ゲーム履歴データがありません",
       "originGeneration": "初出世代",
@@ -109,7 +146,9 @@
       "noAdditionalInfo": "追加情報がありません",
       "noImage": "画像なし",
       "noFormImage": "？",
-      "loadingEvolutionChain": "進化チェーンを読み込み中..."
+      "loadingEvolutionChain": "進化チェーンを読み込み中...",
+      "noStatsData": "ステータスデータがありません",
+      "noStatsAvailable": "ステータスがありません"
     },
     "stats": {
       "hp": "HP",
@@ -126,7 +165,8 @@
       "egg": "タマゴわざ",
       "tutor": "おしえわざ",
       "level": "レベル{{level}}",
-      "learnedAt": "レベル{{level}}で習得"
+      "learnedAt": "レベル{{level}}で習得",
+      "noMovesFoundForMethod": "{{method}}の技は見つかりませんでした"
     },
     "generation": {
       "displayTemplate": "{{region}} (第{{number}}世代)"

@@ -4,6 +4,8 @@ import { useRef, useState, useEffect } from "react";
 import { Pokemon } from "@/types/pokemon";
 import { PokemonCard } from "./PokemonCard";
 import { Locale } from "@/lib/dictionaries";
+import { useAppSelector } from "@/store/hooks";
+import { getFallbackText } from "@/lib/fallbackText";
 
 interface PokemonGridProps {
   pokemons: Pokemon[];
@@ -25,9 +27,12 @@ export function PokemonGrid({
   loading = false,
   isFiltering = false,
   priority = false,
+  language = "en",
 }: PokemonGridProps) {
   const parentRef = useRef<HTMLDivElement>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const { dictionary } = useAppSelector((state) => state.ui);
+  const fallback = getFallbackText(language);
 
   useEffect(() => {
     setIsMounted(true);
@@ -87,7 +92,7 @@ export function PokemonGrid({
       {isFiltering && pokemons.length === 0 && !loading && (
         <div className="text-center py-16 text-gray-500">
           <div className="text-4xl mb-4">🔍</div>
-          <p>フィルター条件に一致するポケモンが見つかりません</p>
+          <p>{dictionary?.ui.search.noFilterResults || fallback}</p>
         </div>
       )}
     </div>

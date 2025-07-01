@@ -12,7 +12,7 @@ import { DataEmptyState } from "../common/DataEmptyState";
 import { TypeBadge, LevelBadge } from "../common/Badge";
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
-import { Locale } from "@/lib/dictionaries";
+import { Locale, interpolate } from "@/lib/dictionaries";
 
 interface PokemonMovesProps {
   moves?: PokemonMove[];
@@ -203,9 +203,9 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
         </div>
       ) : (
         <div className="text-center py-8 text-gray-500">
-          {language === "en"
-            ? `No ${getMoveLearnMethodName(selectedMethod, language).toLowerCase()} moves found`
-            : `${getMoveLearnMethodName(selectedMethod, language)}の技は見つかりませんでした`}
+          {interpolate(dictionary?.ui.moves.noMovesFoundForMethod || fallback, {
+            method: getMoveLearnMethodName(selectedMethod, language),
+          })}
         </div>
       )}
     </div>

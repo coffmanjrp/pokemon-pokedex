@@ -1,7 +1,9 @@
 "use client";
 
 import { forwardRef } from "react";
-import { Locale } from "@/lib/dictionaries";
+import { Locale, interpolate } from "@/lib/dictionaries";
+import { useAppSelector } from "@/store/hooks";
+import { getFallbackText } from "@/lib/fallbackText";
 
 interface PokemonProgressFooterProps {
   lang: Locale;
@@ -36,6 +38,24 @@ export const PokemonProgressFooter = forwardRef<
   },
   ref,
 ) {
+  const { dictionary } = useAppSelector((state) => state.ui);
+  const fallback = getFallbackText(lang);
+
+  // Helper function to get region name for current language
+  const getRegionName = () => {
+    switch (lang) {
+      case "en":
+        return generationRange.region.en;
+      case "ja":
+        return generationRange.region.ja;
+      case "zh-Hant":
+        return generationRange.region["zh-Hant"];
+      case "zh-Hans":
+        return generationRange.region["zh-Hans"];
+      default:
+        return generationRange.region.en;
+    }
+  };
   if (loading) {
     return (
       <footer className="fixed bottom-0 left-0 lg:left-80 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
@@ -45,24 +65,17 @@ export const PokemonProgressFooter = forwardRef<
             <div className="flex items-center space-x-2 md:space-x-3">
               <div className="animate-spin rounded-full h-4 w-4 md:h-5 md:w-5 border-b-2 border-blue-600"></div>
               <span className="text-xs md:text-sm font-medium text-gray-700">
-                {lang === "ja"
-                  ? `さらに読み込み中...`
-                  : lang === "zh-Hant"
-                    ? `載入更多...`
-                    : lang === "zh-Hans"
-                      ? `加载更多...`
-                      : `Loading more...`}
+                {dictionary?.ui.loading.loadingMoreProgress || fallback}
               </span>
             </div>
 
             {/* Right side - Progress info */}
             <div className="flex items-center space-x-2 md:space-x-3">
               <span className="text-xs md:text-sm text-gray-600 hidden sm:block">
-                {lang === "ja"
-                  ? `${loadedCount}/${totalCount}匹`
-                  : lang === "zh-Hant" || lang === "zh-Hans"
-                    ? `${loadedCount}/${totalCount}隻`
-                    : `${loadedCount}/${totalCount}`}
+                {interpolate(dictionary?.ui.loading.pokemonCount || fallback, {
+                  current: loadedCount,
+                  total: totalCount,
+                })}
               </span>
               <div className="w-16 md:w-20 bg-gray-200 rounded-full h-1.5 md:h-2">
                 <div
@@ -94,24 +107,20 @@ export const PokemonProgressFooter = forwardRef<
             <div className="flex items-center space-x-2 md:space-x-3">
               <div className="text-lg md:text-xl">🎉</div>
               <span className="text-xs md:text-sm font-medium text-green-700">
-                {lang === "ja"
-                  ? `${generationRange.region.ja}の全ポケモンを表示完了！`
-                  : lang === "zh-Hant"
-                    ? `所有${generationRange.region["zh-Hant"]}寶可夢載入完成！`
-                    : lang === "zh-Hans"
-                      ? `所有${generationRange.region["zh-Hans"]}宝可梦加载完成！`
-                      : `All ${generationRange.region.en} Pokémon loaded!`}
+                {interpolate(
+                  dictionary?.ui.loading.allRegionPokemonLoaded || fallback,
+                  { region: getRegionName() },
+                )}
               </span>
             </div>
 
             {/* Right side - Complete progress info and close button */}
             <div className="flex items-center space-x-2 md:space-x-3">
               <span className="text-xs md:text-sm text-green-600 hidden sm:block">
-                {lang === "ja"
-                  ? `${totalCount}/${totalCount}匹`
-                  : lang === "zh-Hant" || lang === "zh-Hans"
-                    ? `${totalCount}/${totalCount}隻`
-                    : `${totalCount}/${totalCount}`}
+                {interpolate(dictionary?.ui.loading.pokemonCount || fallback, {
+                  current: totalCount,
+                  total: totalCount,
+                })}
               </span>
               <div className="w-16 md:w-20 bg-green-200 rounded-full h-1.5 md:h-2">
                 <div className="bg-green-600 h-1.5 md:h-2 rounded-full w-full shadow-sm"></div>
@@ -123,15 +132,7 @@ export const PokemonProgressFooter = forwardRef<
                 <button
                   onClick={onCloseCompletion}
                   className="ml-2 p-1 text-green-500 hover:text-green-700 hover:bg-green-100 rounded-full transition-colors duration-200"
-                  aria-label={
-                    lang === "ja"
-                      ? "閉じる"
-                      : lang === "zh-Hant"
-                        ? "關閉"
-                        : lang === "zh-Hans"
-                          ? "关闭"
-                          : "Close"
-                  }
+                  aria-label={dictionary?.ui.loading.close || fallback}
                 >
                   <svg
                     className="w-4 h-4"
@@ -154,11 +155,11 @@ export const PokemonProgressFooter = forwardRef<
           {/* Generation info */}
           <div className="mt-2 pt-2 border-t border-green-200">
             <p className="text-xs text-green-600 text-center">
-              {lang === "ja"
-                ? `第${currentGeneration}世代 (#${generationRange.min}-#${generationRange.max})`
-                : lang === "zh-Hant" || lang === "zh-Hans"
-                  ? `第${currentGeneration}世代 (#${generationRange.min}-#${generationRange.max})`
-                  : `Generation ${currentGeneration} (#${generationRange.min}-#${generationRange.max})`}
+              {interpolate(dictionary?.ui.loading.generationInfo || fallback, {
+                number: currentGeneration,
+                min: generationRange.min,
+                max: generationRange.max,
+              })}
             </p>
           </div>
         </div>
