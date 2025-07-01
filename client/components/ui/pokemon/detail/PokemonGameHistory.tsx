@@ -4,7 +4,7 @@ import { GameIndex, Generation } from "@/types/pokemon";
 import { getGenerationName } from "@/lib/pokemonUtils";
 import { VERSION_TRANSLATIONS } from "@/lib/data/versionTranslations";
 import { getGenerationByGame } from "@/lib/data/generations";
-import { DataEmptyState } from "../common/DataEmptyState";
+import { DataEmptyState } from "../../common/DataEmptyState";
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
 import { Locale } from "@/lib/dictionaries";

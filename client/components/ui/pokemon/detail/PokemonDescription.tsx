@@ -2,7 +2,7 @@
 
 import { Pokemon } from "@/types/pokemon";
 import { getPokemonDescription, getVersionName } from "@/lib/pokemonUtils";
-import { DataEmptyState } from "../common/DataEmptyState";
+import { DataEmptyState } from "../../common/DataEmptyState";
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
 import { Locale } from "@/lib/dictionaries";

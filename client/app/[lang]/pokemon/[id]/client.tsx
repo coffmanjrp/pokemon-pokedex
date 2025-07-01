@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { Pokemon } from "@/types/pokemon";
 import { Dictionary, Locale } from "@/lib/dictionaries";
-import { PokemonDetailHeader } from "@/components/ui/pokemon/PokemonDetailHeader";
-import { PokemonTopNavigationTabs } from "@/components/ui/pokemon/PokemonTopNavigationTabs";
+import { PokemonDetailHeader } from "@/components/ui/pokemon/detail/PokemonDetailHeader";
+import { PokemonTopNavigationTabs } from "@/components/ui/pokemon/detail/PokemonTopNavigationTabs";
 import { useBackgroundPreload } from "@/hooks/useBackgroundPreload";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setLanguage, setDictionary } from "@/store/slices/uiSlice";

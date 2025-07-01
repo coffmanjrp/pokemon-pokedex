@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { Pokemon } from "@/types/pokemon";
-import { PokemonMoves } from "../PokemonMoves";
-import { PokemonDescription } from "../PokemonDescription";
-import { PokemonGameHistory } from "../PokemonGameHistory";
+import { PokemonMoves } from "../detail/PokemonMoves";
+import { PokemonDescription } from "../detail/PokemonDescription";
+import { PokemonGameHistory } from "../detail/PokemonGameHistory";
 import { InfoCard } from "../../common/InfoCard";
 import { TabNavigation } from "../../common/TabNavigation";
 import { SpritesTab } from "./SpritesTab";

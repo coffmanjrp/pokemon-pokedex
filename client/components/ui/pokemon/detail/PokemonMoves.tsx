@@ -7,9 +7,9 @@ import {
   getMoveName,
   getTypeName,
 } from "@/lib/pokemonUtils";
-import { TabNavigation } from "../common/TabNavigation";
-import { DataEmptyState } from "../common/DataEmptyState";
-import { TypeBadge, LevelBadge } from "../common/Badge";
+import { TabNavigation } from "../../common/TabNavigation";
+import { DataEmptyState } from "../../common/DataEmptyState";
+import { TypeBadge, LevelBadge } from "../../common/Badge";
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
 import { Locale, interpolate } from "@/lib/dictionaries";

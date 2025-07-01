@@ -1,12 +1,12 @@
 "use client";
 
-import { PokemonGrid } from "../../components/ui/pokemon/PokemonGrid";
+import { PokemonGrid } from "../../components/ui/pokemon/list/PokemonGrid";
 import { AnimatedLoadingScreen } from "../../components/ui/animation/AnimatedLoadingScreen";
 import { Sidebar } from "../../components/layout/Sidebar";
 import { GenerationHeader } from "../../components/layout/GenerationHeader";
-import { PokemonLoadingIndicator } from "../../components/ui/pokemon/PokemonLoadingIndicator";
-import { PokemonProgressFooter } from "../../components/ui/pokemon/PokemonProgressFooter";
-import { GenerationSwitchingOverlay } from "../../components/ui/pokemon/GenerationSwitchingOverlay";
+import { PokemonLoadingIndicator } from "../../components/ui/pokemon/list/PokemonLoadingIndicator";
+import { PokemonProgressFooter } from "../../components/ui/pokemon/list/PokemonProgressFooter";
+import { GenerationSwitchingOverlay } from "../../components/ui/pokemon/list/GenerationSwitchingOverlay";
 import { usePokemonList } from "../../hooks/usePokemonList";
 import { useNavigationCache } from "../../hooks/useNavigationCache";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";

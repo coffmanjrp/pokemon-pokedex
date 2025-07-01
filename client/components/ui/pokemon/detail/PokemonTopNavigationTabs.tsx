@@ -3,8 +3,8 @@
 import { Pokemon } from "@/types/pokemon";
 import { Locale } from "@/lib/dictionaries";
 import { PokemonBasicInfo } from "./PokemonBasicInfo";
-import { PokemonSpritesGallery } from "./sprites/PokemonSpritesGallery";
-import { PokemonEvolutionChain } from "./evolution/PokemonEvolutionChain";
+import { PokemonSpritesGallery } from "../sprites/PokemonSpritesGallery";
+import { PokemonEvolutionChain } from "../evolution/PokemonEvolutionChain";
 
 interface PokemonTopNavigationTabsProps {
   pokemon: Pokemon;

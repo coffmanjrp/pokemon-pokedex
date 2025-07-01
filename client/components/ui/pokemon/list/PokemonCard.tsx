@@ -6,8 +6,8 @@ import { getPokemonName, getPokemonGenus } from "@/lib/pokemonUtils";
 import { useAppSelector } from "@/store/hooks";
 import { useRef, memo } from "react";
 import { createParticleEchoCombo, AnimationConfig } from "@/lib/animations";
-import { PokemonImage } from "./PokemonImage";
-import { PokemonTypes } from "./PokemonTypes";
+import { PokemonImage } from "../detail/PokemonImage";
+import { PokemonTypes } from "../detail/PokemonTypes";
 
 interface PokemonCardProps {
   pokemon: Pokemon;
