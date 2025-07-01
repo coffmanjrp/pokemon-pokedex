@@ -1,11 +1,12 @@
 "use client";
 
-import { PokemonGrid } from "../../components/ui/pokemon/PokemonGrid";
+import { PokemonGrid } from "../../components/ui/pokemon/list/PokemonGrid";
 import { AnimatedLoadingScreen } from "../../components/ui/animation/AnimatedLoadingScreen";
 import { Sidebar } from "../../components/layout/Sidebar";
-import { PokemonLoadingIndicator } from "../../components/ui/pokemon/PokemonLoadingIndicator";
-import { PokemonProgressFooter } from "../../components/ui/pokemon/PokemonProgressFooter";
-import { GenerationSwitchingOverlay } from "../../components/ui/pokemon/GenerationSwitchingOverlay";
+import { GenerationHeader } from "../../components/layout/GenerationHeader";
+import { PokemonLoadingIndicator } from "../../components/ui/pokemon/list/PokemonLoadingIndicator";
+import { PokemonProgressFooter } from "../../components/ui/pokemon/list/PokemonProgressFooter";
+import { GenerationSwitchingOverlay } from "../../components/ui/pokemon/list/GenerationSwitchingOverlay";
 import { usePokemonList } from "../../hooks/usePokemonList";
 import { useNavigationCache } from "../../hooks/useNavigationCache";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
@@ -215,7 +216,7 @@ function PokemonListContent({
   if (showLoadingScreen) {
     return (
       <AnimatedLoadingScreen
-        language={lang}
+        language={lang as Locale}
         onComplete={handleLoadingComplete}
       />
     );
@@ -236,15 +237,11 @@ function PokemonListContent({
       <div className="flex flex-col h-screen overflow-auto">
         <div className="flex-1 transition-all duration-300 ease-in-out">
           {/* Sticky Generation Header */}
-          <header className="flex-shrink-0 bg-gray-50 border-b border-gray-200 shadow-sm z-30">
-            <div className="relative px-4 md:px-6 py-3">
-              <h1 className="text-sm md:text-base font-bold text-gray-700 text-center lg:text-left lg:ml-0">
-                {lang === "ja"
-                  ? `${generationRange.region.ja} (第${currentGeneration}世代)`
-                  : `${generationRange.region.en} (Generation ${currentGeneration})`}
-              </h1>
-            </div>
-          </header>
+          <GenerationHeader
+            currentGeneration={currentGeneration}
+            lang={lang}
+            dictionary={dictionary}
+          />
 
           {/* Pokemon Grid */}
           <div className="flex-1 overflow-hidden relative">
@@ -269,7 +266,7 @@ function PokemonListContent({
                   isAutoLoading={false}
                   hasNextPage={hasNextPage}
                   onLoadMore={loadMore}
-                  language={lang}
+                  language={lang as Locale}
                   priority={true}
                 />
               </div>

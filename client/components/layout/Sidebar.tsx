@@ -27,8 +27,7 @@ export function Sidebar({
   const searchParams = useSearchParams();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const handleLanguageToggle = () => {
-    const newLang = lang === "en" ? "ja" : "en";
+  const handleLanguageChange = (newLang: Locale) => {
     const newUrl = generateAlternateLanguageUrl(pathname, newLang);
 
     // Preserve URL parameters (query string)
@@ -112,7 +111,13 @@ export function Sidebar({
           >
             <div className="px-4">
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
-                {lang === "ja" ? "世代選択" : "Generations"}
+                {lang === "ja"
+                  ? "世代選択"
+                  : lang === "zh-Hant"
+                    ? "世代選擇"
+                    : lang === "zh-Hans"
+                      ? "世代选择"
+                      : "Generations"}
               </h3>
               <div className="space-y-2">
                 {GENERATIONS.map((generation) => (
@@ -130,10 +135,13 @@ export function Sidebar({
                     style={{ minHeight: "56px" }} // Larger touch target for mobile
                   >
                     <div className="font-medium text-sm">
-                      {generation.name[lang]}
+                      {generation.name[lang as keyof typeof generation.name] ||
+                        generation.name.en}
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
-                      {generation.region[lang]}
+                      {generation.region[
+                        lang as keyof typeof generation.region
+                      ] || generation.region.en}
                     </div>
                   </button>
                 ))}
@@ -143,7 +151,10 @@ export function Sidebar({
 
           {/* Language Toggle at Bottom */}
           <div className="p-6 border-t border-gray-200">
-            <LanguageToggle language={lang} onToggle={handleLanguageToggle} />
+            <LanguageToggle
+              language={lang}
+              onLanguageChange={handleLanguageChange}
+            />
           </div>
         </div>
       </nav>

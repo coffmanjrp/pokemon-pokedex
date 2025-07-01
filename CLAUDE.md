@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. **Pokemon detail pages use SSG** for optimal performance with individual Pokemon data pre-generated at build time. **Pokemon list pages now use full client-side rendering** with intelligent cache system for seamless generation switching - ISR removed to prevent generation data conflicts. **Intelligent generational build system** with automatic detection and memory-efficient processing by Pokemon generation. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes. **Hybrid deployment fully operational** with frontend deployed on Vercel and backend on Railway with CORS wildcard pattern matching for dynamic URLs. **Layout and scrolling optimization completed** with proper sidebar-to-content spacing, overlay positioning, and Pokemon grid scrolling functionality restored. **Generation switching completely fixed** - implemented full cache system with localStorage persistence, eliminated generation data mixing issues, and restored seamless Pokemon list loading across all generations. **UTF-8 character encoding issue fixed** - resolved Japanese Pokemon name corruption in card lists through base64 localStorage encoding with backward compatibility. **Comprehensive Redux dictionary support implemented** across all Pokemon detail child components with unified translation system using shared getFallbackText utility and complete i18n coverage for evolution conditions and sandbox components. **Next.js API Routes system fully implemented** - comprehensive REST API endpoints for Pokemon data access with GraphQL integration, multiple query types (basic/full), evolution chain analysis, debug capabilities, and dynamic Pokemon gender display based on PokeAPI data with color-coded symbols and enhanced multilingual localization.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. **Pokemon detail pages use SSG** for optimal performance with individual Pokemon data pre-generated at build time. **Pokemon list pages now use full client-side rendering** with intelligent cache system for seamless generation switching - ISR removed to prevent generation data conflicts. **Intelligent generational build system** with automatic detection and memory-efficient processing by Pokemon generation. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes. **Hybrid deployment fully operational** with frontend deployed on Vercel and backend on Railway with CORS wildcard pattern matching for dynamic URLs. **Layout and scrolling optimization completed** with proper sidebar-to-content spacing, overlay positioning, and Pokemon grid scrolling functionality restored. **Generation switching completely fixed** - implemented full cache system with localStorage persistence, eliminated generation data mixing issues, and restored seamless Pokemon list loading across all generations. **UTF-8 character encoding issue fixed** - resolved Japanese Pokemon name corruption in card lists through base64 localStorage encoding with backward compatibility. **Comprehensive Redux dictionary support implemented** across all Pokemon detail child components with unified translation system using shared getFallbackText utility and complete i18n coverage for evolution conditions and sandbox components. **Next.js API Routes system fully implemented** - comprehensive REST API endpoints for Pokemon data access with GraphQL integration, multiple query types (basic/full), evolution chain analysis, debug capabilities, and dynamic Pokemon gender display based on PokeAPI data with color-coded symbols and enhanced multilingual localization. **Complete 4-language support implemented** - Traditional Chinese (zh-Hant) and Simplified Chinese (zh-Hans) added alongside English and Japanese with comprehensive Pokemon name translations, form badges, evolution conditions, and UI elements. **Language toggle enhanced** - converted from cycling button to intuitive dropdown menu with upward positioning for better mobile UX. **Evolution chain component architecture refactored** - 467-line monolithic component split into modular, reusable components (EvolutionCard, FormVariationCard, EvolutionArrow) with dedicated custom hook (useEvolutionAnimation) and utility functions, improving maintainability and code organization. **Pokemon component architecture fully organized** - 22+ Pokemon components systematically organized into logical folder structure with list/ and detail/ directories, improved import paths, and clear separation of concerns between Pokemon list page and detail page components for enhanced maintainability and developer experience.
 
 ## Architecture
 
@@ -142,8 +142,37 @@ pokemon-pokedex/
 │   │   └── ui/                   # Organized UI components
 │   │       ├── animation/         # Animation components (PageTransition, AnimatedLoadingScreen)
 │   │       ├── common/           # Common UI components (Badge, LoadingSpinner, ToastProvider, etc.)
-│   │       └── pokemon/          # Pokemon-specific UI components (PokemonGrid, PokemonCard, etc.)
+│   │       └── pokemon/          # Pokemon-specific UI components (organized architecture)
+│   │           ├── list/         # Pokemon list page components
+│   │           │   ├── PokemonGrid.tsx               # Main Pokemon grid display
+│   │           │   ├── PokemonCard.tsx               # Individual Pokemon cards
+│   │           │   ├── PokemonLoadingIndicator.tsx   # Loading states
+│   │           │   ├── PokemonProgressFooter.tsx     # Progress indicators
+│   │           │   ├── GenerationSwitchingOverlay.tsx # Generation switching UI
+│   │           │   └── PokemonCardSkeleton.tsx       # Loading skeletons
+│   │           ├── detail/       # Pokemon detail page components
+│   │           │   ├── PokemonBasicInfo.tsx          # Hero section and main info
+│   │           │   ├── PokemonTopNavigationTabs.tsx  # Tab navigation system
+│   │           │   ├── PokemonMoves.tsx              # Moves and abilities
+│   │           │   ├── PokemonDescription.tsx        # Flavor text descriptions
+│   │           │   ├── PokemonGameHistory.tsx        # Game appearances
+│   │           │   ├── PokemonDetailHeader.tsx       # Page header
+│   │           │   ├── PokemonImage.tsx              # Pokemon image display
+│   │           │   ├── PokemonTypes.tsx              # Type badges
+│   │           │   ├── PokemonStatsSection.tsx       # Statistics display
+│   │           │   └── [15+ other detail components] # Additional detail components
+│   │           ├── sprites/      # Sprite gallery components
+│   │           │   ├── PokemonSpritesGallery.tsx     # Main sprites gallery
+│   │           │   ├── SpritesTab.tsx                # Sprite tab content
+│   │           │   └── SpriteCard.tsx                # Individual sprite cards
+│   │           └── evolution/    # Evolution chain components (refactored architecture)
+│   │               ├── PokemonEvolutionChain.tsx     # Main evolution chain component
+│   │               ├── EvolutionCard.tsx             # Individual Pokemon card
+│   │               ├── FormVariationCard.tsx         # Form variation display
+│   │               └── EvolutionArrow.tsx           # Evolution arrow with conditions
 │   ├── lib/                      # Utility functions and configurations
+│   │   ├── evolution/            # Evolution-specific utilities
+│   │   │   └── evolutionConditions.ts              # Evolution condition rendering logic
 │   │   ├── data/                 # Centralized data files for better organization
 │   │   │   ├── formTranslations.ts    # Pokemon form translations and utilities
 │   │   │   ├── generations.ts         # Generation data and helper functions
@@ -157,9 +186,11 @@ pokemon-pokedex/
 │   │   ├── pokemonUtils.ts       # Pokemon data translation utilities (refactored)
 │   │   ├── formUtils.ts          # Pokemon form variation utilities
 │   │   └── querySelector.ts      # GraphQL query selection based on build mode
-│   ├── hooks/                    # Optimized React hooks (cleaned up from 12 to 2 active hooks)
+│   ├── hooks/                    # Custom React hooks
 │   │   ├── usePokemonList.ts     # Pokemon list management with cache system, generation switching, and Apollo Client integration
-│   │   └── useBackgroundPreload.ts # Background data preloading optimization
+│   │   ├── useBackgroundPreload.ts # Background data preloading optimization
+│   │   ├── useNavigationCache.ts   # Navigation caching logic
+│   │   └── useEvolutionAnimation.ts # Evolution chain animation handling
 │   ├── store/                    # Redux Toolkit configuration
 │   └── types/                    # TypeScript type definitions
 └── server/                       # GraphQL server (FULLY IMPLEMENTED - Apollo Server + Express)
@@ -178,7 +209,7 @@ pokemon-pokedex/
 - **Pokemon Display**: Card-based layout with official artwork and sprites
 - **Generation Navigation**: Sidebar with generation buttons (1-9) and seamless generation switching
 - **Cache Performance**: Client-side intelligent caching with localStorage persistence and 24-hour TTL
-- **Multilingual Support**: Complete English/Japanese localization with middleware-based routing
+- **Multilingual Support**: Complete 4-language support (English/Japanese/Traditional Chinese/Simplified Chinese) with middleware-based routing and intelligent language detection
 - **Responsive Design**: Mobile-first with tablet and desktop optimizations
 - **Mobile/Tablet Experience**: Hamburger menu navigation, touch-optimized UI, responsive grid layouts
 - **Performance**: Multi-level caching, optimized grid rendering, smart cache management, image optimization, iOS Safari scroll optimization
@@ -213,6 +244,46 @@ pokemon-pokedex/
 - Include performance and accessibility considerations
 
 ## Technical Implementation
+
+### Component Architecture
+
+#### Organized Pokemon Component Structure
+The Pokemon component architecture has been systematically organized for optimal maintainability and developer experience:
+
+**Pokemon List Components (`/components/ui/pokemon/list/`)**
+- **Purpose**: Components used on the main Pokemon grid/list page
+- **Key Components**:
+  - `PokemonGrid.tsx` - Main grid layout with responsive design
+  - `PokemonCard.tsx` - Individual Pokemon cards with animation effects
+  - `PokemonLoadingIndicator.tsx` - Loading states during data fetching
+  - `PokemonProgressFooter.tsx` - Generation loading progress
+  - `GenerationSwitchingOverlay.tsx` - Generation switching UI overlay
+  - `PokemonCardSkeleton.tsx` - Skeleton loading states
+
+**Pokemon Detail Components (`/components/ui/pokemon/detail/`)**
+- **Purpose**: Components used on individual Pokemon detail pages
+- **Key Components**:
+  - `PokemonBasicInfo.tsx` - Hero section with main Pokemon information
+  - `PokemonTopNavigationTabs.tsx` - Tab navigation system for detail content
+  - `PokemonMoves.tsx` - Moves, abilities, and learnset information
+  - `PokemonDescription.tsx` - Flavor text descriptions from games
+  - `PokemonGameHistory.tsx` - Game appearances and version history
+  - `PokemonStatsSection.tsx` - Base stats with visual representations
+  - `PokemonTypes.tsx` - Type badges and effectiveness
+  - `PokemonImage.tsx` - Pokemon artwork and sprite display
+  - Plus 10+ additional specialized detail components
+
+**Specialized Component Groups**
+- **Sprites** (`/sprites/`) - Sprite gallery and image management components
+- **Evolution** (`/evolution/`) - Evolution chain display with modular architecture
+- **Common** (`/common/`) - Shared UI components (Badge, DataEmptyState, etc.)
+
+#### Architecture Benefits
+1. **Clear Separation of Concerns**: List vs Detail page components clearly separated
+2. **Improved Maintainability**: Developers can quickly locate relevant components
+3. **Reduced Cognitive Load**: Logical grouping reduces mental overhead
+4. **Scalable Structure**: Easy to add new components in appropriate directories
+5. **Import Path Clarity**: Clear import hierarchies with relative path relationships
 
 ### State Management
 - **Redux Toolkit**: Pokemon data and UI state management with generation cache system
@@ -293,9 +364,12 @@ npm run build:generational  # Generational
 ```
 
 ### Internationalization
-- **Languages**: English/Japanese support with middleware-based routing
+- **Languages**: Complete 4-language support (English/Japanese/Traditional Chinese/Simplified Chinese) with middleware-based routing
 - **Structure**: `/[lang]/` routes with server-side dictionary loading
-- **Translation**: Pokemon names, types, abilities, moves via PokeAPI integration
+- **Translation**: Pokemon names, types, abilities, moves via PokeAPI integration with species.names[] data
+- **Language Detection**: Intelligent detection with regional fallbacks (zh-TW→zh-Hant, zh-CN→zh-Hans)
+- **UI Components**: All components support 4-language localization with fallback patterns
+- **Form Translations**: Pokemon form badges (Mega, Gigantamax, Regional variants) in all languages
 
 ### API Routes System
 - **REST API Integration**: Next.js API Routes providing REST endpoints alongside GraphQL backend
@@ -322,6 +396,8 @@ npm run build:generational  # Generational
 ### Language Navigation
 - Use `href="{/${language}/}"` instead of `href="/"` in navigation components
 - Extract current language using `usePathname()` and `getLocaleFromPathname()`
+- **Language Toggle**: Dropdown menu with upward positioning for better mobile UX
+- **4-Language Support**: English, Japanese, Traditional Chinese, Simplified Chinese with native labels and flags
 
 ### Mobile/Tablet UI
 - Touch targets are minimum 44px for accessibility compliance
@@ -338,8 +414,8 @@ npm run build:generational  # Generational
 - **Cache-First Strategy**: Check localStorage cache before API requests for instant loading
 - **Data Integrity**: Generation-aware data fetching prevents data mixing between generations  
 - **Cache Persistence**: 24-hour TTL with automatic compression and smart cleanup
-- **UTF-8 Encoding**: Base64 localStorage encoding preserves Japanese Pokemon names and prevents character corruption
-- **Character Encoding**: Resolved `���シャマリ` → `オシャマリ` corruption in Japanese card lists through proper UTF-8 handling
+- **UTF-8 Encoding**: Base64 localStorage encoding preserves Japanese and Chinese Pokemon names and prevents character corruption
+- **Character Encoding**: Resolved `���シャマリ` → `オシャマリ` corruption in Japanese card lists through proper UTF-8 handling, supports Chinese characters
 - **Silent Failover**: Timeout protection with graceful fallback to ensure seamless UX
 - **Apollo Client Integration**: Standard fetchMore() patterns with automatic cache management
 - **Cache Restoration**: Instant generation switching with cached data preservation
@@ -347,7 +423,7 @@ npm run build:generational  # Generational
 
 ### SEO & Social Media Optimization
 - **Enhanced Metadata**: Comprehensive Open Graph and Twitter Card implementation
-- **Multilingual SEO**: Language-specific metadata for Japanese and English pages
+- **Multilingual SEO**: Language-specific metadata for all 4 supported languages (English/Japanese/Traditional Chinese/Simplified Chinese)
 - **Dynamic Images**: Daily rotating featured Pokemon images for social sharing
 - **Canonical URLs**: Proper canonical and alternate language URL structure
 - **Rich Snippets**: Optimized meta descriptions with Pokemon-specific information

@@ -3,8 +3,10 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
+import { Locale } from "@/lib/dictionaries";
+
 interface AnimatedLoadingScreenProps {
-  language: "en" | "ja";
+  language: Locale;
   onComplete?: () => void;
 }
 

@@ -1,4 +1,4 @@
-export type Locale = "en" | "ja";
+export type Locale = "en" | "ja" | "zh-Hant" | "zh-Hans" | "es";
 
 // Dictionary type definition
 export interface Dictionary {
@@ -7,6 +7,7 @@ export interface Dictionary {
       placeholder: string;
       noResults: string;
       noResultsDescription: string;
+      noFilterResults: string;
     };
     filters: {
       title: string;
@@ -28,6 +29,14 @@ export interface Dictionary {
       loadingMore: string;
       loadingGeneration: string;
       loadingDetails: string;
+      loadingRegion: string;
+      generationLabel: string;
+      pokemonCount: string;
+      rangeLabel: string;
+      loadingMoreProgress: string;
+      allRegionPokemonLoaded: string;
+      generationInfo: string;
+      close: string;
     };
     error: {
       title: string;
@@ -69,6 +78,7 @@ export interface Dictionary {
       levelUp: string;
       day: string;
       night: string;
+      specialCondition: string;
       versions: string;
       normal: string;
       shiny: string;
@@ -81,6 +91,34 @@ export interface Dictionary {
       showdown: string;
       icons: string;
       noSpritesAvailable: string;
+      spriteLabels: {
+        officialArtwork: string;
+        shinyOfficialArtwork: string;
+        homeFront: string;
+        homeShinyFront: string;
+        homeFemale: string;
+        homeShinyFemale: string;
+        dreamWorld: string;
+        dreamWorldFemale: string;
+        showdownFront: string;
+        showdownBack: string;
+        showdownShinyFront: string;
+        showdownShinyBack: string;
+        gameFront: string;
+        gameBack: string;
+        gameShinyFront: string;
+        gameShinyBack: string;
+        gameFemaleFront: string;
+        gameFemaleBack: string;
+        animatedFrontGenV: string;
+        animatedBackGenV: string;
+        animatedShinyFrontGenV: string;
+        animatedShinyBackGenV: string;
+        iconGenVII: string;
+        femaleIconGenVII: string;
+        xyFront: string;
+        xyShinyFront: string;
+      };
       noMovesData: string;
       noGameHistoryData: string;
       originGeneration: string;
@@ -107,6 +145,13 @@ export interface Dictionary {
       male: string;
       female: string;
       hidden: string;
+      defaultSpecies: string;
+      noAdditionalInfo: string;
+      noImage: string;
+      noFormImage: string;
+      loadingEvolutionChain: string;
+      noStatsData: string;
+      noStatsAvailable: string;
     };
     stats: {
       hp: string;
@@ -124,6 +169,10 @@ export interface Dictionary {
       tutor: string;
       level: string;
       learnedAt: string;
+      noMovesFoundForMethod: string;
+    };
+    generation: {
+      displayTemplate: string;
     };
     generations: {
       [key: string]: string;
@@ -136,12 +185,28 @@ export interface Dictionary {
     language: {
       english: string;
       japanese: string;
+      traditionalChinese: string;
+      simplifiedChinese: string;
+      spanish: string;
       toggle: string;
     };
     sandbox: {
       title: string;
       subtitle: string;
       instructions: string;
+    };
+    generationSwitching: {
+      switchingTo: string;
+      generationRange: string;
+    };
+    emptyStates: {
+      moves: string;
+      descriptions: string;
+      games: string;
+      sprites: string;
+      evolution: string;
+      abilities: string;
+      general: string;
     };
   };
   meta: {
@@ -153,13 +218,19 @@ export interface Dictionary {
     pokemonDescription: string;
     pokemonDescriptionShort: string;
     pokemonKeywords: string;
+    homeKeywords: string;
+    pokemonImageAlt: string;
+    fallbackImageAlt: string;
+    locale: string;
   };
 }
 
 export const getLocaleFromPathname = (pathname: string): Locale => {
   const segments = pathname.split("/");
   const locale = segments[1] as Locale;
-  return locale && ["en", "ja"].includes(locale) ? locale : "en";
+  return locale && ["en", "ja", "zh-Hant", "zh-Hans", "es"].includes(locale)
+    ? locale
+    : "en";
 };
 
 export const generateAlternateLanguageUrl = (
@@ -169,7 +240,10 @@ export const generateAlternateLanguageUrl = (
   const segments = pathname.split("/");
   const currentLocale = segments[1];
 
-  if (currentLocale && ["en", "ja"].includes(currentLocale)) {
+  if (
+    currentLocale &&
+    ["en", "ja", "zh-Hant", "zh-Hans", "es"].includes(currentLocale)
+  ) {
     segments[1] = newLocale;
     return segments.join("/");
   }

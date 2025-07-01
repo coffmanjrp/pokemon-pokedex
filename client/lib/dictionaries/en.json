@@ -3,7 +3,8 @@
     "search": {
       "placeholder": "Search Pokémon by name or ID...",
       "noResults": "No Pokémon found",
-      "noResultsDescription": "Try adjusting your search terms or filters"
+      "noResultsDescription": "Try adjusting your search terms or filters",
+      "noFilterResults": "No Pokémon match the current filters"
     },
     "filters": {
       "title": "Filters",
@@ -24,7 +25,15 @@
       "loadingPokemon": "Loading Pokémon...",
       "loadingMore": "Loading more Pokémon...",
       "loadingGeneration": "Loading Pokémon for Generation {{generation}}...",
-      "loadingDetails": "Loading Pokémon details..."
+      "loadingDetails": "Loading Pokémon details...",
+      "loadingRegion": "Loading {{region}} Pokémon...",
+      "generationLabel": "Generation {{number}}",
+      "pokemonCount": "{{current}}/{{total}} Pokémon",
+      "rangeLabel": "Range: #{{min}}-#{{max}}",
+      "loadingMoreProgress": "Loading more...",
+      "allRegionPokemonLoaded": "All {{region}} Pokémon loaded!",
+      "generationInfo": "Generation {{number}} (#{{min}}-#{{max}})",
+      "close": "Close"
     },
     "error": {
       "title": "Error loading Pokémon",
@@ -66,7 +75,7 @@
       "levelUp": "Level up",
       "day": "Day",
       "night": "Night",
-      "special": "Special",
+      "specialCondition": "Special",
       "versions": "Versions",
       "normal": "Normal",
       "shiny": "Shiny",
@@ -79,6 +88,34 @@
       "showdown": "Pokémon Showdown",
       "icons": "Icons",
       "noSpritesAvailable": "No sprites available for this category",
+      "spriteLabels": {
+        "officialArtwork": "Official Artwork",
+        "shinyOfficialArtwork": "Shiny Official Artwork",
+        "homeFront": "Home Front",
+        "homeShinyFront": "Home Shiny Front",
+        "homeFemale": "Home Female",
+        "homeShinyFemale": "Home Shiny Female",
+        "dreamWorld": "Dream World",
+        "dreamWorldFemale": "Dream World Female",
+        "showdownFront": "Showdown Front",
+        "showdownBack": "Showdown Back",
+        "showdownShinyFront": "Showdown Shiny Front",
+        "showdownShinyBack": "Showdown Shiny Back",
+        "gameFront": "Game Front",
+        "gameBack": "Game Back",
+        "gameShinyFront": "Game Shiny Front",
+        "gameShinyBack": "Game Shiny Back",
+        "gameFemaleFront": "Game Female Front",
+        "gameFemaleBack": "Game Female Back",
+        "animatedFrontGenV": "Animated Front (Gen V)",
+        "animatedBackGenV": "Animated Back (Gen V)",
+        "animatedShinyFrontGenV": "Animated Shiny Front (Gen V)",
+        "animatedShinyBackGenV": "Animated Shiny Back (Gen V)",
+        "iconGenVII": "Icon (Gen VII)",
+        "femaleIconGenVII": "Female Icon (Gen VII)",
+        "xyFront": "X/Y Front",
+        "xyShinyFront": "X/Y Shiny Front"
+      },
       "noMovesData": "No moves data available",
       "noGameHistoryData": "No game history data available",
       "originGeneration": "Origin Generation",
@@ -104,7 +141,14 @@
       "genderless": "Genderless",
       "male": "Male",
       "female": "Female",
-      "hidden": "Hidden Ability"
+      "hidden": "Hidden Ability",
+      "defaultSpecies": "Unknown Species",
+      "noAdditionalInfo": "No additional information available",
+      "noImage": "No Image",
+      "noFormImage": "?",
+      "loadingEvolutionChain": "Loading evolution chain...",
+      "noStatsData": "No stats data available",
+      "noStatsAvailable": "No stats available"
     },
     "stats": {
       "hp": "HP",
@@ -121,7 +165,11 @@
       "egg": "Egg Moves",
       "tutor": "Move Tutor",
       "level": "Level {{level}}",
-      "learnedAt": "Learned at level {{level}}"
+      "learnedAt": "Learned at level {{level}}",
+      "noMovesFoundForMethod": "No {{method}} moves found"
+    },
+    "generation": {
+      "displayTemplate": "{{region}} (Generation {{number}})"
     },
     "generations": {
       "1": "Kanto",
@@ -142,12 +190,28 @@
     "language": {
       "english": "English",
       "japanese": "Japanese",
+      "traditionalChinese": "Traditional Chinese",
+      "simplifiedChinese": "Simplified Chinese",
+      "spanish": "Spanish",
       "toggle": "Toggle language"
     },
     "sandbox": {
       "title": "Animation Sandbox",
       "subtitle": "Test different Pokemon card click animations",
       "instructions": "Click on each card to test the animation effects"
+    },
+    "generationSwitching": {
+      "switchingTo": "Switching to {{region}}...",
+      "generationRange": "Generation {{number}} (#{{min}}-#{{max}})"
+    },
+    "emptyStates": {
+      "moves": "No move data available",
+      "descriptions": "No descriptions available",
+      "games": "No game data available",
+      "sprites": "No sprites available",
+      "evolution": "No evolution data available",
+      "abilities": "No abilities available",
+      "general": "No data available"
     }
   },
   "meta": {
@@ -158,6 +222,10 @@
     "pokemonTitle": "{{name}} (#{{id}}) - {{type}} Pokémon | Pokédex",
     "pokemonDescription": "{{name}} is a {{type}} type Pokémon with {{hp}} HP, {{attack}} Attack, and {{defense}} Defense. {{description}}",
     "pokemonDescriptionShort": "{{name}} - {{type}} type Pokémon from Generation {{generation}}. Height: {{height}}m, Weight: {{weight}}kg.",
-    "pokemonKeywords": "{{name}}, Pokemon, {{type}}, Generation {{generation}}, stats, moves, abilities, evolution"
+    "pokemonKeywords": "{{name}}, Pokemon, {{type}}, Generation {{generation}}, stats, moves, abilities, evolution",
+    "homeKeywords": "pokemon pokedex,pokemon database,pokemon list,pokemon stats,pokemon search,evolution chain,type effectiveness,official artwork,generation 1,generation 2,generation 3,generation 4,generation 5,generation 6,generation 7,generation 8,generation 9",
+    "pokemonImageAlt": "{{name}} - Pokemon Pokedex",
+    "fallbackImageAlt": "Pokemon Pokedex - Comprehensive Pokemon Database",
+    "locale": "en_US"
   }
 }

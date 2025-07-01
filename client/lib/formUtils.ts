@@ -29,14 +29,18 @@ export function getFormDisplayName(
   // Check for regional variants
   for (const [key, translation] of Object.entries(REGIONAL_FORM_TRANSLATIONS)) {
     if (formName.includes(key)) {
-      return `${translation[language]} ${capitalizedPokemonName}`;
+      const translatedForm =
+        translation[language as keyof typeof translation] || translation.en;
+      return `${translatedForm} ${capitalizedPokemonName}`;
     }
   }
 
   // Check for Mega Evolution
   for (const [key, translation] of Object.entries(MEGA_FORM_TRANSLATIONS)) {
     if (formName.includes(key)) {
-      return `${translation[language]} ${capitalizedPokemonName}`;
+      const translatedForm =
+        translation[language as keyof typeof translation] || translation.en;
+      return `${translatedForm} ${capitalizedPokemonName}`;
     }
   }
 
@@ -45,14 +49,18 @@ export function getFormDisplayName(
     GIGANTAMAX_FORM_TRANSLATIONS,
   )) {
     if (formName.includes(key)) {
-      return `${translation[language]} ${capitalizedPokemonName}`;
+      const translatedForm =
+        translation[language as keyof typeof translation] || translation.en;
+      return `${translatedForm} ${capitalizedPokemonName}`;
     }
   }
 
   // Check for special forms
   for (const [key, translation] of Object.entries(SPECIAL_FORM_TRANSLATIONS)) {
     if (formName.includes(key)) {
-      return `${capitalizedPokemonName} (${translation[language]})`;
+      const translatedForm =
+        translation[language as keyof typeof translation] || translation.en;
+      return `${capitalizedPokemonName} (${translatedForm})`;
     }
   }
 
@@ -162,34 +170,148 @@ export function getFormPriority(formName: string | undefined): number {
  */
 export function getFormBadgeName(
   formName: string | undefined,
-  language: "en" | "ja",
+  language: Locale,
 ): string | null {
   if (!formName) return null;
 
   // Regional variants
-  if (formName.includes("alola"))
-    return language === "en" ? "Alolan" : "アローラ";
-  if (formName.includes("galar"))
-    return language === "en" ? "Galarian" : "ガラル";
-  if (formName.includes("hisui"))
-    return language === "en" ? "Hisuian" : "ヒスイ";
-  if (formName.includes("paldea"))
-    return language === "en" ? "Paldean" : "パルデア";
+  if (formName.includes("alola")) {
+    switch (language) {
+      case "en":
+        return "Alolan";
+      case "ja":
+        return "アローラ";
+      case "zh-Hant":
+        return "阿羅拉";
+      case "zh-Hans":
+        return "阿罗拉";
+      default:
+        return "Alolan";
+    }
+  }
+
+  if (formName.includes("galar")) {
+    switch (language) {
+      case "en":
+        return "Galarian";
+      case "ja":
+        return "ガラル";
+      case "zh-Hant":
+        return "伽勒爾";
+      case "zh-Hans":
+        return "伽勒尔";
+      default:
+        return "Galarian";
+    }
+  }
+
+  if (formName.includes("hisui")) {
+    switch (language) {
+      case "en":
+        return "Hisuian";
+      case "ja":
+        return "ヒスイ";
+      case "zh-Hant":
+        return "洗翠";
+      case "zh-Hans":
+        return "洗翠";
+      default:
+        return "Hisuian";
+    }
+  }
+
+  if (formName.includes("paldea")) {
+    switch (language) {
+      case "en":
+        return "Paldean";
+      case "ja":
+        return "パルデア";
+      case "zh-Hant":
+        return "帕德亞";
+      case "zh-Hans":
+        return "帕德亚";
+      default:
+        return "Paldean";
+    }
+  }
 
   // Mega Evolution
-  if (formName.includes("mega-x"))
-    return language === "en" ? "Mega X" : "メガX";
-  if (formName.includes("mega-y"))
-    return language === "en" ? "Mega Y" : "メガY";
-  if (formName.includes("mega")) return language === "en" ? "Mega" : "メガ";
+  if (formName.includes("mega-x")) {
+    switch (language) {
+      case "en":
+        return "Mega X";
+      case "ja":
+        return "メガX";
+      case "zh-Hant":
+        return "超級X";
+      case "zh-Hans":
+        return "超级X";
+      default:
+        return "Mega X";
+    }
+  }
+
+  if (formName.includes("mega-y")) {
+    switch (language) {
+      case "en":
+        return "Mega Y";
+      case "ja":
+        return "メガY";
+      case "zh-Hant":
+        return "超級Y";
+      case "zh-Hans":
+        return "超级Y";
+      default:
+        return "Mega Y";
+    }
+  }
+
+  if (formName.includes("mega")) {
+    switch (language) {
+      case "en":
+        return "Mega";
+      case "ja":
+        return "メガ";
+      case "zh-Hant":
+        return "超級";
+      case "zh-Hans":
+        return "超级";
+      default:
+        return "Mega";
+    }
+  }
 
   // Gigantamax
-  if (formName.includes("gmax"))
-    return language === "en" ? "G-Max" : "キョダイ";
+  if (formName.includes("gmax")) {
+    switch (language) {
+      case "en":
+        return "G-Max";
+      case "ja":
+        return "キョダイ";
+      case "zh-Hant":
+        return "極巨";
+      case "zh-Hans":
+        return "极巨";
+      default:
+        return "G-Max";
+    }
+  }
 
   // Primal
-  if (formName.includes("primal"))
-    return language === "en" ? "Primal" : "ゲンシ";
+  if (formName.includes("primal")) {
+    switch (language) {
+      case "en":
+        return "Primal";
+      case "ja":
+        return "ゲンシ";
+      case "zh-Hant":
+        return "原始";
+      case "zh-Hans":
+        return "原始";
+      default:
+        return "Primal";
+    }
+  }
 
   return null;
 }

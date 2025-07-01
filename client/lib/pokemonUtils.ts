@@ -1,4 +1,5 @@
 import { Pokemon, EvolutionDetail, Move, GenderInfo } from "@/types/pokemon";
+import { Locale } from "@/lib/dictionaries";
 import { getFormDisplayName, isMegaEvolution } from "@/lib/formUtils";
 import {
   REGIONAL_FORM_TRANSLATIONS,
@@ -21,7 +22,7 @@ import React from "react";
  */
 function getFormTranslation(
   formName: string,
-  language: "en" | "ja",
+  language: "en" | "ja" | "zh-Hant" | "zh-Hans" | "es",
 ): string | null {
   console.log(
     `[getFormTranslation] Looking for translation of "${formName}" in language "${language}"`,
@@ -39,7 +40,9 @@ function getFormTranslation(
       console.log(
         `[getFormTranslation] Found regional form: ${key} -> ${translation[language]}`,
       );
-      return translation[language];
+      return (
+        translation[language as keyof typeof translation] || translation.en
+      );
     }
   }
 
@@ -49,7 +52,9 @@ function getFormTranslation(
       console.log(
         `[getFormTranslation] Found exact mega form: ${key} -> ${translation[language]}`,
       );
-      return translation[language];
+      return (
+        translation[language as keyof typeof translation] || translation.en
+      );
     }
   }
   // Check mega forms - partial match as fallback
@@ -58,7 +63,9 @@ function getFormTranslation(
       console.log(
         `[getFormTranslation] Found partial mega form: ${key} -> ${translation[language]}`,
       );
-      return translation[language];
+      return (
+        translation[language as keyof typeof translation] || translation.en
+      );
     }
   }
 
@@ -68,7 +75,9 @@ function getFormTranslation(
       console.log(
         `[getFormTranslation] Found gigantamax form: ${key} -> ${translation[language]}`,
       );
-      return translation[language];
+      return (
+        translation[language as keyof typeof translation] || translation.en
+      );
     }
   }
 
@@ -78,7 +87,9 @@ function getFormTranslation(
       console.log(
         `[getFormTranslation] Found special form: ${key} -> ${translation[language]}`,
       );
-      return translation[language];
+      return (
+        translation[language as keyof typeof translation] || translation.en
+      );
     }
   }
 
@@ -150,27 +161,40 @@ export function shouldDisplayFormSeparately(pokemon: Pokemon): boolean {
 /**
  * Get Pokemon base name without form for separate display
  */
-export function getPokemonBaseName(
-  pokemon: Pokemon,
-  language: "en" | "ja",
-): string {
+export function getPokemonBaseName(pokemon: Pokemon, language: Locale): string {
   if (!shouldDisplayFormSeparately(pokemon)) {
     return getPokemonName(pokemon, language);
   }
 
   // For forms that should be displayed separately, return just the base name
-  if (language === "ja" && pokemon.species?.names) {
-    const japaneseName = pokemon.species.names.find(
-      (nameEntry) =>
-        nameEntry.language.name === "ja" ||
-        nameEntry.language.name === "ja-Hrkt",
+  if (
+    (language === "ja" ||
+      language === "zh-Hant" ||
+      language === "zh-Hans" ||
+      language === "es") &&
+    pokemon.species?.names
+  ) {
+    // Map language codes for PokeAPI
+    const languageCodes = {
+      ja: ["ja", "ja-Hrkt"],
+      "zh-Hant": ["zh-Hant"],
+      "zh-Hans": ["zh-Hans"],
+      es: ["es"],
+    };
+
+    const targetCodes = languageCodes[
+      language as keyof typeof languageCodes
+    ] || ["en"];
+    const speciesName = pokemon.species.names.find((nameEntry) =>
+      targetCodes.includes(nameEntry.language.name),
     );
-    if (japaneseName?.name) {
-      return japaneseName.name;
+
+    if (speciesName?.name) {
+      return speciesName.name;
     }
   }
 
-  // For English or when Japanese name is not available
+  // For English or when target language name is not available
   const baseName = pokemon.name.split("-")[0];
   if (!baseName) return pokemon.name;
   return baseName.charAt(0).toUpperCase() + baseName.slice(1);
@@ -181,7 +205,7 @@ export function getPokemonBaseName(
  */
 export function getPokemonFormName(
   pokemon: Pokemon,
-  language: "en" | "ja",
+  language: Locale,
 ): string | null {
   if (!shouldDisplayFormSeparately(pokemon)) {
     return null;
@@ -208,10 +232,7 @@ export function getPrevNextPokemonId(currentId: number): {
  * Get Pokemon name in the specified language
  * Falls back to English name if target language is not available
  */
-export function getPokemonName(
-  pokemon: Pokemon,
-  language: "en" | "ja",
-): string {
+export function getPokemonName(pokemon: Pokemon, language: Locale): string {
   // Check if this is a variant Pokemon
   const nameParts = pokemon.name.split("-");
   const isVariant = nameParts.length > 1;
@@ -220,56 +241,80 @@ export function getPokemonName(
     const baseName = nameParts[0];
     const formName = nameParts.slice(1).join("-");
 
-    if (language === "ja" && pokemon.species?.names) {
-      // For Japanese variants, combine Japanese species name with form translation
-      const japaneseName = pokemon.species.names.find(
-        (nameEntry) =>
-          nameEntry.language.name === "ja" ||
-          nameEntry.language.name === "ja-Hrkt",
+    // Handle non-English languages with species names
+    if (
+      (language === "ja" ||
+        language === "zh-Hant" ||
+        language === "zh-Hans" ||
+        language === "es") &&
+      pokemon.species?.names
+    ) {
+      // Map language codes for PokeAPI
+      const languageCodes = {
+        ja: ["ja", "ja-Hrkt"],
+        "zh-Hant": ["zh-Hant"],
+        "zh-Hans": ["zh-Hans"],
+        es: ["es"],
+      };
+
+      const targetCodes = languageCodes[
+        language as keyof typeof languageCodes
+      ] || ["en"];
+      const speciesName = pokemon.species.names.find((nameEntry) =>
+        targetCodes.includes(nameEntry.language.name),
       );
 
-      if (japaneseName?.name) {
+      if (speciesName?.name) {
         const formTranslation = getFormTranslation(formName, language);
 
         if (formTranslation) {
-          // Special handling for Mega Evolution in Japanese
-          if (isMegaEvolution(formName)) {
-            // Special format for Mega Charizard and Mega Mewtwo X/Y forms
-            if (
-              (baseName === "charizard" || baseName === "mewtwo") &&
-              (formName === "mega-x" || formName === "mega-y")
-            ) {
-              const result = `メガ${japaneseName.name}${formTranslation}`;
+          if (language === "ja") {
+            // Special handling for Mega Evolution in Japanese
+            if (isMegaEvolution(formName)) {
+              // Special format for Mega Charizard and Mega Mewtwo X/Y forms
+              if (
+                (baseName === "charizard" || baseName === "mewtwo") &&
+                (formName === "mega-x" || formName === "mega-y")
+              ) {
+                const result = `メガ${speciesName.name}${formTranslation}`;
+                console.log(
+                  `[getPokemonName] Japanese Mega X/Y variant: ${pokemon.name} -> ${result}`,
+                );
+                return result;
+              } else {
+                // For other Mega forms: "メガポケモン名" format
+                const result = `${formTranslation}${speciesName.name}`;
+                console.log(
+                  `[getPokemonName] Japanese Mega variant: ${pokemon.name} -> ${result}`,
+                );
+                return result;
+              }
+            } else if (isPrimalForm(formName)) {
+              // Special handling for Primal forms: "ゲンシポケモン名" format
+              const result = `${formTranslation}${speciesName.name}`;
               console.log(
-                `[getPokemonName] Japanese Mega X/Y variant: ${pokemon.name} -> ${result}`,
+                `[getPokemonName] Japanese Primal variant: ${pokemon.name} -> ${result}`,
               );
               return result;
             } else {
-              // For other Mega forms: "メガポケモン名" format
-              const result = `${formTranslation}${japaneseName.name}`;
+              // For other forms: "ポケモン名（フォーム名）" format
+              const result = `${speciesName.name}（${formTranslation}）`;
               console.log(
-                `[getPokemonName] Japanese Mega variant: ${pokemon.name} -> ${result}`,
+                `[getPokemonName] Japanese variant: ${pokemon.name} -> ${result}`,
               );
               return result;
             }
-          } else if (isPrimalForm(formName)) {
-            // Special handling for Primal forms: "ゲンシポケモン名" format
-            const result = `${formTranslation}${japaneseName.name}`;
-            console.log(
-              `[getPokemonName] Japanese Primal variant: ${pokemon.name} -> ${result}`,
-            );
-            return result;
           } else {
-            // For other forms: "ポケモン名（フォーム名）" format
-            const result = `${japaneseName.name}（${formTranslation}）`;
+            // For Chinese and Spanish languages: "ポケモン名（フォーム名）" format
+            const result = `${speciesName.name}（${formTranslation}）`;
             console.log(
-              `[getPokemonName] Japanese variant: ${pokemon.name} -> ${result}`,
+              `[getPokemonName] ${language} variant: ${pokemon.name} -> ${result}`,
             );
             return result;
           }
         }
 
-        return japaneseName.name;
+        return speciesName.name;
       }
     }
 
@@ -278,14 +323,33 @@ export function getPokemonName(
   }
 
   // For non-variant Pokemon
-  if (language === "ja" && pokemon.species?.names) {
-    const japaneseName = pokemon.species.names.find(
-      (nameEntry) =>
-        nameEntry.language.name === "ja" ||
-        nameEntry.language.name === "ja-Hrkt",
+  if (
+    (language === "ja" ||
+      language === "zh-Hant" ||
+      language === "zh-Hans" ||
+      language === "es") &&
+    pokemon.species?.names
+  ) {
+    // Map language codes for PokeAPI
+    const languageCodes = {
+      ja: ["ja", "ja-Hrkt"],
+      "zh-Hant": ["zh-Hant"],
+      "zh-Hans": ["zh-Hans"],
+      es: ["es"],
+    };
+
+    const targetCodes = languageCodes[
+      language as keyof typeof languageCodes
+    ] || ["en"];
+    const speciesName = pokemon.species.names.find((nameEntry) =>
+      targetCodes.includes(nameEntry.language.name),
     );
-    if (japaneseName?.name) {
-      return japaneseName.name;
+
+    if (speciesName?.name) {
+      console.log(
+        `[getPokemonName] ${language} name: ${pokemon.name} -> ${speciesName.name}`,
+      );
+      return speciesName.name;
     }
   }
 
@@ -299,7 +363,7 @@ export function getPokemonName(
  */
 export function getEvolutionPokemonName(
   evolutionDetail: EvolutionDetail,
-  language: "en" | "ja",
+  language: Locale,
 ): string {
   // Check if this is a variant Pokemon
   const nameParts = evolutionDetail.name.split("-");
@@ -309,56 +373,80 @@ export function getEvolutionPokemonName(
     const baseName = nameParts[0];
     const formName = nameParts.slice(1).join("-");
 
-    if (language === "ja" && evolutionDetail.species?.names) {
-      // For Japanese variants, combine Japanese species name with form translation
-      const japaneseName = evolutionDetail.species.names.find(
-        (nameEntry) =>
-          nameEntry.language.name === "ja" ||
-          nameEntry.language.name === "ja-Hrkt",
+    // Handle non-English languages with species names
+    if (
+      (language === "ja" ||
+        language === "zh-Hant" ||
+        language === "zh-Hans" ||
+        language === "es") &&
+      evolutionDetail.species?.names
+    ) {
+      // Map language codes for PokeAPI
+      const languageCodes = {
+        ja: ["ja", "ja-Hrkt"],
+        "zh-Hant": ["zh-Hant"],
+        "zh-Hans": ["zh-Hans"],
+        es: ["es"],
+      };
+
+      const targetCodes = languageCodes[
+        language as keyof typeof languageCodes
+      ] || ["en"];
+      const speciesName = evolutionDetail.species.names.find((nameEntry) =>
+        targetCodes.includes(nameEntry.language.name),
       );
 
-      if (japaneseName?.name) {
+      if (speciesName?.name) {
         const formTranslation = getFormTranslation(formName, language);
 
         if (formTranslation) {
-          // Special handling for Mega Evolution in Japanese
-          if (isMegaEvolution(formName)) {
-            // Special format for Mega Charizard and Mega Mewtwo X/Y forms
-            if (
-              (baseName === "charizard" || baseName === "mewtwo") &&
-              (formName === "mega-x" || formName === "mega-y")
-            ) {
-              const result = `メガ${japaneseName.name}${formTranslation}`;
+          if (language === "ja") {
+            // Special handling for Mega Evolution in Japanese
+            if (isMegaEvolution(formName)) {
+              // Special format for Mega Charizard and Mega Mewtwo X/Y forms
+              if (
+                (baseName === "charizard" || baseName === "mewtwo") &&
+                (formName === "mega-x" || formName === "mega-y")
+              ) {
+                const result = `メガ${speciesName.name}${formTranslation}`;
+                console.log(
+                  `[getEvolutionPokemonName] Japanese Mega X/Y variant: ${evolutionDetail.name} -> ${result}`,
+                );
+                return result;
+              } else {
+                // For other Mega forms: "メガポケモン名" format
+                const result = `${formTranslation}${speciesName.name}`;
+                console.log(
+                  `[getEvolutionPokemonName] Japanese Mega variant: ${evolutionDetail.name} -> ${result}`,
+                );
+                return result;
+              }
+            } else if (isPrimalForm(formName)) {
+              // Special handling for Primal forms: "ゲンシポケモン名" format
+              const result = `${formTranslation}${speciesName.name}`;
               console.log(
-                `[getEvolutionPokemonName] Japanese Mega X/Y variant: ${evolutionDetail.name} -> ${result}`,
+                `[getEvolutionPokemonName] Japanese Primal variant: ${evolutionDetail.name} -> ${result}`,
               );
               return result;
             } else {
-              // For other Mega forms: "メガポケモン名" format
-              const result = `${formTranslation}${japaneseName.name}`;
+              // For other forms: "ポケモン名（フォーム名）" format
+              const result = `${speciesName.name}（${formTranslation}）`;
               console.log(
-                `[getEvolutionPokemonName] Japanese Mega variant: ${evolutionDetail.name} -> ${result}`,
+                `[getEvolutionPokemonName] Japanese variant: ${evolutionDetail.name} -> ${result}`,
               );
               return result;
             }
-          } else if (isPrimalForm(formName)) {
-            // Special handling for Primal forms: "ゲンシポケモン名" format
-            const result = `${formTranslation}${japaneseName.name}`;
-            console.log(
-              `[getEvolutionPokemonName] Japanese Primal variant: ${evolutionDetail.name} -> ${result}`,
-            );
-            return result;
           } else {
-            // For other forms: "ポケモン名（フォーム名）" format
-            const result = `${japaneseName.name}（${formTranslation}）`;
+            // For Chinese and Spanish languages: "ポケモン名（フォーム名）" format
+            const result = `${speciesName.name}（${formTranslation}）`;
             console.log(
-              `[getEvolutionPokemonName] Japanese variant: ${evolutionDetail.name} -> ${result}`,
+              `[getEvolutionPokemonName] ${language} variant: ${evolutionDetail.name} -> ${result}`,
             );
             return result;
           }
         }
 
-        return japaneseName.name;
+        return speciesName.name;
       }
     }
 
@@ -371,14 +459,33 @@ export function getEvolutionPokemonName(
   }
 
   // For non-variant Pokemon
-  if (language === "ja" && evolutionDetail.species?.names) {
-    const japaneseName = evolutionDetail.species.names.find(
-      (nameEntry) =>
-        nameEntry.language.name === "ja" ||
-        nameEntry.language.name === "ja-Hrkt",
+  if (
+    (language === "ja" ||
+      language === "zh-Hant" ||
+      language === "zh-Hans" ||
+      language === "es") &&
+    evolutionDetail.species?.names
+  ) {
+    // Map language codes for PokeAPI
+    const languageCodes = {
+      ja: ["ja", "ja-Hrkt"],
+      "zh-Hant": ["zh-Hant"],
+      "zh-Hans": ["zh-Hans"],
+      es: ["es"],
+    };
+
+    const targetCodes = languageCodes[
+      language as keyof typeof languageCodes
+    ] || ["en"];
+    const speciesName = evolutionDetail.species.names.find((nameEntry) =>
+      targetCodes.includes(nameEntry.language.name),
     );
-    if (japaneseName?.name) {
-      return japaneseName.name;
+
+    if (speciesName?.name) {
+      console.log(
+        `[getEvolutionPokemonName] ${language} name: ${evolutionDetail.name} -> ${speciesName.name}`,
+      );
+      return speciesName.name;
     }
   }
 
@@ -394,19 +501,26 @@ export function getEvolutionPokemonName(
  */
 export function getPokemonDescription(
   pokemon: Pokemon,
-  language: "en" | "ja",
+  language: Locale,
 ): string {
   if (!pokemon.species?.flavorTextEntries) {
     return "";
   }
 
-  const targetLanguage = language === "ja" ? "ja" : "en";
+  // Map locale to PokeAPI language codes
+  const languageMap: Record<string, string[]> = {
+    en: ["en"],
+    ja: ["ja", "ja-Hrkt"],
+    "zh-Hant": ["zh-Hant"],
+    "zh-Hans": ["zh-Hans"],
+    es: ["es"],
+  };
+
+  const targetCodes = languageMap[language] || ["en"];
 
   // Filter entries by language and get the most recent one
-  const languageEntries = pokemon.species.flavorTextEntries.filter(
-    (entry) =>
-      entry.language.name === targetLanguage ||
-      (targetLanguage === "ja" && entry.language.name === "ja-Hrkt"),
+  const languageEntries = pokemon.species.flavorTextEntries.filter((entry) =>
+    targetCodes.includes(entry.language.name),
   );
 
   if (languageEntries.length === 0) {
@@ -434,20 +548,24 @@ export function getPokemonDescription(
 /**
  * Get Pokemon genus (category) in the specified language
  */
-export function getPokemonGenus(
-  pokemon: Pokemon,
-  language: "en" | "ja",
-): string {
+export function getPokemonGenus(pokemon: Pokemon, language: Locale): string {
   if (!pokemon.species?.genera) {
     return "";
   }
 
-  const targetLanguage = language === "ja" ? "ja" : "en";
+  // Map locale to PokeAPI language codes
+  const languageMap: Record<string, string[]> = {
+    en: ["en"],
+    ja: ["ja", "ja-Hrkt"],
+    "zh-Hant": ["zh-Hant"],
+    "zh-Hans": ["zh-Hans"],
+    es: ["es"],
+  };
 
-  const genus = pokemon.species.genera.find(
-    (genusEntry) =>
-      genusEntry.language.name === targetLanguage ||
-      (targetLanguage === "ja" && genusEntry.language.name === "ja-Hrkt"),
+  const targetCodes = languageMap[language] || ["en"];
+
+  const genus = pokemon.species.genera.find((genusEntry) =>
+    targetCodes.includes(genusEntry.language.name),
   );
 
   return genus?.genus || "";
@@ -456,7 +574,7 @@ export function getPokemonGenus(
 /**
  * Get translated type name
  */
-export function getTypeName(typeName: string, language: "en" | "ja"): string {
+export function getTypeName(typeName: string, language: Locale): string {
   const translation = TYPE_TRANSLATIONS[typeName.toLowerCase()];
   return translation ? translation[language] : typeName;
 }
@@ -464,7 +582,7 @@ export function getTypeName(typeName: string, language: "en" | "ja"): string {
 /**
  * Get translated stat name
  */
-export function getStatName(statName: string, language: "en" | "ja"): string {
+export function getStatName(statName: string, language: Locale): string {
   const translation = STAT_TRANSLATIONS[statName.toLowerCase()];
   return translation ? translation[language] : statName;
 }
@@ -474,10 +592,22 @@ export function getStatName(statName: string, language: "en" | "ja"): string {
  */
 export function getMoveLearnMethodName(
   methodName: string,
-  language: "en" | "ja",
+  language: Locale,
 ): string {
   const translation = MOVE_LEARN_METHOD_TRANSLATIONS[methodName.toLowerCase()];
-  return translation ? translation[language] : methodName;
+  if (translation) {
+    // If Chinese language requested but translation doesn't exist, fall back to English
+    if (
+      (language === "zh-Hant" || language === "zh-Hans") &&
+      !translation[language as "en" | "ja"]
+    ) {
+      return translation["en"] || methodName;
+    }
+    return (
+      translation[language as "en" | "ja"] || translation["en"] || methodName
+    );
+  }
+  return methodName;
 }
 
 /**
@@ -503,7 +633,7 @@ export function getAbilityName(
   ability:
     | { name: string; names?: { name: string; language: { name: string } }[] }
     | string,
-  language: "en" | "ja",
+  language: Locale,
 ): string {
   // Handle string input for backward compatibility
   if (typeof ability === "string") {
@@ -512,7 +642,14 @@ export function getAbilityName(
 
   // Tier 1: GraphQL API data (if available in future)
   if (ability.names && ability.names.length > 0) {
-    const targetLanguage = language === "ja" ? ["ja", "ja-Hrkt"] : ["en"];
+    const languageMap: Record<string, string[]> = {
+      en: ["en"],
+      ja: ["ja", "ja-Hrkt"],
+      "zh-Hant": ["zh-Hant"],
+      "zh-Hans": ["zh-Hans"],
+      es: ["es"],
+    };
+    const targetLanguage = languageMap[language] || ["en"];
 
     for (const lang of targetLanguage) {
       const languageName = ability.names.find(
@@ -530,7 +667,16 @@ export function getAbilityName(
   const translation = ABILITY_TRANSLATIONS[abilityName];
 
   if (translation) {
-    return translation[language];
+    // If Chinese language requested but translation doesn't exist, fall back to English
+    if (
+      (language === "zh-Hant" || language === "zh-Hans") &&
+      !translation[language as "en" | "ja"]
+    ) {
+      return translation["en"] || abilityName;
+    }
+    return (
+      translation[language as "en" | "ja"] || translation["en"] || abilityName
+    );
   }
 
   // Tier 3: Final fallback to formatted English name
@@ -547,13 +693,19 @@ export function getAbilityName(
 /**
  * Get translated version name
  */
-export function getVersionName(
-  versionName: string,
-  language: "en" | "ja",
-): string {
+export function getVersionName(versionName: string, language: Locale): string {
   const translation = VERSION_TRANSLATIONS[versionName.toLowerCase()];
   if (translation) {
-    return translation[language];
+    // If Chinese language requested but translation doesn't exist, fall back to English
+    if (
+      (language === "zh-Hant" || language === "zh-Hans") &&
+      !translation[language as "en" | "ja"]
+    ) {
+      return translation["en"] || versionName;
+    }
+    return (
+      translation[language as "en" | "ja"] || translation["en"] || versionName
+    );
   }
 
   // Fallback: capitalize the English name
@@ -568,7 +720,7 @@ export function getVersionName(
  */
 export function getGenerationName(
   generationName: string,
-  language: "en" | "ja",
+  language: Locale,
 ): string {
   const genNumber = generationName.replace("generation-", "");
   const romanToNumber: Record<string, string> = {
@@ -586,6 +738,8 @@ export function getGenerationName(
   const number = romanToNumber[genNumber] || genNumber;
 
   if (language === "ja") {
+    return `第${number}世代`;
+  } else if (language === "zh-Hant" || language === "zh-Hans") {
     return `第${number}世代`;
   } else {
     return `Generation ${number.toUpperCase()}`;
@@ -726,10 +880,17 @@ export function getPokemonSpriteUrl(
  * Get move name in the specified language
  * Prioritizes GraphQL data, falls back to manual translations, then English name
  */
-export function getMoveName(move: Move, language: "en" | "ja"): string {
+export function getMoveName(move: Move, language: Locale): string {
   // First, try to get name from GraphQL API data if available
   if (move.names && move.names.length > 0) {
-    const targetLanguage = language === "ja" ? ["ja", "ja-Hrkt"] : ["en"];
+    const languageMap: Record<string, string[]> = {
+      en: ["en"],
+      ja: ["ja", "ja-Hrkt"],
+      "zh-Hant": ["zh-Hant"],
+      "zh-Hans": ["zh-Hans"],
+      es: ["es"],
+    };
+    const targetLanguage = languageMap[language] || ["en"];
 
     for (const lang of targetLanguage) {
       const languageName = move.names.find(
@@ -747,7 +908,16 @@ export function getMoveName(move: Move, language: "en" | "ja"): string {
   const translation = MOVE_TRANSLATIONS[moveName];
 
   if (translation) {
-    return translation[language];
+    // If Chinese language requested but translation doesn't exist, fall back to English
+    if (
+      (language === "zh-Hant" || language === "zh-Hans") &&
+      !translation[language as "en" | "ja"]
+    ) {
+      return translation["en"] || move.name;
+    }
+    return (
+      translation[language as "en" | "ja"] || translation["en"] || move.name
+    );
   }
 
   // Final fallback to formatted English name
@@ -793,13 +963,19 @@ export function getPokemonGender(genderRate: number): GenderInfo {
  */
 export function getGenderDisplayString(
   genderRate: number,
-  language: "en" | "ja",
+  language: Locale,
 ): string {
   const genderInfo = getPokemonGender(genderRate);
 
   switch (genderInfo.type) {
     case "genderless":
-      return language === "ja" ? "不明" : "Genderless";
+      if (language === "ja") {
+        return "不明";
+      } else if (language === "zh-Hant" || language === "zh-Hans") {
+        return "無性別";
+      } else {
+        return "Genderless";
+      }
     case "male":
       if (genderInfo.maleRatio === 100) {
         return "♂";
@@ -827,16 +1003,27 @@ export function getGenderDisplayString(
  */
 export function getGenderDisplayElement(
   genderRate: number,
-  language: "en" | "ja",
+  language: Locale,
 ): React.ReactElement {
   const genderInfo = getPokemonGender(genderRate);
 
   switch (genderInfo.type) {
     case "genderless":
+      let genderlessText: string;
+      if (language === "ja") {
+        genderlessText = "不明";
+      } else if (language === "zh-Hant" || language === "zh-Hans") {
+        genderlessText = "無性別";
+      } else if (language === "es") {
+        genderlessText = "Sin género";
+      } else {
+        genderlessText = "Genderless";
+      }
+
       return React.createElement(
         "span",
         { className: "text-gray-500" },
-        language === "ja" ? "不明" : "Genderless",
+        genderlessText,
       );
     case "male":
       if (genderInfo.maleRatio === 100) {

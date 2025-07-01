@@ -1,4 +1,9 @@
+"use client";
+
 import React from "react";
+import { Locale } from "@/lib/dictionaries";
+import { useAppSelector } from "@/store/hooks";
+import { getFallbackText } from "@/lib/fallbackText";
 
 interface DataEmptyStateProps {
   type:
@@ -9,42 +14,11 @@ interface DataEmptyStateProps {
     | "evolution"
     | "abilities"
     | "general";
-  language: "en" | "ja";
+  language: Locale;
   customMessage?: string;
   icon?: string;
   size?: "sm" | "md" | "lg";
 }
-
-const emptyStateMessages = {
-  moves: {
-    en: "No move data available",
-    ja: "技データがありません",
-  },
-  descriptions: {
-    en: "No descriptions available",
-    ja: "説明がありません",
-  },
-  games: {
-    en: "No game data available",
-    ja: "ゲームデータがありません",
-  },
-  sprites: {
-    en: "No sprites available",
-    ja: "スプライトがありません",
-  },
-  evolution: {
-    en: "No evolution data available",
-    ja: "進化データがありません",
-  },
-  abilities: {
-    en: "No abilities available",
-    ja: "特性データがありません",
-  },
-  general: {
-    en: "No data available",
-    ja: "データがありません",
-  },
-};
 
 const defaultIcons = {
   moves: "⚔️",
@@ -81,7 +55,10 @@ export function DataEmptyState({
   icon,
   size = "md",
 }: DataEmptyStateProps) {
-  const message = customMessage || emptyStateMessages[type][language];
+  const { dictionary } = useAppSelector((state) => state.ui);
+  const fallback = getFallbackText(language);
+
+  const message = customMessage || dictionary?.ui.emptyStates[type] || fallback;
   const displayIcon = icon || defaultIcons[type];
   const classes = sizeClasses[size];
 

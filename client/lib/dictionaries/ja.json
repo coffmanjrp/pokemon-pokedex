@@ -3,7 +3,8 @@
     "search": {
       "placeholder": "ポケモンの名前やIDで検索...",
       "noResults": "ポケモンが見つかりません",
-      "noResultsDescription": "検索条件やフィルターを調整してください"
+      "noResultsDescription": "検索条件やフィルターを調整してください",
+      "noFilterResults": "フィルター条件に一致するポケモンが見つかりません"
     },
     "filters": {
       "title": "フィルター",
@@ -24,7 +25,15 @@
       "loadingPokemon": "ポケモンを読み込み中...",
       "loadingMore": "もっとポケモンを読み込み中...",
       "loadingGeneration": "第{{generation}}世代のポケモンを読み込み中...",
-      "loadingDetails": "ポケモンの詳細を読み込み中..."
+      "loadingDetails": "ポケモンの詳細を読み込み中...",
+      "loadingRegion": "{{region}}のポケモンを読み込み中...",
+      "generationLabel": "第{{number}}世代",
+      "pokemonCount": "{{current}}/{{total}}匹",
+      "rangeLabel": "範囲: #{{min}}-#{{max}}",
+      "loadingMoreProgress": "さらに読み込み中...",
+      "allRegionPokemonLoaded": "{{region}}の全ポケモンを表示完了！",
+      "generationInfo": "第{{number}}世代 (#{{min}}-#{{max}})",
+      "close": "閉じる"
     },
     "error": {
       "title": "ポケモンの読み込みエラー",
@@ -66,7 +75,7 @@
       "levelUp": "レベルアップ",
       "day": "昼",
       "night": "夜",
-      "special": "特殊",
+      "specialCondition": "特殊",
       "versions": "バージョン",
       "normal": "通常",
       "shiny": "色違い",
@@ -79,6 +88,34 @@
       "showdown": "ポケモンShowdown",
       "icons": "アイコン",
       "noSpritesAvailable": "このカテゴリーには利用可能なスプライトがありません",
+      "spriteLabels": {
+        "officialArtwork": "公式アートワーク",
+        "shinyOfficialArtwork": "色違い公式アートワーク",
+        "homeFront": "HOME正面",
+        "homeShinyFront": "HOME色違い正面",
+        "homeFemale": "HOME♀",
+        "homeShinyFemale": "HOME色違い♀",
+        "dreamWorld": "ポケモンドリームワールド",
+        "dreamWorldFemale": "ポケモンドリームワールド♀",
+        "showdownFront": "Showdown正面",
+        "showdownBack": "Showdown背面",
+        "showdownShinyFront": "Showdown色違い正面",
+        "showdownShinyBack": "Showdown色違い背面",
+        "gameFront": "ゲーム正面",
+        "gameBack": "ゲーム背面",
+        "gameShinyFront": "ゲーム色違い正面",
+        "gameShinyBack": "ゲーム色違い背面",
+        "gameFemaleFront": "ゲーム♀正面",
+        "gameFemaleBack": "ゲーム♀背面",
+        "animatedFrontGenV": "アニメーション正面 (第5世代)",
+        "animatedBackGenV": "アニメーション背面 (第5世代)",
+        "animatedShinyFrontGenV": "アニメーション色違い正面 (第5世代)",
+        "animatedShinyBackGenV": "アニメーション色違い背面 (第5世代)",
+        "iconGenVII": "アイコン (第7世代)",
+        "femaleIconGenVII": "♀アイコン (第7世代)",
+        "xyFront": "X/Y正面",
+        "xyShinyFront": "X/Y色違い正面"
+      },
       "noMovesData": "わざデータがありません",
       "noGameHistoryData": "ゲーム履歴データがありません",
       "originGeneration": "初出世代",
@@ -104,7 +141,14 @@
       "genderless": "不明",
       "male": "オス",
       "female": "メス",
-      "hidden": "隠れ特性"
+      "hidden": "隠れ特性",
+      "defaultSpecies": "不明な種族",
+      "noAdditionalInfo": "追加情報がありません",
+      "noImage": "画像なし",
+      "noFormImage": "？",
+      "loadingEvolutionChain": "進化チェーンを読み込み中...",
+      "noStatsData": "ステータスデータがありません",
+      "noStatsAvailable": "ステータスがありません"
     },
     "stats": {
       "hp": "HP",
@@ -121,7 +165,11 @@
       "egg": "タマゴわざ",
       "tutor": "おしえわざ",
       "level": "レベル{{level}}",
-      "learnedAt": "レベル{{level}}で習得"
+      "learnedAt": "レベル{{level}}で習得",
+      "noMovesFoundForMethod": "{{method}}の技は見つかりませんでした"
+    },
+    "generation": {
+      "displayTemplate": "{{region}} (第{{number}}世代)"
     },
     "generations": {
       "1": "カントー",
@@ -142,12 +190,28 @@
     "language": {
       "english": "English",
       "japanese": "日本語",
+      "traditionalChinese": "繁體中文",
+      "simplifiedChinese": "简体中文",
+      "spanish": "Español",
       "toggle": "言語の切り替え"
     },
     "sandbox": {
       "title": "アニメーション サンドボックス",
       "subtitle": "様々なポケモンカードクリックアニメーションをテスト",
       "instructions": "各カードをクリックしてアニメーション効果をテストしてください"
+    },
+    "generationSwitching": {
+      "switchingTo": "{{region}}に切り替え中...",
+      "generationRange": "第{{number}}世代 (#{{min}}-#{{max}})"
+    },
+    "emptyStates": {
+      "moves": "技データがありません",
+      "descriptions": "説明がありません",
+      "games": "ゲームデータがありません",
+      "sprites": "スプライトがありません",
+      "evolution": "進化データがありません",
+      "abilities": "特性データがありません",
+      "general": "データがありません"
     }
   },
   "meta": {
@@ -158,6 +222,10 @@
     "pokemonTitle": "{{name}} (No.{{id}}) - {{type}}タイプ | ポケモン図鑑",
     "pokemonDescription": "{{name}}は{{type}}タイプのポケモンです。HP {{hp}}、こうげき {{attack}}、ぼうぎょ {{defense}}。{{description}}",
     "pokemonDescriptionShort": "{{name}} - 第{{generation}}世代の{{type}}タイプポケモン。高さ {{height}}m、重さ {{weight}}kg。",
-    "pokemonKeywords": "{{name}}, ポケモン, {{type}}, 第{{generation}}世代, ステータス, わざ, 特性, 進化"
+    "pokemonKeywords": "{{name}}, ポケモン, {{type}}, 第{{generation}}世代, ステータス, わざ, 特性, 進化",
+    "homeKeywords": "ポケモン図鑑,ポケモンデータベース,ポケモン一覧,ポケモンステータス,ポケモン検索,進化チェーン,タイプ相性,公式アートワーク,第1世代,第2世代,第3世代,第4世代,第5世代,第6世代,第7世代,第8世代,第9世代",
+    "pokemonImageAlt": "{{name}} - ポケモン図鑑",
+    "fallbackImageAlt": "ポケモン図鑑 - 包括的なポケモンデータベース",
+    "locale": "ja_JP"
   }
 }
