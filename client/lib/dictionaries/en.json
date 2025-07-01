@@ -105,7 +105,11 @@
       "male": "Male",
       "female": "Female",
       "hidden": "Hidden Ability",
-      "defaultSpecies": "Unknown Species"
+      "defaultSpecies": "Unknown Species",
+      "noAdditionalInfo": "No additional information available",
+      "noImage": "No Image",
+      "noFormImage": "?",
+      "loadingEvolutionChain": "Loading evolution chain..."
     },
     "stats": {
       "hp": "HP",

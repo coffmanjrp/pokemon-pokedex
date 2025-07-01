@@ -109,6 +109,10 @@ export interface Dictionary {
       female: string;
       hidden: string;
       defaultSpecies: string;
+      noAdditionalInfo: string;
+      noImage: string;
+      noFormImage: string;
+      loadingEvolutionChain: string;
     };
     stats: {
       hp: string;

@@ -29,6 +29,22 @@ export function PokemonDetailTabs({
 }: PokemonDetailTabsProps) {
   const [activeTab, setActiveTab] = useState<TabType>("description");
 
+  // Helper function to check if flavor text entry matches current language
+  const isValidLanguageEntry = (entryLanguageName: string): boolean => {
+    switch (language) {
+      case "en":
+        return entryLanguageName === "en";
+      case "ja":
+        return entryLanguageName === "ja" || entryLanguageName === "ja-Hrkt";
+      case "zh-Hant":
+        return entryLanguageName === "zh-Hant";
+      case "zh-Hans":
+        return entryLanguageName === "zh-Hans";
+      default:
+        return entryLanguageName === "en";
+    }
+  };
+
   // Define available tabs based on data availability
   const availableTabs: TabInfo[] = [];
 
@@ -41,10 +57,8 @@ export function PokemonDetailTabs({
       id: "description",
       label: dictionary.ui.pokemonDetails.description,
       icon: "📖",
-      count: pokemon.species.flavorTextEntries.filter(
-        (entry) =>
-          entry.language.name === (language === "en" ? "en" : "ja") ||
-          (language === "ja" && entry.language.name === "ja-Hrkt"),
+      count: pokemon.species.flavorTextEntries.filter((entry) =>
+        isValidLanguageEntry(entry.language.name),
       ).length,
     });
   }
@@ -84,9 +98,7 @@ export function PokemonDetailTabs({
     return (
       <div className="bg-white rounded-lg shadow-md p-8">
         <div className="text-center py-8 text-gray-500">
-          {language === "en"
-            ? "No additional information available"
-            : "追加情報がありません"}
+          {dictionary.ui.pokemonDetails.noAdditionalInfo}
         </div>
       </div>
     );

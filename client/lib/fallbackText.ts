@@ -19,6 +19,21 @@ export const getFallbackText = (language: Locale): string => {
 /**
  * Get fallback metadata text for when dictionary values are missing
  */
+export const getFallbackEvolutionText = (language: Locale): string => {
+  switch (language) {
+    case "en":
+      return "Loading evolution chain...";
+    case "ja":
+      return "進化チェーンを読み込み中...";
+    case "zh-Hant":
+      return "載入進化鏈中...";
+    case "zh-Hans":
+      return "加载进化链中...";
+    default:
+      return "Loading evolution chain...";
+  }
+};
+
 export const getFallbackMetadata = (
   language: Locale,
   type: "homeTitle" | "homeDescription",

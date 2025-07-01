@@ -4,7 +4,7 @@ import { Pokemon } from "@/types/pokemon";
 import { Locale } from "@/lib/dictionaries";
 import { PokemonBasicInfo } from "./PokemonBasicInfo";
 import { PokemonSpritesGallery } from "./PokemonSpritesGallery";
-import { PokemonEvolutionChain } from "./PokemonEvolutionChain";
+import { PokemonEvolutionChain } from "./evolution/PokemonEvolutionChain";
 
 interface PokemonTopNavigationTabsProps {
   pokemon: Pokemon;

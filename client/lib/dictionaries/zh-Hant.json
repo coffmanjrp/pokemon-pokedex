@@ -105,7 +105,11 @@
       "male": "雄性",
       "female": "雌性",
       "hidden": "隱藏",
-      "defaultSpecies": "未知種族"
+      "defaultSpecies": "未知種族",
+      "noAdditionalInfo": "沒有其他可用資訊",
+      "noImage": "無圖片",
+      "noFormImage": "？",
+      "loadingEvolutionChain": "載入進化鏈中..."
     },
     "stats": {
       "hp": "HP",

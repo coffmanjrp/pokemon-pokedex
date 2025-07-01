@@ -105,7 +105,11 @@
       "male": "オス",
       "female": "メス",
       "hidden": "隠れ特性",
-      "defaultSpecies": "不明な種族"
+      "defaultSpecies": "不明な種族",
+      "noAdditionalInfo": "追加情報がありません",
+      "noImage": "画像なし",
+      "noFormImage": "？",
+      "loadingEvolutionChain": "進化チェーンを読み込み中..."
     },
     "stats": {
       "hp": "HP",
