@@ -19,7 +19,8 @@
       "home": "首頁",
       "back": "返回",
       "next": "下一個",
-      "previous": "上一個"
+      "previous": "上一個",
+      "generationsTitle": "世代選擇"
     },
     "loading": {
       "loadingPokemon": "載入寶可夢中...",
@@ -33,7 +34,8 @@
       "loadingMoreProgress": "載入更多...",
       "allRegionPokemonLoaded": "所有{{region}}寶可夢載入完成！",
       "generationInfo": "第{{number}}世代 (#{{min}}-#{{max}})",
-      "close": "關閉"
+      "close": "關閉",
+      "loadingPokedex": "正在加載寶可夢圖鑑..."
     },
     "error": {
       "title": "寶可夢載入錯誤",

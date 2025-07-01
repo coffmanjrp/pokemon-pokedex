@@ -23,6 +23,7 @@ export interface Dictionary {
       back: string;
       next: string;
       previous: string;
+      generationsTitle: string;
     };
     loading: {
       loadingPokemon: string;
@@ -37,6 +38,7 @@ export interface Dictionary {
       allRegionPokemonLoaded: string;
       generationInfo: string;
       close: string;
+      loadingPokedex: string;
     };
     error: {
       title: string;

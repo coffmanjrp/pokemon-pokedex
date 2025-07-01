@@ -14,7 +14,13 @@ interface PokemonProgressFooterProps {
   totalCount: number;
   currentGeneration: number;
   generationRange: {
-    region: { en: string; ja: string; "zh-Hant": string; "zh-Hans": string };
+    region: {
+      en: string;
+      ja: string;
+      "zh-Hant": string;
+      "zh-Hans": string;
+      es: string;
+    };
     min: number;
     max: number;
   };
@@ -52,6 +58,8 @@ export const PokemonProgressFooter = forwardRef<
         return generationRange.region["zh-Hant"];
       case "zh-Hans":
         return generationRange.region["zh-Hans"];
+      case "es":
+        return generationRange.region.es;
       default:
         return generationRange.region.en;
     }
@@ -157,6 +165,7 @@ export const PokemonProgressFooter = forwardRef<
             <p className="text-xs text-green-600 text-center">
               {interpolate(dictionary?.ui.loading.generationInfo || fallback, {
                 number: currentGeneration,
+                region: getRegionName(),
                 min: generationRange.min,
                 max: generationRange.max,
               })}

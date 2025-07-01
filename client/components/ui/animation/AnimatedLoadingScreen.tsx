@@ -3,15 +3,15 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
-import { Locale } from "@/lib/dictionaries";
+import { Dictionary } from "@/lib/dictionaries";
 
 interface AnimatedLoadingScreenProps {
-  language: Locale;
+  dictionary: Dictionary;
   onComplete?: () => void;
 }
 
 export function AnimatedLoadingScreen({
-  language,
+  dictionary,
   onComplete,
 }: AnimatedLoadingScreenProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -229,9 +229,7 @@ export function AnimatedLoadingScreen({
           {/* Loading Text */}
           <div ref={textRef} className="opacity-0">
             <h2 className="text-3xl font-bold text-white mb-4 drop-shadow-lg">
-              {language === "en"
-                ? "Loading Pokédex..."
-                : "ポケモン図鑑を読み込み中..."}
+              {dictionary.ui.loading.loadingPokedex}
             </h2>
           </div>
 

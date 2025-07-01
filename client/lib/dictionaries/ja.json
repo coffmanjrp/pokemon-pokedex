@@ -19,7 +19,8 @@
       "home": "ホーム",
       "back": "戻る",
       "next": "次へ",
-      "previous": "前へ"
+      "previous": "前へ",
+      "generationsTitle": "世代選択"
     },
     "loading": {
       "loadingPokemon": "ポケモンを読み込み中...",
@@ -33,7 +34,8 @@
       "loadingMoreProgress": "さらに読み込み中...",
       "allRegionPokemonLoaded": "{{region}}の全ポケモンを表示完了！",
       "generationInfo": "第{{number}}世代 (#{{min}}-#{{max}})",
-      "close": "閉じる"
+      "close": "閉じる",
+      "loadingPokedex": "ポケモン図鑑を読み込み中..."
     },
     "error": {
       "title": "ポケモンの読み込みエラー",

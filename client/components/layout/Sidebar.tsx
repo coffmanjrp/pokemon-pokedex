@@ -4,7 +4,11 @@ import { useState } from "react";
 import { useAppDispatch } from "@/store/hooks";
 import { setLanguage } from "@/store/slices/uiSlice";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { Locale, generateAlternateLanguageUrl } from "@/lib/dictionaries";
+import {
+  Locale,
+  Dictionary,
+  generateAlternateLanguageUrl,
+} from "@/lib/dictionaries";
 import { setStoredLanguage } from "@/lib/languageStorage";
 import { GENERATIONS } from "@/lib/data/generations";
 import { Logo } from "./Logo";
@@ -12,12 +16,14 @@ import { LanguageToggle } from "./LanguageToggle";
 
 interface SidebarProps {
   lang: Locale;
+  dictionary: Dictionary;
   currentGeneration: number;
   onGenerationChange: (generation: number) => void;
 }
 
 export function Sidebar({
   lang,
+  dictionary,
   currentGeneration,
   onGenerationChange,
 }: SidebarProps) {
@@ -111,13 +117,7 @@ export function Sidebar({
           >
             <div className="px-4">
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
-                {lang === "ja"
-                  ? "世代選択"
-                  : lang === "zh-Hant"
-                    ? "世代選擇"
-                    : lang === "zh-Hans"
-                      ? "世代选择"
-                      : "Generations"}
+                {dictionary.ui.navigation.generationsTitle}
               </h3>
               <div className="space-y-2">
                 {GENERATIONS.map((generation) => (
