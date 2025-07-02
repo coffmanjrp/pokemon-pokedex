@@ -1,4 +1,4 @@
-import { Locale } from "@/lib/dictionaries";
+import { Locale, Dictionary } from "@/lib/dictionaries";
 import {
   REGIONAL_FORM_TRANSLATIONS,
   MEGA_FORM_TRANSLATIONS,
@@ -108,23 +108,25 @@ export function isGigantamax(formName: string | undefined): boolean {
  */
 export function getFormCategory(
   formName: string | undefined,
-  language: Locale,
+  dictionary: Dictionary,
 ): string {
-  if (!formName) return language === "en" ? "Normal" : "ノーマル";
+  if (!formName) {
+    return dictionary.ui.forms.categories.normal;
+  }
 
   if (isRegionalVariant(formName)) {
-    return language === "en" ? "Regional Variant" : "地方のすがた";
+    return dictionary.ui.forms.categories.regionalVariant;
   }
 
   if (isMegaEvolution(formName)) {
-    return language === "en" ? "Mega Evolution" : "メガシンカ";
+    return dictionary.ui.forms.categories.megaEvolution;
   }
 
   if (isGigantamax(formName)) {
-    return language === "en" ? "Gigantamax" : "キョダイマックス";
+    return dictionary.ui.forms.categories.gigantamax;
   }
 
-  return language === "en" ? "Alternative Form" : "別のすがた";
+  return dictionary.ui.forms.categories.alternativeForm;
 }
 
 /**
@@ -170,147 +172,48 @@ export function getFormPriority(formName: string | undefined): number {
  */
 export function getFormBadgeName(
   formName: string | undefined,
-  language: Locale,
+  dictionary: Dictionary,
 ): string | null {
   if (!formName) return null;
 
   // Regional variants
   if (formName.includes("alola")) {
-    switch (language) {
-      case "en":
-        return "Alolan";
-      case "ja":
-        return "アローラ";
-      case "zh-Hant":
-        return "阿羅拉";
-      case "zh-Hans":
-        return "阿罗拉";
-      default:
-        return "Alolan";
-    }
+    return dictionary.ui.forms.badges.alolan;
   }
 
   if (formName.includes("galar")) {
-    switch (language) {
-      case "en":
-        return "Galarian";
-      case "ja":
-        return "ガラル";
-      case "zh-Hant":
-        return "伽勒爾";
-      case "zh-Hans":
-        return "伽勒尔";
-      default:
-        return "Galarian";
-    }
+    return dictionary.ui.forms.badges.galarian;
   }
 
   if (formName.includes("hisui")) {
-    switch (language) {
-      case "en":
-        return "Hisuian";
-      case "ja":
-        return "ヒスイ";
-      case "zh-Hant":
-        return "洗翠";
-      case "zh-Hans":
-        return "洗翠";
-      default:
-        return "Hisuian";
-    }
+    return dictionary.ui.forms.badges.hisuian;
   }
 
   if (formName.includes("paldea")) {
-    switch (language) {
-      case "en":
-        return "Paldean";
-      case "ja":
-        return "パルデア";
-      case "zh-Hant":
-        return "帕德亞";
-      case "zh-Hans":
-        return "帕德亚";
-      default:
-        return "Paldean";
-    }
+    return dictionary.ui.forms.badges.paldean;
   }
 
-  // Mega Evolution
+  // Mega Evolution (check specific variants first)
   if (formName.includes("mega-x")) {
-    switch (language) {
-      case "en":
-        return "Mega X";
-      case "ja":
-        return "メガX";
-      case "zh-Hant":
-        return "超級X";
-      case "zh-Hans":
-        return "超级X";
-      default:
-        return "Mega X";
-    }
+    return dictionary.ui.forms.badges.megaX;
   }
 
   if (formName.includes("mega-y")) {
-    switch (language) {
-      case "en":
-        return "Mega Y";
-      case "ja":
-        return "メガY";
-      case "zh-Hant":
-        return "超級Y";
-      case "zh-Hans":
-        return "超级Y";
-      default:
-        return "Mega Y";
-    }
+    return dictionary.ui.forms.badges.megaY;
   }
 
   if (formName.includes("mega")) {
-    switch (language) {
-      case "en":
-        return "Mega";
-      case "ja":
-        return "メガ";
-      case "zh-Hant":
-        return "超級";
-      case "zh-Hans":
-        return "超级";
-      default:
-        return "Mega";
-    }
+    return dictionary.ui.forms.badges.mega;
   }
 
   // Gigantamax
   if (formName.includes("gmax")) {
-    switch (language) {
-      case "en":
-        return "G-Max";
-      case "ja":
-        return "キョダイ";
-      case "zh-Hant":
-        return "極巨";
-      case "zh-Hans":
-        return "极巨";
-      default:
-        return "G-Max";
-    }
+    return dictionary.ui.forms.badges.gmax;
   }
 
   // Primal
   if (formName.includes("primal")) {
-    switch (language) {
-      case "en":
-        return "Primal";
-      case "ja":
-        return "ゲンシ";
-      case "zh-Hant":
-        return "原始";
-      case "zh-Hans":
-        return "原始";
-      default:
-        return "Primal";
-    }
+    return dictionary.ui.forms.badges.primal;
   }
 
   return null;

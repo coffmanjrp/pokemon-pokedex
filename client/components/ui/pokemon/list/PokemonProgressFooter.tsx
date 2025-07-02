@@ -20,6 +20,7 @@ interface PokemonProgressFooterProps {
       "zh-Hant": string;
       "zh-Hans": string;
       es: string;
+      ko: string;
     };
     min: number;
     max: number;
@@ -60,6 +61,8 @@ export const PokemonProgressFooter = forwardRef<
         return generationRange.region["zh-Hans"];
       case "es":
         return generationRange.region.es;
+      case "ko":
+        return generationRange.region.ko;
       default:
         return generationRange.region.en;
     }

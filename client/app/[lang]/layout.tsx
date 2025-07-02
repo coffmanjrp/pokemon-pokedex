@@ -8,6 +8,7 @@ export async function generateStaticParams() {
     { lang: "zh-Hant" },
     { lang: "zh-Hans" },
     { lang: "es" },
+    { lang: "ko" },
   ];
 }
 

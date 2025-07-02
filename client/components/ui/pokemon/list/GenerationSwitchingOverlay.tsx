@@ -14,6 +14,7 @@ interface GenerationSwitchingOverlayProps {
       "zh-Hant": string;
       "zh-Hans": string;
       es: string;
+      ko: string;
     };
     min: number;
     max: number;

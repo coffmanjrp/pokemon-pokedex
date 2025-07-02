@@ -195,6 +195,7 @@
       "traditionalChinese": "繁體中文",
       "simplifiedChinese": "简体中文",
       "spanish": "Español",
+      "korean": "한국어",
       "toggle": "切換語言"
     },
     "sandbox": {
@@ -214,6 +215,26 @@
       "evolution": "無進化數據",
       "abilities": "無特性數據",
       "general": "無數據可用"
+    },
+    "forms": {
+      "categories": {
+        "normal": "普通",
+        "regionalVariant": "地區形態",
+        "megaEvolution": "超級進化",
+        "gigantamax": "極巨化",
+        "alternativeForm": "其他形態"
+      },
+      "badges": {
+        "alolan": "阿羅拉",
+        "galarian": "伽勒爾",
+        "hisuian": "洗翠",
+        "paldean": "帕德亞",
+        "mega": "超級",
+        "megaX": "超級X",
+        "megaY": "超級Y",
+        "gmax": "極巨",
+        "primal": "原始"
+      }
     }
   },
   "meta": {

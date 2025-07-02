@@ -1,6 +1,13 @@
 export const VERSION_TRANSLATIONS: Record<
   string,
-  { en: string; ja: string; "zh-Hant": string; "zh-Hans": string; es?: string }
+  {
+    en: string;
+    ja: string;
+    "zh-Hant": string;
+    "zh-Hans": string;
+    es?: string;
+    ko?: string;
+  }
 > = {
   red: { en: "Red", ja: "赤", "zh-Hant": "紅", "zh-Hans": "红" },
   blue: { en: "Blue", ja: "青", "zh-Hant": "藍", "zh-Hans": "蓝" },
