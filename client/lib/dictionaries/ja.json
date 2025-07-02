@@ -195,6 +195,7 @@
       "traditionalChinese": "繁體中文",
       "simplifiedChinese": "简体中文",
       "spanish": "Español",
+      "korean": "한국어",
       "toggle": "言語の切り替え"
     },
     "sandbox": {
@@ -214,6 +215,26 @@
       "evolution": "進化データがありません",
       "abilities": "特性データがありません",
       "general": "データがありません"
+    },
+    "forms": {
+      "categories": {
+        "normal": "ノーマル",
+        "regionalVariant": "地方のすがた",
+        "megaEvolution": "メガシンカ",
+        "gigantamax": "キョダイマックス",
+        "alternativeForm": "別のすがた"
+      },
+      "badges": {
+        "alolan": "アローラ",
+        "galarian": "ガラル",
+        "hisuian": "ヒスイ",
+        "paldean": "パルデア",
+        "mega": "メガ",
+        "megaX": "メガX",
+        "megaY": "メガY",
+        "gmax": "キョダイ",
+        "primal": "ゲンシ"
+      }
     }
   },
   "meta": {

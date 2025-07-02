@@ -195,6 +195,7 @@
       "traditionalChinese": "Traditional Chinese",
       "simplifiedChinese": "Simplified Chinese",
       "spanish": "Spanish",
+      "korean": "Korean",
       "toggle": "Toggle language"
     },
     "sandbox": {
@@ -214,6 +215,26 @@
       "evolution": "No evolution data available",
       "abilities": "No abilities available",
       "general": "No data available"
+    },
+    "forms": {
+      "categories": {
+        "normal": "Normal",
+        "regionalVariant": "Regional Variant",
+        "megaEvolution": "Mega Evolution",
+        "gigantamax": "Gigantamax",
+        "alternativeForm": "Alternative Form"
+      },
+      "badges": {
+        "alolan": "Alolan",
+        "galarian": "Galarian",
+        "hisuian": "Hisuian",
+        "paldean": "Paldean",
+        "mega": "Mega",
+        "megaX": "Mega X",
+        "megaY": "Mega Y",
+        "gmax": "G-Max",
+        "primal": "Primal"
+      }
     }
   },
   "meta": {

@@ -99,14 +99,24 @@
         "homeShinyFemale": "HOME 색이 다른 암컷",
         "dreamWorld": "드림 월드",
         "dreamWorldFemale": "드림 월드 암컷",
-        "frontDefault": "기본 앞모습",
-        "frontShiny": "색이 다른 앞모습",
-        "frontFemale": "암컷 앞모습",
-        "frontShinyFemale": "색이 다른 암컷 앞모습",
-        "backDefault": "기본 뒷모습",
-        "backShiny": "색이 다른 뒷모습",
-        "backFemale": "암컷 뒷모습",
-        "backShinyFemale": "색이 다른 암컷 뒷모습"
+        "showdownFront": "쇼다운 앞모습",
+        "showdownBack": "쇼다운 뒷모습",
+        "showdownShinyFront": "쇼다운 색이 다른 앞모습",
+        "showdownShinyBack": "쇼다운 색이 다른 뒷모습",
+        "gameFront": "게임 앞모습",
+        "gameBack": "게임 뒷모습",
+        "gameShinyFront": "게임 색이 다른 앞모습",
+        "gameShinyBack": "게임 색이 다른 뒷모습",
+        "gameFemaleFront": "게임 암컷 앞모습",
+        "gameFemaleBack": "게임 암컷 뒷모습",
+        "animatedFrontGenV": "애니메이션 앞모습 (5세대)",
+        "animatedBackGenV": "애니메이션 뒷모습 (5세대)",
+        "animatedShinyFrontGenV": "애니메이션 색이 다른 앞모습 (5세대)",
+        "animatedShinyBackGenV": "애니메이션 색이 다른 뒷모습 (5세대)",
+        "iconGenVII": "아이콘 (7세대)",
+        "femaleIconGenVII": "암컷 아이콘 (7세대)",
+        "xyFront": "X/Y 앞모습",
+        "xyShinyFront": "X/Y 색이 다른 앞모습"
       },
       "hp": "HP",
       "attack": "공격",
@@ -161,7 +171,18 @@
       "generations": "세대:",
       "latestDescription": "최신 설명",
       "allDescriptions": "모든 설명",
-      "noMovesFoundForMethod": "{{method}}에 대한 기술을 찾을 수 없습니다"
+      "version": "버전",
+      "noDescriptionsInLanguage": "이 언어로 사용 가능한 설명이 없습니다",
+      "weaknesses": "약점",
+      "noMajorWeaknesses": "주요 약점 없음",
+      "noMovesFoundForMethod": "{{method}}에 대한 기술을 찾을 수 없습니다",
+      "noMovesData": "기술 데이터가 없습니다",
+      "noGameHistoryData": "게임 이력 데이터가 없습니다",
+      "originGeneration": "원본 세대",
+      "gameAppearances": "게임 출현",
+      "remakes": "리메이크",
+      "noStatsData": "스탯 데이터가 없습니다",
+      "noStatsAvailable": "사용 가능한 스탯이 없습니다"
     },
     "generation": {
       "displayTemplate": "{{number}}세대 - {{region}}"
@@ -209,34 +230,41 @@
       "abilities": "특성을 사용할 수 없습니다",
       "general": "데이터를 사용할 수 없습니다"
     },
+    "forms": {
+      "categories": {
+        "normal": "일반",
+        "regionalVariant": "지역 변종",
+        "megaEvolution": "메가진화",
+        "gigantamax": "다이맥스",
+        "alternativeForm": "대체 형태"
+      },
+      "badges": {
+        "alolan": "알로라",
+        "galarian": "가라르",
+        "hisuian": "히스이",
+        "paldean": "팔데아",
+        "mega": "메가",
+        "megaX": "메가X",
+        "megaY": "메가Y",
+        "gmax": "거다이",
+        "primal": "원시"
+      }
+    },
     "stats": {
       "hp": "HP",
       "attack": "공격",
       "defense": "방어",
-      "spAttack": "특수공격",
-      "spDefense": "특수방어",
+      "specialAttack": "특수공격",
+      "specialDefense": "특수방어",
       "speed": "스피드",
-      "total": "합계",
-      "statLabels": {
-        "hp": "HP",
-        "attack": "공격",
-        "defense": "방어",
-        "special-attack": "특수공격",
-        "special-defense": "특수방어",
-        "speed": "스피드"
-      }
+      "total": "합계"
     },
     "moves": {
-      "physical": "물리",
-      "special": "특수",
-      "status": "변화",
-      "learnMethod": {
-        "level-up": "레벨업",
-        "machine": "기술머신",
-        "tutor": "기술 가르치기",
-        "egg": "알",
-        "other": "기타"
-      },
+      "levelUp": "레벨업",
+      "machine": "기술머신",
+      "egg": "알 기술",
+      "tutor": "기술 가르치기",
+      "level": "레벨 {{level}}",
       "learnedAt": "레벨 {{level}}에서 습득",
       "noMovesFoundForMethod": "{{method}} 기술을 찾을 수 없습니다"
     }

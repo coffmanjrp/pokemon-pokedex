@@ -65,7 +65,8 @@ export function FormVariationCard({
         {/* Form Badge */}
         <div className="mb-1">
           {(() => {
-            const badgeName = getFormBadgeName(form.formName, lang);
+            if (!dictionary) return null;
+            const badgeName = getFormBadgeName(form.formName, dictionary);
             const badgeColor = getFormBadgeColor(form.formName);
             return badgeName ? (
               <span className={`px-1 py-0.5 text-xs rounded ${badgeColor}`}>

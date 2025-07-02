@@ -190,6 +190,7 @@ export interface Dictionary {
       traditionalChinese: string;
       simplifiedChinese: string;
       spanish: string;
+      korean: string;
       toggle: string;
     };
     sandbox: {
@@ -209,6 +210,26 @@ export interface Dictionary {
       evolution: string;
       abilities: string;
       general: string;
+    };
+    forms: {
+      categories: {
+        normal: string;
+        regionalVariant: string;
+        megaEvolution: string;
+        gigantamax: string;
+        alternativeForm: string;
+      };
+      badges: {
+        alolan: string;
+        galarian: string;
+        hisuian: string;
+        paldean: string;
+        mega: string;
+        megaX: string;
+        megaY: string;
+        gmax: string;
+        primal: string;
+      };
     };
   };
   meta: {
