@@ -22,7 +22,7 @@ import React from "react";
  */
 function getFormTranslation(
   formName: string,
-  language: "en" | "ja" | "zh-Hant" | "zh-Hans" | "es",
+  language: "en" | "ja" | "zh-Hant" | "zh-Hans" | "es" | "ko",
 ): string | null {
   console.log(
     `[getFormTranslation] Looking for translation of "${formName}" in language "${language}"`,
@@ -246,7 +246,8 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
       (language === "ja" ||
         language === "zh-Hant" ||
         language === "zh-Hans" ||
-        language === "es") &&
+        language === "es" ||
+        language === "ko") &&
       pokemon.species?.names
     ) {
       // Map language codes for PokeAPI
@@ -255,6 +256,7 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
         "zh-Hant": ["zh-Hant"],
         "zh-Hans": ["zh-Hans"],
         es: ["es"],
+        ko: ["ko"],
       };
 
       const targetCodes = languageCodes[
@@ -327,7 +329,8 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
     (language === "ja" ||
       language === "zh-Hant" ||
       language === "zh-Hans" ||
-      language === "es") &&
+      language === "es" ||
+      language === "ko") &&
     pokemon.species?.names
   ) {
     // Map language codes for PokeAPI
@@ -336,6 +339,7 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
       "zh-Hant": ["zh-Hant"],
       "zh-Hans": ["zh-Hans"],
       es: ["es"],
+      ko: ["ko"],
     };
 
     const targetCodes = languageCodes[
@@ -378,7 +382,8 @@ export function getEvolutionPokemonName(
       (language === "ja" ||
         language === "zh-Hant" ||
         language === "zh-Hans" ||
-        language === "es") &&
+        language === "es" ||
+        language === "ko") &&
       evolutionDetail.species?.names
     ) {
       // Map language codes for PokeAPI
@@ -387,6 +392,7 @@ export function getEvolutionPokemonName(
         "zh-Hant": ["zh-Hant"],
         "zh-Hans": ["zh-Hans"],
         es: ["es"],
+        ko: ["ko"],
       };
 
       const targetCodes = languageCodes[
@@ -463,7 +469,8 @@ export function getEvolutionPokemonName(
     (language === "ja" ||
       language === "zh-Hant" ||
       language === "zh-Hans" ||
-      language === "es") &&
+      language === "es" ||
+      language === "ko") &&
     evolutionDetail.species?.names
   ) {
     // Map language codes for PokeAPI
@@ -472,6 +479,7 @@ export function getEvolutionPokemonName(
       "zh-Hant": ["zh-Hant"],
       "zh-Hans": ["zh-Hans"],
       es: ["es"],
+      ko: ["ko"],
     };
 
     const targetCodes = languageCodes[
@@ -514,6 +522,7 @@ export function getPokemonDescription(
     "zh-Hant": ["zh-Hant"],
     "zh-Hans": ["zh-Hans"],
     es: ["es"],
+    ko: ["ko"],
   };
 
   const targetCodes = languageMap[language] || ["en"];
@@ -560,6 +569,7 @@ export function getPokemonGenus(pokemon: Pokemon, language: Locale): string {
     "zh-Hant": ["zh-Hant"],
     "zh-Hans": ["zh-Hans"],
     es: ["es"],
+    ko: ["ko"],
   };
 
   const targetCodes = languageMap[language] || ["en"];
@@ -596,9 +606,9 @@ export function getMoveLearnMethodName(
 ): string {
   const translation = MOVE_LEARN_METHOD_TRANSLATIONS[methodName.toLowerCase()];
   if (translation) {
-    // If Chinese language requested but translation doesn't exist, fall back to English
+    // If Chinese/Korean language requested but translation doesn't exist, fall back to English
     if (
-      (language === "zh-Hant" || language === "zh-Hans") &&
+      (language === "zh-Hant" || language === "zh-Hans" || language === "ko") &&
       !translation[language as "en" | "ja"]
     ) {
       return translation["en"] || methodName;
@@ -648,6 +658,7 @@ export function getAbilityName(
       "zh-Hant": ["zh-Hant"],
       "zh-Hans": ["zh-Hans"],
       es: ["es"],
+      ko: ["ko"],
     };
     const targetLanguage = languageMap[language] || ["en"];
 
@@ -667,9 +678,9 @@ export function getAbilityName(
   const translation = ABILITY_TRANSLATIONS[abilityName];
 
   if (translation) {
-    // If Chinese language requested but translation doesn't exist, fall back to English
+    // If Chinese/Korean language requested but translation doesn't exist, fall back to English
     if (
-      (language === "zh-Hant" || language === "zh-Hans") &&
+      (language === "zh-Hant" || language === "zh-Hans" || language === "ko") &&
       !translation[language as "en" | "ja"]
     ) {
       return translation["en"] || abilityName;
@@ -696,9 +707,9 @@ export function getAbilityName(
 export function getVersionName(versionName: string, language: Locale): string {
   const translation = VERSION_TRANSLATIONS[versionName.toLowerCase()];
   if (translation) {
-    // If Chinese language requested but translation doesn't exist, fall back to English
+    // If Chinese/Korean language requested but translation doesn't exist, fall back to English
     if (
-      (language === "zh-Hant" || language === "zh-Hans") &&
+      (language === "zh-Hant" || language === "zh-Hans" || language === "ko") &&
       !translation[language as "en" | "ja"]
     ) {
       return translation["en"] || versionName;
@@ -741,6 +752,8 @@ export function getGenerationName(
     return `第${number}世代`;
   } else if (language === "zh-Hant" || language === "zh-Hans") {
     return `第${number}世代`;
+  } else if (language === "ko") {
+    return `제${number}세대`;
   } else {
     return `Generation ${number.toUpperCase()}`;
   }
@@ -889,6 +902,7 @@ export function getMoveName(move: Move, language: Locale): string {
       "zh-Hant": ["zh-Hant"],
       "zh-Hans": ["zh-Hans"],
       es: ["es"],
+      ko: ["ko"],
     };
     const targetLanguage = languageMap[language] || ["en"];
 
@@ -908,9 +922,9 @@ export function getMoveName(move: Move, language: Locale): string {
   const translation = MOVE_TRANSLATIONS[moveName];
 
   if (translation) {
-    // If Chinese language requested but translation doesn't exist, fall back to English
+    // If Chinese/Korean language requested but translation doesn't exist, fall back to English
     if (
-      (language === "zh-Hant" || language === "zh-Hans") &&
+      (language === "zh-Hant" || language === "zh-Hans" || language === "ko") &&
       !translation[language as "en" | "ja"]
     ) {
       return translation["en"] || move.name;
@@ -973,6 +987,8 @@ export function getGenderDisplayString(
         return "不明";
       } else if (language === "zh-Hant" || language === "zh-Hans") {
         return "無性別";
+      } else if (language === "ko") {
+        return "성별불명";
       } else {
         return "Genderless";
       }
@@ -1016,6 +1032,8 @@ export function getGenderDisplayElement(
         genderlessText = "無性別";
       } else if (language === "es") {
         genderlessText = "Sin género";
+      } else if (language === "ko") {
+        genderlessText = "성별불명";
       } else {
         genderlessText = "Genderless";
       }
