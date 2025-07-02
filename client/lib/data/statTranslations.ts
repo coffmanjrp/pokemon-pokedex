@@ -7,6 +7,7 @@ export const STAT_TRANSLATIONS: Record<
     "zh-Hans": string;
     es: string;
     ko: string;
+    fr: string;
   }
 > = {
   hp: {
@@ -16,6 +17,7 @@ export const STAT_TRANSLATIONS: Record<
     "zh-Hans": "HP",
     es: "PS",
     ko: "HP",
+    fr: "PV",
   },
   attack: {
     en: "Attack",
@@ -24,6 +26,7 @@ export const STAT_TRANSLATIONS: Record<
     "zh-Hans": "攻击",
     es: "Ataque",
     ko: "공격",
+    fr: "Attaque",
   },
   defense: {
     en: "Defense",
@@ -32,6 +35,7 @@ export const STAT_TRANSLATIONS: Record<
     "zh-Hans": "防御",
     es: "Defensa",
     ko: "방어",
+    fr: "Défense",
   },
   "special-attack": {
     en: "Sp. Attack",
@@ -40,6 +44,7 @@ export const STAT_TRANSLATIONS: Record<
     "zh-Hans": "特攻",
     es: "At. Esp.",
     ko: "특수공격",
+    fr: "Att. Spé",
   },
   "special-defense": {
     en: "Sp. Defense",
@@ -48,6 +53,7 @@ export const STAT_TRANSLATIONS: Record<
     "zh-Hans": "特防",
     es: "Def. Esp.",
     ko: "특수방어",
+    fr: "Déf. Spé",
   },
   speed: {
     en: "Speed",
@@ -56,5 +62,6 @@ export const STAT_TRANSLATIONS: Record<
     "zh-Hans": "速度",
     es: "Velocidad",
     ko: "스피드",
+    fr: "Vitesse",
   },
 };

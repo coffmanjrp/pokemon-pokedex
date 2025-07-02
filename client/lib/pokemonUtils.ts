@@ -22,7 +22,7 @@ import React from "react";
  */
 function getFormTranslation(
   formName: string,
-  language: "en" | "ja" | "zh-Hant" | "zh-Hans" | "es" | "ko",
+  language: "en" | "ja" | "zh-Hant" | "zh-Hans" | "es" | "ko" | "fr",
 ): string | null {
   console.log(
     `[getFormTranslation] Looking for translation of "${formName}" in language "${language}"`,

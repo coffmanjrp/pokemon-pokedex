@@ -7,6 +7,7 @@ export interface GenerationData {
     "zh-Hans": string;
     es: string;
     ko: string;
+    fr: string;
   };
   region: {
     en: string;
@@ -15,6 +16,7 @@ export interface GenerationData {
     "zh-Hans": string;
     es: string;
     ko: string;
+    fr: string;
   };
   pokemonRange: { start: number; end: number };
   games: string[];
@@ -31,6 +33,7 @@ export const GENERATIONS: GenerationData[] = [
       "zh-Hans": "第一世代",
       es: "Generación I",
       ko: "1세대",
+      fr: "Génération I",
     },
     region: {
       en: "Kanto",
@@ -39,6 +42,7 @@ export const GENERATIONS: GenerationData[] = [
       "zh-Hans": "关都地区",
       es: "Kanto",
       ko: "관동",
+      fr: "Kanto",
     },
     pokemonRange: { start: 1, end: 151 },
     games: ["red", "blue", "yellow"],
@@ -53,6 +57,7 @@ export const GENERATIONS: GenerationData[] = [
       "zh-Hans": "第二世代",
       es: "Generación II",
       ko: "2세대",
+      fr: "Génération II",
     },
     region: {
       en: "Johto",
@@ -61,6 +66,7 @@ export const GENERATIONS: GenerationData[] = [
       "zh-Hans": "城都地区",
       es: "Johto",
       ko: "성도",
+      fr: "Johto",
     },
     pokemonRange: { start: 152, end: 251 },
     games: ["gold", "silver", "crystal"],
@@ -75,6 +81,7 @@ export const GENERATIONS: GenerationData[] = [
       "zh-Hans": "第三世代",
       es: "Generación III",
       ko: "3세대",
+      fr: "Génération III",
     },
     region: {
       en: "Hoenn",
@@ -83,6 +90,7 @@ export const GENERATIONS: GenerationData[] = [
       "zh-Hans": "丰缘地区",
       es: "Hoenn",
       ko: "호연",
+      fr: "Hoenn",
     },
     pokemonRange: { start: 252, end: 386 },
     games: ["ruby", "sapphire", "emerald"],
@@ -97,6 +105,7 @@ export const GENERATIONS: GenerationData[] = [
       "zh-Hans": "第四世代",
       es: "Generación IV",
       ko: "4세대",
+      fr: "Génération IV",
     },
     region: {
       en: "Sinnoh",
@@ -105,6 +114,7 @@ export const GENERATIONS: GenerationData[] = [
       "zh-Hans": "神奥地区",
       es: "Sinnoh",
       ko: "신오",
+      fr: "Sinnoh",
     },
     pokemonRange: { start: 387, end: 493 },
     games: ["diamond", "pearl", "platinum"],
@@ -119,6 +129,7 @@ export const GENERATIONS: GenerationData[] = [
       "zh-Hans": "第五世代",
       es: "Generación V",
       ko: "5세대",
+      fr: "Génération V",
     },
     region: {
       en: "Unova",
@@ -127,6 +138,7 @@ export const GENERATIONS: GenerationData[] = [
       "zh-Hans": "合众地区",
       es: "Teselia",
       ko: "하나",
+      fr: "Unys",
     },
     pokemonRange: { start: 494, end: 649 },
     games: ["black", "white", "black-2", "white-2"],
@@ -140,6 +152,7 @@ export const GENERATIONS: GenerationData[] = [
       "zh-Hans": "第六世代",
       es: "Generación VI",
       ko: "6세대",
+      fr: "Génération VI",
     },
     region: {
       en: "Kalos",
@@ -148,6 +161,7 @@ export const GENERATIONS: GenerationData[] = [
       "zh-Hans": "卡洛斯地区",
       es: "Kalos",
       ko: "칼로스",
+      fr: "Kalos",
     },
     pokemonRange: { start: 650, end: 721 },
     games: ["x", "y"],
@@ -161,6 +175,7 @@ export const GENERATIONS: GenerationData[] = [
       "zh-Hans": "第七世代",
       es: "Generación VII",
       ko: "7세대",
+      fr: "Génération VII",
     },
     region: {
       en: "Alola",
@@ -169,6 +184,7 @@ export const GENERATIONS: GenerationData[] = [
       "zh-Hans": "阿罗拉地区",
       es: "Alola",
       ko: "알로라",
+      fr: "Alola",
     },
     pokemonRange: { start: 722, end: 809 },
     games: ["sun", "moon", "ultra-sun", "ultra-moon"],
@@ -182,6 +198,7 @@ export const GENERATIONS: GenerationData[] = [
       "zh-Hans": "第八世代",
       es: "Generación VIII",
       ko: "8세대",
+      fr: "Génération VIII",
     },
     region: {
       en: "Galar",
@@ -190,6 +207,7 @@ export const GENERATIONS: GenerationData[] = [
       "zh-Hans": "伽勒尔地区",
       es: "Galar",
       ko: "가라르",
+      fr: "Galar",
     },
     pokemonRange: { start: 810, end: 905 },
     games: ["sword", "shield"],
@@ -204,6 +222,7 @@ export const GENERATIONS: GenerationData[] = [
       "zh-Hans": "第九世代",
       es: "Generación IX",
       ko: "9세대",
+      fr: "Génération IX",
     },
     region: {
       en: "Paldea",
@@ -212,6 +231,7 @@ export const GENERATIONS: GenerationData[] = [
       "zh-Hans": "帕德亚地区",
       es: "Paldea",
       ko: "팔데아",
+      fr: "Paldea",
     },
     pokemonRange: { start: 906, end: 1025 },
     games: ["scarlet", "violet"],
@@ -244,14 +264,14 @@ export const getGenerationByPokemonId = (
 
 export const getGenerationName = (
   generation: GenerationData,
-  language: "en" | "ja" | "zh-Hant" | "zh-Hans" | "es" | "ko",
+  language: "en" | "ja" | "zh-Hant" | "zh-Hans" | "es" | "ko" | "fr",
 ): string => {
   return generation.name[language];
 };
 
 export const getGenerationRegion = (
   generation: GenerationData,
-  language: "en" | "ja" | "zh-Hant" | "zh-Hans" | "es" | "ko",
+  language: "en" | "ja" | "zh-Hant" | "zh-Hans" | "es" | "ko" | "fr",
 ): string => {
   return generation.region[language];
 };
@@ -272,6 +292,7 @@ export const GENERATION_RANGES = {
       "zh-Hans": "关都地区",
       es: "Kanto",
       ko: "관동",
+      fr: "Kanto",
     },
   },
   2: {
@@ -284,6 +305,7 @@ export const GENERATION_RANGES = {
       "zh-Hans": "城都地区",
       es: "Johto",
       ko: "성도",
+      fr: "Johto",
     },
   },
   3: {
@@ -296,6 +318,7 @@ export const GENERATION_RANGES = {
       "zh-Hans": "丰缘地区",
       es: "Hoenn",
       ko: "호연",
+      fr: "Hoenn",
     },
   },
   4: {
@@ -308,6 +331,7 @@ export const GENERATION_RANGES = {
       "zh-Hans": "神奥地区",
       es: "Sinnoh",
       ko: "신오",
+      fr: "Sinnoh",
     },
   },
   5: {
@@ -320,6 +344,7 @@ export const GENERATION_RANGES = {
       "zh-Hans": "合众地区",
       es: "Teselia",
       ko: "하나",
+      fr: "Unys",
     },
   },
   6: {
@@ -332,6 +357,7 @@ export const GENERATION_RANGES = {
       "zh-Hans": "卡洛斯地区",
       es: "Kalos",
       ko: "칼로스",
+      fr: "Kalos",
     },
   },
   7: {
@@ -344,6 +370,7 @@ export const GENERATION_RANGES = {
       "zh-Hans": "阿罗拉地区",
       es: "Alola",
       ko: "알로라",
+      fr: "Alola",
     },
   },
   8: {
@@ -356,6 +383,7 @@ export const GENERATION_RANGES = {
       "zh-Hans": "伽勒尔地区",
       es: "Galar",
       ko: "가라르",
+      fr: "Galar",
     },
   },
   9: {
@@ -368,6 +396,7 @@ export const GENERATION_RANGES = {
       "zh-Hans": "帕德亚地区",
       es: "Paldea",
       ko: "팔데아",
+      fr: "Paldea",
     },
   },
 } as const;

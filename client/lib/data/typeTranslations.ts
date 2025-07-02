@@ -13,6 +13,7 @@ export const TYPE_TRANSLATIONS: Record<
     "zh-Hans": string;
     es: string;
     ko: string;
+    fr: string;
   }
 > = {
   normal: {
@@ -22,6 +23,7 @@ export const TYPE_TRANSLATIONS: Record<
     "zh-Hans": "一般",
     es: "Normal",
     ko: "노말",
+    fr: "Normal",
   },
   fire: {
     en: "Fire",
@@ -30,6 +32,7 @@ export const TYPE_TRANSLATIONS: Record<
     "zh-Hans": "火",
     es: "Fuego",
     ko: "불꽃",
+    fr: "Feu",
   },
   water: {
     en: "Water",
@@ -38,6 +41,7 @@ export const TYPE_TRANSLATIONS: Record<
     "zh-Hans": "水",
     es: "Agua",
     ko: "물",
+    fr: "Eau",
   },
   electric: {
     en: "Electric",
@@ -46,6 +50,7 @@ export const TYPE_TRANSLATIONS: Record<
     "zh-Hans": "电",
     es: "Eléctrico",
     ko: "전기",
+    fr: "Électrik",
   },
   grass: {
     en: "Grass",
@@ -54,6 +59,7 @@ export const TYPE_TRANSLATIONS: Record<
     "zh-Hans": "草",
     es: "Planta",
     ko: "풀",
+    fr: "Plante",
   },
   ice: {
     en: "Ice",
@@ -62,6 +68,7 @@ export const TYPE_TRANSLATIONS: Record<
     "zh-Hans": "冰",
     es: "Hielo",
     ko: "얼음",
+    fr: "Glace",
   },
   fighting: {
     en: "Fighting",
@@ -70,6 +77,7 @@ export const TYPE_TRANSLATIONS: Record<
     "zh-Hans": "格斗",
     es: "Lucha",
     ko: "격투",
+    fr: "Combat",
   },
   poison: {
     en: "Poison",
@@ -78,6 +86,7 @@ export const TYPE_TRANSLATIONS: Record<
     "zh-Hans": "毒",
     es: "Veneno",
     ko: "독",
+    fr: "Poison",
   },
   ground: {
     en: "Ground",
@@ -86,6 +95,7 @@ export const TYPE_TRANSLATIONS: Record<
     "zh-Hans": "地面",
     es: "Tierra",
     ko: "땅",
+    fr: "Sol",
   },
   flying: {
     en: "Flying",
@@ -94,6 +104,7 @@ export const TYPE_TRANSLATIONS: Record<
     "zh-Hans": "飞行",
     es: "Volador",
     ko: "비행",
+    fr: "Vol",
   },
   psychic: {
     en: "Psychic",
@@ -102,6 +113,7 @@ export const TYPE_TRANSLATIONS: Record<
     "zh-Hans": "超能力",
     es: "Psíquico",
     ko: "에스퍼",
+    fr: "Psy",
   },
   bug: {
     en: "Bug",
@@ -110,6 +122,7 @@ export const TYPE_TRANSLATIONS: Record<
     "zh-Hans": "虫",
     es: "Bicho",
     ko: "벌레",
+    fr: "Insecte",
   },
   rock: {
     en: "Rock",
@@ -118,6 +131,7 @@ export const TYPE_TRANSLATIONS: Record<
     "zh-Hans": "岩石",
     es: "Roca",
     ko: "바위",
+    fr: "Roche",
   },
   ghost: {
     en: "Ghost",
@@ -126,6 +140,7 @@ export const TYPE_TRANSLATIONS: Record<
     "zh-Hans": "幽灵",
     es: "Fantasma",
     ko: "고스트",
+    fr: "Spectre",
   },
   dragon: {
     en: "Dragon",
@@ -134,6 +149,7 @@ export const TYPE_TRANSLATIONS: Record<
     "zh-Hans": "龙",
     es: "Dragón",
     ko: "드래곤",
+    fr: "Dragon",
   },
   dark: {
     en: "Dark",
@@ -142,6 +158,7 @@ export const TYPE_TRANSLATIONS: Record<
     "zh-Hans": "恶",
     es: "Siniestro",
     ko: "악",
+    fr: "Ténèbres",
   },
   steel: {
     en: "Steel",
@@ -150,6 +167,7 @@ export const TYPE_TRANSLATIONS: Record<
     "zh-Hans": "钢",
     es: "Acero",
     ko: "강철",
+    fr: "Acier",
   },
   fairy: {
     en: "Fairy",
@@ -158,6 +176,7 @@ export const TYPE_TRANSLATIONS: Record<
     "zh-Hans": "妖精",
     es: "Hada",
     ko: "페어리",
+    fr: "Fée",
   },
 };
 
