@@ -156,8 +156,8 @@
       "hp": "HP",
       "attack": "攻击",
       "defense": "防御",
-      "specialAttack": "特攻",
-      "specialDefense": "特防",
+      "special-attack": "特攻",
+      "special-defense": "特防",
       "speed": "速度",
       "total": "总和"
     },

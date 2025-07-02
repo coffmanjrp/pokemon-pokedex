@@ -12,7 +12,6 @@ import { VERSION_TRANSLATIONS } from "@/lib/data/versionTranslations";
 import { TYPE_EFFECTIVENESS } from "@/lib/data/typeEffectiveness";
 import { MOVE_TRANSLATIONS } from "@/lib/data/moveTranslations";
 import { MOVE_LEARN_METHOD_TRANSLATIONS } from "@/lib/data/moveLearnMethodTranslations";
-import { STAT_TRANSLATIONS } from "@/lib/data/statTranslations";
 import { TYPE_TRANSLATIONS, getTypeColor } from "@/lib/data/typeTranslations";
 import React from "react";
 
@@ -613,14 +612,6 @@ export function getPokemonGenus(pokemon: Pokemon, language: Locale): string {
 export function getTypeName(typeName: string, language: Locale): string {
   const translation = TYPE_TRANSLATIONS[typeName.toLowerCase()];
   return translation ? translation[language] : typeName;
-}
-
-/**
- * Get translated stat name
- */
-export function getStatName(statName: string, language: Locale): string {
-  const translation = STAT_TRANSLATIONS[statName.toLowerCase()];
-  return translation ? translation[language] : statName;
 }
 
 /**

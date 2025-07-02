@@ -167,8 +167,8 @@ export interface Dictionary {
       hp: string;
       attack: string;
       defense: string;
-      specialAttack: string;
-      specialDefense: string;
+      "special-attack": string;
+      "special-defense": string;
       speed: string;
       total: string;
     };

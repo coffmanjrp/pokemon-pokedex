@@ -156,8 +156,8 @@
       "hp": "PS",
       "attack": "Attacco",
       "defense": "Difesa",
-      "specialAttack": "Att. Sp.",
-      "specialDefense": "Dif. Sp.",
+      "special-attack": "Att. Sp.",
+      "special-defense": "Dif. Sp.",
       "speed": "Velocità",
       "total": "Totale"
     },
