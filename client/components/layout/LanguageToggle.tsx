@@ -23,6 +23,7 @@ const LANGUAGE_OPTIONS: LanguageOption[] = [
   { value: "zh-Hans", label: "简体中文", flag: "🇨🇳" },
   { value: "es", label: "Español", flag: "🇪🇸" },
   { value: "ko", label: "한국어", flag: "🇰🇷" },
+  { value: "fr", label: "Français", flag: "🇫🇷" },
 ];
 
 export function LanguageToggle({
@@ -48,6 +49,8 @@ export function LanguageToggle({
         return "Idioma";
       case "ko":
         return "언어";
+      case "fr":
+        return "Langue";
       default:
         return "Language";
     }
