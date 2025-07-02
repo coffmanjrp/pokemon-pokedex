@@ -46,7 +46,9 @@ export function GenerationSwitchingOverlay({
               dictionary?.ui.generationSwitching.switchingTo || fallback,
               {
                 region:
-                  generationRange.region[lang] || generationRange.region.en,
+                  generationRange.region[
+                    lang as keyof typeof generationRange.region
+                  ] || generationRange.region.en,
               },
             )}
           </p>

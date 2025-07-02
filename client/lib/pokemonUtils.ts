@@ -22,7 +22,7 @@ import React from "react";
  */
 function getFormTranslation(
   formName: string,
-  language: "en" | "ja" | "zh-Hant" | "zh-Hans" | "es" | "ko" | "fr",
+  language: "en" | "ja" | "zh-Hant" | "zh-Hans" | "es" | "ko" | "fr" | "it",
 ): string | null {
   console.log(
     `[getFormTranslation] Looking for translation of "${formName}" in language "${language}"`,
@@ -171,7 +171,10 @@ export function getPokemonBaseName(pokemon: Pokemon, language: Locale): string {
     (language === "ja" ||
       language === "zh-Hant" ||
       language === "zh-Hans" ||
-      language === "es") &&
+      language === "es" ||
+      language === "ko" ||
+      language === "fr" ||
+      language === "it") &&
     pokemon.species?.names
   ) {
     // Map language codes for PokeAPI
@@ -180,6 +183,9 @@ export function getPokemonBaseName(pokemon: Pokemon, language: Locale): string {
       "zh-Hant": ["zh-Hant"],
       "zh-Hans": ["zh-Hans"],
       es: ["es"],
+      ko: ["ko"],
+      fr: ["fr"],
+      it: ["it"],
     };
 
     const targetCodes = languageCodes[
@@ -248,7 +254,8 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
         language === "zh-Hans" ||
         language === "es" ||
         language === "ko" ||
-        language === "fr") &&
+        language === "fr" ||
+        language === "it") &&
       pokemon.species?.names
     ) {
       // Map language codes for PokeAPI
@@ -259,6 +266,7 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
         es: ["es"],
         ko: ["ko"],
         fr: ["fr"],
+        it: ["it"],
       };
 
       const targetCodes = languageCodes[
@@ -333,7 +341,8 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
       language === "zh-Hans" ||
       language === "es" ||
       language === "ko" ||
-      language === "fr") &&
+      language === "fr" ||
+      language === "it") &&
     pokemon.species?.names
   ) {
     // Map language codes for PokeAPI
@@ -344,6 +353,7 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
       es: ["es"],
       ko: ["ko"],
       fr: ["fr"],
+      it: ["it"],
     };
 
     const targetCodes = languageCodes[
@@ -388,7 +398,8 @@ export function getEvolutionPokemonName(
         language === "zh-Hans" ||
         language === "es" ||
         language === "ko" ||
-        language === "fr") &&
+        language === "fr" ||
+        language === "it") &&
       evolutionDetail.species?.names
     ) {
       // Map language codes for PokeAPI
@@ -399,6 +410,7 @@ export function getEvolutionPokemonName(
         es: ["es"],
         ko: ["ko"],
         fr: ["fr"],
+        it: ["it"],
       };
 
       const targetCodes = languageCodes[
@@ -477,7 +489,8 @@ export function getEvolutionPokemonName(
       language === "zh-Hans" ||
       language === "es" ||
       language === "ko" ||
-      language === "fr") &&
+      language === "fr" ||
+      language === "it") &&
     evolutionDetail.species?.names
   ) {
     // Map language codes for PokeAPI
@@ -488,6 +501,7 @@ export function getEvolutionPokemonName(
       es: ["es"],
       ko: ["ko"],
       fr: ["fr"],
+      it: ["it"],
     };
 
     const targetCodes = languageCodes[
@@ -532,6 +546,7 @@ export function getPokemonDescription(
     es: ["es"],
     ko: ["ko"],
     fr: ["fr"],
+    it: ["it"],
   };
 
   const targetCodes = languageMap[language] || ["en"];
@@ -580,6 +595,7 @@ export function getPokemonGenus(pokemon: Pokemon, language: Locale): string {
     es: ["es"],
     ko: ["ko"],
     fr: ["fr"],
+    it: ["it"],
   };
 
   const targetCodes = languageMap[language] || ["en"];
@@ -670,6 +686,7 @@ export function getAbilityName(
       es: ["es"],
       ko: ["ko"],
       fr: ["fr"],
+      it: ["it"],
     };
     const targetLanguage = languageMap[language] || ["en"];
 
@@ -914,6 +931,8 @@ export function getMoveName(move: Move, language: Locale): string {
       "zh-Hans": ["zh-Hans"],
       es: ["es"],
       ko: ["ko"],
+      fr: ["fr"],
+      it: ["it"],
     };
     const targetLanguage = languageMap[language] || ["en"];
 

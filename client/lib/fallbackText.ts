@@ -17,6 +17,8 @@ export const getFallbackText = (language: Locale): string => {
       return "로딩 중...";
     case "fr":
       return "Chargement...";
+    case "it":
+      return "Caricamento...";
     default:
       return "Loading...";
   }
@@ -41,6 +43,8 @@ export const getFallbackEvolutionText = (language: Locale): string => {
       return "진화 계보 로딩 중...";
     case "fr":
       return "Chargement de la chaîne d'évolution...";
+    case "it":
+      return "Caricamento catena evolutiva...";
     default:
       return "Loading evolution chain...";
   }
@@ -65,6 +69,8 @@ export const getFallbackMetadata = (
           return "포켓몬 도감 | 완전한 다세대 포켓몬 데이터베이스";
         case "fr":
           return "Pokédex | Base de Données Pokémon Multi-Génération Complète";
+        case "it":
+          return "Pokédex | Database Completo Pokémon Multi-Generazione";
         default:
           return "Pokemon Pokedex | Complete Multi-Generation Pokemon Database";
       }
@@ -82,6 +88,8 @@ export const getFallbackMetadata = (
           return "1302마리 이상의 포켓몬을 포함한 종합적인 포켓몬 데이터베이스. 상세한 스탯, 공식 아트워크, 타입 상성, 진화 계보, 기술 세트를 제공합니다. 1세대부터 9세대까지 완전한 커버리지와 고급 검색 및 필터링 기능을 제공합니다.";
         case "fr":
           return "Base de données Pokémon complète avec plus de 1302 Pokémon incluant des statistiques détaillées, des illustrations officielles, l'efficacité des types, les chaînes d'évolution et les ensembles d'attaques. Couverture complète de la Génération 1 à 9 avec des capacités de recherche et de filtrage avancées.";
+        case "it":
+          return "Database completo dei Pokémon con oltre 1302 Pokémon che include statistiche dettagliate, artwork ufficiali, efficacia dei tipi, catene evolutive e set di mosse. Copertura completa dalla Generazione 1 alla 9 con capacità avanzate di ricerca e filtraggio.";
         default:
           return "Comprehensive Pokemon database featuring 1302+ Pokemon with detailed stats, official artwork, type effectiveness, evolution chains, and move sets. Complete coverage from Generation 1 to 9 with advanced search and filtering capabilities.";
       }

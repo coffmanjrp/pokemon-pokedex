@@ -1,4 +1,12 @@
-export type Locale = "en" | "ja" | "zh-Hant" | "zh-Hans" | "es" | "ko" | "fr";
+export type Locale =
+  | "en"
+  | "ja"
+  | "zh-Hant"
+  | "zh-Hans"
+  | "es"
+  | "ko"
+  | "fr"
+  | "it";
 
 // Dictionary type definition
 export interface Dictionary {
@@ -192,6 +200,7 @@ export interface Dictionary {
       spanish: string;
       korean: string;
       french: string;
+      italian: string;
       toggle: string;
     };
     sandbox: {
@@ -253,7 +262,7 @@ export const getLocaleFromPathname = (pathname: string): Locale => {
   const segments = pathname.split("/");
   const locale = segments[1] as Locale;
   return locale &&
-    ["en", "ja", "zh-Hant", "zh-Hans", "es", "ko", "fr"].includes(locale)
+    ["en", "ja", "zh-Hant", "zh-Hans", "es", "ko", "fr", "it"].includes(locale)
     ? locale
     : "en";
 };
@@ -267,7 +276,9 @@ export const generateAlternateLanguageUrl = (
 
   if (
     currentLocale &&
-    ["en", "ja", "zh-Hant", "zh-Hans", "es", "ko", "fr"].includes(currentLocale)
+    ["en", "ja", "zh-Hant", "zh-Hans", "es", "ko", "fr", "it"].includes(
+      currentLocale,
+    )
   ) {
     segments[1] = newLocale;
     return segments.join("/");

@@ -8,6 +8,7 @@ export const VERSION_TRANSLATIONS: Record<
     es?: string;
     ko?: string;
     fr?: string;
+    it?: string;
   }
 > = {
   red: { en: "Red", ja: "赤", "zh-Hant": "紅", "zh-Hans": "红", fr: "Rouge" },

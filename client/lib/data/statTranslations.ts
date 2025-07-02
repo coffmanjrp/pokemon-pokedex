@@ -8,6 +8,7 @@ export const STAT_TRANSLATIONS: Record<
     es: string;
     ko: string;
     fr: string;
+    it: string;
   }
 > = {
   hp: {
@@ -18,6 +19,7 @@ export const STAT_TRANSLATIONS: Record<
     es: "PS",
     ko: "HP",
     fr: "PV",
+    it: "PS",
   },
   attack: {
     en: "Attack",
@@ -27,6 +29,7 @@ export const STAT_TRANSLATIONS: Record<
     es: "Ataque",
     ko: "공격",
     fr: "Attaque",
+    it: "Attacco",
   },
   defense: {
     en: "Defense",
@@ -36,6 +39,7 @@ export const STAT_TRANSLATIONS: Record<
     es: "Defensa",
     ko: "방어",
     fr: "Défense",
+    it: "Difesa",
   },
   "special-attack": {
     en: "Sp. Attack",
@@ -45,6 +49,7 @@ export const STAT_TRANSLATIONS: Record<
     es: "At. Esp.",
     ko: "특수공격",
     fr: "Att. Spé",
+    it: "Att. Sp.",
   },
   "special-defense": {
     en: "Sp. Defense",
@@ -54,6 +59,7 @@ export const STAT_TRANSLATIONS: Record<
     es: "Def. Esp.",
     ko: "특수방어",
     fr: "Déf. Spé",
+    it: "Dif. Sp.",
   },
   speed: {
     en: "Speed",
@@ -63,5 +69,6 @@ export const STAT_TRANSLATIONS: Record<
     es: "Velocidad",
     ko: "스피드",
     fr: "Vitesse",
+    it: "Velocità",
   },
 };

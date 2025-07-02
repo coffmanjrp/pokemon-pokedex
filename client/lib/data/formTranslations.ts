@@ -6,6 +6,7 @@ export interface FormTranslation {
   es?: string;
   fr?: string;
   ko?: string;
+  it?: string;
 }
 
 export type FormCategory = "regional" | "mega" | "gigantamax" | "special";
