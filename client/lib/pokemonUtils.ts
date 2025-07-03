@@ -2,7 +2,6 @@ import { Pokemon, EvolutionDetail, Move, GenderInfo } from "@/types/pokemon";
 import { Locale, Dictionary } from "@/lib/dictionaries";
 import { getFormDisplayName, isMegaEvolution } from "@/lib/formUtils";
 // Form translations moved to dictionary system
-import { ABILITY_TRANSLATIONS } from "@/lib/data/abilityTranslations";
 import { TYPE_EFFECTIVENESS } from "@/lib/data/typeEffectiveness";
 import { MOVE_TRANSLATIONS } from "@/lib/data/moveTranslations";
 import { getTypeColor } from "@/lib/utils";
@@ -581,13 +580,8 @@ export function formatMoveName(moveName: string): string {
 }
 
 /**
- * Ability name translations
- * Common Pokemon abilities in Japanese
- */
-
-/**
  * Get ability name in the specified language
- * Uses 3-tier fallback: GraphQL data (future), manual translations, formatted English name
+ * Uses 2-tier fallback: GraphQL data, formatted English name
  */
 export function getAbilityName(
   ability:
@@ -625,24 +619,7 @@ export function getAbilityName(
     }
   }
 
-  // Tier 2: Manual translation table for abilities not covered by API
-  const abilityName = ability.name.toLowerCase();
-  const translation = ABILITY_TRANSLATIONS[abilityName];
-
-  if (translation) {
-    // If Chinese/Korean language requested but translation doesn't exist, fall back to English
-    if (
-      (language === "zh-Hant" || language === "zh-Hans" || language === "ko") &&
-      !translation[language as "en" | "ja"]
-    ) {
-      return translation["en"] || abilityName;
-    }
-    return (
-      translation[language as "en" | "ja"] || translation["en"] || abilityName
-    );
-  }
-
-  // Tier 3: Final fallback to formatted English name
+  // Tier 2: Final fallback to formatted English name
   return ability.name
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
