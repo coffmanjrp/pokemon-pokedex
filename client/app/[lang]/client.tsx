@@ -101,7 +101,8 @@ function PokemonListContent({
     if (currentLanguage !== lang) {
       dispatch(setLanguage(lang));
     }
-    if (!currentDictionary) {
+    // Update dictionary when language changes or when dictionary is not set
+    if (!currentDictionary || currentLanguage !== lang) {
       dispatch(setDictionary(dictionary));
     }
   }, [lang, currentLanguage, dictionary, currentDictionary, dispatch]);
