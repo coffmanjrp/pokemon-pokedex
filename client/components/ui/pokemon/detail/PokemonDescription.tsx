@@ -97,7 +97,9 @@ export function PokemonDescription({
               </p>
               <footer className="flex items-center justify-between text-sm">
                 <span className="text-blue-600 font-medium">
-                  {getVersionName(entry.version.name, language)}
+                  {dictionary
+                    ? getVersionName(entry.version.name, dictionary)
+                    : entry.version.name}
                 </span>
                 <span className="text-gray-400 text-xs">
                   {text.version} {index + 1}

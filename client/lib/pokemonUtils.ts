@@ -1,9 +1,8 @@
 import { Pokemon, EvolutionDetail, Move, GenderInfo } from "@/types/pokemon";
-import { Locale } from "@/lib/dictionaries";
+import { Locale, Dictionary } from "@/lib/dictionaries";
 import { getFormDisplayName, isMegaEvolution } from "@/lib/formUtils";
 // Form translations moved to dictionary system
 import { ABILITY_TRANSLATIONS } from "@/lib/data/abilityTranslations";
-import { VERSION_TRANSLATIONS } from "@/lib/data/versionTranslations";
 import { TYPE_EFFECTIVENESS } from "@/lib/data/typeEffectiveness";
 import { MOVE_TRANSLATIONS } from "@/lib/data/moveTranslations";
 import { MOVE_LEARN_METHOD_TRANSLATIONS } from "@/lib/data/moveLearnMethodTranslations";
@@ -654,21 +653,18 @@ export function getAbilityName(
  */
 
 /**
- * Get translated version name
+ * Get translated version name using dictionary system
  */
-export function getVersionName(versionName: string, language: Locale): string {
-  const translation = VERSION_TRANSLATIONS[versionName.toLowerCase()];
-  if (translation) {
-    // If Chinese/Korean language requested but translation doesn't exist, fall back to English
-    if (
-      (language === "zh-Hant" || language === "zh-Hans" || language === "ko") &&
-      !translation[language as "en" | "ja"]
-    ) {
-      return translation["en"] || versionName;
-    }
-    return (
-      translation[language as "en" | "ja"] || translation["en"] || versionName
-    );
+export function getVersionName(
+  versionName: string,
+  dictionary: Dictionary,
+): string {
+  const versionKey = versionName
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, "") as keyof Dictionary["ui"]["gameVersions"];
+
+  if (dictionary.ui.gameVersions[versionKey]) {
+    return dictionary.ui.gameVersions[versionKey];
   }
 
   // Fallback: capitalize the English name
