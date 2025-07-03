@@ -1,7 +1,7 @@
 "use client";
 
 import { Pokemon } from "@/types/pokemon";
-import { Locale } from "@/lib/dictionaries";
+import { Locale, Dictionary } from "@/lib/dictionaries";
 import { PokemonBasicInfo } from "./PokemonBasicInfo";
 import { PokemonSpritesGallery } from "../sprites/PokemonSpritesGallery";
 import { PokemonEvolutionChain } from "../evolution/PokemonEvolutionChain";
@@ -9,17 +9,23 @@ import { PokemonEvolutionChain } from "../evolution/PokemonEvolutionChain";
 interface PokemonTopNavigationTabsProps {
   pokemon: Pokemon;
   lang: Locale;
+  dictionary: Dictionary;
 }
 
 export function PokemonTopNavigationTabs({
   pokemon,
   lang,
+  dictionary,
 }: PokemonTopNavigationTabsProps) {
   const renderTabContent = () => {
     return (
       <div className="space-y-8">
         {/* Pokemon Basic Info - Hero Section */}
-        <PokemonBasicInfo pokemon={pokemon} language={lang as Locale} />
+        <PokemonBasicInfo
+          pokemon={pokemon}
+          language={lang as Locale}
+          dictionary={dictionary}
+        />
 
         {/* Evolution Chain Section - Between Hero and Sprites */}
         {pokemon.species?.evolutionChain?.chain && (
@@ -28,6 +34,7 @@ export function PokemonTopNavigationTabs({
               <PokemonEvolutionChain
                 evolutionChain={pokemon.species.evolutionChain.chain}
                 lang={lang}
+                dictionary={dictionary}
               />
             </div>
           </div>

@@ -20,7 +20,7 @@ interface UIState {
 // Server-side safe initial state - always use default for SSR
 const initialState: UIState = {
   language: "en", // Always start with 'en' for SSR compatibility
-  dictionary: null, // Will be set after hydration
+  dictionary: null, // Will be set after hydration from server components
   isMenuOpen: false,
   isLoading: false,
   notifications: [],

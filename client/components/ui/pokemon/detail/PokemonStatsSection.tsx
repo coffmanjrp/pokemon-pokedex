@@ -3,27 +3,23 @@
 import { Pokemon } from "@/types/pokemon";
 import { PokemonStatBar } from "./PokemonStatBar";
 import { getPokemonDisplayId } from "@/lib/pokemonUtils";
-import { useAppSelector } from "@/store/hooks";
-import { getFallbackText } from "@/lib/fallbackText";
-import { Locale } from "@/lib/dictionaries";
+import { Dictionary } from "@/lib/dictionaries";
 
 interface PokemonStatsSectionProps {
   pokemon: Pokemon;
-  language: Locale;
+  dictionary: Dictionary;
 }
 
 export function PokemonStatsSection({
   pokemon,
-  language,
+  dictionary,
 }: PokemonStatsSectionProps) {
   const displayId = getPokemonDisplayId(pokemon);
-  const { dictionary } = useAppSelector((state) => state.ui);
 
-  const fallback = getFallbackText(language);
-
+  // Use dictionary directly from props to ensure server/client consistency
   const text = {
-    stats: dictionary?.ui.pokemonDetails.stats || fallback,
-    total: dictionary?.ui.stats.total || fallback,
+    stats: dictionary.ui.pokemonDetails.stats,
+    total: dictionary.ui.stats.total,
   };
 
   return (
@@ -49,13 +45,13 @@ export function PokemonStatsSection({
               key={index}
               statName={pokemonStat.stat.name}
               baseStat={pokemonStat.baseStat}
-              language={language}
+              dictionary={dictionary}
             />
           ))}
         </div>
       ) : (
         <div className="text-gray-500 text-center py-4 text-sm">
-          {dictionary?.ui.pokemonDetails.noStatsAvailable || fallback}
+          {dictionary.ui.pokemonDetails.noStatsAvailable}
         </div>
       )}
 

@@ -56,9 +56,12 @@ export function DataEmptyState({
   size = "md",
 }: DataEmptyStateProps) {
   const { dictionary } = useAppSelector((state) => state.ui);
-  const fallback = getFallbackText(language);
 
-  const message = customMessage || dictionary?.ui.emptyStates[type] || fallback;
+  // Use consistent fallback behavior to prevent hydration mismatch
+  const message =
+    customMessage ||
+    dictionary?.ui.emptyStates[type] ||
+    getFallbackText(language);
   const displayIcon = icon || defaultIcons[type];
   const classes = sizeClasses[size];
 

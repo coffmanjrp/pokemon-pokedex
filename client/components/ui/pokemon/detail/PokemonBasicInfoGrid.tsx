@@ -2,33 +2,30 @@
 
 import { Pokemon } from "@/types/pokemon";
 import { getAbilityName, getGenderDisplayElement } from "@/lib/pokemonUtils";
-import { useAppSelector } from "@/store/hooks";
-import { getFallbackText } from "@/lib/fallbackText";
-import { Locale } from "@/lib/dictionaries";
+import { Locale, Dictionary } from "@/lib/dictionaries";
 
 interface PokemonBasicInfoGridProps {
   pokemon: Pokemon;
   genus: string | null;
   language: Locale;
+  dictionary: Dictionary;
 }
 
 export function PokemonBasicInfoGrid({
   pokemon,
   genus,
   language,
+  dictionary,
 }: PokemonBasicInfoGridProps) {
-  const { dictionary } = useAppSelector((state) => state.ui);
-
-  const fallback = getFallbackText(language);
-
+  // Use dictionary directly from props to ensure server/client consistency
   const text = {
-    height: dictionary?.ui.pokemonDetails.height || fallback,
-    weight: dictionary?.ui.pokemonDetails.weight || fallback,
-    abilities: dictionary?.ui.pokemonDetails.abilities || fallback,
-    hidden: dictionary?.ui.pokemonDetails.hidden || fallback,
-    category: dictionary?.ui.pokemonDetails.category || fallback,
-    gender: dictionary?.ui.pokemonDetails.gender || fallback,
-    defaultSpecies: dictionary?.ui.pokemonDetails.defaultSpecies || fallback,
+    height: dictionary.ui.pokemonDetails.height,
+    weight: dictionary.ui.pokemonDetails.weight,
+    abilities: dictionary.ui.pokemonDetails.abilities,
+    hidden: dictionary.ui.pokemonDetails.hidden,
+    category: dictionary.ui.pokemonDetails.category,
+    gender: dictionary.ui.pokemonDetails.gender,
+    defaultSpecies: dictionary.ui.pokemonDetails.defaultSpecies,
   };
 
   return (

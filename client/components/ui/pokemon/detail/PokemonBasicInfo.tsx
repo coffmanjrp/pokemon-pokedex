@@ -19,14 +19,19 @@ import { PokemonStorySection } from "./PokemonStorySection";
 import { PokemonBasicInfoGrid } from "./PokemonBasicInfoGrid";
 import { PokemonWeaknessSection } from "./PokemonWeaknessSection";
 import { PokemonStatsSection } from "./PokemonStatsSection";
-import { Locale } from "@/lib/dictionaries";
+import { Locale, Dictionary } from "@/lib/dictionaries";
 
 interface PokemonBasicInfoProps {
   pokemon: Pokemon;
   language: Locale;
+  dictionary: Dictionary;
 }
 
-function PokemonBasicInfoContent({ pokemon, language }: PokemonBasicInfoProps) {
+function PokemonBasicInfoContent({
+  pokemon,
+  language,
+  dictionary,
+}: PokemonBasicInfoProps) {
   const [isShiny, setIsShiny] = useState(false);
   const searchParams = useSearchParams();
   const fromGeneration = searchParams.get("from");
@@ -58,6 +63,7 @@ function PokemonBasicInfoContent({ pokemon, language }: PokemonBasicInfoProps) {
             pokemon={pokemon}
             displayName={displayName}
             language={language}
+            dictionary={dictionary}
           />
 
           {/* Pokemon Image Container */}
@@ -71,13 +77,16 @@ function PokemonBasicInfoContent({ pokemon, language }: PokemonBasicInfoProps) {
         {/* Right Side - Information Panel (2/5 columns) */}
         <div className="lg:col-span-2 bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 order-2 lg:order-2">
           {/* Story Section */}
-          <PokemonStorySection description={description} language={language} />
+          <PokemonStorySection
+            description={description}
+            dictionary={dictionary}
+          />
 
           {/* Versions Section - Normal/Shiny Toggle */}
           <PokemonVersionToggle
             isShiny={isShiny}
             onToggle={setIsShiny}
-            language={language}
+            dictionary={dictionary}
           />
 
           {/* Basic Info Grid */}
@@ -85,23 +94,35 @@ function PokemonBasicInfoContent({ pokemon, language }: PokemonBasicInfoProps) {
             pokemon={pokemon}
             genus={genus}
             language={language}
+            dictionary={dictionary}
           />
 
           {/* Weaknesses Section */}
-          <PokemonWeaknessSection weaknesses={weaknesses} language={language} />
+          <PokemonWeaknessSection
+            weaknesses={weaknesses}
+            dictionary={dictionary}
+          />
 
           {/* Stats Section */}
-          <PokemonStatsSection pokemon={pokemon} language={language} />
+          <PokemonStatsSection pokemon={pokemon} dictionary={dictionary} />
         </div>
       </div>
     </div>
   );
 }
 
-export function PokemonBasicInfo({ pokemon, language }: PokemonBasicInfoProps) {
+export function PokemonBasicInfo({
+  pokemon,
+  language,
+  dictionary,
+}: PokemonBasicInfoProps) {
   return (
     <Suspense fallback={<div>Loading Pokemon details...</div>}>
-      <PokemonBasicInfoContent pokemon={pokemon} language={language} />
+      <PokemonBasicInfoContent
+        pokemon={pokemon}
+        language={language}
+        dictionary={dictionary}
+      />
     </Suspense>
   );
 }

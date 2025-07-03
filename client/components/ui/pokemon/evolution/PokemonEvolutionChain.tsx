@@ -3,9 +3,8 @@
 import React, { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { EvolutionDetail, FormVariant } from "@/types/pokemon";
-import { Locale } from "@/lib/dictionaries";
-import { useAppSelector } from "@/store/hooks";
-import { getFallbackText, getFallbackEvolutionText } from "@/lib/fallbackText";
+import { Locale, Dictionary } from "@/lib/dictionaries";
+import { getFallbackText } from "@/lib/fallbackText";
 import { renderEvolutionCondition } from "@/lib/evolution/evolutionConditions";
 import { useEvolutionAnimation } from "@/hooks/useEvolutionAnimation";
 import { EvolutionCard } from "./EvolutionCard";
@@ -15,16 +14,16 @@ import { EvolutionArrow } from "./EvolutionArrow";
 interface PokemonEvolutionChainProps {
   evolutionChain: EvolutionDetail;
   lang: Locale;
+  dictionary: Dictionary;
 }
 
 function PokemonEvolutionChainContent({
   evolutionChain,
   lang,
+  dictionary,
 }: PokemonEvolutionChainProps) {
   const searchParams = useSearchParams();
   const fromGeneration = searchParams.get("from");
-  const { dictionary } = useAppSelector((state) => state.ui);
-  const fallback = getFallbackText(lang);
 
   const { containerRef, triggerEvolutionAnimation, triggerFormAnimation } =
     useEvolutionAnimation({ lang, fromGeneration });
@@ -48,7 +47,7 @@ function PokemonEvolutionChainContent({
             lang={lang}
             onClick={triggerEvolutionAnimation}
             dictionary={dictionary}
-            fallback={fallback}
+            fallback={getFallbackText(lang)}
           />
 
           {/* Form Variations - Always Visible */}
@@ -57,7 +56,7 @@ function PokemonEvolutionChainContent({
             currentEvolution.forms.length > 0 && (
               <div className="mt-4 space-y-2">
                 <div className="text-xs text-gray-600 font-medium text-center">
-                  {dictionary?.ui.pokemonDetails.forms || fallback}
+                  {dictionary.ui.pokemonDetails.forms}
                 </div>
                 <div className="flex flex-wrap gap-2 justify-center max-w-xs">
                   {currentEvolution.forms.map((form: FormVariant) => (
@@ -68,7 +67,7 @@ function PokemonEvolutionChainContent({
                       lang={lang}
                       onClick={triggerFormAnimation}
                       dictionary={dictionary}
-                      fallback={fallback}
+                      fallback={getFallbackText(lang)}
                     />
                   ))}
                 </div>
@@ -95,9 +94,9 @@ function PokemonEvolutionChainContent({
                   nextEvolution.evolutionDetails[0],
                   lang,
                   dictionary,
-                  fallback,
+                  getFallbackText(lang),
                 )
-              : dictionary?.ui.error.unknown || fallback;
+              : dictionary.ui.error.unknown;
 
           // Add arrow
           chain.push(
@@ -125,7 +124,7 @@ function PokemonEvolutionChainContent({
   return (
     <div ref={containerRef}>
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        {dictionary?.ui.pokemonDetails.evolutionChain || fallback}
+        {dictionary.ui.pokemonDetails.evolutionChain}
       </h2>
       {/* Mobile: Vertical layout, Desktop: Horizontal layout */}
       <div className="flex justify-center">
@@ -140,16 +139,20 @@ function PokemonEvolutionChainContent({
 export function PokemonEvolutionChain({
   evolutionChain,
   lang,
+  dictionary,
 }: PokemonEvolutionChainProps) {
   if (!evolutionChain) {
     return null;
   }
 
   return (
-    <Suspense fallback={<div>{getFallbackEvolutionText(lang)}</div>}>
+    <Suspense
+      fallback={<div>{dictionary.ui.pokemonDetails.evolutionChain}</div>}
+    >
       <PokemonEvolutionChainContent
         evolutionChain={evolutionChain}
         lang={lang}
+        dictionary={dictionary}
       />
     </Suspense>
   );

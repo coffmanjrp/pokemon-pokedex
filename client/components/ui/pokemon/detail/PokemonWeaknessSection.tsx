@@ -1,27 +1,21 @@
 "use client";
 
 import { getTypeColorFromName, getTypeName } from "@/lib/pokemonUtils";
-import { useAppSelector } from "@/store/hooks";
-import { getFallbackText } from "@/lib/fallbackText";
-import { Locale } from "@/lib/dictionaries";
+import { Dictionary } from "@/lib/dictionaries";
 
 interface PokemonWeaknessSectionProps {
   weaknesses: string[];
-  language: Locale;
+  dictionary: Dictionary;
 }
 
 export function PokemonWeaknessSection({
   weaknesses,
-  language,
+  dictionary,
 }: PokemonWeaknessSectionProps) {
-  const { dictionary } = useAppSelector((state) => state.ui);
-
-  const fallback = getFallbackText(language);
-
+  // Use dictionary directly from props to ensure server/client consistency
   const text = {
-    weaknesses: dictionary?.ui.pokemonDetails.weaknesses || fallback,
-    noMajorWeaknesses:
-      dictionary?.ui.pokemonDetails.noMajorWeaknesses || fallback,
+    weaknesses: dictionary.ui.pokemonDetails.weaknesses,
+    noMajorWeaknesses: dictionary.ui.pokemonDetails.noMajorWeaknesses,
   };
   return (
     <div className="mb-6">
@@ -38,9 +32,7 @@ export function PokemonWeaknessSection({
                 backgroundColor: getTypeColorFromName(weaknessType),
               }}
             >
-              {dictionary
-                ? getTypeName(weaknessType, dictionary)
-                : weaknessType}
+              {getTypeName(weaknessType, dictionary)}
             </span>
           ))}
         </div>

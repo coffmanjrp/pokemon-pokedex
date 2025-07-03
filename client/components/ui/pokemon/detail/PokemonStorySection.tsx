@@ -1,22 +1,18 @@
 "use client";
 
-import { useAppSelector } from "@/store/hooks";
-import { getFallbackText } from "@/lib/fallbackText";
-import { Locale } from "@/lib/dictionaries";
+import { Dictionary } from "@/lib/dictionaries";
 
 interface PokemonStorySectionProps {
   description: string | null;
-  language: Locale;
+  dictionary: Dictionary;
 }
 
 export function PokemonStorySection({
   description,
-  language,
+  dictionary,
 }: PokemonStorySectionProps) {
-  const { dictionary } = useAppSelector((state) => state.ui);
-
-  const fallback = getFallbackText(language);
-  const storyText = dictionary?.ui.pokemonDetails.story || fallback;
+  // Use dictionary directly from props to ensure server/client consistency
+  const storyText = dictionary.ui.pokemonDetails.story;
   if (!description) {
     return null;
   }
