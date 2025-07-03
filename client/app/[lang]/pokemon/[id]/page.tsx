@@ -24,7 +24,17 @@ interface PokemonDetailPageProps {
 // Generate static params for SSG with generational build support
 export async function generateStaticParams() {
   const paths = [];
-  const languages = ["en", "ja", "zh-Hant", "zh-Hans", "es", "ko", "fr", "it"];
+  const languages = [
+    "en",
+    "ja",
+    "zh-Hant",
+    "zh-Hans",
+    "es",
+    "ko",
+    "fr",
+    "it",
+    "de",
+  ];
 
   // Check environment variables for generational build control
   const enableGenerationalBuild =
@@ -282,6 +292,8 @@ export async function generateMetadata({
           es: `https://pokemon-pokedex-client.vercel.app/es/pokemon/${id}`,
           ko: `https://pokemon-pokedex-client.vercel.app/ko/pokemon/${id}`,
           fr: `https://pokemon-pokedex-client.vercel.app/fr/pokemon/${id}`,
+          it: `https://pokemon-pokedex-client.vercel.app/it/pokemon/${id}`,
+          de: `https://pokemon-pokedex-client.vercel.app/de/pokemon/${id}`,
         },
       },
     };

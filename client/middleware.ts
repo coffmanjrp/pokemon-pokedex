@@ -2,7 +2,17 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getLanguageFromCookie } from "@/lib/languageStorage";
 
-const locales = ["en", "ja", "zh-Hant", "zh-Hans", "es", "ko", "fr", "it"];
+const locales = [
+  "en",
+  "ja",
+  "zh-Hant",
+  "zh-Hans",
+  "es",
+  "ko",
+  "fr",
+  "it",
+  "de",
+];
 const defaultLocale = "en";
 
 // Check User-Agent for language indicators
@@ -99,6 +109,26 @@ function getUserAgentLanguage(request: NextRequest): string | null {
   for (const indicator of italianIndicators) {
     if (userAgentLower.includes(indicator.toLowerCase())) {
       return "it";
+    }
+  }
+
+  // Check for German language indicators in User-Agent
+  const germanIndicators = [
+    "de",
+    "de-de",
+    "de-at",
+    "de-ch",
+    "german",
+    "deutsch",
+    "deutschland",
+    "germany",
+    "österreich",
+    "schweiz",
+  ];
+
+  for (const indicator of germanIndicators) {
+    if (userAgentLower.includes(indicator.toLowerCase())) {
+      return "de";
     }
   }
 

@@ -13,7 +13,16 @@ import React from "react";
  */
 function getFormTranslation(
   formName: string,
-  language: "en" | "ja" | "zh-Hant" | "zh-Hans" | "es" | "ko" | "fr" | "it",
+  language:
+    | "en"
+    | "ja"
+    | "zh-Hant"
+    | "zh-Hans"
+    | "es"
+    | "ko"
+    | "fr"
+    | "it"
+    | "de",
 ): string | null {
   console.log(
     `[getFormTranslation] Looking for translation of "${formName}" in language "${language}"`,
@@ -103,7 +112,8 @@ export function getPokemonBaseName(pokemon: Pokemon, language: Locale): string {
       language === "es" ||
       language === "ko" ||
       language === "fr" ||
-      language === "it") &&
+      language === "it" ||
+      language === "de") &&
     pokemon.species?.names
   ) {
     // Map language codes for PokeAPI
@@ -115,6 +125,7 @@ export function getPokemonBaseName(pokemon: Pokemon, language: Locale): string {
       ko: ["ko"],
       fr: ["fr"],
       it: ["it"],
+      de: ["de"],
     };
 
     const targetCodes = languageCodes[
@@ -184,7 +195,8 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
         language === "es" ||
         language === "ko" ||
         language === "fr" ||
-        language === "it") &&
+        language === "it" ||
+        language === "de") &&
       pokemon.species?.names
     ) {
       // Map language codes for PokeAPI
@@ -196,6 +208,7 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
         ko: ["ko"],
         fr: ["fr"],
         it: ["it"],
+        de: ["de"],
       };
 
       const targetCodes = languageCodes[
@@ -271,7 +284,8 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
       language === "es" ||
       language === "ko" ||
       language === "fr" ||
-      language === "it") &&
+      language === "it" ||
+      language === "de") &&
     pokemon.species?.names
   ) {
     // Map language codes for PokeAPI
@@ -283,6 +297,7 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
       ko: ["ko"],
       fr: ["fr"],
       it: ["it"],
+      de: ["de"],
     };
 
     const targetCodes = languageCodes[
@@ -328,7 +343,8 @@ export function getEvolutionPokemonName(
         language === "es" ||
         language === "ko" ||
         language === "fr" ||
-        language === "it") &&
+        language === "it" ||
+        language === "de") &&
       evolutionDetail.species?.names
     ) {
       // Map language codes for PokeAPI
@@ -340,6 +356,7 @@ export function getEvolutionPokemonName(
         ko: ["ko"],
         fr: ["fr"],
         it: ["it"],
+        de: ["de"],
       };
 
       const targetCodes = languageCodes[
@@ -419,7 +436,8 @@ export function getEvolutionPokemonName(
       language === "es" ||
       language === "ko" ||
       language === "fr" ||
-      language === "it") &&
+      language === "it" ||
+      language === "de") &&
     evolutionDetail.species?.names
   ) {
     // Map language codes for PokeAPI
@@ -431,6 +449,7 @@ export function getEvolutionPokemonName(
       ko: ["ko"],
       fr: ["fr"],
       it: ["it"],
+      de: ["de"],
     };
 
     const targetCodes = languageCodes[
@@ -476,6 +495,7 @@ export function getPokemonDescription(
     ko: ["ko"],
     fr: ["fr"],
     it: ["it"],
+    de: ["de"],
   };
 
   const targetCodes = languageMap[language] || ["en"];
@@ -525,6 +545,7 @@ export function getPokemonGenus(pokemon: Pokemon, language: Locale): string {
     ko: ["ko"],
     fr: ["fr"],
     it: ["it"],
+    de: ["de"],
   };
 
   const targetCodes = languageMap[language] || ["en"];
@@ -605,6 +626,7 @@ export function getAbilityName(
       ko: ["ko"],
       fr: ["fr"],
       it: ["it"],
+      de: ["de"],
     };
     const targetLanguage = languageMap[language] || ["en"];
 
@@ -831,6 +853,7 @@ export function getMoveName(move: Move, language: Locale): string {
       ko: ["ko"],
       fr: ["fr"],
       it: ["it"],
+      de: ["de"],
     };
     const targetLanguage = languageMap[language] || ["en"];
 
@@ -917,6 +940,8 @@ export function getGenderDisplayString(
         return "無性別";
       } else if (language === "ko") {
         return "성별불명";
+      } else if (language === "de") {
+        return "Geschlechtslos";
       } else {
         return "Genderless";
       }
@@ -962,6 +987,8 @@ export function getGenderDisplayElement(
         genderlessText = "Sin género";
       } else if (language === "ko") {
         genderlessText = "성별불명";
+      } else if (language === "de") {
+        genderlessText = "Geschlechtslos";
       } else {
         genderlessText = "Genderless";
       }
