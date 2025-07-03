@@ -344,6 +344,17 @@ export interface Dictionary {
       steel: string;
       fairy: string;
     };
+    moveLearnMethods: {
+      "level-up": string;
+      machine: string;
+      egg: string;
+      tutor: string;
+      "light-ball-egg": string;
+      "colosseum-purification": string;
+      "xd-shadow": string;
+      "xd-purification": string;
+      "form-change": string;
+    };
   };
   meta: {
     title: string;

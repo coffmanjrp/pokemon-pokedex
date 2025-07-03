@@ -340,6 +340,17 @@
       "dark": "恶",
       "steel": "钢",
       "fairy": "妖精"
+    },
+    "moveLearnMethods": {
+      "level-up": "等级提升",
+      "machine": "招式学习器",
+      "egg": "蛋招式",
+      "tutor": "招式教学",
+      "light-ball-egg": "蛋招式 (电气球)",
+      "colosseum-purification": "净化",
+      "xd-shadow": "暗影",
+      "xd-purification": "净化",
+      "form-change": "形态变化"
     }
   },
   "meta": {

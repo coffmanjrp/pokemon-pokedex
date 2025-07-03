@@ -5,7 +5,6 @@ import { getFormDisplayName, isMegaEvolution } from "@/lib/formUtils";
 import { ABILITY_TRANSLATIONS } from "@/lib/data/abilityTranslations";
 import { TYPE_EFFECTIVENESS } from "@/lib/data/typeEffectiveness";
 import { MOVE_TRANSLATIONS } from "@/lib/data/moveTranslations";
-import { MOVE_LEARN_METHOD_TRANSLATIONS } from "@/lib/data/moveLearnMethodTranslations";
 import { getTypeColor } from "@/lib/utils";
 import React from "react";
 
@@ -554,26 +553,21 @@ export function getTypeName(typeName: string, dictionary: Dictionary): string {
 }
 
 /**
- * Get translated move learn method
+ * Get translated move learn method using dictionary system
  */
 export function getMoveLearnMethodName(
   methodName: string,
-  language: Locale,
+  dictionary: Dictionary,
 ): string {
-  const translation = MOVE_LEARN_METHOD_TRANSLATIONS[methodName.toLowerCase()];
-  if (translation) {
-    // If Chinese/Korean language requested but translation doesn't exist, fall back to English
-    if (
-      (language === "zh-Hant" || language === "zh-Hans" || language === "ko") &&
-      !translation[language as "en" | "ja"]
-    ) {
-      return translation["en"] || methodName;
-    }
-    return (
-      translation[language as "en" | "ja"] || translation["en"] || methodName
-    );
+  const methodKey =
+    methodName.toLowerCase() as keyof Dictionary["ui"]["moveLearnMethods"];
+
+  if (dictionary.ui.moveLearnMethods[methodKey]) {
+    return dictionary.ui.moveLearnMethods[methodKey];
   }
-  return methodName;
+
+  // Fallback: capitalize the English name
+  return methodName.charAt(0).toUpperCase() + methodName.slice(1);
 }
 
 /**

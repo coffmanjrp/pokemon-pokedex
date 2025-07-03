@@ -340,6 +340,17 @@
       "dark": "Dark",
       "steel": "Steel",
       "fairy": "Fairy"
+    },
+    "moveLearnMethods": {
+      "level-up": "Level Up",
+      "machine": "TM/TR",
+      "egg": "Egg Moves",
+      "tutor": "Move Tutor",
+      "light-ball-egg": "Egg (Light Ball)",
+      "colosseum-purification": "Purification",
+      "xd-shadow": "Shadow",
+      "xd-purification": "Purification",
+      "form-change": "Form Change"
     }
   },
   "meta": {

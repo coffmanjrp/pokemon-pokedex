@@ -340,6 +340,17 @@
       "dark": "Buio",
       "steel": "Acciaio",
       "fairy": "Folletto"
+    },
+    "moveLearnMethods": {
+      "level-up": "Salita di Livello",
+      "machine": "MT/MN",
+      "egg": "Mosse Uovo",
+      "tutor": "Insegnamosse",
+      "light-ball-egg": "Uovo (Elettrosfere)",
+      "colosseum-purification": "Purificazione",
+      "xd-shadow": "Ombra",
+      "xd-purification": "Purificazione",
+      "form-change": "Cambio Forma"
     }
   },
   "meta": {

@@ -349,6 +349,17 @@
       "dark": "악",
       "steel": "강철",
       "fairy": "페어리"
+    },
+    "moveLearnMethods": {
+      "level-up": "레벨업",
+      "machine": "기술머신",
+      "egg": "알기술",
+      "tutor": "기술전수",
+      "light-ball-egg": "알기술 (전기구슬)",
+      "colosseum-purification": "정화",
+      "xd-shadow": "다크",
+      "xd-purification": "정화",
+      "form-change": "폼 체인지"
     }
   },
   "evolution": {

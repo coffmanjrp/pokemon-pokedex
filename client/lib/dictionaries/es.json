@@ -340,6 +340,17 @@
       "dark": "Siniestro",
       "steel": "Acero",
       "fairy": "Hada"
+    },
+    "moveLearnMethods": {
+      "level-up": "Subida de Nivel",
+      "machine": "MT/DT",
+      "egg": "Movimientos Huevo",
+      "tutor": "Tutor de Movimientos",
+      "light-ball-egg": "Huevo (Bolabola)",
+      "colosseum-purification": "Purificación",
+      "xd-shadow": "Sombra",
+      "xd-purification": "Purificación",
+      "form-change": "Cambio de Forma"
     }
   },
   "meta": {

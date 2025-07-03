@@ -340,6 +340,17 @@
       "dark": "Ténèbres",
       "steel": "Acier",
       "fairy": "Fée"
+    },
+    "moveLearnMethods": {
+      "level-up": "Montée de Niveau",
+      "machine": "CT/CS",
+      "egg": "Attaques Œuf",
+      "tutor": "Maître des Capacités",
+      "light-ball-egg": "Œuf (Balle Lumière)",
+      "colosseum-purification": "Purification",
+      "xd-shadow": "Obscur",
+      "xd-purification": "Purification",
+      "form-change": "Changement de Forme"
     }
   },
   "meta": {

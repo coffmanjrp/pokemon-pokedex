@@ -340,6 +340,17 @@
       "dark": "あく",
       "steel": "はがね",
       "fairy": "フェアリー"
+    },
+    "moveLearnMethods": {
+      "level-up": "レベルアップ",
+      "machine": "わざマシン",
+      "egg": "タマゴわざ",
+      "tutor": "おしえわざ",
+      "light-ball-egg": "タマゴわざ (でんきだま)",
+      "colosseum-purification": "スナッチング",
+      "xd-shadow": "ダーク",
+      "xd-purification": "リライブ",
+      "form-change": "フォルムチェンジ"
     }
   },
   "meta": {

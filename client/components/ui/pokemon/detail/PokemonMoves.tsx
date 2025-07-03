@@ -93,7 +93,7 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
 
   const tabsData = availableMethods.map((method) => ({
     id: method,
-    label: getMoveLearnMethodName(method, language),
+    label: dictionary ? getMoveLearnMethodName(method, dictionary) : method,
     count: movesByMethod[method]?.length || 0,
   }));
 
@@ -208,7 +208,9 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
       ) : (
         <div className="text-center py-8 text-gray-500">
           {interpolate(dictionary?.ui.moves.noMovesFoundForMethod || fallback, {
-            method: getMoveLearnMethodName(selectedMethod, language),
+            method: dictionary
+              ? getMoveLearnMethodName(selectedMethod, dictionary)
+              : selectedMethod,
           })}
         </div>
       )}
