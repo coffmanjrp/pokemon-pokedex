@@ -6,7 +6,7 @@ import { ABILITY_TRANSLATIONS } from "@/lib/data/abilityTranslations";
 import { TYPE_EFFECTIVENESS } from "@/lib/data/typeEffectiveness";
 import { MOVE_TRANSLATIONS } from "@/lib/data/moveTranslations";
 import { MOVE_LEARN_METHOD_TRANSLATIONS } from "@/lib/data/moveLearnMethodTranslations";
-import { TYPE_TRANSLATIONS, getTypeColor } from "@/lib/data/typeTranslations";
+import { getTypeColor } from "@/lib/utils";
 import React from "react";
 
 /**
@@ -539,11 +539,18 @@ export function getPokemonGenus(pokemon: Pokemon, language: Locale): string {
 }
 
 /**
- * Get translated type name
+ * Get translated type name using dictionary system
  */
-export function getTypeName(typeName: string, language: Locale): string {
-  const translation = TYPE_TRANSLATIONS[typeName.toLowerCase()];
-  return translation ? translation[language] : typeName;
+export function getTypeName(typeName: string, dictionary: Dictionary): string {
+  const typeKey =
+    typeName.toLowerCase() as keyof Dictionary["ui"]["pokemonTypes"];
+
+  if (dictionary.ui.pokemonTypes[typeKey]) {
+    return dictionary.ui.pokemonTypes[typeKey];
+  }
+
+  // Fallback: capitalize the English name
+  return typeName.charAt(0).toUpperCase() + typeName.slice(1);
 }
 
 /**

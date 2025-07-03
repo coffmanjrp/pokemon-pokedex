@@ -180,7 +180,7 @@ export async function generateMetadata({
 
     const pokemonName = getPokemonName(pokemon, lang);
     const types = pokemon.types
-      .map((t) => getTypeName(t.type.name, lang))
+      .map((t) => getTypeName(t.type.name, dictionary))
       .join("/");
     const pokemonDescription = getPokemonDescription(pokemon, lang);
 

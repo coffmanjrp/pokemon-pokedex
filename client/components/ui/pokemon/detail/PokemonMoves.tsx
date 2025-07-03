@@ -154,7 +154,11 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
                       </span>
                       <TypeBadge
                         type={move.move.type.name}
-                        displayName={getTypeName(move.move.type.name, language)}
+                        displayName={
+                          dictionary
+                            ? getTypeName(move.move.type.name, dictionary)
+                            : move.move.type.name
+                        }
                         size="sm"
                       />
                     </div>

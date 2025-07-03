@@ -38,7 +38,9 @@ export function PokemonWeaknessSection({
                 backgroundColor: getTypeColorFromName(weaknessType),
               }}
             >
-              {getTypeName(weaknessType, language)}
+              {dictionary
+                ? getTypeName(weaknessType, dictionary)
+                : weaknessType}
             </span>
           ))}
         </div>

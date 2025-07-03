@@ -94,7 +94,11 @@ export function FormVariationCard({
                       typeInfo.type.name as keyof typeof POKEMON_TYPE_COLORS
                     ],
                 }}
-                title={getTypeName(typeInfo.type.name, lang)}
+                title={
+                  dictionary
+                    ? getTypeName(typeInfo.type.name, dictionary)
+                    : typeInfo.type.name
+                }
               />
             ))}
         </div>

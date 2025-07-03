@@ -13,11 +13,4 @@ export {
 } from "./generations";
 export type { GenerationData } from "./generations";
 
-export {
-  TYPE_TRANSLATIONS,
-  TYPE_COLORS,
-  TYPE_DATA,
-  getTypeName,
-  getTypeColor,
-} from "./typeTranslations";
-export type { TypeData } from "./typeTranslations";
+export { TYPE_COLORS } from "./typeColors";
