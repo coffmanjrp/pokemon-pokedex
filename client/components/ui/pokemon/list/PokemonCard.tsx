@@ -23,7 +23,7 @@ const PokemonCard = memo(
     className,
     priority = false,
   }: PokemonCardProps) {
-    const { language } = useAppSelector((state) => state.ui);
+    const { language, dictionary } = useAppSelector((state) => state.ui);
     const cardRef = useRef<HTMLDivElement>(null);
     const primaryType = pokemon.types[0]?.type.name as PokemonTypeName;
     const primaryColor = POKEMON_TYPE_COLORS[primaryType] || "#68A090";
@@ -119,7 +119,10 @@ const PokemonCard = memo(
           </h3>
 
           {/* Types */}
-          <PokemonTypes types={pokemon.types} />
+          <PokemonTypes
+            types={pokemon.types}
+            {...(dictionary && { dictionary })}
+          />
 
           {/* Species Classification */}
           {genus && (
