@@ -19,6 +19,8 @@ export const getFallbackText = (language: Locale): string => {
       return "Chargement...";
     case "it":
       return "Caricamento...";
+    case "de":
+      return "Laden...";
     default:
       return "Loading...";
   }
@@ -45,6 +47,8 @@ export const getFallbackEvolutionText = (language: Locale): string => {
       return "Chargement de la chaîne d'évolution...";
     case "it":
       return "Caricamento catena evolutiva...";
+    case "de":
+      return "Evolutionskette wird geladen...";
     default:
       return "Loading evolution chain...";
   }
@@ -71,6 +75,8 @@ export const getFallbackMetadata = (
           return "Pokédex | Base de Données Pokémon Multi-Génération Complète";
         case "it":
           return "Pokédex | Database Completo Pokémon Multi-Generazione";
+        case "de":
+          return "Pokédex | Vollständige Multi-Generationen Pokémon-Datenbank";
         default:
           return "Pokemon Pokedex | Complete Multi-Generation Pokemon Database";
       }
@@ -90,6 +96,8 @@ export const getFallbackMetadata = (
           return "Base de données Pokémon complète avec plus de 1302 Pokémon incluant des statistiques détaillées, des illustrations officielles, l'efficacité des types, les chaînes d'évolution et les ensembles d'attaques. Couverture complète de la Génération 1 à 9 avec des capacités de recherche et de filtrage avancées.";
         case "it":
           return "Database completo dei Pokémon con oltre 1302 Pokémon che include statistiche dettagliate, artwork ufficiali, efficacia dei tipi, catene evolutive e set di mosse. Copertura completa dalla Generazione 1 alla 9 con capacità avanzate di ricerca e filtraggio.";
+        case "de":
+          return "Umfassende Pokémon-Datenbank mit über 1302 Pokémon mit detaillierten Statistiken, offiziellen Artworks, Typ-Effektivität, Entwicklungsketten und Attacken-Sets. Vollständige Abdeckung von Generation 1 bis 9 mit erweiterten Such- und Filterfunktionen.";
         default:
           return "Comprehensive Pokemon database featuring 1302+ Pokemon with detailed stats, official artwork, type effectiveness, evolution chains, and move sets. Complete coverage from Generation 1 to 9 with advanced search and filtering capabilities.";
       }
