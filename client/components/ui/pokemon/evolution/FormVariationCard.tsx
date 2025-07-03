@@ -47,7 +47,12 @@ export function FormVariationCard({
               form.sprites.frontDefault ||
               ""
             }
-            alt={getFormDisplayName(pokemonName, form.formName, lang)}
+            alt={getFormDisplayName(
+              pokemonName,
+              form.formName,
+              lang,
+              dictionary || undefined,
+            )}
             fill
             className="object-contain group-hover:scale-110 transition-transform duration-200"
           />
@@ -89,7 +94,11 @@ export function FormVariationCard({
                       typeInfo.type.name as keyof typeof POKEMON_TYPE_COLORS
                     ],
                 }}
-                title={getTypeName(typeInfo.type.name, lang)}
+                title={
+                  dictionary
+                    ? getTypeName(typeInfo.type.name, dictionary)
+                    : typeInfo.type.name
+                }
               />
             ))}
         </div>

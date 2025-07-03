@@ -1,19 +1,10 @@
 import { Pokemon, EvolutionDetail, Move, GenderInfo } from "@/types/pokemon";
-import { Locale } from "@/lib/dictionaries";
+import { Locale, Dictionary } from "@/lib/dictionaries";
 import { getFormDisplayName, isMegaEvolution } from "@/lib/formUtils";
-import {
-  REGIONAL_FORM_TRANSLATIONS,
-  MEGA_FORM_TRANSLATIONS,
-  GIGANTAMAX_FORM_TRANSLATIONS,
-  SPECIAL_FORM_TRANSLATIONS,
-} from "@/lib/data/formTranslations";
-import { ABILITY_TRANSLATIONS } from "@/lib/data/abilityTranslations";
-import { VERSION_TRANSLATIONS } from "@/lib/data/versionTranslations";
+// Form translations moved to dictionary system
 import { TYPE_EFFECTIVENESS } from "@/lib/data/typeEffectiveness";
 import { MOVE_TRANSLATIONS } from "@/lib/data/moveTranslations";
-import { MOVE_LEARN_METHOD_TRANSLATIONS } from "@/lib/data/moveLearnMethodTranslations";
-import { STAT_TRANSLATIONS } from "@/lib/data/statTranslations";
-import { TYPE_TRANSLATIONS, getTypeColor } from "@/lib/data/typeTranslations";
+import { getTypeColor } from "@/lib/utils";
 import React from "react";
 
 /**
@@ -22,76 +13,23 @@ import React from "react";
  */
 function getFormTranslation(
   formName: string,
-  language: "en" | "ja" | "zh-Hant" | "zh-Hans" | "es" | "ko" | "fr",
+  language:
+    | "en"
+    | "ja"
+    | "zh-Hant"
+    | "zh-Hans"
+    | "es"
+    | "ko"
+    | "fr"
+    | "it"
+    | "de",
 ): string | null {
   console.log(
     `[getFormTranslation] Looking for translation of "${formName}" in language "${language}"`,
   );
 
-  // Safe access to translation objects with fallback
-  const safeRegionalForms = REGIONAL_FORM_TRANSLATIONS || {};
-  const safeMegaForms = MEGA_FORM_TRANSLATIONS || {};
-  const safeGigantamaxForms = GIGANTAMAX_FORM_TRANSLATIONS || {};
-  const safeSpecialForms = SPECIAL_FORM_TRANSLATIONS || {};
-
-  // Check regional forms - try exact match first, then partial match
-  for (const [key, translation] of Object.entries(safeRegionalForms)) {
-    if (formName === key || formName.includes(key)) {
-      console.log(
-        `[getFormTranslation] Found regional form: ${key} -> ${translation[language]}`,
-      );
-      return (
-        translation[language as keyof typeof translation] || translation.en
-      );
-    }
-  }
-
-  // Check mega forms - exact match first
-  for (const [key, translation] of Object.entries(safeMegaForms)) {
-    if (formName === key) {
-      console.log(
-        `[getFormTranslation] Found exact mega form: ${key} -> ${translation[language]}`,
-      );
-      return (
-        translation[language as keyof typeof translation] || translation.en
-      );
-    }
-  }
-  // Check mega forms - partial match as fallback
-  for (const [key, translation] of Object.entries(safeMegaForms)) {
-    if (formName.includes(key)) {
-      console.log(
-        `[getFormTranslation] Found partial mega form: ${key} -> ${translation[language]}`,
-      );
-      return (
-        translation[language as keyof typeof translation] || translation.en
-      );
-    }
-  }
-
-  // Check gigantamax forms
-  for (const [key, translation] of Object.entries(safeGigantamaxForms)) {
-    if (formName === key || formName.includes(key)) {
-      console.log(
-        `[getFormTranslation] Found gigantamax form: ${key} -> ${translation[language]}`,
-      );
-      return (
-        translation[language as keyof typeof translation] || translation.en
-      );
-    }
-  }
-
-  // Check special forms
-  for (const [key, translation] of Object.entries(safeSpecialForms)) {
-    if (formName === key || formName.includes(key)) {
-      console.log(
-        `[getFormTranslation] Found special form: ${key} -> ${translation[language]}`,
-      );
-      return (
-        translation[language as keyof typeof translation] || translation.en
-      );
-    }
-  }
+  // Special forms now handled by dictionary system
+  // This function is deprecated and should use dictionary lookup instead
 
   console.log(`[getFormTranslation] No translation found for "${formName}"`);
   return null;
@@ -171,7 +109,11 @@ export function getPokemonBaseName(pokemon: Pokemon, language: Locale): string {
     (language === "ja" ||
       language === "zh-Hant" ||
       language === "zh-Hans" ||
-      language === "es") &&
+      language === "es" ||
+      language === "ko" ||
+      language === "fr" ||
+      language === "it" ||
+      language === "de") &&
     pokemon.species?.names
   ) {
     // Map language codes for PokeAPI
@@ -180,6 +122,10 @@ export function getPokemonBaseName(pokemon: Pokemon, language: Locale): string {
       "zh-Hant": ["zh-Hant"],
       "zh-Hans": ["zh-Hans"],
       es: ["es"],
+      ko: ["ko"],
+      fr: ["fr"],
+      it: ["it"],
+      de: ["de"],
     };
 
     const targetCodes = languageCodes[
@@ -248,7 +194,9 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
         language === "zh-Hans" ||
         language === "es" ||
         language === "ko" ||
-        language === "fr") &&
+        language === "fr" ||
+        language === "it" ||
+        language === "de") &&
       pokemon.species?.names
     ) {
       // Map language codes for PokeAPI
@@ -259,6 +207,8 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
         es: ["es"],
         ko: ["ko"],
         fr: ["fr"],
+        it: ["it"],
+        de: ["de"],
       };
 
       const targetCodes = languageCodes[
@@ -333,7 +283,9 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
       language === "zh-Hans" ||
       language === "es" ||
       language === "ko" ||
-      language === "fr") &&
+      language === "fr" ||
+      language === "it" ||
+      language === "de") &&
     pokemon.species?.names
   ) {
     // Map language codes for PokeAPI
@@ -344,6 +296,8 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
       es: ["es"],
       ko: ["ko"],
       fr: ["fr"],
+      it: ["it"],
+      de: ["de"],
     };
 
     const targetCodes = languageCodes[
@@ -388,7 +342,9 @@ export function getEvolutionPokemonName(
         language === "zh-Hans" ||
         language === "es" ||
         language === "ko" ||
-        language === "fr") &&
+        language === "fr" ||
+        language === "it" ||
+        language === "de") &&
       evolutionDetail.species?.names
     ) {
       // Map language codes for PokeAPI
@@ -399,6 +355,8 @@ export function getEvolutionPokemonName(
         es: ["es"],
         ko: ["ko"],
         fr: ["fr"],
+        it: ["it"],
+        de: ["de"],
       };
 
       const targetCodes = languageCodes[
@@ -477,7 +435,9 @@ export function getEvolutionPokemonName(
       language === "zh-Hans" ||
       language === "es" ||
       language === "ko" ||
-      language === "fr") &&
+      language === "fr" ||
+      language === "it" ||
+      language === "de") &&
     evolutionDetail.species?.names
   ) {
     // Map language codes for PokeAPI
@@ -488,6 +448,8 @@ export function getEvolutionPokemonName(
       es: ["es"],
       ko: ["ko"],
       fr: ["fr"],
+      it: ["it"],
+      de: ["de"],
     };
 
     const targetCodes = languageCodes[
@@ -532,6 +494,8 @@ export function getPokemonDescription(
     es: ["es"],
     ko: ["ko"],
     fr: ["fr"],
+    it: ["it"],
+    de: ["de"],
   };
 
   const targetCodes = languageMap[language] || ["en"];
@@ -580,6 +544,8 @@ export function getPokemonGenus(pokemon: Pokemon, language: Locale): string {
     es: ["es"],
     ko: ["ko"],
     fr: ["fr"],
+    it: ["it"],
+    de: ["de"],
   };
 
   const targetCodes = languageMap[language] || ["en"];
@@ -592,42 +558,36 @@ export function getPokemonGenus(pokemon: Pokemon, language: Locale): string {
 }
 
 /**
- * Get translated type name
+ * Get translated type name using dictionary system
  */
-export function getTypeName(typeName: string, language: Locale): string {
-  const translation = TYPE_TRANSLATIONS[typeName.toLowerCase()];
-  return translation ? translation[language] : typeName;
+export function getTypeName(typeName: string, dictionary: Dictionary): string {
+  const typeKey =
+    typeName.toLowerCase() as keyof Dictionary["ui"]["pokemonTypes"];
+
+  if (dictionary.ui.pokemonTypes[typeKey]) {
+    return dictionary.ui.pokemonTypes[typeKey];
+  }
+
+  // Fallback: capitalize the English name
+  return typeName.charAt(0).toUpperCase() + typeName.slice(1);
 }
 
 /**
- * Get translated stat name
- */
-export function getStatName(statName: string, language: Locale): string {
-  const translation = STAT_TRANSLATIONS[statName.toLowerCase()];
-  return translation ? translation[language] : statName;
-}
-
-/**
- * Get translated move learn method
+ * Get translated move learn method using dictionary system
  */
 export function getMoveLearnMethodName(
   methodName: string,
-  language: Locale,
+  dictionary: Dictionary,
 ): string {
-  const translation = MOVE_LEARN_METHOD_TRANSLATIONS[methodName.toLowerCase()];
-  if (translation) {
-    // If Chinese/Korean language requested but translation doesn't exist, fall back to English
-    if (
-      (language === "zh-Hant" || language === "zh-Hans" || language === "ko") &&
-      !translation[language as "en" | "ja"]
-    ) {
-      return translation["en"] || methodName;
-    }
-    return (
-      translation[language as "en" | "ja"] || translation["en"] || methodName
-    );
+  const methodKey =
+    methodName.toLowerCase() as keyof Dictionary["ui"]["moveLearnMethods"];
+
+  if (dictionary.ui.moveLearnMethods[methodKey]) {
+    return dictionary.ui.moveLearnMethods[methodKey];
   }
-  return methodName;
+
+  // Fallback: capitalize the English name
+  return methodName.charAt(0).toUpperCase() + methodName.slice(1);
 }
 
 /**
@@ -641,13 +601,8 @@ export function formatMoveName(moveName: string): string {
 }
 
 /**
- * Ability name translations
- * Common Pokemon abilities in Japanese
- */
-
-/**
  * Get ability name in the specified language
- * Uses 3-tier fallback: GraphQL data (future), manual translations, formatted English name
+ * Uses 2-tier fallback: GraphQL data, formatted English name
  */
 export function getAbilityName(
   ability:
@@ -670,6 +625,8 @@ export function getAbilityName(
       es: ["es"],
       ko: ["ko"],
       fr: ["fr"],
+      it: ["it"],
+      de: ["de"],
     };
     const targetLanguage = languageMap[language] || ["en"];
 
@@ -684,24 +641,7 @@ export function getAbilityName(
     }
   }
 
-  // Tier 2: Manual translation table for abilities not covered by API
-  const abilityName = ability.name.toLowerCase();
-  const translation = ABILITY_TRANSLATIONS[abilityName];
-
-  if (translation) {
-    // If Chinese/Korean language requested but translation doesn't exist, fall back to English
-    if (
-      (language === "zh-Hant" || language === "zh-Hans" || language === "ko") &&
-      !translation[language as "en" | "ja"]
-    ) {
-      return translation["en"] || abilityName;
-    }
-    return (
-      translation[language as "en" | "ja"] || translation["en"] || abilityName
-    );
-  }
-
-  // Tier 3: Final fallback to formatted English name
+  // Tier 2: Final fallback to formatted English name
   return ability.name
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -713,21 +653,18 @@ export function getAbilityName(
  */
 
 /**
- * Get translated version name
+ * Get translated version name using dictionary system
  */
-export function getVersionName(versionName: string, language: Locale): string {
-  const translation = VERSION_TRANSLATIONS[versionName.toLowerCase()];
-  if (translation) {
-    // If Chinese/Korean language requested but translation doesn't exist, fall back to English
-    if (
-      (language === "zh-Hant" || language === "zh-Hans" || language === "ko") &&
-      !translation[language as "en" | "ja"]
-    ) {
-      return translation["en"] || versionName;
-    }
-    return (
-      translation[language as "en" | "ja"] || translation["en"] || versionName
-    );
+export function getVersionName(
+  versionName: string,
+  dictionary: Dictionary,
+): string {
+  const versionKey = versionName
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, "") as keyof Dictionary["ui"]["gameVersions"];
+
+  if (dictionary.ui.gameVersions[versionKey]) {
+    return dictionary.ui.gameVersions[versionKey];
   }
 
   // Fallback: capitalize the English name
@@ -914,6 +851,9 @@ export function getMoveName(move: Move, language: Locale): string {
       "zh-Hans": ["zh-Hans"],
       es: ["es"],
       ko: ["ko"],
+      fr: ["fr"],
+      it: ["it"],
+      de: ["de"],
     };
     const targetLanguage = languageMap[language] || ["en"];
 
@@ -1000,6 +940,8 @@ export function getGenderDisplayString(
         return "無性別";
       } else if (language === "ko") {
         return "성별불명";
+      } else if (language === "de") {
+        return "Geschlechtslos";
       } else {
         return "Genderless";
       }
@@ -1045,6 +987,8 @@ export function getGenderDisplayElement(
         genderlessText = "Sin género";
       } else if (language === "ko") {
         genderlessText = "성별불명";
+      } else if (language === "de") {
+        genderlessText = "Geschlechtslos";
       } else {
         genderlessText = "Genderless";
       }

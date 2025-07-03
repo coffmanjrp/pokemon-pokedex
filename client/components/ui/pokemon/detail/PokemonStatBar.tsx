@@ -1,8 +1,9 @@
 "use client";
 
-import { getStatName } from "@/lib/pokemonUtils";
 import { Locale } from "@/lib/dictionaries";
 import { getStatColor } from "@/lib/data/statColors";
+import { useAppSelector } from "@/store/hooks";
+import { getFallbackText } from "@/lib/fallbackText";
 
 interface PokemonStatBarProps {
   statName: string;
@@ -18,11 +19,23 @@ export function PokemonStatBar({
   maxBaseStat = 150,
 }: PokemonStatBarProps) {
   const percentage = (baseStat / maxBaseStat) * 100;
+  const { dictionary } = useAppSelector((state) => state.ui);
+  const fallback = getFallbackText(language);
+
+  // Get stat name from dictionary system
+  const getStatDisplayName = (statName: string): string => {
+    const statKey = statName.toLowerCase();
+    return (
+      dictionary?.ui.stats[statKey as keyof typeof dictionary.ui.stats] ||
+      statName ||
+      fallback
+    );
+  };
 
   return (
     <div className="flex items-center gap-3">
       <div className="w-20 text-xs text-gray-600 text-right">
-        {getStatName(statName, language)}
+        {getStatDisplayName(statName)}
       </div>
       <div className="text-sm font-semibold w-8 text-right">{baseStat}</div>
       <div className="flex-1">

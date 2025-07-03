@@ -4,23 +4,19 @@ import { Pokemon } from "@/types/pokemon";
 import { getTypeName } from "@/lib/pokemonUtils";
 import { useAppSelector } from "@/store/hooks";
 import { TypeBadge } from "../../common/Badge";
-import { Locale } from "@/lib/dictionaries";
 
 interface PokemonTypesProps {
   types: Pokemon["types"];
   size?: "sm" | "md" | "lg";
   className?: string;
-  language?: Locale;
 }
 
 export function PokemonTypes({
   types,
   size = "md",
   className,
-  language: propLanguage,
 }: PokemonTypesProps) {
-  const { language: storeLanguage } = useAppSelector((state) => state.ui);
-  const language = propLanguage || storeLanguage;
+  const { dictionary } = useAppSelector((state) => state.ui);
 
   const getSizeClass = () => {
     switch (size) {
@@ -38,7 +34,9 @@ export function PokemonTypes({
   return (
     <div className={className || defaultClassName}>
       {types.map((typeInfo, index) => {
-        const displayName = getTypeName(typeInfo.type.name, language);
+        const displayName = dictionary
+          ? getTypeName(typeInfo.type.name, dictionary)
+          : typeInfo.type.name;
 
         return (
           <TypeBadge

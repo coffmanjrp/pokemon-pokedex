@@ -48,7 +48,6 @@ export function PokemonHeader({
           types={pokemon.types}
           size="lg"
           className="flex gap-2 justify-start mb-2"
-          language={language}
         />
       </div>
     </div>

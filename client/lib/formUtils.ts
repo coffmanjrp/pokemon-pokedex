@@ -1,20 +1,20 @@
 import { Locale, Dictionary } from "@/lib/dictionaries";
 import {
-  REGIONAL_FORM_TRANSLATIONS,
-  MEGA_FORM_TRANSLATIONS,
-  GIGANTAMAX_FORM_TRANSLATIONS,
-  SPECIAL_FORM_TRANSLATIONS,
   getFormBadgeColor as getFormBadgeColorFromData,
   getFormPriority as getFormPriorityFromData,
-} from "@/lib/data/formTranslations";
+  isRegionalVariant,
+  isMegaEvolution,
+  isGigantamax,
+} from "@/lib/forms";
 
 /**
- * Get display name for a Pokemon form
+ * Get display name for a Pokemon form using dictionary system for basic forms
  */
 export function getFormDisplayName(
   pokemonName: string,
   formName: string | undefined,
   language: Locale,
+  dictionary?: Dictionary,
 ): string {
   if (!formName || formName === "default") {
     return pokemonName;
@@ -26,43 +26,66 @@ export function getFormDisplayName(
       ? pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1)
       : pokemonName;
 
-  // Check for regional variants
-  for (const [key, translation] of Object.entries(REGIONAL_FORM_TRANSLATIONS)) {
-    if (formName.includes(key)) {
-      const translatedForm =
-        translation[language as keyof typeof translation] || translation.en;
-      return `${translatedForm} ${capitalizedPokemonName}`;
+  // Try dictionary system for basic forms first
+  if (dictionary?.ui.forms.translations) {
+    const basicFormTranslations = dictionary.ui.forms.translations;
+
+    // Check for basic forms in dictionary
+    for (const [key, translation] of Object.entries(basicFormTranslations)) {
+      if (formName.includes(key)) {
+        // For regional variants, prefix the Pokemon name
+        if (
+          [
+            "alolan",
+            "galarian",
+            "hisuian",
+            "paldean",
+            "alola",
+            "galar",
+            "hisui",
+            "paldea",
+          ].includes(key)
+        ) {
+          return `${translation} ${capitalizedPokemonName}`;
+        }
+        // For mega, gmax, primal
+        else if (["mega", "mega-x", "mega-y", "gmax", "primal"].includes(key)) {
+          return `${translation} ${capitalizedPokemonName}`;
+        }
+      }
     }
   }
 
-  // Check for Mega Evolution
-  for (const [key, translation] of Object.entries(MEGA_FORM_TRANSLATIONS)) {
-    if (formName.includes(key)) {
-      const translatedForm =
-        translation[language as keyof typeof translation] || translation.en;
-      return `${translatedForm} ${capitalizedPokemonName}`;
+  // Check for special forms using dictionary system
+  if (dictionary?.ui.forms.translations) {
+    const formTranslations = dictionary.ui.forms.translations;
+
+    // Check for special forms in dictionary
+    for (const [key, translation] of Object.entries(formTranslations)) {
+      if (
+        formName.includes(key) &&
+        ![
+          "alolan",
+          "galarian",
+          "hisuian",
+          "paldean",
+          "alola",
+          "galar",
+          "hisui",
+          "paldea",
+          "mega",
+          "mega-x",
+          "mega-y",
+          "gmax",
+          "primal",
+        ].includes(key)
+      ) {
+        return `${capitalizedPokemonName} (${translation})`;
+      }
     }
   }
 
-  // Check for Gigantamax
-  for (const [key, translation] of Object.entries(
-    GIGANTAMAX_FORM_TRANSLATIONS,
-  )) {
-    if (formName.includes(key)) {
-      const translatedForm =
-        translation[language as keyof typeof translation] || translation.en;
-      return `${translatedForm} ${capitalizedPokemonName}`;
-    }
-  }
-
-  // Check for special forms
-  for (const [key, translation] of Object.entries(SPECIAL_FORM_TRANSLATIONS)) {
-    if (formName.includes(key)) {
-      const translatedForm =
-        translation[language as keyof typeof translation] || translation.en;
-      return `${capitalizedPokemonName} (${translatedForm})`;
-    }
-  }
+  // All special forms are now handled by dictionary system above
 
   // Default fallback - capitalize form name
   const capitalizedForm = formName
@@ -73,40 +96,16 @@ export function getFormDisplayName(
   return `${capitalizedPokemonName} (${capitalizedForm})`;
 }
 
-/**
- * Determine if a form is a regional variant
- */
-export function isRegionalVariant(formName: string | undefined): boolean {
-  if (!formName) return false;
-  return Object.keys(REGIONAL_FORM_TRANSLATIONS).some((key) =>
-    formName.includes(key),
-  );
-}
+// Form classification functions moved to @/lib/forms
+// Re-export them here for backward compatibility
+export { isRegionalVariant, isMegaEvolution, isGigantamax } from "@/lib/forms";
 
 /**
- * Determine if a form is a Mega Evolution
+ * Get form category for UI grouping (dictionary-dependent)
+ * This is different from the basic getFormCategory in forms.ts as it returns
+ * localized category names from the dictionary.
  */
-export function isMegaEvolution(formName: string | undefined): boolean {
-  if (!formName) return false;
-  return Object.keys(MEGA_FORM_TRANSLATIONS).some((key) =>
-    formName.includes(key),
-  );
-}
-
-/**
- * Determine if a form is a Gigantamax form
- */
-export function isGigantamax(formName: string | undefined): boolean {
-  if (!formName) return false;
-  return Object.keys(GIGANTAMAX_FORM_TRANSLATIONS).some((key) =>
-    formName.includes(key),
-  );
-}
-
-/**
- * Get form category for UI grouping
- */
-export function getFormCategory(
+export function getFormCategoryForUI(
   formName: string | undefined,
   dictionary: Dictionary,
 ): string {

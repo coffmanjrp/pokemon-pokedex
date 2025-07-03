@@ -119,7 +119,7 @@ const PokemonCard = memo(
           </h3>
 
           {/* Types */}
-          <PokemonTypes types={pokemon.types} language={language} />
+          <PokemonTypes types={pokemon.types} />
 
           {/* Species Classification */}
           {genus && (

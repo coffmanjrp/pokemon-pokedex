@@ -70,7 +70,9 @@ export function EvolutionCard({
                     ],
                 }}
               >
-                {getTypeName(typeInfo.type.name, lang)}
+                {dictionary
+                  ? getTypeName(typeInfo.type.name, dictionary)
+                  : typeInfo.type.name}
               </span>
             ))}
         </div>

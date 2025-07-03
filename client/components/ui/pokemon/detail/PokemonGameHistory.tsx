@@ -2,7 +2,6 @@
 
 import { GameIndex, Generation } from "@/types/pokemon";
 import { getGenerationName } from "@/lib/pokemonUtils";
-import { VERSION_TRANSLATIONS } from "@/lib/data/versionTranslations";
 import { getGenerationByGame } from "@/lib/data/generations";
 import { DataEmptyState } from "../../common/DataEmptyState";
 import { useAppSelector } from "@/store/hooks";
@@ -38,13 +37,22 @@ export function PokemonGameHistory({
     return <DataEmptyState type="games" language={language} />;
   }
 
-  // Game version display names
+  // Game version display names using dictionary system
   const getGameDisplayName = (version: string) => {
-    const translation = VERSION_TRANSLATIONS[version];
-    return (
-      translation?.[language] ||
-      version.charAt(0).toUpperCase() + version.slice(1)
-    );
+    if (!dictionary) {
+      return version.charAt(0).toUpperCase() + version.slice(1);
+    }
+
+    const versionKey = version
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "") as keyof typeof dictionary.ui.gameVersions;
+
+    if (dictionary.ui.gameVersions[versionKey]) {
+      return dictionary.ui.gameVersions[versionKey];
+    }
+
+    // Fallback: capitalize the English name
+    return version.charAt(0).toUpperCase() + version.slice(1);
   };
 
   // Group games by generation/era using unified data

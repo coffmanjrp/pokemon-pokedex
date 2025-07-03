@@ -32,7 +32,10 @@ export function GenerationHeader({
       <div className="relative px-4 md:px-6 py-3">
         <h1 className="text-sm md:text-base font-bold text-gray-700 text-center lg:text-left lg:ml-0">
           {interpolate(dictionary.ui.generation.displayTemplate, {
-            region: generationRange.region[lang] || generationRange.region.en,
+            region:
+              generationRange.region[
+                lang as keyof typeof generationRange.region
+              ] || generationRange.region.en,
             number: currentGeneration,
           })}
         </h1>

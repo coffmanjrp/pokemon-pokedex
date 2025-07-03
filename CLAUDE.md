@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. **Pokemon detail pages use SSG** for optimal performance with individual Pokemon data pre-generated at build time. **Pokemon list pages now use full client-side rendering** with intelligent cache system for seamless generation switching - ISR removed to prevent generation data conflicts. **Intelligent generational build system** with automatic detection and memory-efficient processing by Pokemon generation. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes. **Hybrid deployment fully operational** with frontend deployed on Vercel and backend on Railway with CORS wildcard pattern matching for dynamic URLs. **Layout and scrolling optimization completed** with proper sidebar-to-content spacing, overlay positioning, and Pokemon grid scrolling functionality restored. **Generation switching completely fixed** - implemented full cache system with localStorage persistence, eliminated generation data mixing issues, and restored seamless Pokemon list loading across all generations. **UTF-8 character encoding issue fixed** - resolved Japanese Pokemon name corruption in card lists through base64 localStorage encoding with backward compatibility. **Comprehensive Redux dictionary support implemented** across all Pokemon detail child components with unified translation system using shared getFallbackText utility and complete i18n coverage for evolution conditions and sandbox components. **Next.js API Routes system fully implemented** - comprehensive REST API endpoints for Pokemon data access with GraphQL integration, multiple query types (basic/full), evolution chain analysis, debug capabilities, and dynamic Pokemon gender display based on PokeAPI data with color-coded symbols and enhanced multilingual localization. **French language support fully implemented** - expanded from 6 languages to 7 languages with comprehensive French translations, Pokemon data localization, generation/region names, type translations, game version names, and complete UI coverage including SEO metadata and alternate URLs. **French GraphQL Pokemon data integration completed** - all Pokemon utility functions (getPokemonName, getPokemonDescription, getPokemonGenus, getAbilityName) now properly fetch and display French Pokemon names, descriptions, classifications, and ability names from existing GraphQL species.names, species.genera, species.flavorTextEntries, and ability.names data without requiring additional API calls. **Complete 6-language support implemented** - Korean (ko) added alongside English, Japanese, Traditional Chinese (zh-Hant), Simplified Chinese (zh-Hans), and Spanish (es) with comprehensive Pokemon name translations, form badges, evolution conditions, and UI elements. **Dictionary system architecture enhanced** - Sidebar and AnimatedLoadingScreen components converted from hardcoded language conditions to unified dictionary system for better maintainability and consistency. **Language toggle enhanced** - converted from cycling button to intuitive dropdown menu with upward positioning for better mobile UX. **Evolution chain component architecture refactored** - 467-line monolithic component split into modular, reusable components (EvolutionCard, FormVariationCard, EvolutionArrow) with dedicated custom hook (useEvolutionAnimation) and utility functions, improving maintainability and code organization. **Pokemon component architecture fully organized** - 22+ Pokemon components systematically organized into logical folder structure with list/ and detail/ directories, improved import paths, and clear separation of concerns between Pokemon list page and detail page components for enhanced maintainability and developer experience. **FormUtils dictionary system integration completed** - Migrated getFormCategory() and getFormBadgeName() functions from hardcoded language switches to unified dictionary system, eliminating code duplication and ensuring consistent multilingual Pokemon form translations across all 6 supported languages with improved maintainability and type safety.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. **Pokemon detail pages use SSG** for optimal performance with individual Pokemon data pre-generated at build time. **Pokemon list pages now use full client-side rendering** with intelligent cache system for seamless generation switching - ISR removed to prevent generation data conflicts. **Intelligent generational build system** with automatic detection and memory-efficient processing by Pokemon generation. Major codebase cleanup completed with optimized component architecture and TypeScript compliance. **Mobile and tablet experience fully optimized** with responsive design, touch-friendly navigation, and enhanced UX across all screen sizes. **Hybrid deployment fully operational** with frontend deployed on Vercel and backend on Railway with CORS wildcard pattern matching for dynamic URLs. **Layout and scrolling optimization completed** with proper sidebar-to-content spacing, overlay positioning, and Pokemon grid scrolling functionality restored. **Generation switching completely fixed** - implemented full cache system with localStorage persistence, eliminated generation data mixing issues, and restored seamless Pokemon list loading across all generations. **UTF-8 character encoding issue fixed** - resolved Japanese Pokemon name corruption in card lists through base64 localStorage encoding with backward compatibility. **Comprehensive Redux dictionary support implemented** across all Pokemon detail child components with unified translation system using shared getFallbackText utility and complete i18n coverage for evolution conditions and sandbox components. **Next.js API Routes system fully implemented** - comprehensive REST API endpoints for Pokemon data access with GraphQL integration, multiple query types (basic/full), evolution chain analysis, debug capabilities, and dynamic Pokemon gender display based on PokeAPI data with color-coded symbols and enhanced multilingual localization. **Complete 8-language support implemented** - German (de) added to expand from 7 languages to 8 languages with comprehensive German translations, Pokemon data localization through PokeAPI GraphQL integration, generation/region names, type translations, game version names, and complete UI coverage including SEO metadata and alternate URLs. **German GraphQL Pokemon data integration completed** - all Pokemon utility functions (getPokemonName, getPokemonDescription, getPokemonGenus, getAbilityName, getMoveName) now properly fetch and display German Pokemon names, descriptions, classifications, ability names, and move names from existing GraphQL species.names, species.genera, species.flavorTextEntries, ability.names, and move.names data using PokeAPI language code "de" without requiring additional API calls. **Dictionary system architecture enhanced** - Sidebar and AnimatedLoadingScreen components converted from hardcoded language conditions to unified dictionary system for better maintainability and consistency. **Language toggle enhanced** - converted from cycling button to intuitive dropdown menu with upward positioning for better mobile UX, now supporting 8 languages with native German labels. **Evolution chain component architecture refactored** - 467-line monolithic component split into modular, reusable components (EvolutionCard, FormVariationCard, EvolutionArrow) with dedicated custom hook (useEvolutionAnimation) and utility functions, improving maintainability and code organization. **Pokemon component architecture fully organized** - 22+ Pokemon components systematically organized into logical folder structure with list/ and detail/ directories, improved import paths, and clear separation of concerns between Pokemon list page and detail page components for enhanced maintainability and developer experience. **FormUtils dictionary system integration completed** - Migrated getFormCategory() and getFormBadgeName() functions from hardcoded language switches to unified dictionary system, eliminating code duplication and ensuring consistent multilingual Pokemon form translations across all 8 supported languages with improved maintainability and type safety.
 
 ## Architecture
 
@@ -16,7 +16,7 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 - **Styling**: TailwindCSS with Ruby/Sapphire game-inspired design
 - **State Management**: Redux Toolkit
 - **GraphQL Client**: Apollo Client
-- **Internationalization**: Native App Router i18n with middleware-based language detection and server-side dictionary loading supporting 7 languages (English, Japanese, Traditional Chinese, Simplified Chinese, Spanish, Korean, French)
+- **Internationalization**: Native App Router i18n with middleware-based language detection and server-side dictionary loading supporting 8 languages (English, Japanese, Traditional Chinese, Simplified Chinese, Spanish, Korean, French, German)
 
 ### Backend (GraphQL Server)
 - **Server**: Apollo Server with Express
@@ -364,13 +364,14 @@ npm run build:generational  # Generational
 ```
 
 ### Internationalization
-- **Languages**: Complete 7-language support (English/Japanese/Traditional Chinese/Simplified Chinese/Spanish/Korean/French) with middleware-based routing
+- **Languages**: Complete 8-language support (English/Japanese/Traditional Chinese/Simplified Chinese/Spanish/Korean/French/German) with middleware-based routing
 - **Structure**: `/[lang]/` routes with server-side dictionary loading
-- **Translation**: Pokemon names, types, abilities, moves, game versions, forms, and regions via PokeAPI integration with species.names[] data
-- **Language Detection**: Intelligent detection with regional fallbacks (zh-TW→zh-Hant, zh-CN→zh-Hans, fr-fr/fr-ca→fr)
-- **UI Components**: All components support 7-language localization with unified dictionary system
+- **Translation**: Pokemon names, types, abilities, moves, game versions, forms, and regions via PokeAPI integration with species.names[] data using language codes (en, ja, zh-Hant, zh-Hans, es, ko, fr, de)
+- **Language Detection**: Intelligent detection with regional fallbacks (zh-TW→zh-Hant, zh-CN→zh-Hans, fr-fr/fr-ca→fr, de-de/de-at/de-ch→de)
+- **UI Components**: All components support 8-language localization with unified dictionary system
 - **Dictionary Architecture**: Components converted from hardcoded language conditions to dictionary-based translations for better maintainability
-- **Form Translations**: Pokemon form badges (Mega, Gigantamax, Regional variants) in all languages
+- **Form Translations**: Pokemon form badges (Mega, Gigantamax, Regional variants) in all 8 languages
+- **GraphQL Data Integration**: Pokemon utility functions automatically fetch native language Pokemon data from PokeAPI GraphQL endpoints
 
 ### API Routes System
 - **REST API Integration**: Next.js API Routes providing REST endpoints alongside GraphQL backend
@@ -496,3 +497,221 @@ cd server && npm run build && npm start
 - **Redis Cache**: Server-side caching with 5-minute TTL (Railway Redis or Upstash)
 - **GraphQL Server**: Custom Apollo Server with intelligent caching (Railway/Render)
 - **Apollo Client Cache**: Browser-side caching for efficient data management
+
+## Adding New Language Support
+
+This section provides step-by-step instructions for adding a new language to the Pokemon Pokedex application. The process has been streamlined through the unified dictionary system and PokeAPI GraphQL integration.
+
+### Prerequisites
+
+1. Verify that the target language is supported by PokeAPI at https://pokeapi.co/api/v2/language/
+2. Identify the PokeAPI language code (e.g., "de" for German, "it" for Italian)
+3. Prepare comprehensive UI translations for the new language
+
+### Step-by-Step Process
+
+#### 1. Create Language Dictionary File
+
+Create a new dictionary file in `client/lib/dictionaries/[lang].json`:
+
+```bash
+# Example for German (de.json)
+cp client/lib/dictionaries/en.json client/lib/dictionaries/de.json
+```
+
+Translate all 400+ entries in the dictionary file, including:
+- UI text (navigation, buttons, labels)
+- Pokemon-related terminology (types, abilities, stats)
+- Game version names
+- Form translations (Mega, Gigantamax, Regional variants)
+- Error messages and empty states
+- Meta tags and SEO content
+
+#### 2. Update Type System
+
+Add the new language to the Locale type in `client/lib/dictionaries.ts`:
+
+```typescript
+export type Locale =
+  | "en" | "ja" | "zh-Hant" | "zh-Hans" 
+  | "es" | "ko" | "fr" | "it" 
+  | "de";  // Add new language here
+```
+
+Update the Dictionary interface to include the new language option:
+
+```typescript
+language: {
+  // ... existing languages
+  german: string;  // Add new language option
+}
+```
+
+#### 3. Configure Dictionary Loading
+
+Add the new language to `client/lib/get-dictionary.ts`:
+
+```typescript
+const dictionaries = {
+  // ... existing languages
+  de: () => import("./dictionaries/de.json").then((module) => module.default),
+};
+```
+
+#### 4. Update Language Storage
+
+Modify `client/lib/languageStorage.ts` to support the new language in validation functions:
+
+```typescript
+// Update getStoredLanguage() validation
+if (stored && (
+  stored === "en" || stored === "ja" || /* ... existing languages ... */ ||
+  stored === "de"  // Add new language
+)) {
+  return stored as Language;
+}
+
+// Update getLanguageFromCookie() validation  
+if (value === "en" || value === "ja" || /* ... existing languages ... */ ||
+    value === "de") {  // Add new language
+  return value as Language;
+}
+```
+
+#### 5. Configure Routing and Middleware
+
+Update `client/middleware.ts` to include the new language:
+
+```typescript
+// Add to locales array
+const locales = ["en", "ja", "zh-Hant", "zh-Hans", "es", "ko", "fr", "it", "de"];
+
+// Add User-Agent detection logic (optional)
+const germanIndicators = [
+  "de", "de-de", "de-at", "de-ch", "german", "deutsch", "deutschland", "germany"
+];
+```
+
+#### 6. Update Static Generation
+
+Add the new language to `generateStaticParams` functions:
+
+**In `client/app/[lang]/layout.tsx`:**
+```typescript
+export async function generateStaticParams() {
+  return [
+    // ... existing languages
+    { lang: "de" },
+  ];
+}
+```
+
+**In `client/app/[lang]/pokemon/[id]/page.tsx`:**
+```typescript
+const languages = ["en", "ja", "zh-Hant", "zh-Hans", "es", "ko", "fr", "it", "de"];
+```
+
+#### 7. Add Pokemon Data Integration
+
+Update `client/lib/pokemonUtils.ts` to fetch Pokemon data in the new language:
+
+```typescript
+// Update all language mapping objects
+const languageMap: Record<string, string[]> = {
+  // ... existing languages  
+  de: ["de"],  // Add PokeAPI language code
+};
+
+// Update language condition checks
+if (language === "ja" || language === "zh-Hant" || /* ... existing ... */ || language === "de") {
+  // Pokemon data fetching logic
+}
+```
+
+#### 8. Update Language Toggle Component
+
+Modify `client/components/layout/LanguageToggle.tsx`:
+
+```typescript
+// Add to LANGUAGE_OPTIONS array
+const LANGUAGE_OPTIONS: LanguageOption[] = [
+  // ... existing languages
+  { value: "de", label: "Deutsch", flag: "🇩🇪" },
+];
+
+// Add to getLabel() function
+const getLabel = () => {
+  switch (language) {
+    // ... existing cases
+    case "de": return "Sprache";
+    default: return "Language";
+  }
+};
+```
+
+#### 9. Update All Language Dictionaries
+
+Add the new language option to ALL existing dictionary files:
+
+```json
+// In en.json, ja.json, etc.
+{
+  "ui": {
+    "language": {
+      // ... existing languages
+      "german": "German"  // Translated appropriately for each language
+    }
+  }
+}
+```
+
+#### 10. Update Metadata and SEO
+
+Add alternate language URLs to `client/app/[lang]/pokemon/[id]/page.tsx`:
+
+```typescript
+alternates: {
+  languages: {
+    // ... existing languages
+    de: `https://pokemon-pokedex-client.vercel.app/de/pokemon/${id}`,
+  },
+}
+```
+
+### Verification Checklist
+
+After implementing the new language:
+
+- [ ] Dictionary file created with complete translations
+- [ ] TypeScript types updated (Locale, Dictionary interface)
+- [ ] Dictionary loading configured
+- [ ] Language storage validation updated
+- [ ] Middleware routing configured
+- [ ] Static generation parameters updated
+- [ ] Pokemon utility functions support new language
+- [ ] Language toggle component updated
+- [ ] All existing dictionaries include new language option
+- [ ] SEO metadata includes alternate URLs
+- [ ] Test navigation to `/[new-lang]/` works
+- [ ] Pokemon names, descriptions, and abilities display in new language
+- [ ] UI text appears in new language
+- [ ] Language toggle shows new option with correct label
+
+### Technical Notes
+
+1. **PokeAPI Integration**: The system automatically fetches Pokemon data in the new language using PokeAPI's built-in language support
+2. **Fallback Logic**: If Pokemon data isn't available in the target language, the system falls back to English
+3. **Cache Compatibility**: The generation cache system automatically supports new languages
+4. **Build Compatibility**: Both standard and generational build modes work with new languages
+5. **SSG Support**: Static site generation automatically creates pages for all supported languages
+
+### Example: German Language Integration
+
+The German language integration serves as a reference implementation:
+- Language code: `"de"`
+- PokeAPI support: Full (names, descriptions, abilities, moves)
+- Dictionary entries: 400+ comprehensive translations
+- Native labels: "Deutsch" for German, "Sprache" for language toggle
+- Regional detection: Support for de-DE, de-AT, de-CH variants
+
+This systematic approach ensures consistent, maintainable language support across the entire application.

@@ -1,6 +1,5 @@
 import { EvolutionTrigger } from "@/types/pokemon";
 import { Dictionary, Locale } from "@/lib/dictionaries";
-import { ITEM_TRANSLATIONS } from "@/lib/data/itemTranslations";
 
 export function renderEvolutionCondition(
   trigger: EvolutionTrigger,
@@ -25,26 +24,11 @@ export function renderEvolutionCondition(
   }
 
   if (trigger.item) {
-    const itemKey = trigger.item.name.toLowerCase();
-    const itemTranslation = ITEM_TRANSLATIONS[itemKey];
+    const itemKey =
+      trigger.item.name.toLowerCase() as keyof Dictionary["ui"]["evolutionItems"];
+    const itemName = dictionary?.ui.evolutionItems[itemKey];
 
-    if (itemTranslation) {
-      // Helper function to get item translation for current language
-      const getItemTranslation = (lang: Locale) => {
-        switch (lang) {
-          case "en":
-            return itemTranslation.en;
-          case "ja":
-            return itemTranslation.ja;
-          case "zh-Hant":
-          case "zh-Hans":
-            return itemTranslation.en; // fallback to English for Chinese languages
-          default:
-            return itemTranslation.en;
-        }
-      };
-
-      const itemName = getItemTranslation(lang);
+    if (itemName) {
       const useText = dictionary?.ui.pokemonDetails.use || fallback;
       conditions.push(
         lang === "en" ? `${useText} ${itemName}` : `${itemName}を${useText}`,

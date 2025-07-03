@@ -1,4 +1,13 @@
-export type Locale = "en" | "ja" | "zh-Hant" | "zh-Hans" | "es" | "ko" | "fr";
+export type Locale =
+  | "en"
+  | "ja"
+  | "zh-Hant"
+  | "zh-Hans"
+  | "es"
+  | "ko"
+  | "fr"
+  | "it"
+  | "de";
 
 // Dictionary type definition
 export interface Dictionary {
@@ -159,8 +168,8 @@ export interface Dictionary {
       hp: string;
       attack: string;
       defense: string;
-      specialAttack: string;
-      specialDefense: string;
+      "special-attack": string;
+      "special-defense": string;
       speed: string;
       total: string;
     };
@@ -192,6 +201,8 @@ export interface Dictionary {
       spanish: string;
       korean: string;
       french: string;
+      italian: string;
+      german: string;
       toggle: string;
     };
     sandbox: {
@@ -231,6 +242,156 @@ export interface Dictionary {
         gmax: string;
         primal: string;
       };
+      translations: {
+        alolan: string;
+        galarian: string;
+        hisuian: string;
+        paldean: string;
+        alola: string;
+        galar: string;
+        hisui: string;
+        paldea: string;
+        mega: string;
+        "mega-x": string;
+        "mega-y": string;
+        gmax: string;
+        primal: string;
+        origin: string;
+        altered: string;
+        sky: string;
+        land: string;
+        therian: string;
+        incarnate: string;
+        resolute: string;
+        ordinary: string;
+        zen: string;
+        standard: string;
+        blade: string;
+        shield: string;
+        unbound: string;
+        confined: string;
+        complete: string;
+        "10-percent": string;
+        "50-percent": string;
+        "dusk-mane": string;
+        "dawn-wings": string;
+        ultra: string;
+        "red-meteor": string;
+        "blue-meteor": string;
+        "yellow-meteor": string;
+        "green-meteor": string;
+        "orange-meteor": string;
+        "indigo-meteor": string;
+        "violet-meteor": string;
+      };
+    };
+    gameVersions: {
+      red: string;
+      blue: string;
+      yellow: string;
+      gold: string;
+      silver: string;
+      crystal: string;
+      ruby: string;
+      sapphire: string;
+      emerald: string;
+      firered: string;
+      leafgreen: string;
+      diamond: string;
+      pearl: string;
+      platinum: string;
+      heartgold: string;
+      soulsilver: string;
+      black: string;
+      white: string;
+      colosseum: string;
+      xd: string;
+      "black-2": string;
+      "white-2": string;
+      x: string;
+      y: string;
+      "omega-ruby": string;
+      "alpha-sapphire": string;
+      sun: string;
+      moon: string;
+      "ultra-sun": string;
+      "ultra-moon": string;
+      "lets-go-pikachu": string;
+      "lets-go-eevee": string;
+      sword: string;
+      shield: string;
+      "brilliant-diamond": string;
+      "shining-pearl": string;
+      "legends-arceus": string;
+      scarlet: string;
+      violet: string;
+    };
+    pokemonTypes: {
+      normal: string;
+      fire: string;
+      water: string;
+      electric: string;
+      grass: string;
+      ice: string;
+      fighting: string;
+      poison: string;
+      ground: string;
+      flying: string;
+      psychic: string;
+      bug: string;
+      rock: string;
+      ghost: string;
+      dragon: string;
+      dark: string;
+      steel: string;
+      fairy: string;
+    };
+    moveLearnMethods: {
+      "level-up": string;
+      machine: string;
+      egg: string;
+      tutor: string;
+      "light-ball-egg": string;
+      "colosseum-purification": string;
+      "xd-shadow": string;
+      "xd-purification": string;
+      "form-change": string;
+    };
+    evolutionItems: {
+      "thunder-stone": string;
+      "fire-stone": string;
+      "water-stone": string;
+      "leaf-stone": string;
+      "moon-stone": string;
+      "sun-stone": string;
+      "shiny-stone": string;
+      "dusk-stone": string;
+      "dawn-stone": string;
+      "ice-stone": string;
+      "oval-stone": string;
+      "kings-rock": string;
+      "metal-coat": string;
+      "dragon-scale": string;
+      upgrade: string;
+      "dubious-disc": string;
+      protector: string;
+      electirizer: string;
+      magmarizer: string;
+      "razor-claw": string;
+      "razor-fang": string;
+      "reaper-cloth": string;
+      "deep-sea-tooth": string;
+      "deep-sea-scale": string;
+      "prism-scale": string;
+      sachet: string;
+      "whipped-dream": string;
+      "strawberry-sweet": string;
+      "berry-sweet": string;
+      "love-sweet": string;
+      "star-sweet": string;
+      "clover-sweet": string;
+      "flower-sweet": string;
+      "ribbon-sweet": string;
     };
   };
   meta: {
@@ -253,7 +414,9 @@ export const getLocaleFromPathname = (pathname: string): Locale => {
   const segments = pathname.split("/");
   const locale = segments[1] as Locale;
   return locale &&
-    ["en", "ja", "zh-Hant", "zh-Hans", "es", "ko", "fr"].includes(locale)
+    ["en", "ja", "zh-Hant", "zh-Hans", "es", "ko", "fr", "it", "de"].includes(
+      locale,
+    )
     ? locale
     : "en";
 };
@@ -267,7 +430,9 @@ export const generateAlternateLanguageUrl = (
 
   if (
     currentLocale &&
-    ["en", "ja", "zh-Hant", "zh-Hans", "es", "ko", "fr"].includes(currentLocale)
+    ["en", "ja", "zh-Hant", "zh-Hans", "es", "ko", "fr", "it", "de"].includes(
+      currentLocale,
+    )
   ) {
     segments[1] = newLocale;
     return segments.join("/");
