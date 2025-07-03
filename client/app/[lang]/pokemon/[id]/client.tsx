@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import { Pokemon } from "@/types/pokemon";
 import { Dictionary, Locale } from "@/lib/dictionaries";
 import { PokemonDetailHeader } from "@/components/ui/pokemon/detail/PokemonDetailHeader";
 import { PokemonTopNavigationTabs } from "@/components/ui/pokemon/detail/PokemonTopNavigationTabs";
 import { useBackgroundPreload } from "@/hooks/useBackgroundPreload";
-import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { useAppDispatch } from "@/store/hooks";
 import { setLanguage, setDictionary } from "@/store/slices/uiSlice";
 
 interface PokemonDetailClientProps {
@@ -21,18 +21,13 @@ export default function PokemonDetailClient({
   dictionary,
 }: PokemonDetailClientProps) {
   const dispatch = useAppDispatch();
-  const { language: currentLanguage, dictionary: currentDictionary } =
-    useAppSelector((state) => state.ui);
 
-  // Sync language and dictionary from server props to Redux store
-  useEffect(() => {
-    if (currentLanguage !== lang) {
-      dispatch(setLanguage(lang));
-    }
-    if (!currentDictionary) {
-      dispatch(setDictionary(dictionary));
-    }
-  }, [lang, currentLanguage, dictionary, currentDictionary, dispatch]);
+  // Synchronously initialize Redux state before any rendering to prevent hydration mismatch
+  useLayoutEffect(() => {
+    // Always ensure dictionary is set immediately
+    dispatch(setDictionary(dictionary));
+    dispatch(setLanguage(lang));
+  }, [lang, dictionary, dispatch]);
 
   // Background preload nearby Pokemon
   const { preloadStatus, isPreloading } = useBackgroundPreload({
@@ -45,10 +40,14 @@ export default function PokemonDetailClient({
 
   return (
     <>
-      <PokemonDetailHeader language={lang as Locale} />
+      <PokemonDetailHeader language={lang as Locale} dictionary={dictionary} />
 
       {/* Top Navigation Tabs with Content */}
-      <PokemonTopNavigationTabs pokemon={pokemon} lang={lang} />
+      <PokemonTopNavigationTabs
+        pokemon={pokemon}
+        lang={lang}
+        dictionary={dictionary}
+      />
 
       {/* Debug indicator (removed in production) */}
       {process.env.NODE_ENV === "development" && isPreloading && (

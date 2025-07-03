@@ -1,28 +1,23 @@
 "use client";
 
-import { useAppSelector } from "@/store/hooks";
-import { getFallbackText } from "@/lib/fallbackText";
-import { Locale } from "@/lib/dictionaries";
+import { Dictionary } from "@/lib/dictionaries";
 
 interface PokemonVersionToggleProps {
   isShiny: boolean;
   onToggle: (isShiny: boolean) => void;
-  language: Locale;
+  dictionary: Dictionary;
 }
 
 export function PokemonVersionToggle({
   isShiny,
   onToggle,
-  language,
+  dictionary,
 }: PokemonVersionToggleProps) {
-  const { dictionary } = useAppSelector((state) => state.ui);
-
-  const fallback = getFallbackText(language);
-
+  // Use dictionary directly from props to ensure server/client consistency
   const text = {
-    versions: dictionary?.ui.pokemonDetails.versions || fallback,
-    normal: dictionary?.ui.pokemonDetails.normal || fallback,
-    shiny: dictionary?.ui.pokemonDetails.shiny || fallback,
+    versions: dictionary.ui.pokemonDetails.versions,
+    normal: dictionary.ui.pokemonDetails.normal,
+    shiny: dictionary.ui.pokemonDetails.shiny,
   };
   return (
     <div className="mb-6">

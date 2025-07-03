@@ -8,18 +8,20 @@ import {
   getPokemonFormName,
 } from "@/lib/pokemonUtils";
 import { PokemonTypes } from "./PokemonTypes";
-import { Locale } from "@/lib/dictionaries";
+import { Locale, Dictionary } from "@/lib/dictionaries";
 
 interface PokemonHeaderProps {
   pokemon: Pokemon;
   displayName: string;
   language: Locale;
+  dictionary: Dictionary;
 }
 
 export function PokemonHeader({
   pokemon,
   displayName,
   language,
+  dictionary,
 }: PokemonHeaderProps) {
   const displayId = getPokemonDisplayId(pokemon);
   const shouldSeparateForm = shouldDisplayFormSeparately(pokemon);
@@ -46,6 +48,7 @@ export function PokemonHeader({
       <div>
         <PokemonTypes
           types={pokemon.types}
+          dictionary={dictionary}
           size="lg"
           className="flex gap-2 justify-start mb-2"
         />

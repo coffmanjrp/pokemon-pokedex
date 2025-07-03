@@ -38,23 +38,39 @@ function PokemonListContent({
   // Navigation cache restoration
   const { restoreFromURL } = useNavigationCache();
 
-  // Initialize generation from URL parameter on first load with cache restoration
+  // Initialize generation from URL parameter on first load
   const [currentGeneration, setCurrentGeneration] = useState(() => {
     const generationParam = searchParams.get("generation");
     if (generationParam) {
       const generation = parseInt(generationParam, 10);
       if (generation >= 1 && generation <= 9) {
-        // Try to restore from cache first
-        if (restoreFromURL()) {
-          console.log(
-            `Generation ${generation} restored from cache on initial load`,
-          );
-        }
         return generation;
       }
     }
     return 1;
   });
+
+  // Track if cache restoration has been attempted to prevent infinite loops
+  const cacheRestoredRef = useRef(false);
+
+  // Restore from cache after component mount to avoid setState during render
+  useEffect(() => {
+    if (cacheRestoredRef.current) return; // Prevent multiple executions
+
+    const generationParam = searchParams.get("generation");
+    if (generationParam) {
+      const generation = parseInt(generationParam, 10);
+      if (generation >= 1 && generation <= 9) {
+        // Try to restore from cache
+        if (restoreFromURL()) {
+          console.log(
+            `Generation ${generation} restored from cache on initial load`,
+          );
+        }
+      }
+    }
+    cacheRestoredRef.current = true;
+  }, [searchParams, restoreFromURL]);
   const {
     pokemons,
     loading,
@@ -85,7 +101,8 @@ function PokemonListContent({
     if (currentLanguage !== lang) {
       dispatch(setLanguage(lang));
     }
-    if (!currentDictionary) {
+    // Update dictionary when language changes or when dictionary is not set
+    if (!currentDictionary || currentLanguage !== lang) {
       dispatch(setDictionary(dictionary));
     }
   }, [lang, currentLanguage, dictionary, currentDictionary, dispatch]);

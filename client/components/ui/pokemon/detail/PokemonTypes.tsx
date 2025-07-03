@@ -1,23 +1,22 @@
 "use client";
 
 import { Pokemon } from "@/types/pokemon";
-import { getTypeName } from "@/lib/pokemonUtils";
-import { useAppSelector } from "@/store/hooks";
+import { Dictionary } from "@/lib/dictionaries";
 import { TypeBadge } from "../../common/Badge";
 
 interface PokemonTypesProps {
   types: Pokemon["types"];
+  dictionary?: Dictionary;
   size?: "sm" | "md" | "lg";
   className?: string;
 }
 
 export function PokemonTypes({
   types,
+  dictionary,
   size = "md",
   className,
 }: PokemonTypesProps) {
-  const { dictionary } = useAppSelector((state) => state.ui);
-
   const getSizeClass = () => {
     switch (size) {
       case "sm":
@@ -34,9 +33,11 @@ export function PokemonTypes({
   return (
     <div className={className || defaultClassName}>
       {types.map((typeInfo, index) => {
-        const displayName = dictionary
-          ? getTypeName(typeInfo.type.name, dictionary)
-          : typeInfo.type.name;
+        // Use dictionary directly from props to ensure server/client consistency
+        const displayName =
+          dictionary?.ui.pokemonTypes[
+            typeInfo.type.name as keyof typeof dictionary.ui.pokemonTypes
+          ] || typeInfo.type.name;
 
         return (
           <TypeBadge

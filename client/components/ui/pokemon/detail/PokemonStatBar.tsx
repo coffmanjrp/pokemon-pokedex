@@ -1,34 +1,29 @@
 "use client";
 
-import { Locale } from "@/lib/dictionaries";
+import { Dictionary } from "@/lib/dictionaries";
 import { getStatColor } from "@/lib/data/statColors";
-import { useAppSelector } from "@/store/hooks";
-import { getFallbackText } from "@/lib/fallbackText";
 
 interface PokemonStatBarProps {
   statName: string;
   baseStat: number;
-  language: Locale;
+  dictionary: Dictionary;
   maxBaseStat?: number;
 }
 
 export function PokemonStatBar({
   statName,
   baseStat,
-  language,
+  dictionary,
   maxBaseStat = 150,
 }: PokemonStatBarProps) {
   const percentage = (baseStat / maxBaseStat) * 100;
-  const { dictionary } = useAppSelector((state) => state.ui);
-  const fallback = getFallbackText(language);
 
   // Get stat name from dictionary system
   const getStatDisplayName = (statName: string): string => {
     const statKey = statName.toLowerCase();
     return (
-      dictionary?.ui.stats[statKey as keyof typeof dictionary.ui.stats] ||
-      statName ||
-      fallback
+      dictionary.ui.stats[statKey as keyof typeof dictionary.ui.stats] ||
+      statName
     );
   };
 

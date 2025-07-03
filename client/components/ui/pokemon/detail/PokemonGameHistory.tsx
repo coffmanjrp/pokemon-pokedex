@@ -21,17 +21,22 @@ export function PokemonGameHistory({
 }: PokemonGameHistoryProps) {
   const { dictionary } = useAppSelector((state) => state.ui);
 
-  const fallback = getFallbackText(language);
-
+  // Use consistent fallback text based on props language for server/client consistency
   const text = {
     originGeneration:
-      dictionary?.ui.pokemonDetails.originGeneration || fallback,
-    gameAppearances: dictionary?.ui.pokemonDetails.gameAppearances || fallback,
-    remakes: dictionary?.ui.pokemonDetails.remakes || fallback,
-    otherGames: dictionary?.ui.pokemonDetails.otherGames || fallback,
+      dictionary?.ui.pokemonDetails.originGeneration ||
+      getFallbackText(language),
+    gameAppearances:
+      dictionary?.ui.pokemonDetails.gameAppearances ||
+      getFallbackText(language),
+    remakes: dictionary?.ui.pokemonDetails.remakes || getFallbackText(language),
+    otherGames:
+      dictionary?.ui.pokemonDetails.otherGames || getFallbackText(language),
     totalAppearances:
-      dictionary?.ui.pokemonDetails.totalAppearances || fallback,
-    generations: dictionary?.ui.pokemonDetails.generations || fallback,
+      dictionary?.ui.pokemonDetails.totalAppearances ||
+      getFallbackText(language),
+    generations:
+      dictionary?.ui.pokemonDetails.generations || getFallbackText(language),
   };
   if (!gameIndices || gameIndices.length === 0) {
     return <DataEmptyState type="games" language={language} />;

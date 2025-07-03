@@ -24,6 +24,7 @@ type LearnMethod = "level-up" | "machine" | "egg" | "tutor" | "other";
 export function PokemonMoves({ moves, language }: PokemonMovesProps) {
   const [selectedMethod, setSelectedMethod] = useState<LearnMethod>("level-up");
   const { dictionary } = useAppSelector((state) => state.ui);
+
   if (!moves || moves.length === 0) {
     return <DataEmptyState type="moves" language={language} />;
   }
@@ -61,6 +62,7 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
     {} as Record<LearnMethod, PokemonMove[]>,
   );
 
+  // Use props language for consistent fallback behavior between server and client
   const fallback = getFallbackText(language);
 
   const text = {
