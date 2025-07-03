@@ -50,8 +50,13 @@ function PokemonListContent({
     return 1;
   });
 
+  // Track if cache restoration has been attempted to prevent infinite loops
+  const cacheRestoredRef = useRef(false);
+
   // Restore from cache after component mount to avoid setState during render
   useEffect(() => {
+    if (cacheRestoredRef.current) return; // Prevent multiple executions
+
     const generationParam = searchParams.get("generation");
     if (generationParam) {
       const generation = parseInt(generationParam, 10);
@@ -64,7 +69,8 @@ function PokemonListContent({
         }
       }
     }
-  }, [restoreFromURL, searchParams]);
+    cacheRestoredRef.current = true;
+  }, [searchParams, restoreFromURL]);
   const {
     pokemons,
     loading,
