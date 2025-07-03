@@ -38,23 +38,33 @@ function PokemonListContent({
   // Navigation cache restoration
   const { restoreFromURL } = useNavigationCache();
 
-  // Initialize generation from URL parameter on first load with cache restoration
+  // Initialize generation from URL parameter on first load
   const [currentGeneration, setCurrentGeneration] = useState(() => {
     const generationParam = searchParams.get("generation");
     if (generationParam) {
       const generation = parseInt(generationParam, 10);
       if (generation >= 1 && generation <= 9) {
-        // Try to restore from cache first
-        if (restoreFromURL()) {
-          console.log(
-            `Generation ${generation} restored from cache on initial load`,
-          );
-        }
         return generation;
       }
     }
     return 1;
   });
+
+  // Restore from cache after component mount to avoid setState during render
+  useEffect(() => {
+    const generationParam = searchParams.get("generation");
+    if (generationParam) {
+      const generation = parseInt(generationParam, 10);
+      if (generation >= 1 && generation <= 9) {
+        // Try to restore from cache
+        if (restoreFromURL()) {
+          console.log(
+            `Generation ${generation} restored from cache on initial load`,
+          );
+        }
+      }
+    }
+  }, [restoreFromURL, searchParams]);
   const {
     pokemons,
     loading,
