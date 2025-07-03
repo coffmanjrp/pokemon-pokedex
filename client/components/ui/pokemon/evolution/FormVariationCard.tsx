@@ -47,7 +47,12 @@ export function FormVariationCard({
               form.sprites.frontDefault ||
               ""
             }
-            alt={getFormDisplayName(pokemonName, form.formName, lang)}
+            alt={getFormDisplayName(
+              pokemonName,
+              form.formName,
+              lang,
+              dictionary || undefined,
+            )}
             fill
             className="object-contain group-hover:scale-110 transition-transform duration-200"
           />

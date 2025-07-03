@@ -1,12 +1,7 @@
 import { Pokemon, EvolutionDetail, Move, GenderInfo } from "@/types/pokemon";
 import { Locale } from "@/lib/dictionaries";
 import { getFormDisplayName, isMegaEvolution } from "@/lib/formUtils";
-import {
-  REGIONAL_FORM_TRANSLATIONS,
-  MEGA_FORM_TRANSLATIONS,
-  GIGANTAMAX_FORM_TRANSLATIONS,
-  SPECIAL_FORM_TRANSLATIONS,
-} from "@/lib/data/formTranslations";
+// Form translations moved to dictionary system
 import { ABILITY_TRANSLATIONS } from "@/lib/data/abilityTranslations";
 import { VERSION_TRANSLATIONS } from "@/lib/data/versionTranslations";
 import { TYPE_EFFECTIVENESS } from "@/lib/data/typeEffectiveness";
@@ -27,70 +22,8 @@ function getFormTranslation(
     `[getFormTranslation] Looking for translation of "${formName}" in language "${language}"`,
   );
 
-  // Safe access to translation objects with fallback
-  const safeRegionalForms = REGIONAL_FORM_TRANSLATIONS || {};
-  const safeMegaForms = MEGA_FORM_TRANSLATIONS || {};
-  const safeGigantamaxForms = GIGANTAMAX_FORM_TRANSLATIONS || {};
-  const safeSpecialForms = SPECIAL_FORM_TRANSLATIONS || {};
-
-  // Check regional forms - try exact match first, then partial match
-  for (const [key, translation] of Object.entries(safeRegionalForms)) {
-    if (formName === key || formName.includes(key)) {
-      console.log(
-        `[getFormTranslation] Found regional form: ${key} -> ${translation[language]}`,
-      );
-      return (
-        translation[language as keyof typeof translation] || translation.en
-      );
-    }
-  }
-
-  // Check mega forms - exact match first
-  for (const [key, translation] of Object.entries(safeMegaForms)) {
-    if (formName === key) {
-      console.log(
-        `[getFormTranslation] Found exact mega form: ${key} -> ${translation[language]}`,
-      );
-      return (
-        translation[language as keyof typeof translation] || translation.en
-      );
-    }
-  }
-  // Check mega forms - partial match as fallback
-  for (const [key, translation] of Object.entries(safeMegaForms)) {
-    if (formName.includes(key)) {
-      console.log(
-        `[getFormTranslation] Found partial mega form: ${key} -> ${translation[language]}`,
-      );
-      return (
-        translation[language as keyof typeof translation] || translation.en
-      );
-    }
-  }
-
-  // Check gigantamax forms
-  for (const [key, translation] of Object.entries(safeGigantamaxForms)) {
-    if (formName === key || formName.includes(key)) {
-      console.log(
-        `[getFormTranslation] Found gigantamax form: ${key} -> ${translation[language]}`,
-      );
-      return (
-        translation[language as keyof typeof translation] || translation.en
-      );
-    }
-  }
-
-  // Check special forms
-  for (const [key, translation] of Object.entries(safeSpecialForms)) {
-    if (formName === key || formName.includes(key)) {
-      console.log(
-        `[getFormTranslation] Found special form: ${key} -> ${translation[language]}`,
-      );
-      return (
-        translation[language as keyof typeof translation] || translation.en
-      );
-    }
-  }
+  // Special forms now handled by dictionary system
+  // This function is deprecated and should use dictionary lookup instead
 
   console.log(`[getFormTranslation] No translation found for "${formName}"`);
   return null;
