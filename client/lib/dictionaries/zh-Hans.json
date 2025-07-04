@@ -14,7 +14,9 @@
       "apply": "应用筛选器",
       "showingResults": "显示 {{count}} 个结果",
       "totalPokemon": "总计：{{total}} 只宝可梦",
-      "filterByType": "按属性筛选："
+      "filterByType": "按属性筛选：",
+      "showTypeFilter": "按类型筛选",
+      "hideTypeFilter": "隐藏类型筛选"
     },
     "types": {
       "normal": "一般",
