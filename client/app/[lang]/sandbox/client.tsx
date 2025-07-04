@@ -10,6 +10,7 @@ import { ANIMATIONS, AnimationType } from "@/lib/animations";
 import { getFallbackText } from "@/lib/fallbackText";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setLanguage, setDictionary } from "@/store/slices/uiSlice";
+import { HiChevronLeft } from "react-icons/hi2";
 
 interface SandboxClientProps {
   dictionary: Dictionary;
@@ -498,19 +499,7 @@ function SandboxContent({ lang }: { lang: Locale }) {
             href={backUrl}
             className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium"
           >
-            <svg
-              className="w-4 h-4 mr-1.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
+            <HiChevronLeft className="w-4 h-4 mr-1.5" />
             {text.backButton}
           </Link>
         </div>

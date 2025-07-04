@@ -12,7 +12,8 @@ import {
 import { setStoredLanguage } from "@/lib/languageStorage";
 import { GENERATIONS } from "@/lib/data/generations";
 import { Logo } from "./Logo";
-import { LanguageToggle } from "./LanguageToggle";
+import { LanguageSelector } from "./LanguageSelector";
+import { HiBars3, HiXMark } from "react-icons/hi2";
 
 interface SidebarProps {
   lang: Locale;
@@ -63,28 +64,11 @@ export function Sidebar({
         className="lg:hidden fixed top-2 left-2 z-50 p-2 bg-white rounded-lg shadow-lg border border-gray-200 hover:bg-gray-50 active:bg-gray-100 transition-colors touch-manipulation"
         style={{ minHeight: "44px", minWidth: "44px" }} // Ensure proper touch target size
       >
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          {isMobileMenuOpen ? (
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          ) : (
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          )}
-        </svg>
+        {isMobileMenuOpen ? (
+          <HiXMark className="w-6 h-6" />
+        ) : (
+          <HiBars3 className="w-6 h-6" />
+        )}
       </button>
 
       {/* Mobile Overlay */}
@@ -151,9 +135,10 @@ export function Sidebar({
 
           {/* Language Toggle at Bottom */}
           <div className="p-6 border-t border-gray-200">
-            <LanguageToggle
+            <LanguageSelector
               language={lang}
               onLanguageChange={handleLanguageChange}
+              dictionary={dictionary}
             />
           </div>
         </div>

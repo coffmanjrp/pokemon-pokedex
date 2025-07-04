@@ -4,6 +4,7 @@ import { forwardRef } from "react";
 import { Locale, interpolate } from "@/lib/dictionaries";
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
+import { HiXMark } from "react-icons/hi2";
 
 interface PokemonProgressFooterProps {
   lang: Locale;
@@ -145,19 +146,7 @@ export const PokemonProgressFooter = forwardRef<
                   className="ml-2 p-1 text-green-500 hover:text-green-700 hover:bg-green-100 rounded-full transition-colors duration-200"
                   aria-label={dictionary?.ui.loading.close || fallback}
                 >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                  <HiXMark className="w-4 h-4" />
                 </button>
               )}
             </div>

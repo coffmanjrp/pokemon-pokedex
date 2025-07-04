@@ -30,3 +30,7 @@ export {
   isWeakTo,
   getDamageMultiplier,
 } from "../utils/typeUtils";
+
+// Export language options
+export { LANGUAGE_OPTIONS } from "./languages";
+export type { LanguageOption, LanguageLabels } from "./languages";

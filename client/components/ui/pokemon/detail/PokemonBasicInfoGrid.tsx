@@ -3,6 +3,7 @@
 import { Pokemon } from "@/types/pokemon";
 import { getAbilityName, getGenderDisplayElement } from "@/lib/pokemonUtils";
 import { Locale, Dictionary } from "@/lib/dictionaries";
+import { FaMars, FaVenus } from "react-icons/fa";
 
 interface PokemonBasicInfoGridProps {
   pokemon: Pokemon;
@@ -52,8 +53,8 @@ export function PokemonBasicInfoGrid({
             getGenderDisplayElement(pokemon.species.genderRate, language)
           ) : (
             <>
-              <span className="text-blue-600 font-bold">♂</span>{" "}
-              <span className="text-pink-600 font-bold">♀</span>
+              <FaMars className="text-blue-600 font-bold inline mr-1" />
+              <FaVenus className="text-pink-600 font-bold inline" />
             </>
           )}
         </div>
