@@ -14,7 +14,9 @@
       "apply": "Appliquer les filtres",
       "showingResults": "Affichage de {{count}} résultats",
       "totalPokemon": "Total : {{total}} Pokémon",
-      "filterByType": "Filtrer par type :"
+      "filterByType": "Filtrer par type :",
+      "showTypeFilter": "Filtrer par type",
+      "hideTypeFilter": "Masquer les filtres de type"
     },
     "types": {
       "normal": "Normal",

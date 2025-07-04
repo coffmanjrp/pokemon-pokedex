@@ -14,7 +14,9 @@
       "apply": "フィルターを適用",
       "showingResults": "{{count}}件の結果を表示",
       "totalPokemon": "合計: {{total}}匹のポケモン",
-      "filterByType": "タイプでフィルタリング:"
+      "filterByType": "タイプでフィルタリング:",
+      "showTypeFilter": "タイプで絞り込む",
+      "hideTypeFilter": "タイプフィルタを隠す"
     },
     "types": {
       "normal": "ノーマル",

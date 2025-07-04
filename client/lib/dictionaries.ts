@@ -27,6 +27,8 @@ export interface Dictionary {
       showingResults: string;
       totalPokemon: string;
       filterByType: string;
+      showTypeFilter: string;
+      hideTypeFilter: string;
     };
     types: {
       normal: string;

@@ -14,7 +14,9 @@
       "apply": "필터 적용",
       "showingResults": "{{count}}개 결과",
       "totalPokemon": "총 {{total}}마리 포켓몬",
-      "filterByType": "타입으로 필터링:"
+      "filterByType": "타입으로 필터링:",
+      "showTypeFilter": "타입으로 필터링",
+      "hideTypeFilter": "타입 필터 숨기기"
     },
     "types": {
       "normal": "노말",

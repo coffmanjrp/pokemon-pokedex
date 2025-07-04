@@ -14,7 +14,9 @@
       "apply": "套用篩選器",
       "showingResults": "顯示 {{count}} 個結果",
       "totalPokemon": "總計：{{total}} 隻寶可夢",
-      "filterByType": "按屬性篩選："
+      "filterByType": "按屬性篩選：",
+      "showTypeFilter": "按類型篩選",
+      "hideTypeFilter": "隱藏類型篩選"
     },
     "types": {
       "normal": "一般",
