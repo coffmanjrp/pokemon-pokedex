@@ -171,7 +171,7 @@ export interface PokemonSpecies {
   names: SpeciesName[];
   flavorTextEntries: FlavorTextEntry[];
   genera: Genus[];
-  generation: Generation;
+  generation: Generation | null;
   evolutionChain?: EvolutionChain | undefined;
   varieties?: PokemonVariety[];
   genderRate?: number;

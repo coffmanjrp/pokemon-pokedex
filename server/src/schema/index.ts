@@ -188,7 +188,7 @@ export const typeDefs = gql`
     names: [SpeciesName!]!
     flavorTextEntries: [FlavorTextEntry!]!
     genera: [Genus!]!
-    generation: Generation!
+    generation: Generation
     evolutionChain: EvolutionChain
     varieties: [PokemonVariety!]!
     genderRate: Int
