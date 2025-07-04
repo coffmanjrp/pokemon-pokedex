@@ -7,6 +7,7 @@ import { isPokemonType } from "@/lib/utils/typeUtils";
 import { MOVE_TRANSLATIONS } from "@/lib/data/moveTranslations";
 import { getTypeColor } from "@/lib/utils";
 import React from "react";
+import { FaMars, FaVenus } from "react-icons/fa";
 
 /**
  * Get form translation for use in Japanese Pokemon names
@@ -1002,61 +1003,51 @@ export function getGenderDisplayElement(
       );
     case "male":
       if (genderInfo.maleRatio === 100) {
-        return React.createElement(
-          "span",
-          { className: "text-blue-600 font-bold" },
-          "♂",
-        );
+        return React.createElement(FaMars, {
+          className: "text-blue-600 font-bold inline",
+        });
       } else {
         return React.createElement("span", null, [
-          React.createElement(
-            "span",
-            { key: "male", className: "text-blue-600 font-bold" },
-            "♂",
-          ),
+          React.createElement(FaMars, {
+            key: "male",
+            className: "text-blue-600 font-bold inline",
+          }),
           React.createElement("span", { key: "space" }, " "),
-          React.createElement(
-            "span",
-            { key: "female", className: "text-pink-600 font-bold" },
-            "♀",
-          ),
+          React.createElement(FaVenus, {
+            key: "female",
+            className: "text-pink-600 font-bold inline",
+          }),
         ]);
       }
     case "female":
       if (genderInfo.femaleRatio === 100) {
-        return React.createElement(
-          "span",
-          { className: "text-pink-600 font-bold" },
-          "♀",
-        );
+        return React.createElement(FaVenus, {
+          className: "text-pink-600 font-bold inline",
+        });
       } else {
         return React.createElement("span", null, [
-          React.createElement(
-            "span",
-            { key: "male", className: "text-blue-600 font-bold" },
-            "♂",
-          ),
+          React.createElement(FaMars, {
+            key: "male",
+            className: "text-blue-600 font-bold inline",
+          }),
           React.createElement("span", { key: "space" }, " "),
-          React.createElement(
-            "span",
-            { key: "female", className: "text-pink-600 font-bold" },
-            "♀",
-          ),
+          React.createElement(FaVenus, {
+            key: "female",
+            className: "text-pink-600 font-bold inline",
+          }),
         ]);
       }
     default:
       return React.createElement("span", null, [
-        React.createElement(
-          "span",
-          { key: "male", className: "text-blue-600 font-bold" },
-          "♂",
-        ),
+        React.createElement(FaMars, {
+          key: "male",
+          className: "text-blue-600 font-bold inline",
+        }),
         React.createElement("span", { key: "space" }, " "),
-        React.createElement(
-          "span",
-          { key: "female", className: "text-pink-600 font-bold" },
-          "♀",
-        ),
+        React.createElement(FaVenus, {
+          key: "female",
+          className: "text-pink-600 font-bold inline",
+        }),
       ]);
   }
 }
