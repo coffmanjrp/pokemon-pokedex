@@ -6,6 +6,7 @@ import { PokemonCard } from "./PokemonCard";
 import { Locale } from "@/lib/dictionaries";
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
+import { useRouter } from "next/navigation";
 
 interface PokemonGridProps {
   pokemons: Pokemon[];
@@ -19,6 +20,7 @@ interface PokemonGridProps {
   onLoadMore?: () => void;
   language?: Locale;
   priority?: boolean;
+  currentGeneration?: number;
 }
 
 export function PokemonGrid({
@@ -28,11 +30,33 @@ export function PokemonGrid({
   isFiltering = false,
   priority = false,
   language = "en",
+  currentGeneration,
 }: PokemonGridProps) {
   const parentRef = useRef<HTMLDivElement>(null);
   const [isMounted, setIsMounted] = useState(false);
   const { dictionary } = useAppSelector((state) => state.ui);
   const fallback = getFallbackText(language);
+  const router = useRouter();
+
+  // Batch prefetch visible Pokemon detail pages
+  useEffect(() => {
+    if (!isMounted || pokemons.length === 0) return;
+
+    const prefetchVisiblePokemon = () => {
+      // Prefetch first 12 Pokemon (initial visible batch)
+      const visiblePokemon = pokemons.slice(0, 12);
+
+      visiblePokemon.forEach((pokemon) => {
+        const detailUrl = `/${language}/pokemon/${pokemon.id}${currentGeneration ? `?from=generation-${currentGeneration}` : ""}`;
+        router.prefetch(detailUrl);
+      });
+    };
+
+    // Prefetch after a short delay to avoid blocking initial render
+    const timeoutId = setTimeout(prefetchVisiblePokemon, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [isMounted, pokemons, language, currentGeneration, router]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -62,6 +86,8 @@ export function PokemonGrid({
             onClick={onPokemonClick}
             className="h-72 sm:h-80" // Slightly smaller on mobile
             priority={index < 5} // Priority for first 5 cards in initial render
+            lang={language}
+            {...(currentGeneration && { currentGeneration })}
           />
         ))}
       </div>
@@ -84,6 +110,8 @@ export function PokemonGrid({
             onClick={onPokemonClick}
             className="h-72 sm:h-80"
             priority={priority && index < 5}
+            lang={language}
+            {...(currentGeneration && { currentGeneration })}
           />
         ))}
       </div>
