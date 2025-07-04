@@ -299,7 +299,15 @@ class PokemonService {
         })),
         genderRate: speciesData.gender_rate ?? 4, // Default to 50/50 ratio if not available
         hasGenderDifferences: speciesData.has_gender_differences ?? false,
-      } : null,
+      } : {
+        // Return minimal species object with empty arrays when species data is not available
+        id: data.id.toString(),
+        name: data.name,
+        names: [],
+        genera: [],
+        genderRate: 4, // Default to 50/50 ratio
+        hasGenderDifferences: false,
+      },
     };
   }
 
@@ -373,13 +381,13 @@ class PokemonService {
             url: entry.version.url,
           },
         })),
-        genera: speciesData.genera.map((genus: any) => ({
+        genera: speciesData.genera ? speciesData.genera.map((genus: any) => ({
           genus: genus.genus,
           language: {
             name: genus.language.name,
             url: genus.language.url,
           },
-        })),
+        })) : [],
         generation: {
           id: this.extractIdFromUrl(speciesData.generation.url),
           name: speciesData.generation.name,
@@ -389,7 +397,18 @@ class PokemonService {
         hasGenderDifferences: speciesData.has_gender_differences ?? false,
         evolutionChain: speciesData.evolution_chain ? 
           await this.getEvolutionChain(speciesData.evolution_chain.url) : undefined,
-      } : null,
+      } : {
+        // Return minimal species object with empty arrays when species data is not available
+        id: data.id.toString(),
+        name: data.name,
+        names: [],
+        flavorTextEntries: [],
+        genera: [],
+        generation: null,
+        genderRate: 4, // Default to 50/50 ratio
+        hasGenderDifferences: false,
+        evolutionChain: undefined,
+      },
     };
   }
 

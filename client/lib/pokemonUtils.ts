@@ -530,11 +530,32 @@ export function getPokemonDescription(
 }
 
 /**
+ * Get fallback genus text for the specified language
+ */
+function getGenusFallback(language: Locale): string {
+  const fallbackTexts: Record<Locale, string> = {
+    en: "Pokémon",
+    ja: "ポケモン",
+    "zh-Hant": "寶可夢",
+    "zh-Hans": "宝可梦",
+    es: "Pokémon",
+    ko: "포켓몬",
+    fr: "Pokémon",
+    it: "Pokémon",
+    de: "Pokémon",
+  };
+
+  return fallbackTexts[language] || "Pokémon";
+}
+
+/**
  * Get Pokemon genus (category) in the specified language
  */
 export function getPokemonGenus(pokemon: Pokemon, language: Locale): string {
-  if (!pokemon.species?.genera) {
-    return "";
+  // Check if genus data exists
+  if (!pokemon.species?.genera || pokemon.species.genera.length === 0) {
+    // Return fallback text instead of empty string
+    return getGenusFallback(language);
   }
 
   // Map locale to PokeAPI language codes
@@ -556,7 +577,8 @@ export function getPokemonGenus(pokemon: Pokemon, language: Locale): string {
     targetCodes.includes(genusEntry.language.name),
   );
 
-  return genus?.genus || "";
+  // Return genus or fallback text
+  return genus?.genus || getGenusFallback(language);
 }
 
 /**
