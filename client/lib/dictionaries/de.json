@@ -13,7 +13,28 @@
       "clear": "Alle löschen",
       "apply": "Filter anwenden",
       "showingResults": "{{count}} Ergebnisse angezeigt",
-      "totalPokemon": "Gesamt: {{total}} Pokémon"
+      "totalPokemon": "Gesamt: {{total}} Pokémon",
+      "filterByType": "Nach Typ filtern:"
+    },
+    "types": {
+      "normal": "Normal",
+      "fire": "Feuer",
+      "water": "Wasser",
+      "electric": "Elektro",
+      "grass": "Pflanze",
+      "ice": "Eis",
+      "fighting": "Kampf",
+      "poison": "Gift",
+      "ground": "Boden",
+      "flying": "Flug",
+      "psychic": "Psycho",
+      "bug": "Käfer",
+      "rock": "Gestein",
+      "ghost": "Geist",
+      "dragon": "Drache",
+      "dark": "Unlicht",
+      "steel": "Stahl",
+      "fairy": "Fee"
     },
     "navigation": {
       "home": "Startseite",

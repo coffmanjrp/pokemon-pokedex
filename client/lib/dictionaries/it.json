@@ -13,7 +13,28 @@
       "clear": "Cancella Tutto",
       "apply": "Applica Filtri",
       "showingResults": "Mostrando {{count}} risultati",
-      "totalPokemon": "Totale: {{total}} Pokémon"
+      "totalPokemon": "Totale: {{total}} Pokémon",
+      "filterByType": "Filtra per tipo:"
+    },
+    "types": {
+      "normal": "Normale",
+      "fire": "Fuoco",
+      "water": "Acqua",
+      "electric": "Elettro",
+      "grass": "Erba",
+      "ice": "Ghiaccio",
+      "fighting": "Lotta",
+      "poison": "Veleno",
+      "ground": "Terra",
+      "flying": "Volante",
+      "psychic": "Psico",
+      "bug": "Coleottero",
+      "rock": "Roccia",
+      "ghost": "Spettro",
+      "dragon": "Drago",
+      "dark": "Buio",
+      "steel": "Acciaio",
+      "fairy": "Fata"
     },
     "navigation": {
       "home": "Home",

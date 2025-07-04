@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { TYPE_COLORS } from "@/lib/data/typeColors";
+import { getTypeColorByName } from "@/lib/utils/typeUtils";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -12,5 +12,5 @@ export function cn(...inputs: ClassValue[]) {
  * @returns Hex color code for the type
  */
 export function getTypeColor(typeName: string): string {
-  return TYPE_COLORS[typeName.toLowerCase()] || "#A8A878"; // Default to normal type
+  return getTypeColorByName(typeName);
 }

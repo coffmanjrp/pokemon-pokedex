@@ -9,13 +9,14 @@ import { PokemonProgressFooter } from "../../components/ui/pokemon/list/PokemonP
 import { GenerationSwitchingOverlay } from "../../components/ui/pokemon/list/GenerationSwitchingOverlay";
 import { usePokemonList } from "../../hooks/usePokemonList";
 import { useNavigationCache } from "../../hooks/useNavigationCache";
+import { usePokemonSearch } from "../../hooks/usePokemonSearch";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { setSelectedPokemon } from "../../store/slices/pokemonSlice";
 import { setLanguage, setDictionary } from "../../store/slices/uiSlice";
 import { useEffect, useState, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Pokemon } from "@/types/pokemon";
-import { Dictionary, Locale } from "@/lib/dictionaries";
+import { Pokemon, PokemonTypeName } from "@/types/pokemon";
+import { Dictionary, Locale, interpolate } from "@/lib/dictionaries";
 import { gsap } from "gsap";
 
 interface PokemonListClientProps {
@@ -87,6 +88,21 @@ function PokemonListContent({
   });
   const { generationSwitching } = useAppSelector((state) => state.pokemon);
 
+  // Search functionality
+  const {
+    query: searchQuery,
+    isSearching,
+    results: searchResults,
+    suggestions: searchSuggestions,
+    isSearchMode,
+    hasResults,
+    search,
+    clearSearchResults,
+    updateFilters,
+    clearAllFilters,
+    filters,
+  } = usePokemonSearch();
+
   const [showLoadingScreen, setShowLoadingScreen] = useState(
     initialPokemon.length === 0,
   );
@@ -137,8 +153,35 @@ function PokemonListContent({
     setShowCompletionFooter(true);
     // Generation change doesn't show loading screen, only inline loading indicators
 
+    // Clear search when changing generations
+    if (isSearchMode) {
+      clearSearchResults();
+    }
+
     // Update URL with generation parameter
     router.replace(`/${lang}/?generation=${generation}`);
+  };
+
+  const handleSearch = (query: string) => {
+    search(query);
+  };
+
+  const handleSearchClear = () => {
+    clearSearchResults();
+  };
+
+  const handleBackToGeneration = () => {
+    // Clear both search results and filters
+    clearSearchResults();
+    clearAllFilters();
+  };
+
+  const handleTypeFilter = (types: string[]) => {
+    // Update filters first
+    updateFilters({ types: types as PokemonTypeName[] });
+
+    // Apply type filter - use current search query or empty string
+    search(searchQuery || "", { types: types as PokemonTypeName[] });
   };
 
   // Auto-hide completion footer after 5 seconds with fade animation
@@ -260,6 +303,13 @@ function PokemonListContent({
             currentGeneration={currentGeneration}
             lang={lang}
             dictionary={dictionary}
+            onSearch={handleSearch}
+            onSearchClear={handleSearchClear}
+            searchLoading={isSearching}
+            searchSuggestions={searchSuggestions}
+            showTypeFilter={true}
+            selectedTypes={filters.types}
+            onTypeFilter={handleTypeFilter}
           />
 
           {/* Pokemon Grid */}
@@ -274,22 +324,71 @@ function PokemonListContent({
               />
             )}
 
-            {/* Pokemon Grid - show when we have Pokemon (overlay will handle generation switching) */}
-            {pokemons.length > 0 && (
-              <div className="flex-1 overflow-auto">
-                <PokemonGrid
-                  pokemons={pokemons}
-                  onPokemonClick={handlePokemonClick}
-                  loading={loading}
-                  isFiltering={false}
-                  isAutoLoading={false}
-                  hasNextPage={hasNextPage}
-                  onLoadMore={loadMore}
-                  language={lang as Locale}
-                  priority={true}
-                  currentGeneration={currentGeneration}
-                />
-              </div>
+            {/* Pokemon Grid - show search results or normal generation view */}
+            {isSearchMode ? (
+              // Search Results
+              hasResults ? (
+                <div className="flex-1 overflow-auto">
+                  <div className="px-4 md:px-6 py-3 bg-blue-50 border-b border-blue-200">
+                    <p className="text-sm text-blue-800">
+                      {interpolate(
+                        dictionary.ui.filters?.showingResults ||
+                          "Showing {{count}} results",
+                        { count: searchResults.length },
+                      )}
+                    </p>
+                  </div>
+                  <PokemonGrid
+                    pokemons={searchResults.map((result) => result.pokemon)}
+                    onPokemonClick={handlePokemonClick}
+                    loading={isSearching}
+                    isFiltering={true}
+                    isAutoLoading={false}
+                    hasNextPage={false}
+                    language={lang as Locale}
+                    priority={true}
+                    currentGeneration={currentGeneration}
+                  />
+                </div>
+              ) : (
+                // No Search Results
+                <div className="flex-1 flex items-center justify-center">
+                  <div className="text-center py-16 text-gray-500">
+                    <div className="text-6xl mb-4">🔍</div>
+                    <h3 className="text-xl font-semibold mb-2">
+                      {dictionary.ui.search.noResults || "No Pokémon found"}
+                    </h3>
+                    <p className="text-gray-600 max-w-md">
+                      {dictionary.ui.search.noResultsDescription ||
+                        "Try adjusting your search terms or filters"}
+                    </p>
+                    <button
+                      onClick={handleBackToGeneration}
+                      className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      {dictionary.ui.navigation.back || "Back"}
+                    </button>
+                  </div>
+                </div>
+              )
+            ) : (
+              // Normal Generation View
+              pokemons.length > 0 && (
+                <div className="flex-1 overflow-auto">
+                  <PokemonGrid
+                    pokemons={pokemons}
+                    onPokemonClick={handlePokemonClick}
+                    loading={loading}
+                    isFiltering={false}
+                    isAutoLoading={false}
+                    hasNextPage={hasNextPage}
+                    onLoadMore={loadMore}
+                    language={lang as Locale}
+                    priority={true}
+                    currentGeneration={currentGeneration}
+                  />
+                </div>
+              )
             )}
 
             {/* Generation Switching Overlay */}

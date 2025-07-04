@@ -13,7 +13,28 @@
       "clear": "すべてクリア",
       "apply": "フィルターを適用",
       "showingResults": "{{count}}件の結果を表示",
-      "totalPokemon": "合計: {{total}}匹のポケモン"
+      "totalPokemon": "合計: {{total}}匹のポケモン",
+      "filterByType": "タイプでフィルタリング:"
+    },
+    "types": {
+      "normal": "ノーマル",
+      "fire": "ほのお",
+      "water": "みず",
+      "electric": "でんき",
+      "grass": "くさ",
+      "ice": "こおり",
+      "fighting": "かくとう",
+      "poison": "どく",
+      "ground": "じめん",
+      "flying": "ひこう",
+      "psychic": "エスパー",
+      "bug": "むし",
+      "rock": "いわ",
+      "ghost": "ゴースト",
+      "dragon": "ドラゴン",
+      "dark": "あく",
+      "steel": "はがね",
+      "fairy": "フェアリー"
     },
     "navigation": {
       "home": "ホーム",

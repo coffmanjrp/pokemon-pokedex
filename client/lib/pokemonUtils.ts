@@ -2,7 +2,8 @@ import { Pokemon, EvolutionDetail, Move, GenderInfo } from "@/types/pokemon";
 import { Locale, Dictionary } from "@/lib/dictionaries";
 import { getFormDisplayName, isMegaEvolution } from "@/lib/formUtils";
 // Form translations moved to dictionary system
-import { TYPE_EFFECTIVENESS } from "@/lib/data/typeEffectiveness";
+import { TYPE_EFFECTIVENESS } from "@/lib/data/index";
+import { isPokemonType } from "@/lib/utils/typeUtils";
 import { MOVE_TRANSLATIONS } from "@/lib/data/moveTranslations";
 import { getTypeColor } from "@/lib/utils";
 import React from "react";
@@ -798,9 +799,10 @@ export function getPokemonWeaknesses(pokemon: Pokemon): string[] {
   }
 
   // Get all weaknesses from Pokemon's types
-  const allWeaknesses = pokemon.types.flatMap(
-    (typeSlot) => TYPE_EFFECTIVENESS[typeSlot.type.name.toLowerCase()] || [],
-  );
+  const allWeaknesses = pokemon.types.flatMap((typeSlot) => {
+    const typeName = typeSlot.type.name.toLowerCase();
+    return isPokemonType(typeName) ? TYPE_EFFECTIVENESS[typeName] || [] : [];
+  });
 
   // Remove duplicates and return unique weaknesses
   return [...new Set(allWeaknesses)];
