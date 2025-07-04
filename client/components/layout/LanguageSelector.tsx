@@ -1,65 +1,32 @@
 "use client";
 
 import { useState } from "react";
+import { HiChevronDown, HiChevronUp, HiCheck } from "react-icons/hi2";
 import { cn } from "@/lib/utils";
-import { Locale } from "@/lib/dictionaries";
+import { Locale, Dictionary } from "@/lib/dictionaries";
+import { LANGUAGE_OPTIONS, LanguageOption } from "@/lib/data";
 
-interface LanguageOption {
-  value: Locale;
-  label: string;
-  flag: string;
-}
-
-interface LanguageToggleProps {
+interface LanguageSelectorProps {
   language: Locale;
   onLanguageChange: (language: Locale) => void;
+  dictionary: Dictionary;
   className?: string;
 }
 
-const LANGUAGE_OPTIONS: LanguageOption[] = [
-  { value: "en", label: "English", flag: "🇺🇸" },
-  { value: "ja", label: "日本語", flag: "🇯🇵" },
-  { value: "zh-Hant", label: "繁體中文", flag: "🇹🇼" },
-  { value: "zh-Hans", label: "简体中文", flag: "🇨🇳" },
-  { value: "es", label: "Español", flag: "🇪🇸" },
-  { value: "ko", label: "한국어", flag: "🇰🇷" },
-  { value: "fr", label: "Français", flag: "🇫🇷" },
-  { value: "it", label: "Italiano", flag: "🇮🇹" },
-  { value: "de", label: "Deutsch", flag: "🇩🇪" },
-];
-
-export function LanguageToggle({
+export function LanguageSelector({
   language,
   onLanguageChange,
+  dictionary,
   className,
-}: LanguageToggleProps) {
+}: LanguageSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const currentOption =
     LANGUAGE_OPTIONS.find((option) => option.value === language) ??
     LANGUAGE_OPTIONS[0];
 
-  const getLabel = () => {
-    switch (language) {
-      case "ja":
-        return "言語";
-      case "zh-Hant":
-        return "語言";
-      case "zh-Hans":
-        return "语言";
-      case "es":
-        return "Idioma";
-      case "ko":
-        return "언어";
-      case "fr":
-        return "Langue";
-      case "it":
-        return "Lingua";
-      case "de":
-        return "Sprache";
-      default:
-        return "Language";
-    }
+  const getLanguageLabel = (option: LanguageOption) => {
+    return dictionary.ui.language[option.labelKey];
   };
 
   const handleOptionClick = (selectedLanguage: Locale) => {
@@ -70,7 +37,7 @@ export function LanguageToggle({
   return (
     <div className="w-full relative">
       <label className="text-sm font-medium text-gray-700 mb-2 block">
-        {getLabel()}
+        {dictionary.ui.language.toggle}
       </label>
 
       {/* Dropdown Button */}
@@ -87,24 +54,15 @@ export function LanguageToggle({
       >
         <span className="flex items-center gap-2">
           <span>{currentOption?.flag}</span>
-          <span>{currentOption?.label}</span>
+          <span>
+            {currentOption ? getLanguageLabel(currentOption) : "Language"}
+          </span>
         </span>
-        <svg
-          className={cn(
-            "w-4 h-4 transition-transform duration-200",
-            isOpen && "rotate-180",
-          )}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d={isOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
-          />
-        </svg>
+        {isOpen ? (
+          <HiChevronUp className="w-4 h-4 transition-transform duration-200" />
+        ) : (
+          <HiChevronDown className="w-4 h-4 transition-transform duration-200" />
+        )}
       </button>
 
       {/* Dropdown Menu */}
@@ -131,19 +89,9 @@ export function LanguageToggle({
                 )}
               >
                 <span>{option.flag}</span>
-                <span>{option.label}</span>
+                <span>{getLanguageLabel(option)}</span>
                 {option.value === language && (
-                  <svg
-                    className="w-4 h-4 ml-auto text-blue-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                  <HiCheck className="w-4 h-4 ml-auto text-blue-600" />
                 )}
               </button>
             ))}

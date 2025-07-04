@@ -12,7 +12,7 @@ import {
 import { setStoredLanguage } from "@/lib/languageStorage";
 import { GENERATIONS } from "@/lib/data/generations";
 import { Logo } from "./Logo";
-import { LanguageToggle } from "./LanguageToggle";
+import { LanguageSelector } from "./LanguageSelector";
 
 interface SidebarProps {
   lang: Locale;
@@ -151,9 +151,10 @@ export function Sidebar({
 
           {/* Language Toggle at Bottom */}
           <div className="p-6 border-t border-gray-200">
-            <LanguageToggle
+            <LanguageSelector
               language={lang}
               onLanguageChange={handleLanguageChange}
+              dictionary={dictionary}
             />
           </div>
         </div>
