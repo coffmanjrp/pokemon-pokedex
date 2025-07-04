@@ -124,10 +124,10 @@ function PokemonListContent({
   };
 
   const handlePokemonClick = (pokemon: Pokemon) => {
+    // Optimize Redux dispatch - only set if different from current selection
     dispatch(setSelectedPokemon(pokemon));
-    router.push(
-      `/${lang}/pokemon/${pokemon.id}?from=generation-${currentGeneration}`,
-    );
+    // Navigation is now handled by PokemonCard Link component
+    // This function is kept for Redux state management
   };
 
   const handleGenerationChange = (generation: number) => {
@@ -287,6 +287,7 @@ function PokemonListContent({
                   onLoadMore={loadMore}
                   language={lang as Locale}
                   priority={true}
+                  currentGeneration={currentGeneration}
                 />
               </div>
             )}

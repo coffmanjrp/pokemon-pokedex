@@ -4,16 +4,21 @@ import { Pokemon, POKEMON_TYPE_COLORS, PokemonTypeName } from "@/types/pokemon";
 import { cn } from "@/lib/utils";
 import { getPokemonName, getPokemonGenus } from "@/lib/pokemonUtils";
 import { useAppSelector } from "@/store/hooks";
-import { useRef, memo } from "react";
+import { useRef, memo, useEffect } from "react";
 import { createParticleEchoCombo, AnimationConfig } from "@/lib/animations";
 import { PokemonImage } from "../detail/PokemonImage";
 import { PokemonTypes } from "../detail/PokemonTypes";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Locale } from "@/lib/dictionaries";
 
 interface PokemonCardProps {
   pokemon: Pokemon;
   onClick?: (pokemon: Pokemon) => void;
   className?: string;
   priority?: boolean;
+  lang?: Locale;
+  currentGeneration?: number;
 }
 
 const PokemonCard = memo(function PokemonCard({
@@ -21,18 +26,47 @@ const PokemonCard = memo(function PokemonCard({
   onClick,
   className,
   priority = false,
+  lang,
+  currentGeneration,
 }: PokemonCardProps) {
   const { language, dictionary } = useAppSelector((state) => state.ui);
-  const cardRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const linkRef = useRef<HTMLAnchorElement>(null);
   const primaryType = pokemon.types[0]?.type.name as PokemonTypeName;
   const primaryColor = POKEMON_TYPE_COLORS[primaryType] || "#68A090";
 
+  // Use props lang if provided, otherwise fallback to Redux language
+  const currentLang = lang || language;
+
+  // Build the detail page URL
+  const detailUrl = `/${currentLang}/pokemon/${pokemon.id}${currentGeneration ? `?from=generation-${currentGeneration}` : ""}`;
+
+  // Prefetch on hover for instant navigation
+  useEffect(() => {
+    const prefetchOnHover = () => {
+      router.prefetch(detailUrl);
+    };
+
+    const linkElement = linkRef.current;
+    if (linkElement) {
+      linkElement.addEventListener("mouseenter", prefetchOnHover);
+      linkElement.addEventListener("touchstart", prefetchOnHover, {
+        passive: true,
+      });
+
+      return () => {
+        linkElement.removeEventListener("mouseenter", prefetchOnHover);
+        linkElement.removeEventListener("touchstart", prefetchOnHover);
+      };
+    }
+  }, [router, detailUrl]);
+
   const triggerAnimation = (e: React.MouseEvent) => {
-    const card = cardRef.current;
-    if (!card) return;
+    const linkElement = linkRef.current;
+    if (!linkElement) return;
 
     // Find the grid container for border echo effects
-    const gridContainer = card.closest(".grid") as HTMLElement;
+    const gridContainer = linkElement.closest(".grid") as HTMLElement;
 
     if (!gridContainer) {
       console.warn("Grid container not found for particle echo combo effect");
@@ -45,7 +79,7 @@ const PokemonCard = memo(function PokemonCard({
     const animationConfig: AnimationConfig = {
       pokemon,
       clickEvent: e,
-      targetElement: card,
+      targetElement: linkElement,
       gridContainer,
     };
 
@@ -54,8 +88,15 @@ const PokemonCard = memo(function PokemonCard({
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
+
+    // Trigger animation without waiting for completion
     triggerAnimation(e);
+
+    // Call onClick callback if provided (for Redux state updates)
     onClick?.(pokemon);
+
+    // Navigate immediately for faster perceived performance
+    router.push(detailUrl);
   };
 
   const formatPokemonId = (id: string) => {
@@ -66,21 +107,23 @@ const PokemonCard = memo(function PokemonCard({
     return name.charAt(0).toUpperCase() + name.slice(1);
   };
 
-  const displayName = getPokemonName(pokemon, language);
-  const genus = getPokemonGenus(pokemon, language);
+  const displayName = getPokemonName(pokemon, currentLang);
+  const genus = getPokemonGenus(pokemon, currentLang);
 
   return (
-    <div
-      ref={cardRef}
+    <Link
+      ref={linkRef}
+      href={detailUrl}
+      prefetch={true}
+      onClick={handleClick}
       className={cn(
         "relative overflow-hidden rounded-xl bg-gradient-to-br from-white to-gray-50",
         "border-2 border-gray-200 shadow-lg transition-all duration-300",
         "hover:shadow-xl hover:scale-105 hover:-translate-y-1",
         "active:scale-95 active:shadow-md", // Enhanced touch feedback
-        "cursor-pointer group touch-manipulation",
+        "cursor-pointer group touch-manipulation block",
         className,
       )}
-      onClick={handleClick}
       style={{
         borderColor: primaryColor,
         boxShadow: `0 4px 20px ${primaryColor}20`,
@@ -135,7 +178,7 @@ const PokemonCard = memo(function PokemonCard({
 
       {/* Hover Effect Overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-    </div>
+    </Link>
   );
 });
 
