@@ -13,7 +13,28 @@
       "clear": "Clear All",
       "apply": "Apply Filters",
       "showingResults": "Showing {{count}} results",
-      "totalPokemon": "Total: {{total}} Pokémon"
+      "totalPokemon": "Total: {{total}} Pokémon",
+      "filterByType": "Filter by type:"
+    },
+    "types": {
+      "normal": "Normal",
+      "fire": "Fire",
+      "water": "Water",
+      "electric": "Electric",
+      "grass": "Grass",
+      "ice": "Ice",
+      "fighting": "Fighting",
+      "poison": "Poison",
+      "ground": "Ground",
+      "flying": "Flying",
+      "psychic": "Psychic",
+      "bug": "Bug",
+      "rock": "Rock",
+      "ghost": "Ghost",
+      "dragon": "Dragon",
+      "dark": "Dark",
+      "steel": "Steel",
+      "fairy": "Fairy"
     },
     "navigation": {
       "home": "Home",
