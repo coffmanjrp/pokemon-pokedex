@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Locale } from "@/lib/dictionaries";
+import { HiChevronLeft, HiChevronRight } from "react-icons/hi2";
 
 interface PokemonNavigationProps {
   prevId: number | null;
@@ -38,19 +39,7 @@ export function PokemonNavigation({
           className="hidden md:block fixed left-4 top-1/2 -translate-y-1/2 z-30 group hover:scale-110 transition-all duration-200"
         >
           <div className="flex items-center gap-2">
-            <svg
-              className="w-4 h-4 text-gray-400 group-hover:text-gray-700 transition-colors"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
+            <HiChevronLeft className="w-4 h-4 text-gray-400 group-hover:text-gray-700 transition-colors" />
             <div className="text-lg text-gray-500 font-medium text-center">
               #{prevId.toString().padStart(3, "0")}
             </div>
@@ -68,19 +57,7 @@ export function PokemonNavigation({
             <div className="text-lg text-gray-500 font-medium text-center">
               #{nextId.toString().padStart(3, "0")}
             </div>
-            <svg
-              className="w-4 h-4 text-gray-400 group-hover:text-gray-700 transition-colors"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
+            <HiChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-700 transition-colors" />
           </div>
         </Link>
       )}
