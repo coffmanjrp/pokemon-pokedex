@@ -10,6 +10,7 @@ import { GenerationSwitchingOverlay } from "../../components/ui/pokemon/list/Gen
 import { usePokemonList } from "../../hooks/usePokemonList";
 import { useNavigationCache } from "../../hooks/useNavigationCache";
 import { usePokemonSearch } from "../../hooks/usePokemonSearch";
+import { useScrollRestoration } from "../../hooks/useScrollRestoration";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { setSelectedPokemon } from "../../store/slices/pokemonSlice";
 import { setLanguage, setDictionary } from "../../store/slices/uiSlice";
@@ -50,6 +51,9 @@ function PokemonListContent({
     }
     return 1;
   });
+
+  // Scroll position restoration - use generation as part of the key
+  useScrollRestoration(`pokemon-list-gen-${currentGeneration}`);
 
   // Track if cache restoration has been attempted to prevent infinite loops
   const cacheRestoredRef = useRef(false);

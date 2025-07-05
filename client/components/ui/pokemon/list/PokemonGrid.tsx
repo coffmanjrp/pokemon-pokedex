@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { Pokemon } from "@/types/pokemon";
 import { PokemonCard } from "./PokemonCard";
 import { Locale } from "@/lib/dictionaries";
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
 import { useRouter } from "next/navigation";
+import { useVirtualGrid } from "@/hooks/useVirtualGrid";
 
 interface PokemonGridProps {
   pokemons: Pokemon[];
@@ -34,9 +35,46 @@ export function PokemonGrid({
 }: PokemonGridProps) {
   const parentRef = useRef<HTMLDivElement>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const [enableVirtualScroll, setEnableVirtualScroll] = useState(false);
   const { dictionary } = useAppSelector((state) => state.ui);
   const fallback = getFallbackText(language);
   const router = useRouter();
+
+  // Calculate columns based on screen width
+  const getColumns = useCallback(() => {
+    if (typeof window === "undefined") return 3;
+    const width = window.innerWidth;
+    if (width < 640) return 1; // Mobile
+    if (width < 768) return 2; // Small tablet
+    if (width < 1024) return 3; // Tablet
+    if (width < 1280) return 4; // Small desktop
+    return 5; // Large desktop
+  }, []);
+
+  // Fixed card height for each breakpoint
+  const getItemHeight = useCallback(() => {
+    if (typeof window === "undefined") return 320;
+    const width = window.innerWidth;
+    return width < 640 ? 288 : 320; // h-72 (288px) on mobile, h-80 (320px) on desktop
+  }, []);
+
+  // Gap between cards
+  const getGap = useCallback(() => {
+    if (typeof window === "undefined") return 16;
+    const width = window.innerWidth;
+    return width < 640 ? 12 : 16; // gap-3 (12px) on mobile, gap-4 (16px) on desktop
+  }, []);
+
+  // Use virtual grid hook
+  const { virtualItems, totalHeight } = useVirtualGrid({
+    items: pokemons,
+    getItemHeight,
+    getColumns,
+    gap: getGap(),
+    overscan: 5, // Render 5 extra rows for smoother scrolling
+    paddingStart: 16,
+    paddingEnd: 80, // Extra padding at bottom for navigation
+  });
 
   // Batch prefetch visible Pokemon detail pages
   useEffect(() => {
@@ -61,6 +99,12 @@ export function PokemonGrid({
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Enable virtual scroll for large datasets
+  useEffect(() => {
+    // Enable virtual scroll when we have more than 50 Pokemon
+    setEnableVirtualScroll(pokemons.length > 50);
+  }, [pokemons.length]);
 
   if (loading && pokemons.length === 0) {
     return (
@@ -94,6 +138,50 @@ export function PokemonGrid({
     );
   }
 
+  // Use virtual scroll for large datasets, regular grid for small ones
+  if (enableVirtualScroll && isMounted) {
+    return (
+      <div
+        ref={parentRef}
+        className="w-full relative"
+        style={{
+          WebkitOverflowScrolling: "touch",
+        }}
+      >
+        {/* Virtual scroll container */}
+        <div
+          style={{
+            height: `${totalHeight}px`,
+            position: "relative",
+          }}
+          className="px-3 sm:px-4"
+        >
+          {virtualItems.map(({ index, item: pokemon, style }) => (
+            <div key={pokemon.id} style={style}>
+              <PokemonCard
+                pokemon={pokemon}
+                onClick={onPokemonClick}
+                className="h-72 sm:h-80"
+                priority={priority && index < 10}
+                lang={language}
+                {...(currentGeneration && { currentGeneration })}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Show message when filtering */}
+        {isFiltering && pokemons.length === 0 && !loading && (
+          <div className="text-center py-16 text-gray-500">
+            <div className="text-4xl mb-4">🔍</div>
+            <p>{dictionary?.ui.search.noFilterResults || fallback}</p>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Regular grid for small datasets
   return (
     <div
       ref={parentRef}
