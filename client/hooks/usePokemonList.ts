@@ -364,6 +364,14 @@ export function usePokemonList({
             return previousResult;
           }
 
+          // Ensure previousData exists and has edges array
+          if (!previousData || !previousData.edges) {
+            return {
+              ...previousResult,
+              [fieldName]: newData,
+            };
+          }
+
           // Filter new Pokemon to only include those in current generation
           const filteredEdges = newData.edges.filter((edge: PokemonEdge) => {
             const pokemonId = parseInt(edge.node.id);
