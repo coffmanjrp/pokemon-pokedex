@@ -38,6 +38,11 @@
       "steel": "강철",
       "fairy": "페어리"
     },
+    "classifications": {
+      "baby": "베이비",
+      "legendary": "전설",
+      "mythical": "환상"
+    },
     "navigation": {
       "home": "홈",
       "back": "뒤로",

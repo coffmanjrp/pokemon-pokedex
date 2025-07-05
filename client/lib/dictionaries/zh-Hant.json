@@ -38,6 +38,11 @@
       "steel": "鋼",
       "fairy": "妖精"
     },
+    "classifications": {
+      "baby": "幼年",
+      "legendary": "傳說",
+      "mythical": "幻想"
+    },
     "navigation": {
       "home": "首頁",
       "back": "返回",

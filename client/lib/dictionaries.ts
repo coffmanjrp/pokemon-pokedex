@@ -50,6 +50,11 @@ export interface Dictionary {
       steel: string;
       fairy: string;
     };
+    classifications: {
+      baby: string;
+      legendary: string;
+      mythical: string;
+    };
     navigation: {
       home: string;
       back: string;

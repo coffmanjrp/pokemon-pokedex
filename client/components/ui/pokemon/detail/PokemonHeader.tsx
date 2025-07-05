@@ -9,6 +9,7 @@ import {
 } from "@/lib/pokemonUtils";
 import { PokemonTypes } from "./PokemonTypes";
 import { Locale, Dictionary } from "@/lib/dictionaries";
+import { PokemonClassificationBadge } from "./PokemonClassificationBadge";
 
 interface PokemonHeaderProps {
   pokemon: Pokemon;
@@ -34,12 +35,24 @@ export function PokemonHeader({
 
   return (
     <div className="mb-3">
-      <h1 className="text-4xl font-bold text-gray-900 mb-3">
-        {baseName}
-        <span className="text-2xl text-gray-500 ml-3">
-          #{displayId.toString().padStart(3, "0")}
-        </span>
-      </h1>
+      <div className="flex items-start justify-between mb-3">
+        <h1 className="text-4xl font-bold text-gray-900">
+          {baseName}
+          <span className="text-2xl text-gray-500 ml-3">
+            #{displayId.toString().padStart(3, "0")}
+          </span>
+        </h1>
+
+        {/* Special Pokemon Classification Badge */}
+        <div className="flex-shrink-0 ml-4">
+          <PokemonClassificationBadge
+            pokemon={pokemon}
+            dictionary={dictionary}
+            size="lg"
+          />
+        </div>
+      </div>
+
       {formName && (
         <div className="mb-2">
           <span className="text-2xl font-medium text-gray-600">{formName}</span>

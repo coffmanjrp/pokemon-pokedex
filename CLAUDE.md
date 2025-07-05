@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. Pokemon detail pages use SSG for optimal performance with individual Pokemon data pre-generated at build time. Pokemon list pages use full client-side rendering with intelligent cache system for seamless generation switching. Hybrid deployment fully operational with frontend deployed on Vercel and backend on Railway. Complete 9-language support implemented (English, Japanese, Traditional Chinese, Simplified Chinese, Spanish, Korean, French, German, Italian) with comprehensive translations, Pokemon data localization through PokeAPI GraphQL integration, and complete UI coverage including SEO metadata. Icon system consolidation completed using react-icons library (Heroicons v2 for UI elements, Font Awesome for specialized symbols) for consistent styling, better accessibility, and improved maintainability. Recent improvements include Pokemon cache system optimization with enhanced UTF-8 character encoding for Japanese Pokemon names and server-side Pokemon service enhancements with intelligent caching strategies.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. Pokemon detail pages use SSG for optimal performance with individual Pokemon data pre-generated at build time. Pokemon list pages use full client-side rendering with intelligent cache system for seamless generation switching. Hybrid deployment fully operational with frontend deployed on Vercel and backend on Railway. Complete 9-language support implemented (English, Japanese, Traditional Chinese, Simplified Chinese, Spanish, Korean, French, German, Italian) with comprehensive translations, Pokemon data localization through PokeAPI GraphQL integration, and complete UI coverage including SEO metadata. Icon system consolidation completed using react-icons library (Heroicons v2 for UI elements, Font Awesome for specialized symbols) for consistent styling, better accessibility, and improved maintainability. Pokemon classification system fully implemented with multilingual badge support (Baby→ベイビィ, Legendary→伝説, Mythical→幻) across all 9 languages, comprehensive animation system with 26 distinct effects including classification-based hover animations, and enhanced sandbox environment with categorized animation testing. Recent improvements include Pokemon cache system optimization with enhanced UTF-8 character encoding for Japanese Pokemon names, server-side Pokemon service enhancements with intelligent caching strategies, and resolution of animation cleanup issues ensuring smooth user experience.
 
 ## Architecture
 
@@ -156,9 +156,12 @@ pokemon-pokedex/
 - **Advanced Search**: Real-time Pokemon search with debouncing, suggestions, multi-language support (including Japanese hiragana/katakana conversion), and type filtering
 - **Cache Performance**: Client-side intelligent caching with localStorage persistence and 24-hour TTL
 - **Multilingual Support**: Complete 9-language support (English/Japanese/Traditional Chinese/Simplified Chinese/Spanish/Korean/French/German/Italian) with middleware-based routing and unified dictionary system
+- **Pokemon Classification System**: Multilingual badge system for Baby (ベイビィ), Legendary (伝説), and Mythical (幻) Pokemon with visual indicators and specialized hover effects
+- **Interactive Animation System**: 26 distinct animation effects categorized into Regular Click Effects, Special Hover Effects, and Classification-based Hover Effects with smooth cleanup transitions
+- **Animation Sandbox**: Comprehensive testing environment with categorized animations, hover/click differentiation, and visual feedback indicators
 - **Responsive Design**: Mobile-first with tablet and desktop optimizations
 - **Performance**: Multi-level caching, optimized grid rendering, smart cache management, image optimization
-- **Detail Pages**: Comprehensive Pokemon information with evolution chains and form variants
+- **Detail Pages**: Comprehensive Pokemon information with evolution chains, form variants, and classification badges
 - **Type System**: Official Pokemon type colors and effectiveness calculations
 - **SEO Optimization**: Enhanced metadata with Open Graph, Twitter Cards, and multilingual support
 - **API Routes**: Comprehensive REST API endpoints for Pokemon data access with GraphQL integration
@@ -192,13 +195,14 @@ pokemon-pokedex/
 ### Component Architecture
 
 **Pokemon Component Organization**:
-- **List Components** (`/components/ui/pokemon/list/`) - Pokemon grid, cards, loading states
-- **Detail Components** (`/components/ui/pokemon/detail/`) - Pokemon detail pages, stats, moves, descriptions
+- **List Components** (`/components/ui/pokemon/list/`) - Pokemon grid, cards, loading states with special classification hover effects
+- **Detail Components** (`/components/ui/pokemon/detail/`) - Pokemon detail pages, stats, moves, descriptions, and classification badges
+- **Classification Components** (`/detail/PokemonClassificationBadge.tsx`) - Reusable multilingual badge component with size variants
 - **Sprites Components** (`/sprites/`) - Sprite gallery and image management
 - **Evolution Components** (`/evolution/`) - Evolution chain display with modular architecture
 - **Common Components** (`/common/`) - Shared UI components (Badge, LoadingSpinner, etc.)
 
-**Benefits**: Clear separation of concerns, improved maintainability, scalable structure
+**Benefits**: Clear separation of concerns, improved maintainability, scalable structure, reusable classification system
 
 ### State Management
 - **Redux Toolkit**: Pokemon data and UI state management with generation cache system
@@ -229,13 +233,31 @@ npm run build:generational      # Force generational build
 npm run build:gen-1             # Specific generation build
 ```
 
+### Animation System Architecture
+- **Core Animation Library**: GSAP-based animation system with 26 distinct effects in `client/lib/animations/`
+- **Animation Categories**:
+  - **Regular Click Effects** (`rippleWave`, `particleBurst`, `cardFlip`, `pokeballPop`, `electricSpark`, `scaleGlow`, `bounceTilt`)
+  - **Combination Effects** (`cardEcho`, `cardEchoBorder`, `particleEchoCombo`, `ultimateEchoCombo`, `elementalStorm`, `megaEvolution`)
+  - **Special Pokemon Effects** (`babySparkle`, `legendaryAura`, `mythicalShimmer`)
+  - **Hover Effects** (`babyHoverSparkle`, `legendaryHoverAura`, `mythicalHoverShimmer`)
+  - **Classification Hover Effects** (`babyHeartBurst`, `legendaryBorderFlow`, `legendaryRainbowBorder`, `legendaryLightningBorder`, `mythicalElectricSpark`)
+- **Animation Files**:
+  - `client/lib/animations/rippleWave.ts` - Basic ripple and particle effects
+  - `client/lib/animations/combinationEffects.ts` - Complex multi-layered animations
+  - `client/lib/animations/specialEffects.ts` - Classification-based click animations
+  - `client/lib/animations/hoverEffects.ts` - Classification-based hover animations
+  - `client/lib/animations/subtleEffects.ts` - Subtle hover effects with proper cleanup functions
+- **Animation Integration**: Smart classification-based triggering in Pokemon cards with throttling and cleanup management
+- **Sandbox Environment**: Comprehensive testing interface at `/[lang]/sandbox` with categorized animation sections
+
 ### Internationalization
 - **Languages**: Complete 9-language support (English/Japanese/Traditional Chinese/Simplified Chinese/Spanish/Korean/French/German/Italian) with middleware-based routing
 - **Structure**: `/[lang]/` routes with server-side dictionary loading
-- **Translation**: Pokemon names, types, abilities, moves, game versions, forms, and regions via PokeAPI integration
+- **Translation**: Pokemon names, types, abilities, moves, game versions, forms, regions, and classification badges via PokeAPI integration
 - **Language Detection**: Intelligent detection with regional fallbacks
 - **Dictionary Architecture**: Components converted from hardcoded language conditions to dictionary-based translations
 - **Dictionary Files**: 9 language files in `client/lib/dictionaries/[lang].json` (en, ja, zh-Hans, zh-Hant, es, ko, fr, de, it)
+- **Classification Translations**: Baby→ベイビィ, Legendary→伝説, Mythical→幻 with complete localization coverage
 
 ### API Routes System
 - **REST API Integration**: Next.js API Routes providing REST endpoints alongside GraphQL backend

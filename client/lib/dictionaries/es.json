@@ -38,6 +38,11 @@
       "steel": "Acero",
       "fairy": "Hada"
     },
+    "classifications": {
+      "baby": "Bebé",
+      "legendary": "Legendario",
+      "mythical": "Mítico"
+    },
     "navigation": {
       "home": "Inicio",
       "back": "Atrás",

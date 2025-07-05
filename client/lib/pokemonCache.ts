@@ -1,7 +1,7 @@
 import { Pokemon } from "@/types/pokemon";
 
 // Cache configuration
-const CACHE_VERSION = "1.3.0"; // Updated to include genera classification data in cache
+const CACHE_VERSION = "1.4.0"; // Updated to include special Pokemon classification data (baby, legendary, mythical)
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 const MAX_CACHED_GENERATIONS = 5; // Limit to prevent excessive storage usage
 
@@ -15,6 +15,10 @@ interface CachedPokemon {
   speciesNames?: { name: string; language: { name: string } }[];
   speciesGenera?: { genus: string; language: { name: string } }[];
   speciesId?: string;
+  // Special Pokemon classification data
+  isBaby?: boolean;
+  isLegendary?: boolean;
+  isMythical?: boolean;
 }
 
 interface GenerationCacheData {
@@ -50,6 +54,16 @@ const compressPokemon = (pokemon: Pokemon): CachedPokemon => ({
   ...(pokemon.species?.names && { speciesNames: pokemon.species.names }),
   ...(pokemon.species?.genera && { speciesGenera: pokemon.species.genera }),
   ...(pokemon.species?.id && { speciesId: pokemon.species.id }),
+  // Preserve special Pokemon classification data
+  ...(pokemon.species?.isBaby !== undefined && {
+    isBaby: pokemon.species.isBaby,
+  }),
+  ...(pokemon.species?.isLegendary !== undefined && {
+    isLegendary: pokemon.species.isLegendary,
+  }),
+  ...(pokemon.species?.isMythical !== undefined && {
+    isMythical: pokemon.species.isMythical,
+  }),
 });
 
 /**
@@ -80,6 +94,9 @@ const decompressPokemon = (cached: CachedPokemon): Pokemon =>
         flavorTextEntries: [],
         genera: cached.speciesGenera || [],
         generation: { id: "1", name: "generation-i" },
+        isBaby: cached.isBaby,
+        isLegendary: cached.isLegendary,
+        isMythical: cached.isMythical,
       },
     }),
     height: 0,
