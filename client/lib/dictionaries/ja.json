@@ -38,6 +38,11 @@
       "steel": "はがね",
       "fairy": "フェアリー"
     },
+    "classifications": {
+      "baby": "ベイビィ",
+      "legendary": "伝説",
+      "mythical": "幻"
+    },
     "navigation": {
       "home": "ホーム",
       "back": "戻る",

@@ -38,6 +38,11 @@
       "steel": "Stahl",
       "fairy": "Fee"
     },
+    "classifications": {
+      "baby": "Baby",
+      "legendary": "Legendär",
+      "mythical": "Mystisch"
+    },
     "navigation": {
       "home": "Startseite",
       "back": "Zurück",

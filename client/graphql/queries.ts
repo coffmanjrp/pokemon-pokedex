@@ -36,6 +36,9 @@ export const GET_POKEMONS_BASIC = gql`
             }
             genderRate
             hasGenderDifferences
+            isBaby
+            isLegendary
+            isMythical
           }
         }
         cursor
@@ -84,6 +87,9 @@ export const GET_POKEMON_BASIC = gql`
         }
         genderRate
         hasGenderDifferences
+        isBaby
+        isLegendary
+        isMythical
       }
     }
   }
@@ -125,6 +131,9 @@ export const GET_POKEMONS = gql`
             }
             genderRate
             hasGenderDifferences
+            isBaby
+            isLegendary
+            isMythical
           }
         }
         cursor
@@ -215,6 +224,11 @@ export const GET_POKEMONS_FULL = gql`
                 url
               }
             }
+            genderRate
+            hasGenderDifferences
+            isBaby
+            isLegendary
+            isMythical
           }
         }
         cursor
@@ -358,6 +372,9 @@ export const GET_POKEMON = gql`
         }
         genderRate
         hasGenderDifferences
+        isBaby
+        isLegendary
+        isMythical
         evolutionChain {
           id
           url

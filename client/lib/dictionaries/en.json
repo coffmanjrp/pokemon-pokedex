@@ -38,6 +38,11 @@
       "steel": "Steel",
       "fairy": "Fairy"
     },
+    "classifications": {
+      "baby": "Baby",
+      "legendary": "Legendary",
+      "mythical": "Mythical"
+    },
     "navigation": {
       "home": "Home",
       "back": "Back",

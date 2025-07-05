@@ -1,13 +1,12 @@
 "use client";
 
 import { Dictionary, Locale } from "@/lib/dictionaries";
-import { POKEMON_TYPE_COLORS, PokemonTypeName } from "@/types/pokemon";
-import { useRef, Suspense, useEffect } from "react";
+import { POKEMON_TYPE_COLORS, PokemonTypeName, Pokemon } from "@/types/pokemon";
+import { useRef, Suspense, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ANIMATIONS, AnimationType } from "@/lib/animations";
-import { getFallbackText } from "@/lib/fallbackText";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setLanguage, setDictionary } from "@/store/slices/uiSlice";
 import { HiChevronLeft } from "react-icons/hi2";
@@ -26,6 +25,9 @@ type TestPokemon = {
     name: string;
     url: string;
     genera: Array<{ genus: string; language: { name: string; url: string } }>;
+    isBaby?: boolean;
+    isLegendary?: boolean;
+    isMythical?: boolean;
   };
 };
 
@@ -47,6 +49,9 @@ const testPokemons = [
       name: "bulbasaur",
       url: "",
       genera: [{ genus: "たねポケモン", language: { name: "ja", url: "" } }],
+      isBaby: false,
+      isLegendary: false,
+      isMythical: false,
     },
   },
   {
@@ -65,6 +70,9 @@ const testPokemons = [
       name: "charizard",
       url: "",
       genera: [{ genus: "かえんポケモン", language: { name: "ja", url: "" } }],
+      isBaby: false,
+      isLegendary: false,
+      isMythical: false,
     },
   },
   {
@@ -83,6 +91,9 @@ const testPokemons = [
       name: "blastoise",
       url: "",
       genera: [{ genus: "こうらポケモン", language: { name: "ja", url: "" } }],
+      isBaby: false,
+      isLegendary: false,
+      isMythical: false,
     },
   },
   {
@@ -101,6 +112,9 @@ const testPokemons = [
       name: "pikachu",
       url: "",
       genera: [{ genus: "ねずみポケモン", language: { name: "ja", url: "" } }],
+      isBaby: false,
+      isLegendary: false,
+      isMythical: false,
     },
   },
   {
@@ -121,6 +135,9 @@ const testPokemons = [
       genera: [
         { genus: "いでんしポケモン", language: { name: "ja", url: "" } },
       ],
+      isBaby: false,
+      isLegendary: true,
+      isMythical: false,
     },
   },
   {
@@ -141,6 +158,9 @@ const testPokemons = [
       genera: [
         { genus: "れいとうポケモン", language: { name: "ja", url: "" } },
       ],
+      isBaby: false,
+      isLegendary: true,
+      isMythical: false,
     },
   },
   {
@@ -161,6 +181,9 @@ const testPokemons = [
       genera: [
         { genus: "ふうせんポケモン", language: { name: "ja", url: "" } },
       ],
+      isBaby: false,
+      isLegendary: false,
+      isMythical: false,
     },
   },
   {
@@ -181,6 +204,9 @@ const testPokemons = [
       genera: [
         { genus: "ドラゴンポケモン", language: { name: "ja", url: "" } },
       ],
+      isBaby: false,
+      isLegendary: false,
+      isMythical: false,
     },
   },
   {
@@ -201,6 +227,9 @@ const testPokemons = [
       genera: [
         { genus: "たいようポケモン", language: { name: "ja", url: "" } },
       ],
+      isBaby: false,
+      isLegendary: false,
+      isMythical: false,
     },
   },
   {
@@ -221,6 +250,9 @@ const testPokemons = [
       genera: [
         { genus: "きょうあくポケモン", language: { name: "ja", url: "" } },
       ],
+      isBaby: false,
+      isLegendary: false,
+      isMythical: false,
     },
   },
   {
@@ -239,6 +271,9 @@ const testPokemons = [
       name: "lucario",
       url: "",
       genera: [{ genus: "はどうポケモン", language: { name: "ja", url: "" } }],
+      isBaby: false,
+      isLegendary: false,
+      isMythical: false,
     },
   },
   {
@@ -259,6 +294,9 @@ const testPokemons = [
       genera: [
         { genus: "てんくうポケモン", language: { name: "ja", url: "" } },
       ],
+      isBaby: false,
+      isLegendary: true,
+      isMythical: false,
     },
   },
   {
@@ -279,6 +317,9 @@ const testPokemons = [
       genera: [
         { genus: "ねんりきポケモン", language: { name: "ja", url: "" } },
       ],
+      isBaby: false,
+      isLegendary: false,
+      isMythical: false,
     },
   },
 ];
@@ -303,10 +344,48 @@ function TestCard({
   const cardRef = useRef<HTMLDivElement>(null);
   const primaryType = pokemon.types?.[0]?.type.name as PokemonTypeName;
   const primaryColor = POKEMON_TYPE_COLORS[primaryType] || "#68A090";
+  const [hoverCleanup, setHoverCleanup] = useState<(() => void) | null>(null);
+
+  const isHoverEffect =
+    animationType.includes("-hover-") ||
+    [
+      "baby-heart-burst",
+      "legendary-border-flow",
+      "legendary-rainbow-border",
+      "legendary-lightning-border",
+      "mythical-electric-spark",
+    ].includes(animationType);
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    onAnimationClick(e, pokemon, animationType);
+    if (!isHoverEffect) {
+      onAnimationClick(e, pokemon, animationType);
+    }
+  };
+
+  const handleHoverStart = () => {
+    if (isHoverEffect && cardRef.current) {
+      const animationFunction = ANIMATIONS[animationType];
+      if (animationFunction) {
+        const cleanupFn = animationFunction({
+          pokemon: pokemon as unknown as Pokemon,
+          clickEvent: new MouseEvent(
+            "mouseenter",
+          ) as unknown as React.MouseEvent<HTMLElement>,
+          targetElement: cardRef.current,
+        });
+        if (cleanupFn) {
+          setHoverCleanup(() => cleanupFn);
+        }
+      }
+    }
+  };
+
+  const handleHoverEnd = () => {
+    if (hoverCleanup) {
+      hoverCleanup();
+      setHoverCleanup(null);
+    }
   };
 
   return (
@@ -314,12 +393,24 @@ function TestCard({
       <h3 className="text-lg font-bold mb-2 text-center">{animationType}</h3>
       <p className="text-sm text-gray-600 mb-4 text-center">
         {animationDescription}
+        {isHoverEffect && (
+          <span className="block mt-1 text-xs font-semibold text-blue-600">
+            HOVER TO TEST
+          </span>
+        )}
+        {!isHoverEffect && (
+          <span className="block mt-1 text-xs font-semibold text-green-600">
+            CLICK TO TEST
+          </span>
+        )}
       </p>
 
       <div
         ref={cardRef}
         className="relative overflow-hidden rounded-xl bg-gradient-to-br from-white to-gray-50 border-2 border-gray-200 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 hover:-translate-y-1 cursor-pointer group"
         onClick={handleClick}
+        onMouseEnter={handleHoverStart}
+        onMouseLeave={handleHoverEnd}
         style={{
           borderColor: primaryColor,
           boxShadow: `0 4px 20px ${primaryColor}20`,
@@ -382,17 +473,23 @@ function TestCard({
   );
 }
 
-function SandboxContent({ lang }: { lang: Locale }) {
+function SandboxContent({
+  lang,
+  dictionary,
+}: {
+  lang: Locale;
+  dictionary: Dictionary;
+}) {
   const searchParams = useSearchParams();
   const fromGeneration = searchParams.get("from");
-  const { dictionary } = useAppSelector((state) => state.ui);
-  const fallback = getFallbackText(lang);
 
   const text = {
-    backButton: dictionary?.ui.navigation.home || fallback,
-    title: dictionary?.ui.sandbox?.title || fallback,
-    subtitle: dictionary?.ui.sandbox?.subtitle || fallback,
-    instructions: dictionary?.ui.sandbox?.instructions || fallback,
+    backButton: dictionary.ui.navigation.home,
+    title: dictionary.ui.sandbox?.title || "Animation Sandbox",
+    subtitle: dictionary.ui.sandbox?.subtitle || "Test Pokemon card animations",
+    instructions:
+      dictionary.ui.sandbox?.instructions ||
+      "Click or hover on cards to test animations",
   };
 
   // Create back URL based on generation parameter
@@ -467,6 +564,160 @@ function SandboxContent({ lang }: { lang: Locale }) {
       description: "Evolution transformation with energy rings and power surge",
       pokemon: testPokemons[12] || testPokemons[0],
     },
+    {
+      type: "baby-sparkle" as AnimationType,
+      description:
+        "Baby Pokemon sparkle effect with cute pastel colors and hearts",
+      pokemon: {
+        ...testPokemons[6],
+        species: {
+          ...testPokemons[6]?.species,
+          isBaby: true,
+          isLegendary: false,
+          isMythical: false,
+        },
+      },
+    },
+    {
+      type: "legendary-aura" as AnimationType,
+      description:
+        "Legendary Pokemon aura with golden energy rings and lightning",
+      pokemon: {
+        ...testPokemons[4],
+        species: {
+          ...testPokemons[4]?.species,
+          isBaby: false,
+          isLegendary: true,
+          isMythical: false,
+        },
+      },
+    },
+    {
+      type: "mythical-shimmer" as AnimationType,
+      description:
+        "Mythical Pokemon shimmer with rainbow portal and mystical symbols",
+      pokemon: {
+        ...testPokemons[5],
+        species: {
+          ...testPokemons[5]?.species,
+          isBaby: false,
+          isLegendary: false,
+          isMythical: true,
+        },
+      },
+    },
+    {
+      type: "baby-hover-sparkle" as AnimationType,
+      description: "Baby Pokemon hover effect with gentle sparkles and glow",
+      pokemon: {
+        ...testPokemons[6],
+        species: {
+          ...testPokemons[6]?.species,
+          isBaby: true,
+          isLegendary: false,
+          isMythical: false,
+        },
+      },
+    },
+    {
+      type: "legendary-hover-aura" as AnimationType,
+      description:
+        "Legendary Pokemon hover effect with powerful aura and lightning",
+      pokemon: {
+        ...testPokemons[4],
+        species: {
+          ...testPokemons[4]?.species,
+          isBaby: false,
+          isLegendary: true,
+          isMythical: false,
+        },
+      },
+    },
+    {
+      type: "mythical-hover-shimmer" as AnimationType,
+      description:
+        "Mythical Pokemon hover effect with mystical shimmer and floating symbols",
+      pokemon: {
+        ...testPokemons[5],
+        species: {
+          ...testPokemons[5]?.species,
+          isBaby: false,
+          isLegendary: false,
+          isMythical: true,
+        },
+      },
+    },
+    {
+      type: "baby-heart-burst" as AnimationType,
+      description:
+        "Baby Pokemon heart burst - cute hearts fly out briefly on hover",
+      pokemon: {
+        ...testPokemons[6],
+        species: {
+          ...testPokemons[6]?.species,
+          isBaby: true,
+          isLegendary: false,
+          isMythical: false,
+        },
+      },
+    },
+    {
+      type: "legendary-border-flow" as AnimationType,
+      description: "Legendary Pokemon dual type colors flowing around border",
+      pokemon: {
+        ...testPokemons[4], // Pikachu (Electric)
+        types: [
+          { type: { name: "electric", url: "" } },
+          { type: { name: "fighting", url: "" } }, // Add secondary type for demo
+        ],
+        species: {
+          ...testPokemons[4]?.species,
+          isBaby: false,
+          isLegendary: true,
+          isMythical: false,
+        },
+      },
+    },
+    {
+      type: "legendary-rainbow-border" as AnimationType,
+      description: "Legendary Pokemon prismatic rainbow border with rotation",
+      pokemon: {
+        ...testPokemons[5],
+        species: {
+          ...testPokemons[5]?.species,
+          isBaby: false,
+          isLegendary: true,
+          isMythical: false,
+        },
+      },
+    },
+    {
+      type: "legendary-lightning-border" as AnimationType,
+      description: "Legendary Pokemon golden lightning sparks along border",
+      pokemon: {
+        ...testPokemons[11],
+        species: {
+          ...testPokemons[11]?.species,
+          isBaby: false,
+          isLegendary: true,
+          isMythical: false,
+        },
+      },
+    },
+    {
+      type: "mythical-electric-spark" as AnimationType,
+      description:
+        "Mythical Pokemon electric sparks around card with connecting lines",
+      pokemon: {
+        ...testPokemons[4], // Pikachu for electric theme
+        species: {
+          ...testPokemons[4]?.species,
+          isBaby: false,
+          isLegendary: false,
+          isMythical: true,
+        },
+      },
+    },
   ];
 
   const handleAnimationClick = (
@@ -482,8 +733,7 @@ function SandboxContent({ lang }: { lang: Locale }) {
     const animationFunction = ANIMATIONS[animationType];
     if (animationFunction) {
       animationFunction({
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        pokemon: pokemon as any,
+        pokemon: pokemon as unknown as Pokemon,
         clickEvent: e,
         targetElement,
         gridContainer,
@@ -511,18 +761,92 @@ function SandboxContent({ lang }: { lang: Locale }) {
           <p className="text-lg text-gray-600">{text.subtitle}</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 relative">
-          {animations.map((animation) =>
-            animation.pokemon ? (
-              <TestCard
-                key={animation.type}
-                pokemon={animation.pokemon}
-                animationType={animation.type}
-                animationDescription={animation.description}
-                onAnimationClick={handleAnimationClick}
-              />
-            ) : null,
-          )}
+        {/* Regular Effects Section */}
+        <div className="mb-16">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+            Regular Click Effects
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 relative">
+            {animations
+              .filter(
+                (animation) =>
+                  !animation.type.includes("-hover-") &&
+                  ![
+                    "baby-heart-burst",
+                    "legendary-border-flow",
+                    "legendary-rainbow-border",
+                    "legendary-lightning-border",
+                    "mythical-electric-spark",
+                  ].includes(animation.type),
+              )
+              .map((animation) =>
+                animation.pokemon ? (
+                  <TestCard
+                    key={animation.type}
+                    pokemon={animation.pokemon as TestPokemon}
+                    animationType={animation.type}
+                    animationDescription={animation.description}
+                    onAnimationClick={handleAnimationClick}
+                  />
+                ) : null,
+              )}
+          </div>
+        </div>
+
+        {/* Hover Effects Section */}
+        <div className="mb-16">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+            Special Hover Effects
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 relative">
+            {animations
+              .filter((animation) => animation.type.includes("-hover-"))
+              .map((animation) =>
+                animation.pokemon ? (
+                  <TestCard
+                    key={animation.type}
+                    pokemon={animation.pokemon as TestPokemon}
+                    animationType={animation.type}
+                    animationDescription={animation.description}
+                    onAnimationClick={handleAnimationClick}
+                  />
+                ) : null,
+              )}
+          </div>
+        </div>
+
+        {/* Classification Effects Section */}
+        <div className="mb-16">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+            Classification Hover Effects
+            <span className="block text-sm font-normal text-gray-600 mt-2">
+              Special effects based on Pokemon classification (Baby, Legendary,
+              Mythical)
+            </span>
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 relative">
+            {animations
+              .filter((animation) =>
+                [
+                  "baby-heart-burst",
+                  "legendary-border-flow",
+                  "legendary-rainbow-border",
+                  "legendary-lightning-border",
+                  "mythical-electric-spark",
+                ].includes(animation.type),
+              )
+              .map((animation) =>
+                animation.pokemon ? (
+                  <TestCard
+                    key={animation.type}
+                    pokemon={animation.pokemon as TestPokemon}
+                    animationType={animation.type}
+                    animationDescription={animation.description}
+                    onAnimationClick={handleAnimationClick}
+                  />
+                ) : null,
+              )}
+          </div>
         </div>
 
         <div className="mt-12 text-center">
@@ -549,8 +873,8 @@ export function SandboxClient({ dictionary, lang }: SandboxClientProps) {
   }, [lang, currentLanguage, dictionary, currentDictionary, dispatch]);
 
   return (
-    <Suspense fallback={<div>{getFallbackText(lang)}</div>}>
-      <SandboxContent lang={lang} />
+    <Suspense fallback={<div>Loading...</div>}>
+      <SandboxContent lang={lang} dictionary={dictionary} />
     </Suspense>
   );
 }

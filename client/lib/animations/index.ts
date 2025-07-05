@@ -14,6 +14,23 @@ import {
   createElementalStorm,
   createMegaEvolutionEffect,
 } from "./combinationEffects";
+import {
+  createBabySparkle,
+  createLegendaryAura,
+  createMythicalShimmer,
+} from "./specialEffects";
+import {
+  createBabyHoverSparkle,
+  createLegendaryHoverAura,
+  createMythicalHoverShimmer,
+} from "./hoverEffects";
+import {
+  createBabyHeartBurst,
+  createLegendaryBorderFlow,
+  createLegendaryRainbowBorder,
+  createLegendaryLightningBorder,
+  createMythicalElectricSpark,
+} from "./subtleEffects";
 
 // Export all animation functions for easy importing
 export { createRippleWave } from "./rippleWave";
@@ -31,6 +48,23 @@ export {
   createElementalStorm,
   createMegaEvolutionEffect,
 } from "./combinationEffects";
+export {
+  createBabySparkle,
+  createLegendaryAura,
+  createMythicalShimmer,
+} from "./specialEffects";
+export {
+  createBabyHoverSparkle,
+  createLegendaryHoverAura,
+  createMythicalHoverShimmer,
+} from "./hoverEffects";
+export {
+  createBabyHeartBurst,
+  createLegendaryBorderFlow,
+  createLegendaryRainbowBorder,
+  createLegendaryLightningBorder,
+  createMythicalElectricSpark,
+} from "./subtleEffects";
 
 // Export types
 export type {
@@ -57,6 +91,17 @@ export const ANIMATIONS = {
   "ultimate-echo-combo": createUltimateEchoCombo,
   "elemental-storm": createElementalStorm,
   "mega-evolution": createMegaEvolutionEffect,
+  "baby-sparkle": createBabySparkle,
+  "legendary-aura": createLegendaryAura,
+  "mythical-shimmer": createMythicalShimmer,
+  "baby-hover-sparkle": createBabyHoverSparkle,
+  "legendary-hover-aura": createLegendaryHoverAura,
+  "mythical-hover-shimmer": createMythicalHoverShimmer,
+  "baby-heart-burst": createBabyHeartBurst,
+  "legendary-border-flow": createLegendaryBorderFlow,
+  "legendary-rainbow-border": createLegendaryRainbowBorder,
+  "legendary-lightning-border": createLegendaryLightningBorder,
+  "mythical-electric-spark": createMythicalElectricSpark,
 } as const;
 
 export type AnimationType = keyof typeof ANIMATIONS;

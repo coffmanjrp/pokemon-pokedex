@@ -193,6 +193,9 @@ export const typeDefs = gql`
     varieties: [PokemonVariety!]!
     genderRate: Int
     hasGenderDifferences: Boolean
+    isBaby: Boolean
+    isLegendary: Boolean
+    isMythical: Boolean
   }
 
   type PokemonVariety {
@@ -325,6 +328,9 @@ export const typeDefs = gql`
     genera: [Genus!]!
     genderRate: Int
     hasGenderDifferences: Boolean
+    isBaby: Boolean
+    isLegendary: Boolean
+    isMythical: Boolean
   }
 
   # Connection type for PokemonBasic pagination

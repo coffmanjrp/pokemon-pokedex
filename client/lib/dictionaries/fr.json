@@ -38,6 +38,11 @@
       "steel": "Acier",
       "fairy": "Fée"
     },
+    "classifications": {
+      "baby": "Bébé",
+      "legendary": "Légendaire",
+      "mythical": "Mythique"
+    },
     "navigation": {
       "home": "Accueil",
       "back": "Retour",

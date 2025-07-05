@@ -38,6 +38,11 @@
       "steel": "Acciaio",
       "fairy": "Fata"
     },
+    "classifications": {
+      "baby": "Baby",
+      "legendary": "Leggendario",
+      "mythical": "Mitico"
+    },
     "navigation": {
       "home": "Home",
       "back": "Indietro",

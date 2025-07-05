@@ -4,10 +4,17 @@ import { Pokemon, POKEMON_TYPE_COLORS, PokemonTypeName } from "@/types/pokemon";
 import { cn } from "@/lib/utils";
 import { getPokemonName, getPokemonGenus } from "@/lib/pokemonUtils";
 import { useAppSelector } from "@/store/hooks";
-import { useRef, memo, useEffect } from "react";
-import { createParticleEchoCombo, AnimationConfig } from "@/lib/animations";
+import { useRef, memo, useEffect, useState } from "react";
+import {
+  createParticleEchoCombo,
+  createBabyHeartBurst,
+  createLegendaryLightningBorder,
+  createMythicalElectricSpark,
+  AnimationConfig,
+} from "@/lib/animations";
 import { PokemonImage } from "../detail/PokemonImage";
 import { PokemonTypes } from "../detail/PokemonTypes";
+import { PokemonClassificationBadge } from "../detail/PokemonClassificationBadge";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Locale } from "@/lib/dictionaries";
@@ -110,18 +117,76 @@ const PokemonCard = memo(function PokemonCard({
   const displayName = getPokemonName(pokemon, currentLang);
   const genus = getPokemonGenus(pokemon, currentLang);
 
+  // Check for special Pokemon classification for hover effects
+  const isBaby = pokemon.species?.isBaby === true;
+  const isLegendary = pokemon.species?.isLegendary === true;
+  const isMythical = pokemon.species?.isMythical === true;
+  const isSpecialPokemon = isBaby || isLegendary || isMythical;
+
+  // State for hover animation and cleanup
+  const [isHoverCooldown, setIsHoverCooldown] = useState(false);
+  const [hoverCleanup, setHoverCleanup] = useState<(() => void) | null>(null);
+
+  // Special hover effect for special Pokemon
+  const handleSpecialHoverStart = () => {
+    const linkElement = linkRef.current;
+    if (!linkElement || isHoverCooldown || !isSpecialPokemon) return;
+
+    // Throttle hover effects to prevent spam
+    setIsHoverCooldown(true);
+    setTimeout(() => setIsHoverCooldown(false), 1000);
+
+    const animationConfig: AnimationConfig = {
+      pokemon,
+      clickEvent: new MouseEvent(
+        "mouseenter",
+      ) as unknown as React.MouseEvent<HTMLElement>,
+      targetElement: linkElement,
+    };
+
+    // Choose appropriate hover effect based on Pokemon classification
+    let cleanupFn: (() => void) | null = null;
+
+    if (isBaby) {
+      cleanupFn = createBabyHeartBurst(animationConfig);
+    } else if (isLegendary) {
+      cleanupFn = createLegendaryLightningBorder(animationConfig);
+    } else if (isMythical) {
+      cleanupFn = createMythicalElectricSpark(animationConfig);
+    }
+
+    if (cleanupFn) {
+      setHoverCleanup(() => cleanupFn);
+    }
+  };
+
+  const handleSpecialHoverEnd = () => {
+    // Clean up any ongoing hover animations
+    if (hoverCleanup) {
+      hoverCleanup();
+      setHoverCleanup(null);
+    }
+  };
+
   return (
     <Link
       ref={linkRef}
       href={detailUrl}
       prefetch={true}
       onClick={handleClick}
+      onMouseEnter={handleSpecialHoverStart}
+      onMouseLeave={handleSpecialHoverEnd}
       className={cn(
         "relative overflow-hidden rounded-xl bg-gradient-to-br from-white to-gray-50",
         "border-2 border-gray-200 shadow-lg transition-all duration-300",
         "hover:shadow-xl hover:scale-105 hover:-translate-y-1",
         "active:scale-95 active:shadow-md", // Enhanced touch feedback
         "cursor-pointer group touch-manipulation block",
+        // Special visual indicator for special Pokemon
+        isSpecialPokemon && "ring-2 ring-opacity-50",
+        isBaby && "ring-pink-300",
+        isLegendary && "ring-yellow-400",
+        isMythical && "ring-purple-400",
         className,
       )}
       style={{
@@ -138,8 +203,18 @@ const PokemonCard = memo(function PokemonCard({
         }}
       />
 
-      {/* Pokemon ID */}
-      <div className="absolute top-3 right-3 z-10">
+      {/* Pokemon ID and Special Classification Badge */}
+      <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
+        {/* Special Pokemon Classification Badge */}
+        {dictionary && (
+          <PokemonClassificationBadge
+            pokemon={pokemon}
+            dictionary={dictionary}
+            size="sm"
+          />
+        )}
+
+        {/* Pokemon ID */}
         <span
           className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold text-white"
           style={{ backgroundColor: primaryColor }}

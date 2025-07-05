@@ -435,6 +435,9 @@ export interface PokemonSpecies {
   varieties?: PokemonVariety[];
   genderRate?: number;
   hasGenderDifferences?: boolean;
+  isBaby?: boolean;
+  isLegendary?: boolean;
+  isMythical?: boolean;
 }
 
 export interface PokemonVariety {

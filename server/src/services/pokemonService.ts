@@ -299,6 +299,9 @@ class PokemonService {
         })) : [],
         genderRate: speciesData.gender_rate ?? 4, // Default to 50/50 ratio if not available
         hasGenderDifferences: speciesData.has_gender_differences ?? false,
+        isBaby: speciesData.is_baby ?? false,
+        isLegendary: speciesData.is_legendary ?? false,
+        isMythical: speciesData.is_mythical ?? false,
       } : {
         // Return minimal species object with empty arrays when species data is not available
         id: data.id.toString(),
@@ -307,6 +310,9 @@ class PokemonService {
         genera: [],
         genderRate: 4, // Default to 50/50 ratio
         hasGenderDifferences: false,
+        isBaby: false,
+        isLegendary: false,
+        isMythical: false,
       },
     };
   }
@@ -395,6 +401,9 @@ class PokemonService {
         },
         genderRate: speciesData.gender_rate ?? 4, // Default to 50/50 ratio if not available
         hasGenderDifferences: speciesData.has_gender_differences ?? false,
+        isBaby: speciesData.is_baby ?? false,
+        isLegendary: speciesData.is_legendary ?? false,
+        isMythical: speciesData.is_mythical ?? false,
         evolutionChain: speciesData.evolution_chain ? 
           await this.getEvolutionChain(speciesData.evolution_chain.url) : undefined,
       } : {
@@ -407,6 +416,9 @@ class PokemonService {
         generation: null,
         genderRate: 4, // Default to 50/50 ratio
         hasGenderDifferences: false,
+        isBaby: false,
+        isLegendary: false,
+        isMythical: false,
         evolutionChain: undefined,
       },
     };
