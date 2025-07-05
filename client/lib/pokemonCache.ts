@@ -1,7 +1,7 @@
 import { Pokemon } from "@/types/pokemon";
 
 // Cache configuration
-const CACHE_VERSION = "1.2.0"; // Updated to fix UTF-8 encoding for Japanese characters
+const CACHE_VERSION = "1.3.0"; // Updated to include genera classification data in cache
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 const MAX_CACHED_GENERATIONS = 5; // Limit to prevent excessive storage usage
 
@@ -13,6 +13,7 @@ interface CachedPokemon {
   sprite: string;
   // Essential species data for multilingual support
   speciesNames?: { name: string; language: { name: string } }[];
+  speciesGenera?: { genus: string; language: { name: string } }[];
   speciesId?: string;
 }
 
@@ -45,8 +46,9 @@ const compressPokemon = (pokemon: Pokemon): CachedPokemon => ({
     pokemon.sprites?.other?.officialArtwork?.frontDefault ||
     pokemon.sprites?.frontDefault ||
     "",
-  // Preserve essential species data for Japanese name translation
+  // Preserve essential species data for multilingual support
   ...(pokemon.species?.names && { speciesNames: pokemon.species.names }),
+  ...(pokemon.species?.genera && { speciesGenera: pokemon.species.genera }),
   ...(pokemon.species?.id && { speciesId: pokemon.species.id }),
 });
 
@@ -76,7 +78,7 @@ const decompressPokemon = (cached: CachedPokemon): Pokemon =>
         name: cached.name.split("-")[0],
         names: cached.speciesNames,
         flavorTextEntries: [],
-        genera: [],
+        genera: cached.speciesGenera || [],
         generation: { id: "1", name: "generation-i" },
       },
     }),

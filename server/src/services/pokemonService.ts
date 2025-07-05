@@ -290,13 +290,13 @@ class PokemonService {
             url: nameEntry.language.url,
           },
         })),
-        genera: speciesData.genera.map((genus: any) => ({
+        genera: speciesData.genera ? speciesData.genera.map((genus: any) => ({
           genus: genus.genus,
           language: {
             name: genus.language.name,
             url: genus.language.url,
           },
-        })),
+        })) : [],
         genderRate: speciesData.gender_rate ?? 4, // Default to 50/50 ratio if not available
         hasGenderDifferences: speciesData.has_gender_differences ?? false,
       } : {
@@ -506,13 +506,13 @@ class PokemonService {
             url: entry.version.url,
           },
         })),
-        genera: speciesData.genera.map((genus: any) => ({
+        genera: speciesData.genera ? speciesData.genera.map((genus: any) => ({
           genus: genus.genus,
           language: {
             name: genus.language.name,
             url: genus.language.url,
           },
-        })),
+        })) : [],
         generation: {
           id: this.extractIdFromUrl(speciesData.generation.url),
           name: speciesData.generation.name,
