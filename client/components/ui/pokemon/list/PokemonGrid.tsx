@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import { Pokemon } from "@/types/pokemon";
 import { PokemonCard } from "./PokemonCard";
+import { VirtualPokemonGrid } from "./VirtualPokemonGrid";
 import { Locale } from "@/lib/dictionaries";
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
@@ -34,6 +35,7 @@ export function PokemonGrid({
 }: PokemonGridProps) {
   const parentRef = useRef<HTMLDivElement>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const [useVirtualScroll, setUseVirtualScroll] = useState(false);
   const { dictionary } = useAppSelector((state) => state.ui);
   const fallback = getFallbackText(language);
   const router = useRouter();
@@ -61,6 +63,12 @@ export function PokemonGrid({
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Enable virtual scroll for large datasets
+  useEffect(() => {
+    // Enable virtual scroll when we have more than 50 Pokemon
+    setUseVirtualScroll(pokemons.length > 50);
+  }, [pokemons.length]);
 
   if (loading && pokemons.length === 0) {
     return (
@@ -94,6 +102,30 @@ export function PokemonGrid({
     );
   }
 
+  // Use virtual scrolling for large datasets
+  if (useVirtualScroll && isMounted) {
+    return (
+      <div className="w-full h-[calc(100vh-200px)]">
+        <VirtualPokemonGrid
+          pokemons={pokemons}
+          onPokemonClick={onPokemonClick}
+          language={language}
+          priority={priority}
+          {...(currentGeneration && { currentGeneration })}
+        />
+
+        {/* Show message when filtering */}
+        {isFiltering && pokemons.length === 0 && !loading && (
+          <div className="text-center py-16 text-gray-500">
+            <div className="text-4xl mb-4">🔍</div>
+            <p>{dictionary?.ui.search.noFilterResults || fallback}</p>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Standard grid for smaller datasets
   return (
     <div
       ref={parentRef}

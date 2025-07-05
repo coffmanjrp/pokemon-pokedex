@@ -253,7 +253,7 @@ function PokemonListContent({
 
         {/* Main Content */}
         <div className="flex flex-col h-screen overflow-hidden">
-          <div className="flex-1 transition-all duration-300 ease-in-out">
+          <div className="flex-1 flex flex-col transition-all duration-300 ease-in-out">
             <div className="flex flex-col items-center justify-center h-full py-16 text-red-500">
               <div className="text-6xl mb-4">⚠️</div>
               <h3 className="text-xl font-semibold mb-2">
@@ -296,8 +296,8 @@ function PokemonListContent({
       </Suspense>
 
       {/* Main Content */}
-      <div className="flex flex-col h-screen overflow-auto">
-        <div className="flex-1 transition-all duration-300 ease-in-out">
+      <div className="flex flex-col h-screen overflow-hidden">
+        <div className="flex-1 flex flex-col transition-all duration-300 ease-in-out">
           {/* Sticky Generation Header */}
           <GenerationHeader
             currentGeneration={currentGeneration}
@@ -313,7 +313,7 @@ function PokemonListContent({
           />
 
           {/* Pokemon Grid */}
-          <div className="flex-1 overflow-hidden relative">
+          <div className="flex-1 overflow-auto relative">
             {/* Inline loading indicator for initial load when no Pokemon data */}
             {loading && pokemons.length === 0 && !generationSwitching && (
               <PokemonLoadingIndicator
@@ -374,7 +374,7 @@ function PokemonListContent({
             ) : (
               // Normal Generation View
               pokemons.length > 0 && (
-                <div className="flex-1 overflow-auto">
+                <div className="flex-1 flex flex-col overflow-hidden">
                   <PokemonGrid
                     pokemons={pokemons}
                     onPokemonClick={handlePokemonClick}

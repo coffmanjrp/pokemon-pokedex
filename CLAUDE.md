@@ -41,7 +41,8 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 - **Image Optimization**: AVIF/WebP formats, 1-year caching, dynamic quality settings
 - **Bundle Optimization**: Tree shaking, package optimization, code splitting
 - **Cache Strategy**: Long-term static asset caching, intelligent API response caching
-- **Grid Rendering**: Optimized standard grid for better reliability and scrolling functionality
+- **Virtual Scrolling**: react-window implementation for efficient rendering of large Pokemon datasets (51+ Pokemon)
+- **Hybrid Grid System**: Automatic switching between standard grid (≤50 Pokemon) and virtual scrolling (51+ Pokemon)
 - **Generation Switching**: Enhanced reliability with 8-second timeout handling and seamless data preservation
 - **Apollo Client Integration**: Standard fetchMore() patterns with automatic cache management
 - **SEO & Metadata**: Comprehensive Open Graph, Twitter Cards, and multilingual metadata implementation
@@ -160,7 +161,7 @@ pokemon-pokedex/
 - **Interactive Animation System**: 26 distinct animation effects categorized into Regular Click Effects, Special Hover Effects, and Classification-based Hover Effects with smooth cleanup transitions
 - **Animation Sandbox**: Comprehensive testing environment with categorized animations, hover/click differentiation, and visual feedback indicators
 - **Responsive Design**: Mobile-first with tablet and desktop optimizations
-- **Performance**: Multi-level caching, optimized grid rendering, smart cache management, image optimization
+- **Performance**: Multi-level caching, virtual scrolling with react-window, hybrid grid system, smart cache management, image optimization
 - **Detail Pages**: Comprehensive Pokemon information with evolution chains, form variants, and classification badges
 - **Type System**: Official Pokemon type colors and effectiveness calculations
 - **SEO Optimization**: Enhanced metadata with Open Graph, Twitter Cards, and multilingual support
@@ -195,7 +196,8 @@ pokemon-pokedex/
 ### Component Architecture
 
 **Pokemon Component Organization**:
-- **List Components** (`/components/ui/pokemon/list/`) - Pokemon grid, cards, loading states with special classification hover effects
+- **List Components** (`/components/ui/pokemon/list/`) - Pokemon grid with hybrid virtual scrolling, cards, loading states with special classification hover effects
+- **Virtual Scrolling** (`VirtualPokemonGrid.tsx`) - react-window based grid with responsive column calculation and automatic performance optimization
 - **Detail Components** (`/components/ui/pokemon/detail/`) - Pokemon detail pages, stats, moves, descriptions, and classification badges
 - **Classification Components** (`/detail/PokemonClassificationBadge.tsx`) - Reusable multilingual badge component with size variants
 - **Sprites Components** (`/sprites/`) - Sprite gallery and image management
@@ -320,6 +322,26 @@ REDIS_URL=redis://localhost:6379
 - **Redis Cache**: Server-side caching with 5-minute TTL
 - **GraphQL Server**: Custom Apollo Server with intelligent caching
 - **Apollo Client Cache**: Browser-side caching for efficient data management
+
+## Virtual Scrolling Implementation
+
+### Architecture
+- **Library**: react-window (VariableSizeGrid component)
+- **Hybrid System**: Automatic switching based on Pokemon count threshold (50 Pokemon)
+- **Performance**: Only renders visible items, reducing DOM nodes and improving scroll performance
+- **Responsive**: Dynamic column calculation based on screen width (1-5 columns)
+
+### Key Files
+- `VirtualPokemonGrid.tsx`: Main virtual scrolling component with responsive grid layout
+- `PokemonGrid.tsx`: Hybrid controller that switches between standard and virtual grids
+- **Integration**: Seamless fallback to standard grid for smaller datasets
+
+### Technical Features
+- **Memory Efficient**: Only renders visible Pokemon cards in viewport
+- **Smooth Scrolling**: Optimized for large datasets (Generation 1: 151 Pokemon)
+- **Mobile Responsive**: Adaptive column count (Mobile: 1 col, Desktop: 5 cols)
+- **TypeScript**: Full type safety with proper interface definitions
+- **Accessibility**: Maintains Pokemon card accessibility and navigation features
 
 ## Adding New Language Support
 
