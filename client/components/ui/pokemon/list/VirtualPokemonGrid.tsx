@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useCallback, forwardRef } from "react";
 import { VariableSizeGrid as Grid } from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
 import { Pokemon } from "@/types/pokemon";
 import { PokemonCard } from "./PokemonCard";
 import { Locale } from "@/lib/dictionaries";
@@ -12,7 +13,35 @@ interface VirtualPokemonGridProps {
   language?: Locale;
   priority?: boolean;
   currentGeneration?: number;
+  onScroll?: (event: { scrollTop: number }) => void;
 }
+
+// Padding configuration
+const PADDING_SIZE = 8; // 8px padding (equivalent to p-2)
+
+// Inner element with padding
+const innerElementType = forwardRef<
+  HTMLDivElement,
+  { style?: React.CSSProperties }
+>(({ style = {}, ...rest }, ref) => (
+  <div
+    ref={ref}
+    style={{
+      ...style,
+      width: style.width ? `${parseFloat(style.width as string)}px` : undefined,
+      height: style.height
+        ? `${parseFloat(style.height as string) + PADDING_SIZE * 2}px`
+        : undefined,
+      paddingTop: `${PADDING_SIZE}px`,
+      paddingLeft: `${PADDING_SIZE}px`,
+      paddingRight: `${PADDING_SIZE}px`,
+      paddingBottom: `${PADDING_SIZE}px`,
+    }}
+    {...rest}
+  />
+));
+
+innerElementType.displayName = "InnerElement";
 
 // Cell renderer component
 const CellRenderer = ({
@@ -31,7 +60,6 @@ const CellRenderer = ({
     language: Locale;
     priority: boolean;
     currentGeneration?: number;
-    gap: number;
   };
 }) => {
   const {
@@ -41,7 +69,6 @@ const CellRenderer = ({
     language,
     priority,
     currentGeneration,
-    gap,
   } = data;
   const index = rowIndex * columns + columnIndex;
 
@@ -55,17 +82,15 @@ const CellRenderer = ({
     return null;
   }
 
-  // Adjust style to add gap
+  // Adjust style to account for padding
   const adjustedStyle = {
     ...style,
-    left: Number(style.left) + gap * (columnIndex + 1),
-    top: Number(style.top) + gap * (rowIndex + 1),
-    width: Number(style.width) - gap,
-    height: Number(style.height) - gap,
+    left: `${parseFloat(style.left as string) + PADDING_SIZE}px`,
+    top: `${parseFloat(style.top as string) + PADDING_SIZE}px`,
   };
 
   return (
-    <div style={adjustedStyle}>
+    <div style={adjustedStyle} className="p-1.5 sm:p-2">
       <PokemonCard
         pokemon={pokemon}
         onClick={onPokemonClick}
@@ -84,90 +109,62 @@ export const VirtualPokemonGrid = ({
   language = "en",
   priority = false,
   currentGeneration,
+  onScroll,
 }: VirtualPokemonGridProps) => {
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Calculate columns based on screen width
-  const getColumns = useCallback(() => {
-    if (typeof window === "undefined") return 3;
-    const width = window.innerWidth;
-    if (width < 640) return 1; // Mobile
-    if (width < 768) return 2; // Small tablet
-    if (width < 1024) return 3; // Tablet
-    if (width < 1280) return 4; // Small desktop
+  // Calculate columns based on width
+  const getColumns = useCallback((width: number) => {
+    // Account for padding when calculating columns
+    const effectiveWidth = width - PADDING_SIZE * 2;
+    if (effectiveWidth < 640) return 1; // Mobile
+    if (effectiveWidth < 768) return 2; // Small tablet
+    if (effectiveWidth < 1024) return 3; // Tablet
+    if (effectiveWidth < 1280) return 4; // Small desktop
     return 5; // Large desktop
   }, []);
 
-  const [columns, setColumns] = useState(getColumns());
-
-  // Gap between cards
-  const gap =
-    typeof window !== "undefined" && window.innerWidth < 640 ? 12 : 16;
-
   // Fixed card height for each breakpoint
-  const getItemHeight = useCallback(() => {
-    if (typeof window === "undefined") return 320;
-    const width = window.innerWidth;
-    return width < 640 ? 288 : 320; // h-72 (288px) on mobile, h-80 (320px) on desktop
+  const getItemHeight = useCallback((width: number) => {
+    return width < 640 ? 300 : 337; // Include padding - slightly taller
   }, []);
 
-  const itemHeight = getItemHeight();
-
-  // Update dimensions on mount and resize
-  useEffect(() => {
-    const updateDimensions = () => {
-      if (containerRef.current) {
-        setDimensions({
-          width: containerRef.current.offsetWidth,
-          height: window.innerHeight - 200, // Account for header and footer
-        });
-      }
-      setColumns(getColumns());
-    };
-
-    updateDimensions();
-    window.addEventListener("resize", updateDimensions);
-
-    return () => {
-      window.removeEventListener("resize", updateDimensions);
-    };
-  }, [getColumns]);
-
-  const rowCount = Math.ceil(pokemons.length / columns);
-
-  // Calculate column width dynamically
-  const columnWidth = useCallback(() => {
-    const totalGaps = gap * (columns + 1);
-    return (dimensions.width - totalGaps) / columns;
-  }, [dimensions.width, columns, gap]);
-
-  // Row height is fixed
-  const rowHeight = useCallback(() => itemHeight + gap, [itemHeight, gap]);
-
   return (
-    <div ref={containerRef} className="w-full h-full px-3 sm:px-4 py-4">
-      {dimensions.width > 0 && dimensions.height > 0 && (
-        <Grid
-          columnCount={columns}
-          columnWidth={columnWidth}
-          height={dimensions.height}
-          rowCount={rowCount}
-          rowHeight={rowHeight}
-          width={dimensions.width}
-          itemData={{
-            pokemons,
-            columns,
-            onPokemonClick,
-            language,
-            priority,
-            ...(currentGeneration && { currentGeneration }),
-            gap,
-          }}
-        >
-          {CellRenderer}
-        </Grid>
-      )}
-    </div>
+    <AutoSizer>
+      {({ height, width }) => {
+        const columns = getColumns(width);
+        const rowCount = Math.ceil(pokemons.length / columns);
+        const itemHeight = getItemHeight(width);
+
+        // Calculate column width evenly, accounting for padding
+        const effectiveWidth = width - PADDING_SIZE * 2;
+        const columnWidth = () => Math.floor(effectiveWidth / columns);
+
+        // Fixed row height
+        const rowHeight = () => itemHeight;
+
+        return (
+          <Grid
+            columnCount={columns}
+            columnWidth={columnWidth}
+            height={height}
+            rowCount={rowCount}
+            rowHeight={rowHeight}
+            width={width}
+            innerElementType={innerElementType}
+            itemData={{
+              pokemons,
+              columns,
+              onPokemonClick,
+              language,
+              priority,
+              ...(currentGeneration && { currentGeneration }),
+            }}
+            onScroll={onScroll}
+            className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100"
+          >
+            {CellRenderer}
+          </Grid>
+        );
+      }}
+    </AutoSizer>
   );
 };

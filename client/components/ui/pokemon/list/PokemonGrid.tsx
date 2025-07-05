@@ -22,6 +22,7 @@ interface PokemonGridProps {
   language?: Locale;
   priority?: boolean;
   currentGeneration?: number;
+  onScroll?: (event: { scrollTop: number }) => void;
 }
 
 export function PokemonGrid({
@@ -32,6 +33,7 @@ export function PokemonGrid({
   priority = false,
   language = "en",
   currentGeneration,
+  onScroll,
 }: PokemonGridProps) {
   const parentRef = useRef<HTMLDivElement>(null);
   const [isMounted, setIsMounted] = useState(false);
@@ -66,8 +68,8 @@ export function PokemonGrid({
 
   // Enable virtual scroll for large datasets
   useEffect(() => {
-    // Enable virtual scroll when we have more than 50 Pokemon
-    setUseVirtualScroll(pokemons.length > 50);
+    // Enable virtual scroll when we have more than 10 Pokemon
+    setUseVirtualScroll(pokemons.length > 10);
   }, [pokemons.length]);
 
   if (loading && pokemons.length === 0) {
@@ -105,12 +107,13 @@ export function PokemonGrid({
   // Use virtual scrolling for large datasets
   if (useVirtualScroll && isMounted) {
     return (
-      <div className="w-full h-[calc(100vh-200px)]">
+      <div className="w-full h-full">
         <VirtualPokemonGrid
           pokemons={pokemons}
           onPokemonClick={onPokemonClick}
           language={language}
           priority={priority}
+          {...(onScroll && { onScroll })}
           {...(currentGeneration && { currentGeneration })}
         />
 

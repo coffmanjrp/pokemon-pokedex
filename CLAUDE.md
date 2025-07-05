@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. Pokemon detail pages use SSG for optimal performance with individual Pokemon data pre-generated at build time. Pokemon list pages use full client-side rendering with intelligent cache system for seamless generation switching. Hybrid deployment fully operational with frontend deployed on Vercel and backend on Railway. Complete 9-language support implemented (English, Japanese, Traditional Chinese, Simplified Chinese, Spanish, Korean, French, German, Italian) with comprehensive translations, Pokemon data localization through PokeAPI GraphQL integration, and complete UI coverage including SEO metadata. Icon system consolidation completed using react-icons library (Heroicons v2 for UI elements, Font Awesome for specialized symbols) for consistent styling, better accessibility, and improved maintainability. Pokemon classification system fully implemented with multilingual badge support (Baby→ベイビィ, Legendary→伝説, Mythical→幻) across all 9 languages, comprehensive animation system with 26 distinct effects including classification-based hover animations, and enhanced sandbox environment with categorized animation testing. Recent improvements include Pokemon cache system optimization with enhanced UTF-8 character encoding for Japanese Pokemon names, server-side Pokemon service enhancements with intelligent caching strategies, and resolution of animation cleanup issues ensuring smooth user experience.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. Pokemon detail pages use SSG for optimal performance with individual Pokemon data pre-generated at build time. Pokemon list pages use full client-side rendering with intelligent cache system for seamless generation switching. Hybrid deployment fully operational with frontend deployed on Vercel and backend on Railway. Complete 9-language support implemented (English, Japanese, Traditional Chinese, Simplified Chinese, Spanish, Korean, French, German, Italian) with comprehensive translations, Pokemon data localization through PokeAPI GraphQL integration, and complete UI coverage including SEO metadata. Icon system consolidation completed using react-icons library (Heroicons v2 for UI elements, Font Awesome for specialized symbols) for consistent styling, better accessibility, and improved maintainability. Pokemon classification system fully implemented with multilingual badge support (Baby→ベイビィ, Legendary→伝説, Mythical→幻) across all 9 languages, comprehensive animation system with 26 distinct effects including classification-based hover animations, and enhanced sandbox environment with categorized animation testing. Recent improvements include Pokemon cache system optimization with enhanced UTF-8 character encoding for Japanese Pokemon names, server-side Pokemon service enhancements with intelligent caching strategies, resolution of animation cleanup issues ensuring smooth user experience, virtual scrolling implementation with react-window for large datasets (threshold: 10+ Pokemon), and dynamic header shrinking system with smooth GSAP animations that preserves search functionality through icon display.
 
 ## Architecture
 
@@ -41,8 +41,8 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 - **Image Optimization**: AVIF/WebP formats, 1-year caching, dynamic quality settings
 - **Bundle Optimization**: Tree shaking, package optimization, code splitting
 - **Cache Strategy**: Long-term static asset caching, intelligent API response caching
-- **Virtual Scrolling**: react-window implementation for efficient rendering of large Pokemon datasets (51+ Pokemon)
-- **Hybrid Grid System**: Automatic switching between standard grid (≤50 Pokemon) and virtual scrolling (51+ Pokemon)
+- **Virtual Scrolling**: react-window implementation for efficient rendering of large Pokemon datasets (11+ Pokemon)
+- **Hybrid Grid System**: Automatic switching between standard grid (≤10 Pokemon) and virtual scrolling (11+ Pokemon)
 - **Generation Switching**: Enhanced reliability with 8-second timeout handling and seamless data preservation
 - **Apollo Client Integration**: Standard fetchMore() patterns with automatic cache management
 - **SEO & Metadata**: Comprehensive Open Graph, Twitter Cards, and multilingual metadata implementation
@@ -326,10 +326,11 @@ REDIS_URL=redis://localhost:6379
 ## Virtual Scrolling Implementation
 
 ### Architecture
-- **Library**: react-window (VariableSizeGrid component)
-- **Hybrid System**: Automatic switching based on Pokemon count threshold (50 Pokemon)
+- **Library**: react-window (VariableSizeGrid component) with react-virtualized-auto-sizer
+- **Hybrid System**: Automatic switching based on Pokemon count threshold (10 Pokemon)
 - **Performance**: Only renders visible items, reducing DOM nodes and improving scroll performance
 - **Responsive**: Dynamic column calculation based on screen width (1-5 columns)
+- **Layout**: Tighter card spacing (8px gap) with proper padding implementation
 
 ### Key Files
 - `VirtualPokemonGrid.tsx`: Main virtual scrolling component with responsive grid layout
@@ -342,6 +343,26 @@ REDIS_URL=redis://localhost:6379
 - **Mobile Responsive**: Adaptive column count (Mobile: 1 col, Desktop: 5 cols)
 - **TypeScript**: Full type safety with proper interface definitions
 - **Accessibility**: Maintains Pokemon card accessibility and navigation features
+- **Scroll Event Integration**: Compatible with header shrink functionality
+
+## Header Shrink System
+
+### Overview
+Dynamic header that shrinks on scroll to maximize content visibility while maintaining access to key features.
+
+### Features
+- **Automatic Shrinking**: Header reduces height after 100px scroll
+- **Smooth Animations**: GSAP-powered transitions with easing effects
+- **Search Icon Preservation**: Search functionality remains accessible via icon
+- **Mobile Optimization**: Consistent title and icon alignment with hamburger menu
+- **Hover Restoration**: Header expands on mouse hover for full functionality
+
+### Technical Implementation
+- **Scroll Detection**: Throttled scroll events with requestAnimationFrame
+- **GSAP Timeline**: Coordinated animations for multiple elements
+- **Component States**: Title scaling (0.75x), search bar fade out, type filter collapse
+- **Mobile Layout**: Fixed height container (h-10) for consistent alignment
+- **Desktop Layout**: Flexible layout with smooth transitions
 
 ## Adding New Language Support
 

@@ -224,12 +224,12 @@ const PokemonCard = memo(function PokemonCard({
       </div>
 
       {/* Pokemon Image */}
-      <div className="relative h-36 sm:h-48 flex items-center justify-center p-3 sm:p-4">
+      <div className="relative h-36 sm:h-48 flex items-center justify-center p-3 md:mb-0 sm:p-4 mb-5">
         <PokemonImage pokemon={pokemon} priority={priority} />
       </div>
 
       {/* Pokemon Info */}
-      <div className="p-3 sm:p-4 pt-0">
+      <div className="p-3 sm:p-4 pt-0 pb-4">
         {/* Name */}
         <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-2 text-center leading-tight">
           {language === "ja" ? displayName : formatName(displayName)}

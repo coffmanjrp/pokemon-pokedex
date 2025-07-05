@@ -13,7 +13,7 @@ import { usePokemonSearch } from "../../hooks/usePokemonSearch";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { setSelectedPokemon } from "../../store/slices/pokemonSlice";
 import { setLanguage, setDictionary } from "../../store/slices/uiSlice";
-import { useEffect, useState, useRef, Suspense } from "react";
+import { useEffect, useState, useRef, Suspense, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Pokemon, PokemonTypeName } from "@/types/pokemon";
 import { Dictionary, Locale, interpolate } from "@/lib/dictionaries";
@@ -50,6 +50,12 @@ function PokemonListContent({
     }
     return 1;
   });
+
+  // Header visibility state
+  const [headerState, setHeaderState] = useState<"visible" | "shrink">(
+    "visible",
+  );
+  const lastScrollYRef = useRef(0);
 
   // Track if cache restoration has been attempted to prevent infinite loops
   const cacheRestoredRef = useRef(false);
@@ -214,6 +220,28 @@ function PokemonListContent({
     }
   }, [loading, hasNextPage, pokemons.length, showCompletionFooter]);
 
+  // Handle scroll for header shrink/expand
+  const handleScroll = useCallback((event: { scrollTop: number }) => {
+    // react-window passes a different event structure
+    const currentScrollY = event.scrollTop || 0;
+
+    // Only shrink after scrolling down 100px
+    if (currentScrollY > lastScrollYRef.current && currentScrollY > 100) {
+      // Scrolling down
+      setHeaderState("shrink");
+    } else if (
+      currentScrollY < lastScrollYRef.current ||
+      currentScrollY <= 50
+    ) {
+      // Scrolling up or near top
+      setHeaderState("visible");
+    }
+
+    lastScrollYRef.current = currentScrollY;
+  }, []);
+
+  // Remove the old scroll event listener useEffect since we'll handle scroll directly
+
   // Animate completion footer entrance
   useEffect(() => {
     if (
@@ -310,6 +338,8 @@ function PokemonListContent({
             showTypeFilter={true}
             selectedTypes={filters.types}
             onTypeFilter={handleTypeFilter}
+            isShrinked={headerState === "shrink"}
+            onMouseEnter={() => setHeaderState("visible")}
           />
 
           {/* Pokemon Grid */}
@@ -374,20 +404,19 @@ function PokemonListContent({
             ) : (
               // Normal Generation View
               pokemons.length > 0 && (
-                <div className="flex-1 flex flex-col overflow-hidden">
-                  <PokemonGrid
-                    pokemons={pokemons}
-                    onPokemonClick={handlePokemonClick}
-                    loading={loading}
-                    isFiltering={false}
-                    isAutoLoading={false}
-                    hasNextPage={hasNextPage}
-                    onLoadMore={loadMore}
-                    language={lang as Locale}
-                    priority={true}
-                    currentGeneration={currentGeneration}
-                  />
-                </div>
+                <PokemonGrid
+                  pokemons={pokemons}
+                  onPokemonClick={handlePokemonClick}
+                  loading={loading}
+                  isFiltering={false}
+                  isAutoLoading={false}
+                  hasNextPage={hasNextPage}
+                  onLoadMore={loadMore}
+                  language={lang as Locale}
+                  priority={true}
+                  currentGeneration={currentGeneration}
+                  onScroll={handleScroll}
+                />
               )
             )}
 
