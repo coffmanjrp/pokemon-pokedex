@@ -4,7 +4,8 @@
       "placeholder": "포켓몬 이름이나 번호로 검색...",
       "noResults": "포켓몬을 찾을 수 없습니다",
       "noResultsDescription": "검색어나 필터를 조정해 보세요",
-      "noFilterResults": "현재 필터와 일치하는 포켓몬이 없습니다"
+      "noFilterResults": "현재 필터와 일치하는 포켓몬이 없습니다",
+      "clearSearch": "검색 지우기"
     },
     "filters": {
       "title": "필터",

@@ -103,6 +103,7 @@ function PokemonListContent({
     isSearchMode,
     hasResults,
     search,
+    updateQuery,
     clearSearchResults,
     updateFilters,
     clearAllFilters,
@@ -169,6 +170,7 @@ function PokemonListContent({
   };
 
   const handleSearch = (query: string) => {
+    updateQuery(query);
     search(query);
   };
 
@@ -185,6 +187,17 @@ function PokemonListContent({
   const handleTypeFilter = (types: string[]) => {
     // Update filters first
     updateFilters({ types: types as PokemonTypeName[] });
+
+    // Expand header when type filter is activated
+    if (types.length > 0 && headerState === "shrink") {
+      setHeaderState("visible");
+    }
+
+    // If no types selected, clear search mode and show all pokemon
+    if (types.length === 0) {
+      clearSearchResults();
+      return;
+    }
 
     // Apply type filter - use current search query or empty string
     search(searchQuery || "", { types: types as PokemonTypeName[] });
@@ -221,24 +234,32 @@ function PokemonListContent({
   }, [loading, hasNextPage, pokemons.length, showCompletionFooter]);
 
   // Handle scroll for header shrink/expand
-  const handleScroll = useCallback((event: { scrollTop: number }) => {
-    // react-window passes a different event structure
-    const currentScrollY = event.scrollTop || 0;
+  const handleScroll = useCallback(
+    (event: { scrollTop: number }) => {
+      // Don't shrink header when type filter is active
+      if (filters.types && filters.types.length > 0) {
+        return;
+      }
 
-    // Only shrink after scrolling down 100px
-    if (currentScrollY > lastScrollYRef.current && currentScrollY > 100) {
-      // Scrolling down
-      setHeaderState("shrink");
-    } else if (
-      currentScrollY < lastScrollYRef.current ||
-      currentScrollY <= 50
-    ) {
-      // Scrolling up or near top
-      setHeaderState("visible");
-    }
+      // react-window passes a different event structure
+      const currentScrollY = event.scrollTop || 0;
 
-    lastScrollYRef.current = currentScrollY;
-  }, []);
+      // Only shrink after scrolling down 100px
+      if (currentScrollY > lastScrollYRef.current && currentScrollY > 100) {
+        // Scrolling down
+        setHeaderState("shrink");
+      } else if (
+        currentScrollY < lastScrollYRef.current ||
+        currentScrollY <= 50
+      ) {
+        // Scrolling up or near top
+        setHeaderState("visible");
+      }
+
+      lastScrollYRef.current = currentScrollY;
+    },
+    [filters.types],
+  );
 
   // Remove the old scroll event listener useEffect since we'll handle scroll directly
 
@@ -331,6 +352,7 @@ function PokemonListContent({
             currentGeneration={currentGeneration}
             lang={lang}
             dictionary={dictionary}
+            searchQuery={searchQuery}
             onSearch={handleSearch}
             onSearchClear={handleSearchClear}
             searchLoading={isSearching}
@@ -343,7 +365,7 @@ function PokemonListContent({
           />
 
           {/* Pokemon Grid */}
-          <div className="flex-1 overflow-auto relative">
+          <div className="flex-1 flex flex-col relative">
             {/* Inline loading indicator for initial load when no Pokemon data */}
             {loading && pokemons.length === 0 && !generationSwitching && (
               <PokemonLoadingIndicator
@@ -358,8 +380,8 @@ function PokemonListContent({
             {isSearchMode ? (
               // Search Results
               hasResults ? (
-                <div className="flex-1 overflow-auto">
-                  <div className="px-4 md:px-6 py-3 bg-blue-50 border-b border-blue-200">
+                <div className="flex-1 flex flex-col">
+                  <div className="px-4 md:px-6 py-3 bg-blue-50 border-b border-blue-200 flex-shrink-0 flex items-center justify-between">
                     <p className="text-sm text-blue-800">
                       {interpolate(
                         dictionary.ui.filters?.showingResults ||
@@ -367,18 +389,27 @@ function PokemonListContent({
                         { count: searchResults.length },
                       )}
                     </p>
+                    <button
+                      onClick={handleSearchClear}
+                      className="text-sm text-blue-600 hover:text-blue-800 underline"
+                    >
+                      {dictionary.ui.search.clearSearch || "Clear search"}
+                    </button>
                   </div>
-                  <PokemonGrid
-                    pokemons={searchResults.map((result) => result.pokemon)}
-                    onPokemonClick={handlePokemonClick}
-                    loading={isSearching}
-                    isFiltering={true}
-                    isAutoLoading={false}
-                    hasNextPage={false}
-                    language={lang as Locale}
-                    priority={true}
-                    currentGeneration={currentGeneration}
-                  />
+                  <div className="flex-1 overflow-auto">
+                    <PokemonGrid
+                      pokemons={searchResults.map((result) => result.pokemon)}
+                      onPokemonClick={handlePokemonClick}
+                      loading={isSearching}
+                      isFiltering={true}
+                      isAutoLoading={false}
+                      hasNextPage={false}
+                      language={lang as Locale}
+                      priority={true}
+                      currentGeneration={currentGeneration}
+                      onScroll={handleScroll}
+                    />
+                  </div>
                 </div>
               ) : (
                 // No Search Results
@@ -404,19 +435,21 @@ function PokemonListContent({
             ) : (
               // Normal Generation View
               pokemons.length > 0 && (
-                <PokemonGrid
-                  pokemons={pokemons}
-                  onPokemonClick={handlePokemonClick}
-                  loading={loading}
-                  isFiltering={false}
-                  isAutoLoading={false}
-                  hasNextPage={hasNextPage}
-                  onLoadMore={loadMore}
-                  language={lang as Locale}
-                  priority={true}
-                  currentGeneration={currentGeneration}
-                  onScroll={handleScroll}
-                />
+                <div className="flex-1 overflow-auto">
+                  <PokemonGrid
+                    pokemons={pokemons}
+                    onPokemonClick={handlePokemonClick}
+                    loading={loading}
+                    isFiltering={false}
+                    isAutoLoading={false}
+                    hasNextPage={hasNextPage}
+                    onLoadMore={loadMore}
+                    language={lang as Locale}
+                    priority={true}
+                    currentGeneration={currentGeneration}
+                    onScroll={handleScroll}
+                  />
+                </div>
               )
             )}
 

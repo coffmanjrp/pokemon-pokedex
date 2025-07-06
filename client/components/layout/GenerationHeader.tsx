@@ -17,6 +17,7 @@ interface GenerationHeaderProps {
   lang: Locale;
   dictionary: Dictionary;
   className?: string;
+  searchQuery?: string;
   onSearch?: (query: string) => void;
   onSearchClear?: () => void;
   showSearch?: boolean;
@@ -34,6 +35,7 @@ export function GenerationHeader({
   lang,
   dictionary,
   className = "",
+  searchQuery: externalSearchQuery = "",
   onSearch,
   onSearchClear,
   showSearch = true,
@@ -45,7 +47,7 @@ export function GenerationHeader({
   isShrinked = false,
   onMouseEnter,
 }: GenerationHeaderProps) {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(externalSearchQuery);
   const [isTypeFilterOpen, setIsTypeFilterOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -53,6 +55,11 @@ export function GenerationHeader({
   const titleRefs = useRef<HTMLHeadingElement[]>([]);
   const searchIconRef = useRef<HTMLDivElement>(null);
   const mobileSearchIconRef = useRef<HTMLDivElement>(null);
+
+  // Sync with external search query
+  useEffect(() => {
+    setSearchQuery(externalSearchQuery);
+  }, [externalSearchQuery]);
 
   // Component mount effect and initial setup
   useEffect(() => {
