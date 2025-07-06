@@ -275,6 +275,17 @@ export function usePokemonSearch({
     }
   }, [debouncedQuery, generateSuggestions, enableSuggestions, dispatch]);
 
+  // Re-run search when Pokemon list updates (for dynamic filtering)
+  // Using pokemons.length as dependency to avoid deep comparison issues
+  useEffect(() => {
+    // Only re-run if we're in search mode and have a query or active filters
+    if (isSearchMode && (query.trim().length > 0 || filters.types.length > 0)) {
+      // Perform search with current query and filters
+      const updatedResults = performSearch(query, filters);
+      dispatch(setResults(updatedResults));
+    }
+  }, [pokemons.length, isSearchMode, query, filters, performSearch, dispatch]);
+
   // Search function to be called from components
   const search = useCallback(
     (searchQuery: string, searchFilters?: Partial<SearchFilters>) => {
