@@ -101,6 +101,7 @@
       "special": "特殊",
       "status": "变化",
       "noMovesFound": "找不到招式",
+      "target": "目标",
       "forms": "形态",
       "trade": "交换",
       "levelUp": "等级提升",
@@ -417,6 +418,24 @@
       "clover-sweet": "四叶糖饰",
       "flower-sweet": "花朵糖饰",
       "ribbon-sweet": "缎带糖饰"
+    },
+    "moveTargets": {
+      "selected-pokemon": "选定的敌方宝可梦",
+      "user": "使用者自己",
+      "all-opponents": "所有敌方宝可梦",
+      "random-opponent": "随机的敌方宝可梦",
+      "all-other-pokemon": "场上其他所有宝可梦",
+      "ally": "选定的我方宝可梦",
+      "users-field": "我方场地",
+      "user-or-ally": "使用者或选定的我方宝可梦",
+      "opponents-field": "敌方场地",
+      "entire-field": "全场",
+      "user-and-allies": "使用者和所有我方宝可梦",
+      "all-pokemon": "场上所有宝可梦",
+      "all-allies": "所有我方宝可梦",
+      "specific-move": "特定招式",
+      "users-side": "User's Side",
+      "fainting-pokemon": "Fainting Pokemon"
     }
   },
   "meta": {

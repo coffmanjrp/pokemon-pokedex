@@ -101,6 +101,7 @@
       "special": "Spéciale",
       "status": "Statut",
       "noMovesFound": "Aucune attaque trouvée",
+      "target": "Cible",
       "forms": "Formes",
       "trade": "Échange",
       "levelUp": "Montée de niveau",
@@ -417,6 +418,24 @@
       "clover-sweet": "Bonbon Trèfle",
       "flower-sweet": "Bonbon Fleur",
       "ribbon-sweet": "Bonbon Ruban"
+    },
+    "moveTargets": {
+      "selected-pokemon": "Pokémon adverse ciblé",
+      "user": "Le lanceur",
+      "all-opponents": "Tous les Pokémon adverses",
+      "random-opponent": "Pokémon adverse aléatoire",
+      "all-other-pokemon": "Tous les autres Pokémon sur le terrain",
+      "ally": "Pokémon allié ciblé",
+      "users-field": "Terrain du lanceur",
+      "user-or-ally": "Lanceur ou Pokémon allié ciblé",
+      "opponents-field": "Terrain adverse",
+      "entire-field": "Terrain entier",
+      "user-and-allies": "Lanceur et tous les Pokémon alliés",
+      "all-pokemon": "Tous les Pokémon sur le terrain",
+      "all-allies": "Tous les Pokémon alliés",
+      "specific-move": "Capacité spécifique",
+      "users-side": "User's Side",
+      "fainting-pokemon": "Fainting Pokemon"
     }
   },
   "meta": {

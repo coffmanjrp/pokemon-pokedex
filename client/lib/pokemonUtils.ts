@@ -1073,3 +1073,152 @@ export function getGenderDisplayElement(
       ]);
   }
 }
+
+/**
+ * Get move flavor text (description) in the specified language
+ * @param move - Move object with flavorTextEntries
+ * @param language - Target language
+ * @returns Move description string
+ */
+export function getMoveFlavorText(move: Move, language: Locale): string {
+  if (!move.flavorTextEntries || move.flavorTextEntries.length === 0) {
+    return "";
+  }
+
+  // Map locale to PokeAPI language codes
+  const languageMap: Record<string, string[]> = {
+    en: ["en"],
+    ja: ["ja", "ja-Hrkt"],
+    "zh-Hant": ["zh-Hant"],
+    "zh-Hans": ["zh-Hans"],
+    es: ["es"],
+    ko: ["ko"],
+    fr: ["fr"],
+    it: ["it"],
+    de: ["de"],
+  };
+
+  const targetCodes = languageMap[language] || ["en"];
+
+  // Filter entries by language and get the most recent one
+  const languageEntries = move.flavorTextEntries.filter((entry) =>
+    targetCodes.includes(entry.language.name),
+  );
+
+  if (languageEntries.length === 0) {
+    // Fallback to English if target language not available
+    const englishEntries = move.flavorTextEntries.filter(
+      (entry) => entry.language.name === "en",
+    );
+    return (
+      englishEntries[englishEntries.length - 1]?.flavorText?.replace(
+        /\f/g,
+        " ",
+      ) || ""
+    );
+  }
+
+  // Return the most recent entry and clean up formatting
+  return (
+    languageEntries[languageEntries.length - 1]?.flavorText?.replace(
+      /\f/g,
+      " ",
+    ) || ""
+  );
+}
+
+/**
+ * Get move damage class name in the specified language
+ * @param damageClass - Damage class object with names array
+ * @param language - Target language
+ * @returns Damage class name string
+ */
+export function getMoveDamageClassName(
+  damageClass: { name: string; names?: { name: string; language: { name: string } }[] },
+  language: Locale,
+): string {
+  // Use multilingual data if available
+  if (damageClass.names && damageClass.names.length > 0) {
+    const languageMap: Record<string, string[]> = {
+      en: ["en"],
+      ja: ["ja", "ja-Hrkt"],
+      "zh-Hant": ["zh-Hant"],
+      "zh-Hans": ["zh-Hans"],
+      es: ["es"],
+      ko: ["ko"],
+      fr: ["fr"],
+      it: ["it"],
+      de: ["de"],
+    };
+    const targetLanguage = languageMap[language] || ["en"];
+
+    for (const lang of targetLanguage) {
+      const languageName = damageClass.names.find(
+        (nameEntry) => nameEntry.language.name === lang,
+      );
+
+      if (languageName) {
+        return languageName.name;
+      }
+    }
+  }
+
+  // Fallback to formatted English name
+  return damageClass.name
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+/**
+ * Get move target name in the specified language
+ * @param target - Target object with names array
+ * @param language - Target language
+ * @param dictionary - Optional dictionary for fallback
+ * @returns Target name string
+ */
+export function getMoveTargetName(
+  target: { name: string; names?: { name: string; language: { name: string } }[] },
+  language: Locale,
+  dictionary?: Dictionary,
+): string {
+  // Use multilingual data if available
+  if (target.names && target.names.length > 0) {
+    const languageMap: Record<string, string[]> = {
+      en: ["en"],
+      ja: ["ja", "ja-Hrkt"],
+      "zh-Hant": ["zh-Hant"],
+      "zh-Hans": ["zh-Hans"],
+      es: ["es"],
+      ko: ["ko"],
+      fr: ["fr"],
+      it: ["it"],
+      de: ["de"],
+    };
+    const targetLanguage = languageMap[language] || ["en"];
+
+    for (const lang of targetLanguage) {
+      const languageName = target.names.find(
+        (nameEntry) => nameEntry.language.name === lang,
+      );
+
+      if (languageName) {
+        return languageName.name;
+      }
+    }
+  }
+
+  // Try dictionary system if available
+  if (dictionary && dictionary.ui.moveTargets) {
+    const targetKey = target.name.toLowerCase() as keyof typeof dictionary.ui.moveTargets;
+    if (dictionary.ui.moveTargets[targetKey]) {
+      return dictionary.ui.moveTargets[targetKey];
+    }
+  }
+
+  // Fallback to formatted English name
+  return target.name
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}

@@ -306,6 +306,13 @@ export const GET_POKEMON = gql`
           id
           name
           url
+          names {
+            name
+            language {
+              name
+              url
+            }
+          }
           type {
             id
             name
@@ -314,6 +321,13 @@ export const GET_POKEMON = gql`
           damageClass {
             id
             name
+            names {
+              name
+              language {
+                name
+                url
+              }
+            }
           }
           power
           accuracy
@@ -322,8 +336,26 @@ export const GET_POKEMON = gql`
           target {
             id
             name
+            names {
+              name
+              language {
+                name
+                url
+              }
+            }
           }
           effectChance
+          flavorTextEntries {
+            flavorText
+            language {
+              name
+              url
+            }
+            versionGroup {
+              name
+              url
+            }
+          }
         }
         versionGroupDetails {
           levelLearnedAt

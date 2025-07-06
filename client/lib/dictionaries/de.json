@@ -101,6 +101,7 @@
       "special": "Spezial",
       "status": "Status",
       "noMovesFound": "Keine Attacken gefunden",
+      "target": "Ziel",
       "forms": "Formen",
       "trade": "Tausch",
       "levelUp": "Level-Up",
@@ -417,6 +418,24 @@
       "clover-sweet": "Kleebonbon",
       "flower-sweet": "Blütenbonbon",
       "ribbon-sweet": "Schleifenbonbon"
+    },
+    "moveTargets": {
+      "selected-pokemon": "Ausgewähltes gegnerisches Pokémon",
+      "user": "Der Anwender",
+      "all-opponents": "Alle gegnerischen Pokémon",
+      "random-opponent": "Zufälliges gegnerisches Pokémon",
+      "all-other-pokemon": "Alle anderen Pokémon auf dem Feld",
+      "ally": "Ausgewähltes verbündetes Pokémon",
+      "users-field": "Anwenderfeld",
+      "user-or-ally": "Anwender oder ausgewähltes verbündetes Pokémon",
+      "opponents-field": "Gegnerisches Feld",
+      "entire-field": "Gesamtes Feld",
+      "user-and-allies": "Anwender und alle verbündeten Pokémon",
+      "all-pokemon": "Alle Pokémon auf dem Feld",
+      "all-allies": "Alle verbündeten Pokémon",
+      "specific-move": "Spezifische Attacke",
+      "users-side": "User's Side",
+      "fainting-pokemon": "Fainting Pokemon"
     }
   },
   "meta": {
