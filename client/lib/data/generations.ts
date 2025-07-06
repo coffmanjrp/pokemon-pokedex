@@ -23,11 +23,39 @@ export interface GenerationData {
     de: string;
   };
   pokemonRange: { start: number; end: number };
+  formRanges?: { start: number; end: number }[]; // Additional ranges for regional variants and forms
   games: string[];
   remakes?: string[];
 }
 
 export const GENERATIONS: GenerationData[] = [
+  {
+    id: 0,
+    name: {
+      en: "Other",
+      ja: "その他",
+      "zh-Hant": "其他",
+      "zh-Hans": "其他",
+      es: "Otros",
+      ko: "기타",
+      fr: "Autres",
+      it: "Altri",
+      de: "Andere",
+    },
+    region: {
+      en: "Various",
+      ja: "様々な地方",
+      "zh-Hant": "各地區",
+      "zh-Hans": "各地区",
+      es: "Varias",
+      ko: "여러 지역",
+      fr: "Diverses",
+      it: "Varie",
+      de: "Verschiedene",
+    },
+    pokemonRange: { start: 1026, end: 1302 }, // Extended range for forms and special Pokemon
+    games: ["forms", "variants", "mega", "gmax"],
+  },
   {
     id: 1,
     name: {
@@ -340,6 +368,21 @@ export const isRemakeGame = (gameName: string): boolean => {
 
 // usePokemonList compatible format with min/max properties
 export const GENERATION_RANGES = {
+  0: {
+    min: 1026,
+    max: 1302,
+    region: {
+      en: "Various",
+      ja: "様々な地方",
+      "zh-Hant": "各地區",
+      "zh-Hans": "各地区",
+      es: "Varias",
+      ko: "여러 지역",
+      fr: "Diverses",
+      it: "Varie",
+      de: "Verschiedene",
+    },
+  },
   1: {
     min: 1,
     max: 151,
