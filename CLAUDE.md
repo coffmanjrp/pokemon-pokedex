@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. Pokemon detail pages use SSG for optimal performance with individual Pokemon data pre-generated at build time. Pokemon list pages use full client-side rendering with intelligent cache system for seamless generation switching. Hybrid deployment fully operational with frontend deployed on Vercel and backend on Railway. Complete 9-language support implemented (English, Japanese, Traditional Chinese, Simplified Chinese, Spanish, Korean, French, German, Italian) with comprehensive translations, Pokemon data localization through PokeAPI GraphQL integration, and complete UI coverage including SEO metadata. Icon system consolidation completed using react-icons library (Heroicons v2 for UI elements, Font Awesome for specialized symbols) for consistent styling, better accessibility, and improved maintainability. Pokemon classification system fully implemented with multilingual badge support (Baby→ベイビィ, Legendary→伝説, Mythical→幻) across all 9 languages, comprehensive animation system with 26 distinct effects including classification-based hover animations, and enhanced sandbox environment with categorized animation testing. Recent improvements include Pokemon cache system optimization with enhanced UTF-8 character encoding for Japanese Pokemon names, server-side Pokemon service enhancements with intelligent caching strategies, and resolution of animation cleanup issues ensuring smooth user experience.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. Pokemon detail pages use SSG for optimal performance with individual Pokemon data pre-generated at build time. Pokemon list pages use full client-side rendering with intelligent cache system for seamless generation switching. Hybrid deployment fully operational with frontend deployed on Vercel and backend on Railway. Complete 9-language support implemented (English, Japanese, Traditional Chinese, Simplified Chinese, Spanish, Korean, French, German, Italian) with comprehensive translations, Pokemon data localization through PokeAPI GraphQL integration, and complete UI coverage including SEO metadata. Icon system consolidation completed using react-icons library (Heroicons v2 for UI elements, Font Awesome for specialized symbols) for consistent styling, better accessibility, and improved maintainability. Pokemon classification system fully implemented with multilingual badge support (Baby→ベイビィ, Legendary→伝説, Mythical→幻) across all 9 languages, comprehensive animation system with 26 distinct effects including classification-based hover animations, and enhanced sandbox environment with categorized animation testing. Recent improvements include Pokemon cache system optimization with enhanced UTF-8 character encoding for Japanese Pokemon names, server-side Pokemon service enhancements with intelligent caching strategies, resolution of animation cleanup issues ensuring smooth user experience, virtual scrolling implementation with react-window for large datasets (threshold: 10+ Pokemon), dynamic header shrinking system with smooth GSAP animations that preserves search functionality through icon display, and streamlined search interface with simplified input mechanism eliminating dropdown suggestions for improved UI stability and performance.
 
 ## Architecture
 
@@ -41,7 +41,8 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 - **Image Optimization**: AVIF/WebP formats, 1-year caching, dynamic quality settings
 - **Bundle Optimization**: Tree shaking, package optimization, code splitting
 - **Cache Strategy**: Long-term static asset caching, intelligent API response caching
-- **Grid Rendering**: Optimized standard grid for better reliability and scrolling functionality
+- **Virtual Scrolling**: react-window implementation for efficient rendering of large Pokemon datasets (11+ Pokemon)
+- **Hybrid Grid System**: Automatic switching between standard grid (≤10 Pokemon) and virtual scrolling (11+ Pokemon)
 - **Generation Switching**: Enhanced reliability with 8-second timeout handling and seamless data preservation
 - **Apollo Client Integration**: Standard fetchMore() patterns with automatic cache management
 - **SEO & Metadata**: Comprehensive Open Graph, Twitter Cards, and multilingual metadata implementation
@@ -153,14 +154,14 @@ pokemon-pokedex/
 
 - **Pokemon Display**: Card-based layout with official artwork and sprites
 - **Generation Navigation**: Sidebar with generation buttons (1-9) and seamless generation switching
-- **Advanced Search**: Real-time Pokemon search with debouncing, suggestions, multi-language support (including Japanese hiragana/katakana conversion), and type filtering
+- **Advanced Search**: Streamlined Pokemon search interface with real-time search, multi-language support (including Japanese hiragana/katakana conversion), type filtering, and search result clearing functionality
 - **Cache Performance**: Client-side intelligent caching with localStorage persistence and 24-hour TTL
 - **Multilingual Support**: Complete 9-language support (English/Japanese/Traditional Chinese/Simplified Chinese/Spanish/Korean/French/German/Italian) with middleware-based routing and unified dictionary system
 - **Pokemon Classification System**: Multilingual badge system for Baby (ベイビィ), Legendary (伝説), and Mythical (幻) Pokemon with visual indicators and specialized hover effects
 - **Interactive Animation System**: 26 distinct animation effects categorized into Regular Click Effects, Special Hover Effects, and Classification-based Hover Effects with smooth cleanup transitions
 - **Animation Sandbox**: Comprehensive testing environment with categorized animations, hover/click differentiation, and visual feedback indicators
 - **Responsive Design**: Mobile-first with tablet and desktop optimizations
-- **Performance**: Multi-level caching, optimized grid rendering, smart cache management, image optimization
+- **Performance**: Multi-level caching, virtual scrolling with react-window, hybrid grid system, smart cache management, image optimization
 - **Detail Pages**: Comprehensive Pokemon information with evolution chains, form variants, and classification badges
 - **Type System**: Official Pokemon type colors and effectiveness calculations
 - **SEO Optimization**: Enhanced metadata with Open Graph, Twitter Cards, and multilingual support
@@ -195,7 +196,8 @@ pokemon-pokedex/
 ### Component Architecture
 
 **Pokemon Component Organization**:
-- **List Components** (`/components/ui/pokemon/list/`) - Pokemon grid, cards, loading states with special classification hover effects
+- **List Components** (`/components/ui/pokemon/list/`) - Pokemon grid with hybrid virtual scrolling, cards, loading states with special classification hover effects
+- **Virtual Scrolling** (`VirtualPokemonGrid.tsx`) - react-window based grid with responsive column calculation and automatic performance optimization
 - **Detail Components** (`/components/ui/pokemon/detail/`) - Pokemon detail pages, stats, moves, descriptions, and classification badges
 - **Classification Components** (`/detail/PokemonClassificationBadge.tsx`) - Reusable multilingual badge component with size variants
 - **Sprites Components** (`/sprites/`) - Sprite gallery and image management
@@ -320,6 +322,47 @@ REDIS_URL=redis://localhost:6379
 - **Redis Cache**: Server-side caching with 5-minute TTL
 - **GraphQL Server**: Custom Apollo Server with intelligent caching
 - **Apollo Client Cache**: Browser-side caching for efficient data management
+
+## Virtual Scrolling Implementation
+
+### Architecture
+- **Library**: react-window (VariableSizeGrid component) with react-virtualized-auto-sizer
+- **Hybrid System**: Automatic switching based on Pokemon count threshold (10 Pokemon)
+- **Performance**: Only renders visible items, reducing DOM nodes and improving scroll performance
+- **Responsive**: Dynamic column calculation based on screen width (1-5 columns)
+- **Layout**: Tighter card spacing (8px gap) with proper padding implementation
+
+### Key Files
+- `VirtualPokemonGrid.tsx`: Main virtual scrolling component with responsive grid layout
+- `PokemonGrid.tsx`: Hybrid controller that switches between standard and virtual grids
+- **Integration**: Seamless fallback to standard grid for smaller datasets
+
+### Technical Features
+- **Memory Efficient**: Only renders visible Pokemon cards in viewport
+- **Smooth Scrolling**: Optimized for large datasets (Generation 1: 151 Pokemon)
+- **Mobile Responsive**: Adaptive column count (Mobile: 1 col, Desktop: 5 cols)
+- **TypeScript**: Full type safety with proper interface definitions
+- **Accessibility**: Maintains Pokemon card accessibility and navigation features
+- **Scroll Event Integration**: Compatible with header shrink functionality
+
+## Header Shrink System
+
+### Overview
+Dynamic header that shrinks on scroll to maximize content visibility while maintaining access to key features.
+
+### Features
+- **Automatic Shrinking**: Header reduces height after 100px scroll
+- **Smooth Animations**: GSAP-powered transitions with easing effects
+- **Search Icon Preservation**: Search functionality remains accessible via icon
+- **Mobile Optimization**: Consistent title and icon alignment with hamburger menu
+- **Hover Restoration**: Header expands on mouse hover for full functionality
+
+### Technical Implementation
+- **Scroll Detection**: Throttled scroll events with requestAnimationFrame
+- **GSAP Timeline**: Coordinated animations for multiple elements
+- **Component States**: Title scaling (0.75x), search bar fade out, type filter collapse
+- **Mobile Layout**: Fixed height container (h-10) for consistent alignment
+- **Desktop Layout**: Flexible layout with smooth transitions
 
 ## Adding New Language Support
 

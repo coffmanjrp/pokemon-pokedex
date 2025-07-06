@@ -4,7 +4,8 @@
       "placeholder": "Cerca Pokémon per nome o ID...",
       "noResults": "Nessun Pokémon trovato",
       "noResultsDescription": "Prova a modificare i termini di ricerca o i filtri",
-      "noFilterResults": "Nessun Pokémon corrisponde ai filtri attuali"
+      "noFilterResults": "Nessun Pokémon corrisponde ai filtri attuali",
+      "clearSearch": "Cancella ricerca"
     },
     "filters": {
       "title": "Filtri",

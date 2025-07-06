@@ -4,7 +4,8 @@
       "placeholder": "ポケモンの名前やIDで検索...",
       "noResults": "ポケモンが見つかりません",
       "noResultsDescription": "検索条件やフィルターを調整してください",
-      "noFilterResults": "フィルター条件に一致するポケモンが見つかりません"
+      "noFilterResults": "フィルター条件に一致するポケモンが見つかりません",
+      "clearSearch": "検索をクリア"
     },
     "filters": {
       "title": "フィルター",

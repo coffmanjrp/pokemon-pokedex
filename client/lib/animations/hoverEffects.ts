@@ -15,7 +15,6 @@ export function createBabyHoverSparkle(
   const glowTween = gsap.to(targetElement, {
     boxShadow:
       "0 0 25px rgba(255, 182, 193, 0.6), 0 4px 20px rgba(255, 182, 193, 0.3)",
-    scale: 1.02,
     duration: 1.5,
     yoyo: true,
     repeat: -1,
@@ -81,7 +80,6 @@ export function createBabyHoverSparkle(
     // Reset card to original state
     gsap.set(targetElement, {
       boxShadow: "",
-      scale: 1,
     });
 
     // Clean up remaining sparkles
@@ -187,7 +185,6 @@ export function createLegendaryHoverAura(
     // Reset card to original state
     gsap.set(targetElement, {
       boxShadow: "",
-      scale: 1,
     });
 
     if (aura.parentNode) {
@@ -307,7 +304,6 @@ export function createMythicalHoverShimmer(
     // Reset card to original state
     gsap.set(targetElement, {
       boxShadow: "",
-      scale: 1,
     });
 
     elements.forEach((element) => {

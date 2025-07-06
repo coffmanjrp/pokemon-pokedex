@@ -16,6 +16,7 @@ interface SearchBarProps {
   showSuggestions?: boolean;
   suggestions?: string[];
   loading?: boolean;
+  activeTypeFilters?: string[];
 }
 
 export function SearchBar({
@@ -25,15 +26,12 @@ export function SearchBar({
   onClear,
   className,
   dictionary,
-  showSuggestions = false,
-  suggestions = [],
   loading = false,
+  activeTypeFilters = [],
 }: SearchBarProps) {
   const { dictionary: reduxDictionary } = useAppSelector((state) => state.ui);
   const [isFocused, setIsFocused] = useState(false);
-  const [showDropdown, setShowDropdown] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Use props or fallback to Redux state
   const currentDictionary = dictionary || reduxDictionary;
@@ -44,9 +42,13 @@ export function SearchBar({
 
   const handleClear = useCallback(() => {
     onChange("");
-    onClear?.();
-    setShowDropdown(false);
-  }, [onChange, onClear]);
+    // タイプフィルタがアクティブな場合は、onSearchを呼んで空の検索を実行
+    if (activeTypeFilters.length > 0) {
+      onSearch?.("");
+    } else {
+      onClear?.();
+    }
+  }, [onChange, onClear, onSearch, activeTypeFilters]);
 
   // Handle ESC key to clear search
   useEffect(() => {
@@ -61,57 +63,28 @@ export function SearchBar({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleClear]);
 
-  // Click outside to close dropdown
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node) &&
-        !inputRef.current?.contains(event.target as Node)
-      ) {
-        setShowDropdown(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     onChange(newValue);
-    setShowDropdown(
-      showSuggestions && newValue.length > 0 && suggestions.length > 0,
-    );
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (value.trim()) {
       onSearch?.(value.trim());
-      setShowDropdown(false);
       inputRef.current?.blur();
+    } else {
+      // Clear search when submitting empty query
+      handleClear();
     }
-  };
-
-  const handleSuggestionClick = (suggestion: string) => {
-    onChange(suggestion);
-    onSearch?.(suggestion);
-    setShowDropdown(false);
-    inputRef.current?.blur();
   };
 
   const handleFocus = () => {
     setIsFocused(true);
-    if (showSuggestions && value.length > 0 && suggestions.length > 0) {
-      setShowDropdown(true);
-    }
   };
 
   const handleBlur = () => {
     setIsFocused(false);
-    // Delay hiding dropdown to allow for suggestion clicks
-    setTimeout(() => setShowDropdown(false), 150);
   };
 
   return (
@@ -155,25 +128,6 @@ export function SearchBar({
           </button>
         )}
       </form>
-
-      {/* Suggestions Dropdown */}
-      {showDropdown && suggestions.length > 0 && (
-        <div
-          ref={dropdownRef}
-          className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto"
-        >
-          {suggestions.slice(0, 10).map((suggestion, index) => (
-            <button
-              key={index}
-              type="button"
-              onClick={() => handleSuggestionClick(suggestion)}
-              className="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors border-b border-gray-100 last:border-b-0"
-            >
-              <span className="text-gray-900">{suggestion}</span>
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

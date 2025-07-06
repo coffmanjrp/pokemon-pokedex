@@ -7,16 +7,18 @@ import { GenerationHeader } from "../../components/layout/GenerationHeader";
 import { PokemonLoadingIndicator } from "../../components/ui/pokemon/list/PokemonLoadingIndicator";
 import { PokemonProgressFooter } from "../../components/ui/pokemon/list/PokemonProgressFooter";
 import { GenerationSwitchingOverlay } from "../../components/ui/pokemon/list/GenerationSwitchingOverlay";
+import { SearchResults } from "../../components/ui/pokemon/list/SearchResults";
+import { NoSearchResults } from "../../components/ui/pokemon/list/NoSearchResults";
 import { usePokemonList } from "../../hooks/usePokemonList";
 import { useNavigationCache } from "../../hooks/useNavigationCache";
 import { usePokemonSearch } from "../../hooks/usePokemonSearch";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { setSelectedPokemon } from "../../store/slices/pokemonSlice";
 import { setLanguage, setDictionary } from "../../store/slices/uiSlice";
-import { useEffect, useState, useRef, Suspense } from "react";
+import { useEffect, useState, useRef, Suspense, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Pokemon, PokemonTypeName } from "@/types/pokemon";
-import { Dictionary, Locale, interpolate } from "@/lib/dictionaries";
+import { Dictionary, Locale } from "@/lib/dictionaries";
 import { gsap } from "gsap";
 
 interface PokemonListClientProps {
@@ -50,6 +52,12 @@ function PokemonListContent({
     }
     return 1;
   });
+
+  // Header visibility state
+  const [headerState, setHeaderState] = useState<"visible" | "shrink">(
+    "visible",
+  );
+  const lastScrollYRef = useRef(0);
 
   // Track if cache restoration has been attempted to prevent infinite loops
   const cacheRestoredRef = useRef(false);
@@ -97,6 +105,7 @@ function PokemonListContent({
     isSearchMode,
     hasResults,
     search,
+    updateQuery,
     clearSearchResults,
     updateFilters,
     clearAllFilters,
@@ -163,11 +172,19 @@ function PokemonListContent({
   };
 
   const handleSearch = (query: string) => {
+    updateQuery(query);
     search(query);
   };
 
   const handleSearchClear = () => {
-    clearSearchResults();
+    if (filters.types && filters.types.length > 0) {
+      // タイプフィルタがアクティブな場合、クエリを空にしてタイプフィルタで再検索
+      updateQuery("");
+      search("", { types: filters.types });
+    } else {
+      // タイプフィルタがない場合は通常のクリア
+      clearSearchResults();
+    }
   };
 
   const handleBackToGeneration = () => {
@@ -179,6 +196,17 @@ function PokemonListContent({
   const handleTypeFilter = (types: string[]) => {
     // Update filters first
     updateFilters({ types: types as PokemonTypeName[] });
+
+    // Expand header when type filter is activated
+    if (types.length > 0 && headerState === "shrink") {
+      setHeaderState("visible");
+    }
+
+    // If no types selected, clear search mode and show all pokemon
+    if (types.length === 0) {
+      clearSearchResults();
+      return;
+    }
 
     // Apply type filter - use current search query or empty string
     search(searchQuery || "", { types: types as PokemonTypeName[] });
@@ -213,6 +241,36 @@ function PokemonListContent({
       return () => clearTimeout(timer);
     }
   }, [loading, hasNextPage, pokemons.length, showCompletionFooter]);
+
+  // Handle scroll for header shrink/expand
+  const handleScroll = useCallback(
+    (event: { scrollTop: number }) => {
+      // Don't shrink header when type filter is active
+      if (filters.types && filters.types.length > 0) {
+        return;
+      }
+
+      // react-window passes a different event structure
+      const currentScrollY = event.scrollTop || 0;
+
+      // Only shrink after scrolling down 100px
+      if (currentScrollY > lastScrollYRef.current && currentScrollY > 100) {
+        // Scrolling down
+        setHeaderState("shrink");
+      } else if (
+        currentScrollY < lastScrollYRef.current ||
+        currentScrollY <= 50
+      ) {
+        // Scrolling up or near top
+        setHeaderState("visible");
+      }
+
+      lastScrollYRef.current = currentScrollY;
+    },
+    [filters.types],
+  );
+
+  // Remove the old scroll event listener useEffect since we'll handle scroll directly
 
   // Animate completion footer entrance
   useEffect(() => {
@@ -253,7 +311,7 @@ function PokemonListContent({
 
         {/* Main Content */}
         <div className="flex flex-col h-screen overflow-hidden">
-          <div className="flex-1 transition-all duration-300 ease-in-out">
+          <div className="flex-1 flex flex-col transition-all duration-300 ease-in-out">
             <div className="flex flex-col items-center justify-center h-full py-16 text-red-500">
               <div className="text-6xl mb-4">⚠️</div>
               <h3 className="text-xl font-semibold mb-2">
@@ -296,13 +354,14 @@ function PokemonListContent({
       </Suspense>
 
       {/* Main Content */}
-      <div className="flex flex-col h-screen overflow-auto">
-        <div className="flex-1 transition-all duration-300 ease-in-out">
+      <div className="flex flex-col h-screen overflow-hidden">
+        <div className="flex-1 flex flex-col transition-all duration-300 ease-in-out">
           {/* Sticky Generation Header */}
           <GenerationHeader
             currentGeneration={currentGeneration}
             lang={lang}
             dictionary={dictionary}
+            searchQuery={searchQuery}
             onSearch={handleSearch}
             onSearchClear={handleSearchClear}
             searchLoading={isSearching}
@@ -310,10 +369,12 @@ function PokemonListContent({
             showTypeFilter={true}
             selectedTypes={filters.types}
             onTypeFilter={handleTypeFilter}
+            isShrinked={headerState === "shrink"}
+            onMouseEnter={() => setHeaderState("visible")}
           />
 
           {/* Pokemon Grid */}
-          <div className="flex-1 overflow-hidden relative">
+          <div className="flex-1 flex flex-col relative">
             {/* Inline loading indicator for initial load when no Pokemon data */}
             {loading && pokemons.length === 0 && !generationSwitching && (
               <PokemonLoadingIndicator
@@ -328,48 +389,22 @@ function PokemonListContent({
             {isSearchMode ? (
               // Search Results
               hasResults ? (
-                <div className="flex-1 overflow-auto">
-                  <div className="px-4 md:px-6 py-3 bg-blue-50 border-b border-blue-200">
-                    <p className="text-sm text-blue-800">
-                      {interpolate(
-                        dictionary.ui.filters?.showingResults ||
-                          "Showing {{count}} results",
-                        { count: searchResults.length },
-                      )}
-                    </p>
-                  </div>
-                  <PokemonGrid
-                    pokemons={searchResults.map((result) => result.pokemon)}
-                    onPokemonClick={handlePokemonClick}
-                    loading={isSearching}
-                    isFiltering={true}
-                    isAutoLoading={false}
-                    hasNextPage={false}
-                    language={lang as Locale}
-                    priority={true}
-                    currentGeneration={currentGeneration}
-                  />
-                </div>
+                <SearchResults
+                  searchResults={searchResults}
+                  onSearchClear={handleSearchClear}
+                  onPokemonClick={handlePokemonClick}
+                  isSearching={isSearching}
+                  lang={lang}
+                  currentGeneration={currentGeneration}
+                  onScroll={handleScroll}
+                  dictionary={dictionary}
+                />
               ) : (
                 // No Search Results
-                <div className="flex-1 flex items-center justify-center">
-                  <div className="text-center py-16 text-gray-500">
-                    <div className="text-6xl mb-4">🔍</div>
-                    <h3 className="text-xl font-semibold mb-2">
-                      {dictionary.ui.search.noResults || "No Pokémon found"}
-                    </h3>
-                    <p className="text-gray-600 max-w-md">
-                      {dictionary.ui.search.noResultsDescription ||
-                        "Try adjusting your search terms or filters"}
-                    </p>
-                    <button
-                      onClick={handleBackToGeneration}
-                      className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      {dictionary.ui.navigation.back || "Back"}
-                    </button>
-                  </div>
-                </div>
+                <NoSearchResults
+                  onBackToGeneration={handleBackToGeneration}
+                  dictionary={dictionary}
+                />
               )
             ) : (
               // Normal Generation View
@@ -386,6 +421,7 @@ function PokemonListContent({
                     language={lang as Locale}
                     priority={true}
                     currentGeneration={currentGeneration}
+                    onScroll={handleScroll}
                   />
                 </div>
               )
