@@ -100,7 +100,6 @@ export function createBabyHeartBurst(
   const cardGlow = gsap.to(targetElement, {
     boxShadow:
       "0 0 20px rgba(255, 182, 193, 0.6), 0 4px 15px rgba(255, 182, 193, 0.4)",
-    scale: 1.01,
     duration: 0.3,
     yoyo: true,
     repeat: 1,
@@ -122,7 +121,6 @@ export function createBabyHeartBurst(
     // Reset card to original state
     gsap.set(targetElement, {
       boxShadow: "",
-      scale: 1,
     });
 
     hearts.forEach((heart) => {
@@ -194,7 +192,6 @@ export function createLegendaryBorderFlow(
     // Reset card to original state
     gsap.set(targetElement, {
       boxShadow: "",
-      scale: 1,
     });
 
     if (borderOverlay.parentNode) {
@@ -273,7 +270,6 @@ export function createLegendaryRainbowBorder(
     // Reset card to original state
     gsap.set(targetElement, {
       boxShadow: "",
-      scale: 1,
     });
 
     if (rainbowBorder.parentNode) {
@@ -368,13 +364,11 @@ export function createLegendaryLightningBorder(
   gsap.set(targetElement, {
     boxShadow:
       "0 0 25px rgba(255, 215, 0, 0.5), 0 4px 20px rgba(255, 215, 0, 0.3)",
-    scale: 1.008,
   });
 
   const cardGlow = gsap.to(targetElement, {
     boxShadow:
       "0 0 35px rgba(255, 215, 0, 0.7), 0 4px 25px rgba(255, 215, 0, 0.4)",
-    scale: 1.012,
     duration: 0.8,
     yoyo: true,
     repeat: -1,
@@ -388,7 +382,6 @@ export function createLegendaryLightningBorder(
     // Reset card to original state - use gsap.to for smooth transition
     gsap.to(targetElement, {
       boxShadow: "none",
-      scale: 1,
       duration: 0.3,
       ease: "power2.out",
     });
@@ -569,7 +562,6 @@ export function createMythicalElectricSpark(
   const cardGlow = gsap.to(targetElement, {
     boxShadow:
       "0 0 20px rgba(221, 160, 221, 0.4), 0 4px 15px rgba(221, 160, 221, 0.2)",
-    scale: 1.005,
     duration: 2.5,
     yoyo: true,
     repeat: -1,
@@ -585,7 +577,6 @@ export function createMythicalElectricSpark(
     // Reset card to original state
     gsap.set(targetElement, {
       boxShadow: "",
-      scale: 1,
     });
 
     // Clean up remaining sparks and lines
