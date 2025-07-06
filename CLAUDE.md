@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. Pokemon detail pages use SSG for optimal performance with individual Pokemon data pre-generated at build time. Pokemon list pages use full client-side rendering with intelligent cache system for seamless generation switching. Hybrid deployment fully operational with frontend deployed on Vercel and backend on Railway. Complete 9-language support implemented (English, Japanese, Traditional Chinese, Simplified Chinese, Spanish, Korean, French, German, Italian) with comprehensive translations, Pokemon data localization through PokeAPI GraphQL integration, and complete UI coverage including SEO metadata. Icon system consolidation completed using react-icons library (Heroicons v2 for UI elements, Font Awesome for specialized symbols) for consistent styling, better accessibility, and improved maintainability. Pokemon classification system fully implemented with multilingual badge support (Baby→ベイビィ, Legendary→伝説, Mythical→幻) across all 9 languages, comprehensive animation system with 26 distinct effects including classification-based hover animations, and enhanced sandbox environment with categorized animation testing. Recent improvements include Pokemon cache system optimization with enhanced UTF-8 character encoding for Japanese Pokemon names, server-side Pokemon service enhancements with intelligent caching strategies, resolution of animation cleanup issues ensuring smooth user experience, virtual scrolling implementation with react-window for large datasets (threshold: 10+ Pokemon), dynamic header shrinking system with smooth GSAP animations that preserves search functionality through icon display, and streamlined search interface with simplified input mechanism eliminating dropdown suggestions for improved UI stability and performance.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. Pokemon detail pages use SSG for optimal performance with individual Pokemon data pre-generated at build time. Pokemon list pages use full client-side rendering with intelligent cache system for seamless generation switching. Hybrid deployment fully operational with frontend deployed on Vercel and backend on Railway. Complete 9-language support implemented (English, Japanese, Traditional Chinese, Simplified Chinese, Spanish, Korean, French, German, Italian) with comprehensive translations, Pokemon data localization through PokeAPI GraphQL integration, and complete UI coverage including SEO metadata. Icon system consolidation completed using react-icons library (Heroicons v2 for UI elements, Font Awesome for specialized symbols) for consistent styling, better accessibility, and improved maintainability. Pokemon classification system fully implemented with multilingual badge support (Baby→ベイビィ, Legendary→伝説, Mythical→幻) across all 9 languages, comprehensive animation system with 26 distinct effects including classification-based hover animations, and enhanced sandbox environment with categorized animation testing. Recent improvements include Pokemon cache system optimization with enhanced UTF-8 character encoding for Japanese Pokemon names, server-side Pokemon service enhancements with intelligent caching strategies, resolution of animation cleanup issues ensuring smooth user experience, virtual scrolling implementation with react-window for large datasets (threshold: 10+ Pokemon), dynamic header shrinking system with smooth GSAP animations that preserves search functionality through icon display, streamlined search interface with simplified input mechanism eliminating dropdown suggestions for improved UI stability and performance, and complete move data multilingual support with tooltip-based descriptions using react-tooltip, damage class localization through dictionary system, and data source annotations.
 
 ## Architecture
 
@@ -163,6 +163,7 @@ pokemon-pokedex/
 - **Responsive Design**: Mobile-first with tablet and desktop optimizations
 - **Performance**: Multi-level caching, virtual scrolling with react-window, hybrid grid system, smart cache management, image optimization
 - **Detail Pages**: Comprehensive Pokemon information with evolution chains, form variants, and classification badges
+- **Move Information**: Multilingual move names, descriptions, damage classes, and targets with tooltip display using react-tooltip
 - **Type System**: Official Pokemon type colors and effectiveness calculations
 - **SEO Optimization**: Enhanced metadata with Open Graph, Twitter Cards, and multilingual support
 - **API Routes**: Comprehensive REST API endpoints for Pokemon data access with GraphQL integration
@@ -202,7 +203,8 @@ pokemon-pokedex/
 - **Classification Components** (`/detail/PokemonClassificationBadge.tsx`) - Reusable multilingual badge component with size variants
 - **Sprites Components** (`/sprites/`) - Sprite gallery and image management
 - **Evolution Components** (`/evolution/`) - Evolution chain display with modular architecture
-- **Common Components** (`/common/`) - Shared UI components (Badge, LoadingSpinner, etc.)
+- **Common Components** (`/common/`) - Shared UI components (Badge, LoadingSpinner, InfoTooltip, etc.)
+- **InfoTooltip Component** (`/common/InfoTooltip.tsx`) - Reusable tooltip component with customizable icon prop for move descriptions
 
 **Benefits**: Clear separation of concerns, improved maintainability, scalable structure, reusable classification system
 
@@ -363,6 +365,22 @@ Dynamic header that shrinks on scroll to maximize content visibility while maint
 - **Component States**: Title scaling (0.75x), search bar fade out, type filter collapse
 - **Mobile Layout**: Fixed height container (h-10) for consistent alignment
 - **Desktop Layout**: Flexible layout with smooth transitions
+
+## Move Data System
+
+### Multilingual Move Support
+- **Move Names**: Fetched from PokeAPI with full multilingual support through GraphQL
+- **Move Descriptions**: Flavor text entries in all supported languages displayed via tooltips
+- **Damage Classes**: Localized through dictionary system (Physical→物理, Special→特殊, Status→変化)
+- **Move Targets**: Complete multilingual support with dictionary fallback system
+- **Data Source**: Move data is from the latest Pokémon games (Scarlet/Violet) with annotations
+
+### Implementation Details
+- **GraphQL Query**: Enhanced to include `names`, `flavorTextEntries`, and target `names` for moves
+- **Server-side**: Pokemon service fetches damage class and target multilingual data from PokeAPI
+- **Client-side**: Utility functions in `pokemonUtils.ts` for move data localization
+- **UI Components**: InfoTooltip component for displaying move descriptions on hover
+- **Dictionary System**: Extended with `moveTargets` section for all 9 languages
 
 ## Adding New Language Support
 
