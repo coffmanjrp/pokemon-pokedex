@@ -16,6 +16,7 @@ interface SearchBarProps {
   showSuggestions?: boolean;
   suggestions?: string[];
   loading?: boolean;
+  activeTypeFilters?: string[];
 }
 
 export function SearchBar({
@@ -26,6 +27,7 @@ export function SearchBar({
   className,
   dictionary,
   loading = false,
+  activeTypeFilters = [],
 }: SearchBarProps) {
   const { dictionary: reduxDictionary } = useAppSelector((state) => state.ui);
   const [isFocused, setIsFocused] = useState(false);
@@ -40,8 +42,13 @@ export function SearchBar({
 
   const handleClear = useCallback(() => {
     onChange("");
-    onClear?.();
-  }, [onChange, onClear]);
+    // タイプフィルタがアクティブな場合は、onSearchを呼んで空の検索を実行
+    if (activeTypeFilters.length > 0) {
+      onSearch?.("");
+    } else {
+      onClear?.();
+    }
+  }, [onChange, onClear, onSearch, activeTypeFilters]);
 
   // Handle ESC key to clear search
   useEffect(() => {

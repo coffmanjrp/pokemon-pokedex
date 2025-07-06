@@ -438,6 +438,7 @@ export function GenerationHeader({
               showSuggestions={true}
               suggestions={searchSuggestions}
               className="w-full"
+              activeTypeFilters={selectedTypes || []}
             />
           </div>
         )}
@@ -480,6 +481,7 @@ export function GenerationHeader({
                 showSuggestions={true}
                 suggestions={searchSuggestions}
                 className="w-full"
+                activeTypeFilters={selectedTypes || []}
               />
             </div>
           )}

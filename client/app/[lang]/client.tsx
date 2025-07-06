@@ -175,7 +175,14 @@ function PokemonListContent({
   };
 
   const handleSearchClear = () => {
-    clearSearchResults();
+    if (filters.types && filters.types.length > 0) {
+      // タイプフィルタがアクティブな場合、クエリを空にしてタイプフィルタで再検索
+      updateQuery("");
+      search("", { types: filters.types });
+    } else {
+      // タイプフィルタがない場合は通常のクリア
+      clearSearchResults();
+    }
   };
 
   const handleBackToGeneration = () => {
