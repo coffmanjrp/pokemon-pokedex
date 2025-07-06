@@ -101,6 +101,7 @@
       "special": "Especial",
       "status": "Estado",
       "noMovesFound": "No se encontraron movimientos",
+      "target": "Objetivo",
       "forms": "Formas",
       "trade": "Intercambio",
       "levelUp": "Subir de Nivel",
@@ -197,7 +198,8 @@
       "tutor": "Tutor",
       "level": "Nivel",
       "learnedAt": "aprendido en el nivel",
-      "noMovesFoundForMethod": "No se encontraron movimientos para {{method}}"
+      "noMovesFoundForMethod": "No se encontraron movimientos para {{method}}",
+      "dataSource": "Los datos de movimientos son de los últimos juegos Pokémon (Escarlata/Púrpura)"
     },
     "generation": {
       "displayTemplate": "Generación {{number}} - {{region}}"
@@ -417,6 +419,24 @@
       "clover-sweet": "Confite Trébol",
       "flower-sweet": "Confite Flor",
       "ribbon-sweet": "Confite Lazo"
+    },
+    "moveTargets": {
+      "selected-pokemon": "Pokémon rival seleccionado",
+      "user": "El usuario",
+      "all-opponents": "Todos los Pokémon rivales",
+      "random-opponent": "Pokémon rival aleatorio",
+      "all-other-pokemon": "Todos los demás Pokémon en el campo",
+      "ally": "Pokémon aliado seleccionado",
+      "users-field": "Campo del usuario",
+      "user-or-ally": "Usuario o Pokémon aliado seleccionado",
+      "opponents-field": "Campo rival",
+      "entire-field": "Todo el campo",
+      "user-and-allies": "Usuario y todos los Pokémon aliados",
+      "all-pokemon": "Todos los Pokémon en el campo",
+      "all-allies": "Todos los Pokémon aliados",
+      "specific-move": "Movimiento específico",
+      "users-side": "User's Side",
+      "fainting-pokemon": "Fainting Pokemon"
     }
   },
   "meta": {

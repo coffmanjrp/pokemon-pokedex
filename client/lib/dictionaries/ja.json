@@ -101,6 +101,7 @@
       "special": "特殊",
       "status": "変化",
       "noMovesFound": "技は見つかりませんでした",
+      "target": "ターゲット",
       "forms": "すがた",
       "trade": "通信交換",
       "levelUp": "レベルアップ",
@@ -197,7 +198,8 @@
       "tutor": "おしえわざ",
       "level": "レベル{{level}}",
       "learnedAt": "レベル{{level}}で習得",
-      "noMovesFoundForMethod": "{{method}}の技は見つかりませんでした"
+      "noMovesFoundForMethod": "{{method}}の技は見つかりませんでした",
+      "dataSource": "技データは最新のポケモンゲーム（スカーレット/バイオレット）のものです"
     },
     "generation": {
       "displayTemplate": "{{region}} (第{{number}}世代)"
@@ -417,6 +419,23 @@
       "clover-sweet": "よつばアメざいく",
       "flower-sweet": "おはなアメざいく",
       "ribbon-sweet": "リボンアメざいく"
+    },
+    "moveTargets": {
+      "specific-move": "特定の技",
+      "selected-pokemon": "選択したポケモン",
+      "all-pokemon": "すべてのポケモン",
+      "users-field": "自分の場",
+      "user-or-ally": "自分または味方",
+      "user-and-allies": "自分と味方",
+      "user": "自分",
+      "random-opponent": "ランダムな相手",
+      "all-other-pokemon": "他のすべてのポケモン",
+      "all-opponents": "相手全体",
+      "entire-field": "全体の場",
+      "users-side": "自分の場",
+      "opponents-field": "相手の場",
+      "ally": "味方",
+      "fainting-pokemon": "ひんしになるポケモン"
     }
   },
   "meta": {

@@ -101,6 +101,7 @@
       "special": "Special",
       "status": "Status",
       "noMovesFound": "No moves found",
+      "target": "Target",
       "forms": "Forms",
       "trade": "Trade",
       "levelUp": "Level up",
@@ -197,7 +198,8 @@
       "tutor": "Move Tutor",
       "level": "Level {{level}}",
       "learnedAt": "Learned at level {{level}}",
-      "noMovesFoundForMethod": "No {{method}} moves found"
+      "noMovesFoundForMethod": "No {{method}} moves found",
+      "dataSource": "Move data is from the latest Pokémon games (Scarlet/Violet)"
     },
     "generation": {
       "displayTemplate": "{{region}} (Generation {{number}})"
@@ -417,6 +419,23 @@
       "clover-sweet": "Clover Sweet",
       "flower-sweet": "Flower Sweet",
       "ribbon-sweet": "Ribbon Sweet"
+    },
+    "moveTargets": {
+      "specific-move": "Specific Move",
+      "selected-pokemon": "Selected Pokemon",
+      "all-pokemon": "All Pokemon",
+      "users-field": "User's Field",
+      "user-or-ally": "User or Ally",
+      "user-and-allies": "User and Allies",
+      "user": "User",
+      "random-opponent": "Random Opponent",
+      "all-other-pokemon": "All Other Pokemon",
+      "all-opponents": "All Opponents",
+      "entire-field": "Entire Field",
+      "users-side": "User's Side",
+      "opponents-field": "Opponent's Field",
+      "ally": "Ally",
+      "fainting-pokemon": "Fainting Pokemon"
     }
   },
   "meta": {

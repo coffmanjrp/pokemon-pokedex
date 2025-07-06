@@ -101,6 +101,7 @@
       "special": "Speciale",
       "status": "Stato",
       "noMovesFound": "Nessuna mossa trovata",
+      "target": "Bersaglio",
       "forms": "Forme",
       "trade": "Scambio",
       "levelUp": "Salita di livello",
@@ -197,7 +198,8 @@
       "tutor": "Tutor Mosse",
       "level": "Livello {{level}}",
       "learnedAt": "Imparata al livello {{level}}",
-      "noMovesFoundForMethod": "Nessuna mossa {{method}} trovata"
+      "noMovesFoundForMethod": "Nessuna mossa {{method}} trovata",
+      "dataSource": "I dati delle mosse sono dai più recenti giochi Pokémon (Scarlatto/Violetto)"
     },
     "generation": {
       "displayTemplate": "{{region}} (Generazione {{number}})"
@@ -417,6 +419,24 @@
       "clover-sweet": "Bonbon Quadrifoglio",
       "flower-sweet": "Bonbon Fiore",
       "ribbon-sweet": "Bonbon Fiocco"
+    },
+    "moveTargets": {
+      "selected-pokemon": "Pokémon avversario selezionato",
+      "user": "L'utilizzatore",
+      "all-opponents": "Tutti i Pokémon avversari",
+      "random-opponent": "Pokémon avversario casuale",
+      "all-other-pokemon": "Tutti gli altri Pokémon in campo",
+      "ally": "Pokémon alleato selezionato",
+      "users-field": "Campo dell'utilizzatore",
+      "user-or-ally": "Utilizzatore o Pokémon alleato selezionato",
+      "opponents-field": "Campo avversario",
+      "entire-field": "Intero campo",
+      "user-and-allies": "Utilizzatore e tutti i Pokémon alleati",
+      "all-pokemon": "Tutti i Pokémon in campo",
+      "all-allies": "Tutti i Pokémon alleati",
+      "specific-move": "Mossa specifica",
+      "users-side": "User's Side",
+      "fainting-pokemon": "Fainting Pokemon"
     }
   },
   "meta": {

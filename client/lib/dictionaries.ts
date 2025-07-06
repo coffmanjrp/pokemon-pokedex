@@ -109,6 +109,7 @@ export interface Dictionary {
       category: string;
       power: string;
       accuracy: string;
+      target: string;
       physical: string;
       special: string;
       status: string;
@@ -210,6 +211,7 @@ export interface Dictionary {
       level: string;
       learnedAt: string;
       noMovesFoundForMethod: string;
+      dataSource: string;
     };
     generation: {
       displayTemplate: string;
@@ -421,6 +423,24 @@ export interface Dictionary {
       "clover-sweet": string;
       "flower-sweet": string;
       "ribbon-sweet": string;
+    };
+    moveTargets: {
+      "specific-move": string;
+      "selected-pokemon": string;
+      "all-pokemon": string;
+      "users-field": string;
+      "user-or-ally": string;
+      "user-and-allies": string;
+      user: string;
+      "random-opponent": string;
+      "all-other-pokemon": string;
+      "all-opponents": string;
+      "entire-field": string;
+      "users-side": string;
+      "opponents-field": string;
+      ally: string;
+      "fainting-pokemon": string;
+      [key: string]: string;
     };
   };
   meta: {

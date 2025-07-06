@@ -750,6 +750,28 @@ class PokemonService {
           };
         }
 
+        // Fetch damage class and target multilingual data
+        let damageClassData = null;
+        let targetData = null;
+        
+        try {
+          if (moveDetails.damage_class && moveDetails.damage_class.url) {
+            const damageClassUrl = moveDetails.damage_class.url.replace('https://pokeapi.co/api/v2', '');
+            damageClassData = await this.fetchFromPokeAPI(damageClassUrl);
+          }
+        } catch (error) {
+          console.warn(`Could not fetch damage class data for move ${moveInfo.move.name}:`, error);
+        }
+        
+        try {
+          if (moveDetails.target && moveDetails.target.url) {
+            const targetUrl = moveDetails.target.url.replace('https://pokeapi.co/api/v2', '');
+            targetData = await this.fetchFromPokeAPI(targetUrl);
+          }
+        } catch (error) {
+          console.warn(`Could not fetch target data for move ${moveInfo.move.name}:`, error);
+        }
+
         return {
           move: {
             id: this.extractIdFromUrl(moveInfo.move.url),
@@ -770,7 +792,13 @@ class PokemonService {
             damageClass: {
               id: this.extractIdFromUrl(moveDetails.damage_class.url),
               name: moveDetails.damage_class.name,
-              names: moveDetails.damage_class.names || [],
+              names: damageClassData ? (damageClassData.names || []).map((nameEntry: any) => ({
+                name: nameEntry.name,
+                language: {
+                  name: nameEntry.language.name,
+                  url: nameEntry.language.url,
+                },
+              })) : [],
             },
             power: moveDetails.power,
             accuracy: moveDetails.accuracy,
@@ -779,7 +807,13 @@ class PokemonService {
             target: {
               id: this.extractIdFromUrl(moveDetails.target.url),
               name: moveDetails.target.name,
-              names: moveDetails.target.names || [],
+              names: targetData ? (targetData.names || []).map((nameEntry: any) => ({
+                name: nameEntry.name,
+                language: {
+                  name: nameEntry.language.name,
+                  url: nameEntry.language.url,
+                },
+              })) : [],
             },
             effectChance: moveDetails.effect_chance,
             flavorTextEntries: (moveDetails.flavor_text_entries || []).map((entry: any) => ({
