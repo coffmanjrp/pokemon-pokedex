@@ -431,14 +431,14 @@ export interface Dictionary {
       "users-field": string;
       "user-or-ally": string;
       "user-and-allies": string;
-      "user": string;
+      user: string;
       "random-opponent": string;
       "all-other-pokemon": string;
       "all-opponents": string;
       "entire-field": string;
       "users-side": string;
       "opponents-field": string;
-      "ally": string;
+      ally: string;
       "fainting-pokemon": string;
       [key: string]: string;
     };

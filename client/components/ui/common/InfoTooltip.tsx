@@ -1,15 +1,15 @@
 "use client";
 
-import React from 'react';
-import { Tooltip } from 'react-tooltip';
-import { IoInformationCircleOutline } from 'react-icons/io5';
-import { IconType } from 'react-icons';
+import React from "react";
+import { Tooltip } from "react-tooltip";
+import { IoInformationCircleOutline } from "react-icons/io5";
+import { IconType } from "react-icons";
 
 interface InfoTooltipProps {
   id: string;
   content: React.ReactNode;
   children?: React.ReactNode;
-  placement?: 'top' | 'bottom' | 'left' | 'right';
+  placement?: "top" | "bottom" | "left" | "right";
   className?: string;
   iconClassName?: string;
   icon?: IconType;
@@ -19,10 +19,10 @@ export function InfoTooltip({
   id,
   content,
   children,
-  placement = 'top',
-  className = '',
-  iconClassName = 'w-5 h-5',
-  icon: Icon = IoInformationCircleOutline
+  placement = "top",
+  className = "",
+  iconClassName = "w-5 h-5",
+  icon: Icon = IoInformationCircleOutline,
 }: InfoTooltipProps) {
   return (
     <>
@@ -34,10 +34,10 @@ export function InfoTooltip({
       >
         {children || <Icon className={iconClassName} />}
       </button>
-      <Tooltip 
+      <Tooltip
         id={id}
         className="max-w-xs z-50"
-        style={{ backgroundColor: '#2563eb', color: '#ffffff' }}
+        style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
       >
         {content}
       </Tooltip>

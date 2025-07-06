@@ -1134,7 +1134,10 @@ export function getMoveFlavorText(move: Move, language: Locale): string {
  * @returns Damage class name string
  */
 export function getMoveDamageClassName(
-  damageClass: { name: string; names?: { name: string; language: { name: string } }[] },
+  damageClass: {
+    name: string;
+    names?: { name: string; language: { name: string } }[];
+  },
   language: Locale,
 ): string {
   // Use multilingual data if available
@@ -1178,7 +1181,10 @@ export function getMoveDamageClassName(
  * @returns Target name string
  */
 export function getMoveTargetName(
-  target: { name: string; names?: { name: string; language: { name: string } }[] },
+  target: {
+    name: string;
+    names?: { name: string; language: { name: string } }[];
+  },
   language: Locale,
   dictionary?: Dictionary,
 ): string {
@@ -1210,7 +1216,8 @@ export function getMoveTargetName(
 
   // Try dictionary system if available
   if (dictionary && dictionary.ui.moveTargets) {
-    const targetKey = target.name.toLowerCase() as keyof typeof dictionary.ui.moveTargets;
+    const targetKey =
+      target.name.toLowerCase() as keyof typeof dictionary.ui.moveTargets;
     if (dictionary.ui.moveTargets[targetKey]) {
       return dictionary.ui.moveTargets[targetKey];
     }

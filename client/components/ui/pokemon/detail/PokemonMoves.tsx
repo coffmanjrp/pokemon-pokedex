@@ -81,7 +81,6 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
     description: dictionary?.ui.pokemonDetails.description || "Description",
   };
 
-
   const methodTabs: LearnMethod[] = ["level-up", "machine", "egg", "tutor"];
   const availableMethods = methodTabs.filter(
     (method) => movesByMethod[method]?.length > 0,
@@ -140,23 +139,29 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
                       )}
                     </div>
                     {/* Description tooltip icon */}
-                    {move.move.flavorTextEntries && move.move.flavorTextEntries.length > 0 && (
-                      <InfoTooltip
-                        id={`move-${move.move.id}-tooltip`}
-                        content={
-                          <>
-                            <p className="text-sm leading-relaxed">
-                              {getMoveFlavorText(move.move, language)}
-                            </p>
-                            {move.move.target && (
-                              <div className="mt-2 text-xs opacity-80">
-                                {text.target}: {getMoveTargetName(move.move.target, language, dictionary || undefined)}
-                              </div>
-                            )}
-                          </>
-                        }
-                      />
-                    )}
+                    {move.move.flavorTextEntries &&
+                      move.move.flavorTextEntries.length > 0 && (
+                        <InfoTooltip
+                          id={`move-${move.move.id}-tooltip`}
+                          content={
+                            <>
+                              <p className="text-sm leading-relaxed">
+                                {getMoveFlavorText(move.move, language)}
+                              </p>
+                              {move.move.target && (
+                                <div className="mt-2 text-xs opacity-80">
+                                  {text.target}:{" "}
+                                  {getMoveTargetName(
+                                    move.move.target,
+                                    language,
+                                    dictionary || undefined,
+                                  )}
+                                </div>
+                              )}
+                            </>
+                          }
+                        />
+                      )}
                   </div>
 
                   {/* Move details */}
@@ -183,10 +188,13 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
                         {text.category}
                       </div>
                       <span className="text-gray-900 font-medium">
-                        {move.move.damageClass.name === 'physical' ? text.physical :
-                         move.move.damageClass.name === 'special' ? text.special :
-                         move.move.damageClass.name === 'status' ? text.status :
-                         move.move.damageClass.name}
+                        {move.move.damageClass.name === "physical"
+                          ? text.physical
+                          : move.move.damageClass.name === "special"
+                            ? text.special
+                            : move.move.damageClass.name === "status"
+                              ? text.status
+                              : move.move.damageClass.name}
                       </span>
                     </div>
 
@@ -236,7 +244,9 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
       {/* Data source note */}
       <div className="mt-6 pt-4 border-t border-gray-200">
         <p className="text-xs text-gray-500 text-center">
-          ※ {dictionary?.ui.moves.dataSource || "Move data is from the latest Pokémon games (Scarlet/Violet)"}
+          ※{" "}
+          {dictionary?.ui.moves.dataSource ||
+            "Move data is from the latest Pokémon games (Scarlet/Violet)"}
         </p>
       </div>
     </div>
