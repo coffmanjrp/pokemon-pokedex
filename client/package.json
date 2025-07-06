@@ -27,7 +27,8 @@
     "build:gen-6": "BUILD_GENERATION=6 npm run build:legacy",
     "build:gen-7": "BUILD_GENERATION=7 npm run build:legacy",
     "build:gen-8": "BUILD_GENERATION=8 npm run build:legacy",
-    "build:gen-9": "BUILD_GENERATION=9 npm run build:legacy"
+    "build:gen-9": "BUILD_GENERATION=9 npm run build:legacy",
+    "prepare": "husky"
   },
   "dependencies": {
     "@apollo/client": "^3.13.8",
@@ -61,8 +62,10 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
+    "husky": "^9.1.7",
     "jest": "^30.0.2",
     "jest-environment-jsdom": "^30.0.2",
+    "lint-staged": "^16.1.2",
     "prettier": "^3.0.0",
     "tailwindcss": "^4",
     "typescript": "^5"
