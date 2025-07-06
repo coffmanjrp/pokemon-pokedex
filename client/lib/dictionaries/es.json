@@ -198,7 +198,8 @@
       "tutor": "Tutor",
       "level": "Nivel",
       "learnedAt": "aprendido en el nivel",
-      "noMovesFoundForMethod": "No se encontraron movimientos para {{method}}"
+      "noMovesFoundForMethod": "No se encontraron movimientos para {{method}}",
+      "dataSource": "Los datos de movimientos son de los últimos juegos Pokémon (Escarlata/Púrpura)"
     },
     "generation": {
       "displayTemplate": "Generación {{number}} - {{region}}"

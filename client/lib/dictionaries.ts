@@ -211,6 +211,7 @@ export interface Dictionary {
       level: string;
       learnedAt: string;
       noMovesFoundForMethod: string;
+      dataSource: string;
     };
     generation: {
       displayTemplate: string;

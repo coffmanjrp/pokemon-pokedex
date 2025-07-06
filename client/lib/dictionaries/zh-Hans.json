@@ -198,7 +198,8 @@
       "tutor": "招式教学",
       "level": "等级",
       "learnedAt": "学习时机",
-      "noMovesFoundForMethod": "找不到{{method}}招式"
+      "noMovesFoundForMethod": "找不到{{method}}招式",
+      "dataSource": "技能数据来自最新的宝可梦游戏（朱/紫）"
     },
     "generation": {
       "displayTemplate": "{{region}} (第{{number}}世代)"

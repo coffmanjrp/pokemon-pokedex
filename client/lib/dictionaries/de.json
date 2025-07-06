@@ -198,7 +198,8 @@
       "tutor": "Attacken-Lehrer",
       "level": "Level {{level}}",
       "learnedAt": "Erlernt auf Level {{level}}",
-      "noMovesFoundForMethod": "Keine {{method}} Attacken gefunden"
+      "noMovesFoundForMethod": "Keine {{method}} Attacken gefunden",
+      "dataSource": "Attackendaten stammen aus den neuesten Pokémon-Spielen (Karmesin/Purpur)"
     },
     "generation": {
       "displayTemplate": "{{region}} (Generation {{number}})"

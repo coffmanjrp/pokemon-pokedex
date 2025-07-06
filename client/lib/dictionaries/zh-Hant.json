@@ -198,7 +198,8 @@
       "tutor": "招式教學",
       "level": "等級",
       "learnedAt": "學習時機",
-      "noMovesFoundForMethod": "找不到{{method}}招式"
+      "noMovesFoundForMethod": "找不到{{method}}招式",
+      "dataSource": "技能資料來自最新的寶可夢遊戲（朱/紫）"
     },
     "generation": {
       "displayTemplate": "{{region}} (第{{number}}世代)"

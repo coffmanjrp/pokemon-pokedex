@@ -198,7 +198,8 @@
       "tutor": "Maître des capacités",
       "level": "Niveau {{level}}",
       "learnedAt": "Apprise au niveau {{level}}",
-      "noMovesFoundForMethod": "Aucune attaque {{method}} trouvée"
+      "noMovesFoundForMethod": "Aucune attaque {{method}} trouvée",
+      "dataSource": "Les données des attaques proviennent des derniers jeux Pokémon (Écarlate/Violet)"
     },
     "generation": {
       "displayTemplate": "{{region}} (Génération {{number}})"

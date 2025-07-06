@@ -198,7 +198,8 @@
       "tutor": "Move Tutor",
       "level": "Level {{level}}",
       "learnedAt": "Learned at level {{level}}",
-      "noMovesFoundForMethod": "No {{method}} moves found"
+      "noMovesFoundForMethod": "No {{method}} moves found",
+      "dataSource": "Move data is from the latest Pokémon games (Scarlet/Violet)"
     },
     "generation": {
       "displayTemplate": "{{region}} (Generation {{number}})"

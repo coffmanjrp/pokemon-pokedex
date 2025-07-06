@@ -233,6 +233,12 @@ export function PokemonMoves({ moves, language }: PokemonMovesProps) {
           })}
         </div>
       )}
+      {/* Data source note */}
+      <div className="mt-6 pt-4 border-t border-gray-200">
+        <p className="text-xs text-gray-500 text-center">
+          ※ {dictionary?.ui.moves.dataSource || "Move data is from the latest Pokémon games (Scarlet/Violet)"}
+        </p>
+      </div>
     </div>
   );
 }
