@@ -301,7 +301,7 @@ export const GENERATIONS: GenerationData[] = [
       it: "Varie Forme",
       de: "Verschiedene Formen",
     },
-    pokemonRange: { start: 10033, end: 10274 }, // Special Pokemon forms (Mega, Regional, etc.)
+    pokemonRange: { start: 10033, end: 10277 }, // Special Pokemon forms (Mega, Regional, etc.)
     games: ["forms", "variants", "mega", "gmax"],
   },
 ];
@@ -370,7 +370,7 @@ export const isRemakeGame = (gameName: string): boolean => {
 export const GENERATION_RANGES = {
   0: {
     min: 10033,
-    max: 10274,
+    max: 10277,
     region: {
       en: "Various Forms",
       ja: "様々な形態",

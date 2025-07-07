@@ -4,6 +4,8 @@
  * Used for displaying correct Pokemon numbers in badges and navigation
  */
 
+import blacklistConfig from "../../../shared/blacklist.json";
+
 export interface FormMapping {
   formId: number;
   basePokemonId: number;
@@ -22,7 +24,7 @@ export interface FormMapping {
  * Comprehensive mapping of Pokemon forms to their base IDs
  * Source: PokeAPI form data
  */
-export const POKEMON_FORM_MAPPINGS: FormMapping[] = [
+const ALL_POKEMON_FORM_MAPPINGS: FormMapping[] = [
   // Mega Evolutions
   { formId: 10033, basePokemonId: 3, formName: "mega", category: "mega" }, // Mega Venusaur
   { formId: 10034, basePokemonId: 6, formName: "mega-x", category: "mega" }, // Mega Charizard X
@@ -248,7 +250,31 @@ export const POKEMON_FORM_MAPPINGS: FormMapping[] = [
     category: "other",
   }, // Koraidon (Gliding Build)
   { formId: 10274, basePokemonId: 1008, formName: "glide", category: "other" }, // Miraidon (Glide Mode)
+  {
+    formId: 10275,
+    basePokemonId: 1017,
+    formName: "cornerstone-mask",
+    category: "other",
+  }, // Ogerpon (Cornerstone Mask)
+  {
+    formId: 10276,
+    basePokemonId: 1024,
+    formName: "terastal",
+    category: "other",
+  }, // Terapagos (Terastal)
+  {
+    formId: 10277,
+    basePokemonId: 1024,
+    formName: "stellar",
+    category: "other",
+  }, // Terapagos (Stellar)
 ];
+
+// Filter out blacklisted form IDs
+export const POKEMON_FORM_MAPPINGS: FormMapping[] =
+  ALL_POKEMON_FORM_MAPPINGS.filter(
+    (mapping) => !blacklistConfig.blacklistedFormIds.includes(mapping.formId),
+  );
 
 /**
  * Create a map for fast lookup of base Pokemon IDs
@@ -322,9 +348,11 @@ export function getPokemonDisplayId(pokemonId: number): number {
  * @returns Sorted array of all real Pokemon form IDs
  */
 export function getRealFormIds(): number[] {
-  return POKEMON_FORM_MAPPINGS.map((mapping) => mapping.formId).sort(
-    (a, b) => a - b,
-  );
+  return POKEMON_FORM_MAPPINGS.filter(
+    (mapping) => mapping.formId >= 10033 && mapping.formId <= 10277,
+  )
+    .map((mapping) => mapping.formId)
+    .sort((a, b) => a - b);
 }
 
 /**
@@ -346,6 +374,8 @@ export function getFormIdsForRange(
  * @returns Total number of Pokemon forms that actually exist
  */
 export function getTotalFormCount(): number {
-  // Should match server-side REAL_FORM_IDS.length (79 items)
-  return POKEMON_FORM_MAPPINGS.length;
+  // Count only forms that are in Generation 0 range (10033-10277)
+  return POKEMON_FORM_MAPPINGS.filter(
+    (mapping) => mapping.formId >= 10033 && mapping.formId <= 10277,
+  ).length;
 }

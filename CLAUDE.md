@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. Pokemon detail pages use SSG for optimal performance with individual Pokemon data pre-generated at build time. Pokemon list pages use full client-side rendering with intelligent cache system for seamless generation switching. Hybrid deployment fully operational with frontend deployed on Vercel and backend on Railway. Complete 9-language support implemented (English, Japanese, Traditional Chinese, Simplified Chinese, Spanish, Korean, French, German, Italian) with comprehensive translations, Pokemon data localization through PokeAPI GraphQL integration, and complete UI coverage including SEO metadata. Icon system consolidation completed using react-icons library (Heroicons v2 for UI elements, Font Awesome for specialized symbols) for consistent styling, better accessibility, and improved maintainability. Pokemon classification system fully implemented with multilingual badge support (Baby→ベイビィ, Legendary→伝説, Mythical→幻) across all 9 languages, comprehensive animation system with 26 distinct effects including classification-based hover animations, and enhanced sandbox environment with categorized animation testing. Recent improvements include Pokemon cache system optimization with enhanced UTF-8 character encoding for Japanese Pokemon names, server-side Pokemon service enhancements with intelligent caching strategies, resolution of animation cleanup issues ensuring smooth user experience, virtual scrolling implementation with react-window for large datasets (threshold: 10+ Pokemon), dynamic header shrinking system with smooth GSAP animations that preserves search functionality through icon display, streamlined search interface with simplified input mechanism eliminating dropdown suggestions for improved UI stability and performance, and complete move data multilingual support with tooltip-based descriptions using react-tooltip, damage class localization through dictionary system, and data source annotations.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. Pokemon detail pages use SSG for optimal performance with individual Pokemon data pre-generated at build time. Pokemon list pages use full client-side rendering with intelligent cache system for seamless generation switching. Hybrid deployment fully operational with frontend deployed on Vercel and backend on Railway. Complete 9-language support implemented (English, Japanese, Traditional Chinese, Simplified Chinese, Spanish, Korean, French, German, Italian) with comprehensive translations, Pokemon data localization through PokeAPI GraphQL integration, and complete UI coverage including SEO metadata. Icon system consolidation completed using react-icons library (Heroicons v2 for UI elements, Font Awesome for specialized symbols) for consistent styling, better accessibility, and improved maintainability. Pokemon classification system fully implemented with multilingual badge support (Baby→ベイビィ, Legendary→伝説, Mythical→幻) across all 9 languages, comprehensive animation system with 26 distinct effects including classification-based hover animations, and enhanced sandbox environment with categorized animation testing. Recent improvements include Pokemon cache system optimization with enhanced UTF-8 character encoding for Japanese Pokemon names, server-side Pokemon service enhancements with intelligent caching strategies, resolution of animation cleanup issues ensuring smooth user experience, virtual scrolling implementation with react-window for large datasets (threshold: 10+ Pokemon), dynamic header shrinking system with smooth GSAP animations that preserves search functionality through icon display, streamlined search interface with simplified input mechanism eliminating dropdown suggestions for improved UI stability and performance, complete move data multilingual support with tooltip-based descriptions using react-tooltip, damage class localization through dictionary system, and data source annotations. Generation 0 (Other) implementation now includes centralized blacklist system for excluding Pokemon forms without sprite data.
 
 ## Architecture
 
@@ -381,6 +381,29 @@ Dynamic header that shrinks on scroll to maximize content visibility while maint
 - **Client-side**: Utility functions in `pokemonUtils.ts` for move data localization
 - **UI Components**: InfoTooltip component for displaying move descriptions on hover
 - **Dictionary System**: Extended with `moveTargets` section for all 9 languages
+
+## Generation 0 (Other) - Pokemon Forms
+
+### Overview
+Generation 0 displays special Pokemon forms including Mega Evolutions, Regional Variants (Alolan, Galarian, Hisuian, Paldean), and other special forms. The system uses non-sequential Pokemon IDs (10000+ range) with special pagination handling.
+
+### Blacklist System
+- **Configuration File**: `/shared/blacklist.json` - Centralized blacklist for Pokemon forms without sprite data
+- **Blacklisted IDs**: 10264-10271 (Koraidon/Miraidon forms without sprites)
+- **Implementation**: Both server and client automatically filter out blacklisted IDs
+- **Maintenance**: Simply edit the JSON file to add/remove blacklisted Pokemon
+
+### Technical Implementation
+- **Server-side**: Special handling in `getPokemonFormsBasic()` for offset >= 10000
+- **Non-sequential IDs**: Uses `REAL_FORM_IDS` array for pagination instead of continuous ranges
+- **Client-side**: Modified `getTotalFormCount()` to count only Generation 0 forms (10033-10277)
+- **Cache Support**: Full localStorage and Redis caching with UTF-8 encoding for form names
+
+### Key Files
+- `/server/src/data/pokemonFormIds.ts` - Server-side form ID list with blacklist filtering
+- `/client/lib/data/pokemonFormMappings.ts` - Client-side form mappings with blacklist filtering
+- `/shared/blacklist.json` - Centralized blacklist configuration
+- `/client/lib/data/generations.ts` - Generation 0 configuration with range 10033-10277
 
 ## Adding New Language Support
 

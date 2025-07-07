@@ -260,7 +260,8 @@ class PokemonService {
   // Special handler for Pokemon forms (Generation 0)
   async getPokemonFormsBasic(limit: number, offset: number): Promise<any> {
     // Calculate which form IDs to fetch based on offset
-    const startIndex = offset - 10033; // Convert offset to index in REAL_FORM_IDS array
+    // Client sends offset as 10032 (10033 - 1), so we need to add 1
+    const startIndex = offset >= 10032 ? offset - 10032 : 0; // Convert offset to index in REAL_FORM_IDS array
     const formIds = getFormIdsForPagination(startIndex, limit);
     
     const pokemonProcessor = async (formId: number) => {

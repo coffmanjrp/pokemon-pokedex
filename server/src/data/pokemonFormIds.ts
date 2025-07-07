@@ -4,7 +4,9 @@
  * Used for pagination in the "Other" generation to skip non-existent IDs
  */
 
-export const REAL_FORM_IDS: number[] = [
+import blacklistConfig from '../../../shared/blacklist.json';
+
+const ALL_FORM_IDS: number[] = [
   // Mega Evolutions
   10033, // Mega Venusaur
   10034, // Mega Charizard X
@@ -115,7 +117,15 @@ export const REAL_FORM_IDS: number[] = [
   10272, // Miraidon (Aquatic Mode)
   10273, // Koraidon (Gliding Build)
   10274, // Miraidon (Glide Mode)
-].sort((a, b) => a - b); // Sort for consistent ordering
+  10275, // Ogerpon (Cornerstone Mask)
+  10276, // Terapagos (Terastal)
+  10277, // Terapagos (Stellar)
+];
+
+// Filter out blacklisted IDs
+export const REAL_FORM_IDS: number[] = ALL_FORM_IDS
+  .filter(id => !blacklistConfig.blacklistedFormIds.includes(id))
+  .sort((a, b) => a - b); // Sort for consistent ordering
 
 /**
  * Get Pokemon form IDs for pagination

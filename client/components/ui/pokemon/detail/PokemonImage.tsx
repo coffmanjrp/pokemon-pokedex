@@ -118,7 +118,9 @@ export function PokemonImage({
         placeholder="blur"
         blurDataURL={blurDataURL}
         loading={priority ? "eager" : "lazy"}
-        unoptimized={imageSrc.includes(".gif")} // Preserve GIF animations
+        unoptimized={
+          imageSrc.includes(".gif") || imageSrc === "/placeholder-pokemon.png"
+        } // Preserve GIF animations and placeholder
         fetchPriority={priority ? "high" : "low"}
         onLoad={() => setImageLoaded(true)}
         onError={() => {
