@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Pokemon, PokemonConnection } from '../types/pokemon';
 import { cacheService } from './cacheService';
+import { REAL_FORM_IDS, getFormIdsForPagination, getTotalRealFormCount } from '../data/pokemonFormIds';
 
 const POKEAPI_BASE_URL = process.env['POKEAPI_BASE_URL'] || 'https://pokeapi.co/api/v2';
 
@@ -206,6 +207,11 @@ class PokemonService {
   }
 
   async getPokemonsBasic(limit: number, offset: number): Promise<any> {
+    // Special handling for Generation 0 (Other) - Pokemon forms with IDs 10000+
+    if (offset >= 10000) {
+      return this.getPokemonFormsBasic(limit, offset);
+    }
+    
     const listData = await this.fetchFromPokeAPI(`/pokemon?limit=${limit}&offset=${offset}`);
     
     const pokemonProcessor = async (pokemon: any) => {
@@ -248,6 +254,62 @@ class PokemonService {
         endCursor: edges[edges.length - 1]?.cursor || null,
       },
       totalCount: listData.count,
+    };
+  }
+
+  // Special handler for Pokemon forms (Generation 0)
+  async getPokemonFormsBasic(limit: number, offset: number): Promise<any> {
+    // Calculate which form IDs to fetch based on offset
+    const startIndex = offset - 10033; // Convert offset to index in REAL_FORM_IDS array
+    const formIds = getFormIdsForPagination(startIndex, limit);
+    
+    const pokemonProcessor = async (formId: number) => {
+      const pokemonData = await this.fetchFromPokeAPI(`/pokemon/${formId}`);
+      
+      if (!pokemonData) {
+        console.warn(`Could not fetch Pokemon form data for ID ${formId}`);
+        return null;
+      }
+      
+      // Get basic species data (names and genera only)
+      let speciesData = null;
+      if (pokemonData.species && pokemonData.species.url) {
+        try {
+          const speciesEndpoint = pokemonData.species.url.replace('https://pokeapi.co/api/v2', '');
+          speciesData = await this.fetchFromPokeAPI(speciesEndpoint);
+        } catch (error) {
+          console.warn(`Could not fetch species data for Pokemon form ${formId}:`, error);
+        }
+      }
+      
+      return this.transformPokemonBasicData(pokemonData, speciesData);
+    };
+
+    // Use concurrency limit for Pokemon processing
+    const pokemonResults = await this.processWithConcurrencyLimit(
+      formIds.map(id => ({ id })), 
+      (item) => pokemonProcessor(item.id), 
+      3
+    );
+    const pokemons = pokemonResults.filter(pokemon => pokemon !== null);
+    
+    const edges = pokemons.map((pokemon, index) => ({
+      node: pokemon,
+      cursor: Buffer.from(`${offset + index}`).toString('base64'),
+    }));
+
+    const totalFormCount = getTotalRealFormCount();
+    const hasMoreForms = startIndex + limit < totalFormCount;
+
+    return {
+      edges,
+      pageInfo: {
+        hasNextPage: hasMoreForms,
+        hasPreviousPage: startIndex > 0,
+        startCursor: edges[0]?.cursor || null,
+        endCursor: edges[edges.length - 1]?.cursor || null,
+      },
+      totalCount: totalFormCount,
     };
   }
 

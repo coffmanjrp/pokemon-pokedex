@@ -30,33 +30,6 @@ export interface GenerationData {
 
 export const GENERATIONS: GenerationData[] = [
   {
-    id: 0,
-    name: {
-      en: "Other",
-      ja: "その他",
-      "zh-Hant": "其他",
-      "zh-Hans": "其他",
-      es: "Otros",
-      ko: "기타",
-      fr: "Autres",
-      it: "Altri",
-      de: "Andere",
-    },
-    region: {
-      en: "Various",
-      ja: "様々な地方",
-      "zh-Hant": "各地區",
-      "zh-Hans": "各地区",
-      es: "Varias",
-      ko: "여러 지역",
-      fr: "Diverses",
-      it: "Varie",
-      de: "Verschiedene",
-    },
-    pokemonRange: { start: 1026, end: 1302 }, // Extended range for forms and special Pokemon
-    games: ["forms", "variants", "mega", "gmax"],
-  },
-  {
     id: 1,
     name: {
       en: "Generation I",
@@ -304,6 +277,33 @@ export const GENERATIONS: GenerationData[] = [
     pokemonRange: { start: 906, end: 1025 },
     games: ["scarlet", "violet"],
   },
+  {
+    id: 0,
+    name: {
+      en: "Other",
+      ja: "その他",
+      "zh-Hant": "其他",
+      "zh-Hans": "其他",
+      es: "Otros",
+      ko: "기타",
+      fr: "Autres",
+      it: "Altri",
+      de: "Andere",
+    },
+    region: {
+      en: "Various Forms",
+      ja: "様々な形態",
+      "zh-Hant": "各種形態",
+      "zh-Hans": "各种形态",
+      es: "Varias Formas",
+      ko: "여러 형태",
+      fr: "Diverses Formes",
+      it: "Varie Forme",
+      de: "Verschiedene Formen",
+    },
+    pokemonRange: { start: 10033, end: 10274 }, // Special Pokemon forms (Mega, Regional, etc.)
+    games: ["forms", "variants", "mega", "gmax"],
+  },
 ];
 
 // Helper functions
@@ -369,18 +369,18 @@ export const isRemakeGame = (gameName: string): boolean => {
 // usePokemonList compatible format with min/max properties
 export const GENERATION_RANGES = {
   0: {
-    min: 1026,
-    max: 1302,
+    min: 10033,
+    max: 10274,
     region: {
-      en: "Various",
-      ja: "様々な地方",
-      "zh-Hant": "各地區",
-      "zh-Hans": "各地区",
-      es: "Varias",
-      ko: "여러 지역",
-      fr: "Diverses",
-      it: "Varie",
-      de: "Verschiedene",
+      en: "Various Forms",
+      ja: "様々な形態",
+      "zh-Hant": "各種形態",
+      "zh-Hans": "各种形态",
+      es: "Varias Formas",
+      ko: "여러 형태",
+      fr: "Diverses Formes",
+      it: "Varie Forme",
+      de: "Verschiedene Formen",
     },
   },
   1: {

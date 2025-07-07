@@ -307,13 +307,17 @@ export function GenerationHeader({
             className="font-bold text-gray-700 whitespace-nowrap"
             style={{ transformOrigin: "center" }}
           >
-            {interpolate(dictionary.ui.generation.displayTemplate, {
-              region:
-                generationRange.region[
+            {currentGeneration === 0
+              ? generationRange.region[
                   lang as keyof typeof generationRange.region
-                ] || generationRange.region.en,
-              number: currentGeneration,
-            })}
+                ] || generationRange.region.en
+              : interpolate(dictionary.ui.generation.displayTemplate, {
+                  region:
+                    generationRange.region[
+                      lang as keyof typeof generationRange.region
+                    ] || generationRange.region.en,
+                  number: currentGeneration,
+                })}
           </h1>
 
           {/* Mobile Search Icon (visible when shrinked) - positioned at the right */}
@@ -366,13 +370,17 @@ export function GenerationHeader({
             className="font-bold text-gray-700 flex-shrink-0"
             style={{ transformOrigin: "left center" }}
           >
-            {interpolate(dictionary.ui.generation.displayTemplate, {
-              region:
-                generationRange.region[
+            {currentGeneration === 0
+              ? generationRange.region[
                   lang as keyof typeof generationRange.region
-                ] || generationRange.region.en,
-              number: currentGeneration,
-            })}
+                ] || generationRange.region.en
+              : interpolate(dictionary.ui.generation.displayTemplate, {
+                  region:
+                    generationRange.region[
+                      lang as keyof typeof generationRange.region
+                    ] || generationRange.region.en,
+                  number: currentGeneration,
+                })}
           </h1>
 
           {/* Search Bar */}

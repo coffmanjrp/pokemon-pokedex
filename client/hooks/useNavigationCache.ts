@@ -33,7 +33,7 @@ export const useNavigationCache = () => {
       if (generationParam) {
         const generation = parseInt(generationParam);
 
-        if (!isNaN(generation) && generation >= 1 && generation <= 9) {
+        if (!isNaN(generation) && generation >= 0 && generation <= 9) {
           // Check if we have cached data for this generation
           if (isGenerationCached(generation)) {
             const cachedData = getCachedGenerationData(generation);
@@ -107,7 +107,7 @@ export const useNavigationCache = () => {
     if (generationParam) {
       const generation = parseInt(generationParam);
 
-      if (!isNaN(generation) && generation >= 1 && generation <= 9) {
+      if (!isNaN(generation) && generation >= 0 && generation <= 9) {
         // Check if we have cached data for this generation
         if (isGenerationCached(generation)) {
           const cachedData = getCachedGenerationData(generation);

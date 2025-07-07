@@ -219,6 +219,7 @@ export function usePokemonSearch({
           return appliedFilters.generations.some((gen) => {
             // Simple generation ranges - could be made more precise
             const ranges: Record<number, readonly [number, number]> = {
+              0: [10033, 10274],
               1: [1, 151],
               2: [152, 251],
               3: [252, 386],
@@ -245,7 +246,7 @@ export function usePokemonSearch({
         filteredResults = filteredResults.filter((result) => {
           const pokemonId = parseInt(result.pokemon.id);
           const min = appliedFilters.minId ?? 1;
-          const max = appliedFilters.maxId ?? 1025;
+          const max = appliedFilters.maxId ?? 10274;
           return pokemonId >= min && pokemonId <= max;
         });
       }

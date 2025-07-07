@@ -33,7 +33,6 @@ function getFormTranslation(
   // Special forms now handled by dictionary system
   // This function is deprecated and should use dictionary lookup instead
 
-  console.log(`[getFormTranslation] No translation found for "${formName}"`);
   return null;
 }
 
