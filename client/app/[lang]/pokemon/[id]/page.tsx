@@ -320,11 +320,20 @@ export default async function PokemonDetailPage({
       getClient(),
     ]);
 
+    console.log(`[PokemonDetailPage] Fetching Pokemon with ID: ${id}`);
+    console.log("[PokemonDetailPage] Using query:", GET_POKEMON);
+
     const { data } = await client.query({
       query: GET_POKEMON,
       variables: { id },
       errorPolicy: "all", // Continue even if there are GraphQL errors
     });
+
+    console.log(`[PokemonDetailPage] Response data:`, data);
+    console.log(
+      `[PokemonDetailPage] Has evolution chain:`,
+      data?.pokemon?.species?.evolutionChain ? "Yes" : "No",
+    );
 
     const pokemon: Pokemon = data?.pokemon;
 
