@@ -7,6 +7,7 @@ import {
   generatePokemonBlurDataURL,
   DEFAULT_BLUR_DATA_URL,
 } from "@/lib/blurDataUtils";
+import placeholderPokemon from "@/public/placeholder-pokemon.png";
 
 interface PokemonImageProps {
   pokemon: Pokemon;
@@ -22,7 +23,9 @@ export function PokemonImage({
   priority = false,
 }: PokemonImageProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageSrc, setImageSrc] = useState<string>("");
+  const [imageSrc, setImageSrc] = useState<string | typeof placeholderPokemon>(
+    "",
+  );
 
   const getImageUrl = () => {
     // Check if any sprite URL exists and is valid
@@ -36,7 +39,7 @@ export function PokemonImage({
     if (homeSprite && homeSprite !== "null") return homeSprite;
     if (defaultSprite && defaultSprite !== "null") return defaultSprite;
 
-    return "/placeholder-pokemon.png";
+    return placeholderPokemon;
   };
 
   // Pokemon のプライマリタイプを取得
@@ -52,7 +55,7 @@ export function PokemonImage({
     const url = getImageUrl();
     setImageSrc(url);
     // If already using placeholder, set as loaded
-    if (url === "/placeholder-pokemon.png") {
+    if (url === placeholderPokemon) {
       setImageLoaded(true);
     }
   }, [pokemon]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -106,7 +109,7 @@ export function PokemonImage({
       )}
 
       <Image
-        src={imageSrc || "/placeholder-pokemon.png"}
+        src={imageSrc || placeholderPokemon}
         alt={pokemon.name}
         fill
         className={`object-contain drop-shadow-lg transition-opacity duration-500 rounded-lg ${
@@ -118,14 +121,12 @@ export function PokemonImage({
         placeholder="blur"
         blurDataURL={blurDataURL}
         loading={priority ? "eager" : "lazy"}
-        unoptimized={
-          imageSrc.includes(".gif") || imageSrc === "/placeholder-pokemon.png"
-        } // Preserve GIF animations and placeholder
+        unoptimized={typeof imageSrc === "string" && imageSrc.includes(".gif")} // Preserve GIF animations
         fetchPriority={priority ? "high" : "low"}
         onLoad={() => setImageLoaded(true)}
         onError={() => {
-          if (imageSrc !== "/placeholder-pokemon.png") {
-            setImageSrc("/placeholder-pokemon.png");
+          if (imageSrc !== placeholderPokemon) {
+            setImageSrc(placeholderPokemon);
             setImageLoaded(true);
           }
         }}
