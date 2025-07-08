@@ -133,7 +133,9 @@ class PokemonService {
     if (pokemonData.species && pokemonData.species.url) {
       try {
         const speciesEndpoint = pokemonData.species.url.replace('https://pokeapi.co/api/v2', '');
+        console.log(`[Pokemon ${id}] Fetching species data from: ${speciesEndpoint}`);
         speciesData = await this.fetchFromPokeAPI(speciesEndpoint);
+        console.log(`[Pokemon ${id}] Species data fetched successfully`);
       } catch (error) {
         console.warn(`Could not fetch species data for Pokemon ${id}:`, error);
       }
@@ -478,8 +480,13 @@ class PokemonService {
         isBaby: speciesData.is_baby ?? false,
         isLegendary: speciesData.is_legendary ?? false,
         isMythical: speciesData.is_mythical ?? false,
-        evolutionChain: speciesData.evolution_chain ? 
-          await this.getEvolutionChain(speciesData.evolution_chain.url) : undefined,
+        evolutionChain: speciesData.evolution_chain ? (
+          console.log(`[Pokemon ${data.id}] Species has evolution chain:`, speciesData.evolution_chain),
+          await this.getEvolutionChain(speciesData.evolution_chain.url)
+        ) : (
+          console.log(`[Pokemon ${data.id}] No evolution chain in species data`),
+          undefined
+        ),
       } : {
         // Return minimal species object with empty arrays when species data is not available
         id: data.id.toString(),
@@ -505,7 +512,12 @@ class PokemonService {
 
   private async getEvolutionChain(evolutionChainUrl: string) {
     try {
-      const evolutionData = await this.fetchFromPokeAPI(evolutionChainUrl.replace(POKEAPI_BASE_URL, ''));
+      console.log(`[Evolution Chain] Fetching from URL: ${evolutionChainUrl}`);
+      const endpoint = evolutionChainUrl.replace(POKEAPI_BASE_URL, '');
+      console.log(`[Evolution Chain] Endpoint: ${endpoint}`);
+      
+      const evolutionData = await this.fetchFromPokeAPI(endpoint);
+      console.log(`[Evolution Chain] Successfully fetched data for chain ID: ${this.extractIdFromUrl(evolutionChainUrl)}`);
       
       return {
         id: this.extractIdFromUrl(evolutionChainUrl),
@@ -513,7 +525,11 @@ class PokemonService {
         chain: await this.transformEvolutionChainData(evolutionData.chain),
       };
     } catch (error) {
-      console.error('Error fetching evolution chain:', error);
+      console.error(`[Evolution Chain] Error fetching from ${evolutionChainUrl}:`, error);
+      console.error('[Evolution Chain] Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+      });
       return undefined;
     }
   }
