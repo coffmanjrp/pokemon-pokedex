@@ -55,7 +55,14 @@ export function getPokemonDisplayId(pokemon: Pokemon): string {
  * Used to determine if navigation arrows should be hidden
  */
 export function isPokemonVariant(pokemon: Pokemon): boolean {
-  return pokemon.name.includes("-");
+  // Base Pokemon (ID 1-1025) should not be considered variants even if they have hyphens in names
+  const pokemonId = parseInt(pokemon.id);
+  if (pokemonId >= 1 && pokemonId <= 1025) {
+    return false;
+  }
+
+  // Only Pokemon with form IDs (10000+) are considered variants
+  return pokemon.name.includes("-") && pokemonId >= 10000;
 }
 
 /**
