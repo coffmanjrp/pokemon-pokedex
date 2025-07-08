@@ -200,6 +200,11 @@ const ALL_POKEMON_FORM_MAPPINGS: FormMapping[] = [
   }, // Galarian Stunfisk (additional form)
 
   // Hisuian Forms
+  { formId: 10229, basePokemonId: 58, formName: "hisui", category: "hisuian" }, // Hisuian Growlithe (additional ID)
+  { formId: 10230, basePokemonId: 59, formName: "hisui", category: "hisuian" }, // Hisuian Arcanine (additional ID)
+  { formId: 10231, basePokemonId: 100, formName: "hisui", category: "hisuian" }, // Hisuian Voltorb (additional ID)
+  { formId: 10232, basePokemonId: 101, formName: "hisui", category: "hisuian" }, // Hisuian Electrode (additional ID)
+  { formId: 10233, basePokemonId: 157, formName: "hisui", category: "hisuian" }, // Hisuian Typhlosion (additional ID)
   { formId: 10234, basePokemonId: 58, formName: "hisui", category: "hisuian" }, // Hisuian Growlithe
   { formId: 10235, basePokemonId: 59, formName: "hisui", category: "hisuian" }, // Hisuian Arcanine
   { formId: 10236, basePokemonId: 100, formName: "hisui", category: "hisuian" }, // Hisuian Voltorb

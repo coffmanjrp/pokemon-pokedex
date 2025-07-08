@@ -92,6 +92,11 @@ const ALL_FORM_IDS: number[] = [
   10180, // Galarian Stunfisk (additional form)
 
   // Hisuian Forms
+  10229, // Hisuian Growlithe (additional ID)
+  10230, // Hisuian Arcanine (additional ID)
+  10231, // Hisuian Voltorb (additional ID)
+  10232, // Hisuian Electrode (additional ID)
+  10233, // Hisuian Typhlosion (additional ID)
   10234, // Hisuian Growlithe
   10235, // Hisuian Arcanine
   10236, // Hisuian Voltorb
