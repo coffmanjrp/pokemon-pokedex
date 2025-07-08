@@ -18,6 +18,7 @@ import { PokemonBadge } from "../../common/PokemonBadge";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Locale } from "@/lib/dictionaries";
+import { getPokemonDisplayId } from "@/lib/data/pokemonFormMappings";
 
 interface PokemonCardProps {
   pokemon: Pokemon;
@@ -107,6 +108,11 @@ const PokemonCard = memo(function PokemonCard({
   };
 
   const formatPokemonId = (id: string) => {
+    // For Generation 0 (Other), display the base Pokemon ID instead of the form ID
+    if (currentGeneration === 0) {
+      const displayId = getPokemonDisplayId(parseInt(id));
+      return `#${displayId.toString().padStart(3, "0")}`;
+    }
     return `#${id.padStart(3, "0")}`;
   };
 
