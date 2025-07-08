@@ -76,6 +76,18 @@ const ALL_POKEMON_FORM_MAPPINGS: FormMapping[] = [
   { formId: 10106, basePokemonId: 89, formName: "alola", category: "alolan" }, // Alolan Muk
   { formId: 10107, basePokemonId: 103, formName: "alola", category: "alolan" }, // Alolan Exeggutor
   { formId: 10108, basePokemonId: 105, formName: "alola", category: "alolan" }, // Alolan Marowak
+  { formId: 10109, basePokemonId: 74, formName: "alola", category: "alolan" }, // Alolan Geodude (duplicate form)
+  { formId: 10110, basePokemonId: 75, formName: "alola", category: "alolan" }, // Alolan Graveler (duplicate form)
+  { formId: 10111, basePokemonId: 76, formName: "alola", category: "alolan" }, // Alolan Golem (duplicate form)
+  { formId: 10112, basePokemonId: 88, formName: "alola", category: "alolan" }, // Alolan Grimer (duplicate form)
+  { formId: 10113, basePokemonId: 89, formName: "alola", category: "alolan" }, // Alolan Muk (duplicate form)
+  { formId: 10115, basePokemonId: 105, formName: "alola", category: "alolan" }, // Alolan Marowak (duplicate form)
+  {
+    formId: 10149,
+    basePokemonId: 105,
+    formName: "alola-totem",
+    category: "alolan",
+  }, // Alolan Marowak Totem
 
   // Galarian Forms
   { formId: 10158, basePokemonId: 52, formName: "galar", category: "galarian" }, // Galarian Meowth
