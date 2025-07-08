@@ -86,6 +86,10 @@ const ALL_FORM_IDS: number[] = [
   10174, // Galarian Darmanitan
   10175, // Galarian Yamask
   10176, // Galarian Stunfisk
+  10177, // Galarian Darmanitan (additional form)
+  10178, // Galarian Darmanitan (Zen Mode)
+  10179, // Galarian Yamask (additional form)
+  10180, // Galarian Stunfisk (additional form)
 
   // Hisuian Forms
   10234, // Hisuian Growlithe

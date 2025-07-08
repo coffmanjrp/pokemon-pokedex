@@ -174,6 +174,30 @@ const ALL_POKEMON_FORM_MAPPINGS: FormMapping[] = [
     formName: "galar",
     category: "galarian",
   }, // Galarian Stunfisk
+  {
+    formId: 10177,
+    basePokemonId: 555,
+    formName: "galar",
+    category: "galarian",
+  }, // Galarian Darmanitan (additional form)
+  {
+    formId: 10178,
+    basePokemonId: 555,
+    formName: "galar-zen",
+    category: "galarian",
+  }, // Galarian Darmanitan (Zen Mode)
+  {
+    formId: 10179,
+    basePokemonId: 562,
+    formName: "galar",
+    category: "galarian",
+  }, // Galarian Yamask (additional form)
+  {
+    formId: 10180,
+    basePokemonId: 618,
+    formName: "galar",
+    category: "galarian",
+  }, // Galarian Stunfisk (additional form)
 
   // Hisuian Forms
   { formId: 10234, basePokemonId: 58, formName: "hisui", category: "hisuian" }, // Hisuian Growlithe
