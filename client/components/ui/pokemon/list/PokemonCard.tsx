@@ -14,7 +14,7 @@ import {
 } from "@/lib/animations";
 import { PokemonImage } from "../detail/PokemonImage";
 import { PokemonTypes } from "../detail/PokemonTypes";
-import { PokemonClassificationBadge } from "../detail/PokemonClassificationBadge";
+import { PokemonBadge } from "../../common/PokemonBadge";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Locale } from "@/lib/dictionaries";
@@ -203,11 +203,24 @@ const PokemonCard = memo(function PokemonCard({
         }}
       />
 
+      {/* Pokemon Form Badge (Generation 0 only) */}
+      {currentGeneration === 0 && dictionary && (
+        <div className="absolute top-3 left-3 z-10">
+          <PokemonBadge
+            type="form"
+            pokemon={pokemon}
+            dictionary={dictionary}
+            size="sm"
+          />
+        </div>
+      )}
+
       {/* Pokemon ID and Special Classification Badge */}
       <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
         {/* Special Pokemon Classification Badge */}
         {dictionary && (
-          <PokemonClassificationBadge
+          <PokemonBadge
+            type="classification"
             pokemon={pokemon}
             dictionary={dictionary}
             size="sm"
@@ -215,12 +228,12 @@ const PokemonCard = memo(function PokemonCard({
         )}
 
         {/* Pokemon ID */}
-        <span
-          className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold text-white"
-          style={{ backgroundColor: primaryColor }}
-        >
-          {formatPokemonId(pokemon.id)}
-        </span>
+        <PokemonBadge
+          text={formatPokemonId(pokemon.id)}
+          variant="id"
+          size="sm"
+          customColor={primaryColor}
+        />
       </div>
 
       {/* Pokemon Image */}

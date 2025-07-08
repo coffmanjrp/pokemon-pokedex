@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. Pokemon detail pages use SSG for optimal performance with individual Pokemon data pre-generated at build time. Pokemon list pages use full client-side rendering with intelligent cache system for seamless generation switching. Hybrid deployment fully operational with frontend deployed on Vercel and backend on Railway. Complete 9-language support implemented (English, Japanese, Traditional Chinese, Simplified Chinese, Spanish, Korean, French, German, Italian) with comprehensive translations, Pokemon data localization through PokeAPI GraphQL integration, and complete UI coverage including SEO metadata. Icon system consolidation completed using react-icons library (Heroicons v2 for UI elements, Font Awesome for specialized symbols) for consistent styling, better accessibility, and improved maintainability. Pokemon classification system fully implemented with multilingual badge support (Baby→ベイビィ, Legendary→伝説, Mythical→幻) across all 9 languages, comprehensive animation system with 26 distinct effects including classification-based hover animations, and enhanced sandbox environment with categorized animation testing. Recent improvements include Pokemon cache system optimization with enhanced UTF-8 character encoding for Japanese Pokemon names, server-side Pokemon service enhancements with intelligent caching strategies, resolution of animation cleanup issues ensuring smooth user experience, virtual scrolling implementation with react-window for large datasets (threshold: 10+ Pokemon), dynamic header shrinking system with smooth GSAP animations that preserves search functionality through icon display, streamlined search interface with simplified input mechanism eliminating dropdown suggestions for improved UI stability and performance, complete move data multilingual support with tooltip-based descriptions using react-tooltip, damage class localization through dictionary system, and data source annotations. Generation 0 (Other) implementation now includes centralized blacklist system for excluding Pokemon forms without sprite data.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. Pokemon detail pages use SSG for optimal performance with individual Pokemon data pre-generated at build time. Pokemon list pages use full client-side rendering with intelligent cache system for seamless generation switching. Hybrid deployment fully operational with frontend deployed on Vercel and backend on Railway. Complete 9-language support implemented (English, Japanese, Traditional Chinese, Simplified Chinese, Spanish, Korean, French, German, Italian) with comprehensive translations, Pokemon data localization through PokeAPI GraphQL integration, and complete UI coverage including SEO metadata. Icon system consolidation completed using react-icons library (Heroicons v2 for UI elements, Font Awesome for specialized symbols) for consistent styling, better accessibility, and improved maintainability. Pokemon classification system fully implemented with multilingual badge support (Baby→ベイビィ, Legendary→伝説, Mythical→幻) across all 9 languages, comprehensive animation system with 26 distinct effects including classification-based hover animations, and enhanced sandbox environment with categorized animation testing. Recent improvements include Pokemon cache system optimization with enhanced UTF-8 character encoding for Japanese Pokemon names, server-side Pokemon service enhancements with intelligent caching strategies, resolution of animation cleanup issues ensuring smooth user experience, virtual scrolling implementation with react-window for large datasets (threshold: 10+ Pokemon), dynamic header shrinking system with smooth GSAP animations that preserves search functionality through icon display, streamlined search interface with simplified input mechanism eliminating dropdown suggestions for improved UI stability and performance, complete move data multilingual support with tooltip-based descriptions using react-tooltip, damage class localization through dictionary system, and data source annotations. Generation 0 (Other) implementation now includes centralized blacklist system for excluding Pokemon forms without sprite data. Pokemon badge system fully refactored with Strategy Pattern implementation for improved maintainability, unified color schemes for all badge types, and centralized badge logic in utility functions.
 
 ## Architecture
 
@@ -203,8 +203,9 @@ pokemon-pokedex/
 - **Classification Components** (`/detail/PokemonClassificationBadge.tsx`) - Reusable multilingual badge component with size variants
 - **Sprites Components** (`/sprites/`) - Sprite gallery and image management
 - **Evolution Components** (`/evolution/`) - Evolution chain display with modular architecture
-- **Common Components** (`/common/`) - Shared UI components (Badge, LoadingSpinner, InfoTooltip, etc.)
+- **Common Components** (`/common/`) - Shared UI components (PokemonBadge, LoadingSpinner, InfoTooltip, etc.)
 - **InfoTooltip Component** (`/common/InfoTooltip.tsx`) - Reusable tooltip component with customizable icon prop for move descriptions
+- **PokemonBadge Component** (`/common/PokemonBadge.tsx`) - Unified badge component with Strategy Pattern for classification and form badges
 
 **Benefits**: Clear separation of concerns, improved maintainability, scalable structure, reusable classification system
 
@@ -253,6 +254,32 @@ npm run build:gen-1             # Specific generation build
   - `client/lib/animations/subtleEffects.ts` - Subtle hover effects with proper cleanup functions
 - **Animation Integration**: Smart classification-based triggering in Pokemon cards with throttling and cleanup management
 - **Sandbox Environment**: Comprehensive testing interface at `/[lang]/sandbox` with categorized animation sections
+
+### Pokemon Badge System Architecture
+- **Unified Badge Component**: Single `PokemonBadge` component handles all badge types (classification, form, custom)
+- **Strategy Pattern Implementation**: Configuration-driven badge logic using priority-ordered arrays
+- **Badge Configuration Files**:
+  - `client/lib/utils/pokemonBadgeUtils.ts` - Centralized badge logic with Strategy Pattern
+  - Badge configurations defined as arrays with condition functions, dictionary keys, and color mappings
+- **Color Scheme Management**: Unified color palette for all badge types with region-specific styling
+  - **Classifications**: Baby (pink), Legendary (yellow), Mythical (purple)
+  - **Regional Variants**: Alolan (yellow), Galarian (blue), Hisuian (green), Paldean (orange)
+  - **Forms**: Mega Evolution (purple), Gigantamax (red), Primal (indigo), Special (gray)
+- **Configuration Structure**:
+  ```typescript
+  interface BadgeConfig {
+    id: string;
+    condition: (pokemon: Pokemon) => boolean;
+    badgeKey: string;
+    colorKey: string;
+    variant: BadgeVariant;
+  }
+  ```
+- **Key Functions**:
+  - `getClassificationBadge()` - Returns badge info for Pokemon classifications
+  - `getFormBadge()` - Returns badge info for Pokemon forms
+  - `getBadgeInfo()` - Unified interface for badge data retrieval
+- **Benefits**: Eliminates nested if-statements, improves maintainability, enables easy addition of new badge types
 
 ### Internationalization
 - **Languages**: Complete 9-language support (English/Japanese/Traditional Chinese/Simplified Chinese/Spanish/Korean/French/German/Italian) with middleware-based routing

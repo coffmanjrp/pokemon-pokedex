@@ -272,6 +272,7 @@ export interface Dictionary {
         megaY: string;
         gmax: string;
         primal: string;
+        special: string;
       };
       translations: {
         alolan: string;

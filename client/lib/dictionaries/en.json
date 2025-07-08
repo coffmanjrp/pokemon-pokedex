@@ -267,7 +267,8 @@
         "megaX": "Mega X",
         "megaY": "Mega Y",
         "gmax": "G-Max",
-        "primal": "Primal"
+        "primal": "Primal",
+        "special": "Special"
       },
       "translations": {
         "alolan": "Alolan",

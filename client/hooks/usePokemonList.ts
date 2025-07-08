@@ -169,6 +169,11 @@ export function usePokemonList({
             moves: pokemon.moves,
             species: pokemon.species,
             gameIndices: pokemon.gameIndices,
+            // Add form-related fields
+            formName: pokemon.formName,
+            isRegionalVariant: pokemon.isRegionalVariant,
+            isMegaEvolution: pokemon.isMegaEvolution,
+            isDynamax: pokemon.isDynamax,
           } as Pokemon;
         })
         .filter((pokemon: Pokemon) => {

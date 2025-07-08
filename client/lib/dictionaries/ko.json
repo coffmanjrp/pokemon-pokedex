@@ -276,7 +276,8 @@
         "megaX": "메가X",
         "megaY": "메가Y",
         "gmax": "거다이",
-        "primal": "원시"
+        "primal": "원시",
+        "special": "특수"
       },
       "translations": {
         "alolan": "알로라",

@@ -316,6 +316,9 @@ class PokemonService {
 
   // Lightweight transformation for basic Pokemon data (browsing)
   private transformPokemonBasicData(data: any, speciesData: any = null): any {
+    // Extract form name from the Pokemon name
+    const formName = this.extractFormName(data.name);
+    
     return {
       id: data.id.toString(),
       name: data.name,
@@ -377,10 +380,18 @@ class PokemonService {
         isLegendary: false,
         isMythical: false,
       },
+      // Add form-related fields
+      formName: formName,
+      isRegionalVariant: this.isRegionalVariant(formName),
+      isMegaEvolution: this.isMegaEvolution(formName),
+      isDynamax: this.isDynamax(formName),
     };
   }
 
   private async transformPokemonData(data: any, speciesData: any = null): Promise<Pokemon> {
+    // Extract form name from the Pokemon name
+    const formName = this.extractFormName(data.name);
+    
     return {
       id: data.id.toString(),
       name: data.name,
@@ -484,6 +495,11 @@ class PokemonService {
         isMythical: false,
         evolutionChain: undefined,
       },
+      // Add form-related fields
+      formName: formName,
+      isRegionalVariant: this.isRegionalVariant(formName),
+      isMegaEvolution: this.isMegaEvolution(formName),
+      isDynamax: this.isDynamax(formName),
     };
   }
 
@@ -667,7 +683,7 @@ class PokemonService {
           const formName = variantData.name.replace(`${speciesData.name}-`, '');
           const isRegionalVariant = this.isRegionalVariant(formName);
           const isMegaEvolution = this.isMegaEvolution(formName);
-          const isDynamax = this.isGigantamax(formName);
+          const isDynamax = this.isDynamax(formName);
 
           forms.push({
             id: variantData.id.toString(),
@@ -709,19 +725,6 @@ class PokemonService {
       console.error('Error fetching Pokemon forms:', error);
       return [];
     }
-  }
-
-  private isRegionalVariant(formName: string): boolean {
-    const regionalForms = ['alolan', 'galarian', 'hisuian', 'paldean'];
-    return regionalForms.some(form => formName.includes(form));
-  }
-
-  private isMegaEvolution(formName: string): boolean {
-    return formName.includes('mega');
-  }
-
-  private isGigantamax(formName: string): boolean {
-    return formName.includes('gmax');
   }
 
   private async transformAbilities(abilitiesData: any[]): Promise<any[]> {
@@ -943,6 +946,40 @@ class PokemonService {
   private extractIdFromUrl(url: string): string {
     const matches = url.match(/\/(\d+)\/$/);
     return matches?.[1] ?? '0';
+  }
+
+  // Extract form name from Pokemon name (e.g., "charizard-mega-x" -> "mega-x")
+  private extractFormName(pokemonName: string): string | null {
+    // List of known base Pokemon names that might have forms
+    const parts = pokemonName.split('-');
+    if (parts.length <= 1) {
+      return null;
+    }
+    
+    // Remove the base Pokemon name and return the form suffix
+    return parts.slice(1).join('-');
+  }
+
+  // Check if the Pokemon is a regional variant
+  private isRegionalVariant(formName: string | null): boolean {
+    if (!formName) return false;
+    
+    const regionalKeywords = ['alola', 'alolan', 'galar', 'galarian', 'hisui', 'hisuian', 'paldea', 'paldean'];
+    return regionalKeywords.some(keyword => formName.toLowerCase().includes(keyword));
+  }
+
+  // Check if the Pokemon is a Mega Evolution
+  private isMegaEvolution(formName: string | null): boolean {
+    if (!formName) return false;
+    
+    return formName.toLowerCase().includes('mega');
+  }
+
+  // Check if the Pokemon is a Gigantamax form
+  private isDynamax(formName: string | null): boolean {
+    if (!formName) return false;
+    
+    return formName.toLowerCase().includes('gmax');
   }
 }
 

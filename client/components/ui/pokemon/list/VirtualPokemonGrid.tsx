@@ -97,7 +97,7 @@ const CellRenderer = ({
         className="h-full"
         priority={priority && index < 10}
         lang={language}
-        {...(currentGeneration && { currentGeneration })}
+        {...(currentGeneration !== undefined && { currentGeneration })}
       />
     </div>
   );
@@ -156,7 +156,7 @@ export const VirtualPokemonGrid = ({
               onPokemonClick,
               language,
               priority,
-              ...(currentGeneration && { currentGeneration }),
+              ...(currentGeneration !== undefined && { currentGeneration }),
             }}
             onScroll={onScroll}
             className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100"

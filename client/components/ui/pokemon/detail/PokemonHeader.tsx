@@ -9,7 +9,7 @@ import {
 } from "@/lib/pokemonUtils";
 import { PokemonTypes } from "./PokemonTypes";
 import { Locale, Dictionary } from "@/lib/dictionaries";
-import { PokemonClassificationBadge } from "./PokemonClassificationBadge";
+import { PokemonBadge } from "../../common/PokemonBadge";
 
 interface PokemonHeaderProps {
   pokemon: Pokemon;
@@ -45,7 +45,8 @@ export function PokemonHeader({
 
         {/* Special Pokemon Classification Badge */}
         <div className="flex-shrink-0 ml-4">
-          <PokemonClassificationBadge
+          <PokemonBadge
+            type="classification"
             pokemon={pokemon}
             dictionary={dictionary}
             size="lg"

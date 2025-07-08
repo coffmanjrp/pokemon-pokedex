@@ -40,6 +40,10 @@ export const GET_POKEMONS_BASIC = gql`
             isLegendary
             isMythical
           }
+          formName
+          isRegionalVariant
+          isMegaEvolution
+          isDynamax
         }
         cursor
       }
@@ -91,6 +95,10 @@ export const GET_POKEMON_BASIC = gql`
         isLegendary
         isMythical
       }
+      formName
+      isRegionalVariant
+      isMegaEvolution
+      isDynamax
     }
   }
 `;
@@ -135,6 +143,10 @@ export const GET_POKEMONS = gql`
             isLegendary
             isMythical
           }
+          formName
+          isRegionalVariant
+          isMegaEvolution
+          isDynamax
         }
         cursor
       }

@@ -11,6 +11,10 @@ export interface Pokemon {
   moves?: PokemonMove[];
   species?: PokemonSpecies;
   gameIndices?: GameIndex[];
+  formName?: string;
+  isRegionalVariant?: boolean;
+  isMegaEvolution?: boolean;
+  isDynamax?: boolean;
 }
 
 export interface PokemonTypeSlot {

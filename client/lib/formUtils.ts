@@ -1,11 +1,11 @@
 import { Locale, Dictionary } from "@/lib/dictionaries";
 import {
-  getFormBadgeColor as getFormBadgeColorFromData,
   getFormPriority as getFormPriorityFromData,
   isRegionalVariant,
   isMegaEvolution,
   isGigantamax,
 } from "@/lib/forms";
+import { getFormColor } from "@/lib/utils/pokemonBadgeUtils";
 
 /**
  * Get display name for a Pokemon form using dictionary system for basic forms
@@ -223,5 +223,5 @@ export function getFormBadgeName(
  */
 export function getFormBadgeColor(formName: string | undefined): string {
   if (!formName) return "bg-gray-100 text-gray-800";
-  return getFormBadgeColorFromData(formName);
+  return getFormColor(formName);
 }
