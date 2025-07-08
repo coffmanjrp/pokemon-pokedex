@@ -58,6 +58,13 @@ const ALL_FORM_IDS: number[] = [
   10106, // Alolan Muk
   10107, // Alolan Exeggutor
   10108, // Alolan Marowak
+  10109, // Alolan Geodude (missing from original list)
+  10110, // Alolan Graveler (missing from original list)
+  10111, // Alolan Golem (missing from original list)
+  10112, // Alolan Grimer (missing from original list) 
+  10113, // Alolan Muk (missing from original list)
+  10115, // Alolan Marowak (missing from original list)
+  10149, // Alolan Marowak Totem (missing from original list)
 
   // Galarian Forms
   10158, // Galarian Meowth
