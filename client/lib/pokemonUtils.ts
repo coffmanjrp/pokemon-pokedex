@@ -100,9 +100,13 @@ export function shouldDisplayFormSeparately(pokemon: Pokemon): boolean {
 /**
  * Get Pokemon base name without form for separate display
  */
-export function getPokemonBaseName(pokemon: Pokemon, language: Locale): string {
+export function getPokemonBaseName(
+  pokemon: Pokemon,
+  language: Locale,
+  dictionary?: Dictionary,
+): string {
   if (!shouldDisplayFormSeparately(pokemon)) {
-    return getPokemonName(pokemon, language);
+    return getPokemonName(pokemon, language, dictionary);
   }
 
   // For forms that should be displayed separately, return just the base name
@@ -153,13 +157,31 @@ export function getPokemonBaseName(pokemon: Pokemon, language: Locale): string {
 export function getPokemonFormName(
   pokemon: Pokemon,
   language: Locale,
+  dictionary?: Dictionary,
 ): string | null {
   if (!shouldDisplayFormSeparately(pokemon)) {
     return null;
   }
 
   const formName = pokemon.name.split("-").slice(1).join("-");
-  return getFormTranslation(formName, language);
+
+  // Use dictionary for form translations
+  if (dictionary?.ui?.forms?.translations) {
+    // Try to find form translation in dictionary
+    for (const [key, translation] of Object.entries(
+      dictionary.ui.forms.translations,
+    )) {
+      if (formName.includes(key)) {
+        return translation;
+      }
+    }
+  }
+
+  // Fallback: capitalize form name
+  return formName
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 }
 
 /**
@@ -179,7 +201,11 @@ export function getPrevNextPokemonId(currentId: number): {
  * Get Pokemon name in the specified language
  * Falls back to English name if target language is not available
  */
-export function getPokemonName(pokemon: Pokemon, language: Locale): string {
+export function getPokemonName(
+  pokemon: Pokemon,
+  language: Locale,
+  dictionary?: Dictionary,
+): string {
   // Check if this is a variant Pokemon
   const nameParts = pokemon.name.split("-");
   const isVariant = nameParts.length > 1;
@@ -220,7 +246,27 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
       );
 
       if (speciesName?.name) {
-        const formTranslation = getFormTranslation(formName, language);
+        // Use dictionary for form translations
+        let formTranslation = null;
+        if (dictionary?.ui?.forms?.translations) {
+          if (formName.includes("mega-x")) {
+            formTranslation = "X";
+          } else if (formName.includes("mega-y")) {
+            formTranslation = "Y";
+          } else if (formName.includes("mega")) {
+            formTranslation = dictionary.ui.forms.translations.mega;
+          } else {
+            // Try to find other form translations
+            for (const [key, translation] of Object.entries(
+              dictionary.ui.forms.translations,
+            )) {
+              if (formName.includes(key)) {
+                formTranslation = translation;
+                break;
+              }
+            }
+          }
+        }
 
         if (formTranslation) {
           if (language === "ja") {
@@ -231,7 +277,9 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
                 (baseName === "charizard" || baseName === "mewtwo") &&
                 (formName === "mega-x" || formName === "mega-y")
               ) {
-                const result = `メガ${speciesName.name}${formTranslation}`;
+                const megaText =
+                  dictionary?.ui?.forms?.translations?.mega || "メガ";
+                const result = `${megaText}${speciesName.name}${formTranslation}`;
                 console.log(
                   `[getPokemonName] Japanese Mega X/Y variant: ${pokemon.name} -> ${result}`,
                 );
@@ -260,12 +308,36 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
               return result;
             }
           } else {
-            // For Chinese and Spanish languages: "ポケモン名（フォーム名）" format
-            const result = `${speciesName.name}（${formTranslation}）`;
-            console.log(
-              `[getPokemonName] ${language} variant: ${pokemon.name} -> ${result}`,
-            );
-            return result;
+            // For other languages with Mega Evolution
+            if (isMegaEvolution(formName)) {
+              // Special format for Mega Charizard and Mega Mewtwo X/Y forms
+              if (
+                (baseName === "charizard" || baseName === "mewtwo") &&
+                (formName === "mega-x" || formName === "mega-y")
+              ) {
+                const megaText =
+                  dictionary?.ui?.forms?.translations?.mega || "Mega";
+                const result = `${megaText} ${speciesName.name} ${formTranslation}`;
+                console.log(
+                  `[getPokemonName] ${language} Mega X/Y variant: ${pokemon.name} -> ${result}`,
+                );
+                return result;
+              } else {
+                // For other Mega forms: "Mega Pokemon Name" format
+                const result = `${formTranslation} ${speciesName.name}`;
+                console.log(
+                  `[getPokemonName] ${language} Mega variant: ${pokemon.name} -> ${result}`,
+                );
+                return result;
+              }
+            } else {
+              // For other forms: "Pokemon Name (Form Name)" format
+              const result = `${speciesName.name} (${formTranslation})`;
+              console.log(
+                `[getPokemonName] ${language} variant: ${pokemon.name} -> ${result}`,
+              );
+              return result;
+            }
           }
         }
 
@@ -273,8 +345,13 @@ export function getPokemonName(pokemon: Pokemon, language: Locale): string {
       }
     }
 
-    // For English or when Japanese name is not available
-    return getFormDisplayName(baseName || pokemon.name, formName, language);
+    // For English or when target language name is not available
+    return getFormDisplayName(
+      baseName || pokemon.name,
+      formName,
+      language,
+      dictionary,
+    );
   }
 
   // For non-variant Pokemon

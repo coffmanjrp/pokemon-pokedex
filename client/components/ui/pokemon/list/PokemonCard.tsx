@@ -114,7 +114,11 @@ const PokemonCard = memo(function PokemonCard({
     return name.charAt(0).toUpperCase() + name.slice(1);
   };
 
-  const displayName = getPokemonName(pokemon, currentLang);
+  const displayName = getPokemonName(
+    pokemon,
+    currentLang,
+    dictionary || undefined,
+  );
   const genus = getPokemonGenus(pokemon, currentLang);
 
   // Check for special Pokemon classification for hover effects

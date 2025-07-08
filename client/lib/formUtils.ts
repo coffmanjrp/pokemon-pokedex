@@ -26,7 +26,21 @@ export function getFormDisplayName(
       ? pokemonName.charAt(0).toUpperCase() + pokemonName.slice(1)
       : pokemonName;
 
-  // Try dictionary system for basic forms first
+  // Handle Mega Evolution forms first (priority handling)
+  if (dictionary?.ui.forms.translations && formName.includes("mega")) {
+    const megaTranslation = dictionary.ui.forms.translations.mega;
+
+    // Check for specific Mega X/Y variants
+    if (formName.includes("mega-x")) {
+      return `${megaTranslation} ${capitalizedPokemonName} X`;
+    } else if (formName.includes("mega-y")) {
+      return `${megaTranslation} ${capitalizedPokemonName} Y`;
+    } else if (formName.includes("mega")) {
+      return `${megaTranslation} ${capitalizedPokemonName}`;
+    }
+  }
+
+  // Try dictionary system for other forms
   if (dictionary?.ui.forms.translations) {
     const basicFormTranslations = dictionary.ui.forms.translations;
 
@@ -48,8 +62,8 @@ export function getFormDisplayName(
         ) {
           return `${translation} ${capitalizedPokemonName}`;
         }
-        // For mega, gmax, primal
-        else if (["mega", "mega-x", "mega-y", "gmax", "primal"].includes(key)) {
+        // For gmax, primal (mega handled above)
+        else if (["gmax", "primal"].includes(key)) {
           return `${translation} ${capitalizedPokemonName}`;
         }
       }

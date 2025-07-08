@@ -27,10 +27,10 @@ export function PokemonHeader({
   const displayId = getPokemonDisplayId(pokemon);
   const shouldSeparateForm = shouldDisplayFormSeparately(pokemon);
   const baseName = shouldSeparateForm
-    ? getPokemonBaseName(pokemon, language)
+    ? getPokemonBaseName(pokemon, language, dictionary)
     : displayName;
   const formName = shouldSeparateForm
-    ? getPokemonFormName(pokemon, language)
+    ? getPokemonFormName(pokemon, language, dictionary)
     : null;
 
   return (
