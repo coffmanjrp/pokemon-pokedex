@@ -22,6 +22,7 @@ export const GET_POKEMONS_BASIC = gql`
             }
           }
           species {
+            id
             names {
               name
               language {
@@ -77,6 +78,7 @@ export const GET_POKEMON_BASIC = gql`
         }
       }
       species {
+        id
         names {
           name
           language {

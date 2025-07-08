@@ -2,7 +2,11 @@
 
 import { Pokemon, POKEMON_TYPE_COLORS, PokemonTypeName } from "@/types/pokemon";
 import { cn } from "@/lib/utils";
-import { getPokemonName, getPokemonGenus } from "@/lib/pokemonUtils";
+import {
+  getPokemonName,
+  getPokemonGenus,
+  getPokemonDisplayId,
+} from "@/lib/pokemonUtils";
 import { useAppSelector } from "@/store/hooks";
 import { useRef, memo, useEffect, useState } from "react";
 import {
@@ -18,7 +22,6 @@ import { PokemonBadge } from "../../common/PokemonBadge";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Locale } from "@/lib/dictionaries";
-import { getPokemonDisplayId } from "@/lib/data/pokemonFormMappings";
 
 interface PokemonCardProps {
   pokemon: Pokemon;
@@ -107,13 +110,13 @@ const PokemonCard = memo(function PokemonCard({
     router.push(detailUrl);
   };
 
-  const formatPokemonId = (id: string) => {
+  const formatPokemonId = (pokemon: Pokemon) => {
     // For Generation 0 (Other), display the base Pokemon ID instead of the form ID
     if (currentGeneration === 0) {
-      const displayId = getPokemonDisplayId(parseInt(id));
-      return `#${displayId.toString().padStart(3, "0")}`;
+      const displayId = getPokemonDisplayId(pokemon);
+      return `#${displayId.padStart(3, "0")}`;
     }
-    return `#${id.padStart(3, "0")}`;
+    return `#${pokemon.id.padStart(3, "0")}`;
   };
 
   const formatName = (name: string) => {
@@ -239,7 +242,7 @@ const PokemonCard = memo(function PokemonCard({
 
         {/* Pokemon ID */}
         <PokemonBadge
-          text={formatPokemonId(pokemon.id)}
+          text={formatPokemonId(pokemon)}
           variant="id"
           size="sm"
           customColor={primaryColor}

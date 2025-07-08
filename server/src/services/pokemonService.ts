@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Pokemon, PokemonConnection } from '../types/pokemon';
 import { cacheService } from './cacheService';
-import { REAL_FORM_IDS, getFormIdsForPagination, getTotalRealFormCount } from '../data/pokemonFormIds';
+import { REAL_FORM_IDS, getFormIdsForPagination, getSortedFormIdsForPagination, getTotalRealFormCount } from '../data/pokemonFormIds';
 
 const POKEAPI_BASE_URL = process.env['POKEAPI_BASE_URL'] || 'https://pokeapi.co/api/v2';
 
@@ -263,8 +263,8 @@ class PokemonService {
   async getPokemonFormsBasic(limit: number, offset: number): Promise<any> {
     // Calculate which form IDs to fetch based on offset
     // Client sends offset as 10032 (10033 - 1), so we need to add 1
-    const startIndex = offset >= 10032 ? offset - 10032 : 0; // Convert offset to index in REAL_FORM_IDS array
-    const formIds = getFormIdsForPagination(startIndex, limit);
+    const startIndex = offset >= 10032 ? offset - 10032 : 0; // Convert offset to index in sorted form IDs array
+    const formIds = getSortedFormIdsForPagination(startIndex, limit);
     
     const pokemonProcessor = async (formId: number) => {
       const pokemonData = await this.fetchFromPokeAPI(`/pokemon/${formId}`);
