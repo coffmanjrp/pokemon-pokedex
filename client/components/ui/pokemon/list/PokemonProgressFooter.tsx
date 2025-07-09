@@ -152,17 +152,22 @@ export const PokemonProgressFooter = forwardRef<
             </div>
           </div>
 
-          {/* Generation info */}
-          <div className="mt-2 pt-2 border-t border-green-200">
-            <p className="text-xs text-green-600 text-center">
-              {interpolate(dictionary?.ui.loading.generationInfo || fallback, {
-                number: currentGeneration,
-                region: getRegionName(),
-                min: generationRange.min,
-                max: generationRange.max,
-              })}
-            </p>
-          </div>
+          {/* Generation info - Hide for Generation 0 */}
+          {currentGeneration !== 0 && (
+            <div className="mt-2 pt-2 border-t border-green-200">
+              <p className="text-xs text-green-600 text-center">
+                {interpolate(
+                  dictionary?.ui.loading.generationInfo || fallback,
+                  {
+                    number: currentGeneration,
+                    region: getRegionName(),
+                    min: generationRange.min,
+                    max: generationRange.max,
+                  },
+                )}
+              </p>
+            </div>
+          )}
         </div>
       </footer>
     );
