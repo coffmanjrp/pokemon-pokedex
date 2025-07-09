@@ -7,7 +7,7 @@ import {
   generatePokemonBlurDataURL,
   DEFAULT_BLUR_DATA_URL,
 } from "@/lib/blurDataUtils";
-import placeholderPokemon from "/placeholder-pokemon.png";
+const placeholderPokemon = "/placeholder-pokemon.png";
 
 interface PokemonImageProps {
   pokemon: Pokemon;
@@ -23,9 +23,7 @@ export function PokemonImage({
   priority = false,
 }: PokemonImageProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageSrc, setImageSrc] = useState<string | typeof placeholderPokemon>(
-    "",
-  );
+  const [imageSrc, setImageSrc] = useState<string>("");
 
   const getImageUrl = () => {
     // Check if any sprite URL exists and is valid
