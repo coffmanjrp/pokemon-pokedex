@@ -1,9 +1,7 @@
 // Main lib exports - form-related functionality
 export {
-  FORM_BADGE_COLORS,
   FORM_PRIORITIES,
   getFormCategory,
-  getFormBadgeColor,
   getFormPriority,
   isRegionalVariant,
   isMegaEvolution,
@@ -19,4 +17,5 @@ export {
   getFormCategoryForUI,
   getFormBadgeName,
   parsePokemonId,
+  getFormBadgeColor,
 } from "./formUtils";

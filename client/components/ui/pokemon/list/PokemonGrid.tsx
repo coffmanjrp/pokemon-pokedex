@@ -97,7 +97,7 @@ export function PokemonGrid({
             className="h-72 sm:h-80" // Slightly smaller on mobile
             priority={index < 5} // Priority for first 5 cards in initial render
             lang={language}
-            {...(currentGeneration && { currentGeneration })}
+            {...(currentGeneration !== undefined && { currentGeneration })}
           />
         ))}
       </div>
@@ -114,7 +114,7 @@ export function PokemonGrid({
           language={language}
           priority={priority}
           {...(onScroll && { onScroll })}
-          {...(currentGeneration && { currentGeneration })}
+          {...(currentGeneration !== undefined && { currentGeneration })}
         />
 
         {/* Show message when filtering */}
@@ -146,7 +146,7 @@ export function PokemonGrid({
             className="h-72 sm:h-80"
             priority={priority && index < 5}
             lang={language}
-            {...(currentGeneration && { currentGeneration })}
+            {...(currentGeneration !== undefined && { currentGeneration })}
           />
         ))}
       </div>

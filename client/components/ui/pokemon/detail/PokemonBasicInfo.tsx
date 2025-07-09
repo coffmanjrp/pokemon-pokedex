@@ -36,7 +36,7 @@ function PokemonBasicInfoContent({
   const searchParams = useSearchParams();
   const fromGeneration = searchParams.get("from");
 
-  const displayName = getPokemonName(pokemon, language);
+  const displayName = getPokemonName(pokemon, language, dictionary);
   const isVariant = isPokemonVariant(pokemon);
   const description = getPokemonDescription(pokemon, language);
   const genus = getPokemonGenus(pokemon, language);

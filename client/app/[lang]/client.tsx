@@ -46,7 +46,7 @@ function PokemonListContent({
     const generationParam = searchParams.get("generation");
     if (generationParam) {
       const generation = parseInt(generationParam, 10);
-      if (generation >= 1 && generation <= 9) {
+      if (generation >= 0 && generation <= 9) {
         return generation;
       }
     }
@@ -69,13 +69,9 @@ function PokemonListContent({
     const generationParam = searchParams.get("generation");
     if (generationParam) {
       const generation = parseInt(generationParam, 10);
-      if (generation >= 1 && generation <= 9) {
+      if (generation >= 0 && generation <= 9) {
         // Try to restore from cache
-        if (restoreFromURL()) {
-          console.log(
-            `Generation ${generation} restored from cache on initial load`,
-          );
-        }
+        restoreFromURL();
       }
     }
     cacheRestoredRef.current = true;

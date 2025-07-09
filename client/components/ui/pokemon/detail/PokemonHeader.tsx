@@ -9,7 +9,7 @@ import {
 } from "@/lib/pokemonUtils";
 import { PokemonTypes } from "./PokemonTypes";
 import { Locale, Dictionary } from "@/lib/dictionaries";
-import { PokemonClassificationBadge } from "./PokemonClassificationBadge";
+import { PokemonBadge } from "../../common/PokemonBadge";
 
 interface PokemonHeaderProps {
   pokemon: Pokemon;
@@ -27,10 +27,10 @@ export function PokemonHeader({
   const displayId = getPokemonDisplayId(pokemon);
   const shouldSeparateForm = shouldDisplayFormSeparately(pokemon);
   const baseName = shouldSeparateForm
-    ? getPokemonBaseName(pokemon, language)
+    ? getPokemonBaseName(pokemon, language, dictionary)
     : displayName;
   const formName = shouldSeparateForm
-    ? getPokemonFormName(pokemon, language)
+    ? getPokemonFormName(pokemon, language, dictionary)
     : null;
 
   return (
@@ -45,7 +45,8 @@ export function PokemonHeader({
 
         {/* Special Pokemon Classification Badge */}
         <div className="flex-shrink-0 ml-4">
-          <PokemonClassificationBadge
+          <PokemonBadge
+            type="classification"
             pokemon={pokemon}
             dictionary={dictionary}
             size="lg"

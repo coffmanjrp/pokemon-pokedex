@@ -28,6 +28,10 @@ export const typeDefs = gql`
     moves: [PokemonMove!]!
     species: PokemonSpecies
     gameIndices: [GameIndex!]!
+    formName: String
+    isRegionalVariant: Boolean
+    isMegaEvolution: Boolean
+    isDynamax: Boolean
   }
 
   type PokemonType {
@@ -318,6 +322,10 @@ export const typeDefs = gql`
     types: [PokemonType!]!
     sprites: PokemonSprites!
     species: PokemonSpeciesBasic
+    formName: String
+    isRegionalVariant: Boolean
+    isMegaEvolution: Boolean
+    isDynamax: Boolean
   }
 
   # Lightweight species type for browsing

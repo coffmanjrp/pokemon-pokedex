@@ -25,14 +25,6 @@ export interface FormData extends FormTranslation {
   badgeColor: string;
 }
 
-// Badge colors for different form categories
-export const FORM_BADGE_COLORS: Record<FormCategory, string> = {
-  regional: "bg-green-100 text-green-800",
-  mega: "bg-purple-100 text-purple-800",
-  gigantamax: "bg-red-100 text-red-800",
-  special: "bg-blue-100 text-blue-800",
-};
-
 // Form priorities for sorting (lower number = higher priority)
 export const FORM_PRIORITIES: Record<FormCategory, number> = {
   regional: 1,
@@ -102,14 +94,6 @@ export const getFormCategory = (formName: string): FormCategory | null => {
     return "special";
   }
   return null;
-};
-
-/**
- * Get the badge color class for a form
- */
-export const getFormBadgeColor = (formName: string): string => {
-  const category = getFormCategory(formName);
-  return category ? FORM_BADGE_COLORS[category] : "bg-gray-100 text-gray-800";
 };
 
 /**

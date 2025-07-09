@@ -34,3 +34,19 @@ export {
 // Export language options
 export { LANGUAGE_OPTIONS } from "./languages";
 export type { LanguageOption, LanguageLabels } from "./languages";
+
+// Export badge data and functions
+export {
+  POKEMON_BADGE_COLORS,
+  getClassificationColor,
+  getFormColor,
+  getClassificationBadge,
+  getFormBadge,
+  getBadgeInfo,
+} from "../utils/pokemonBadgeUtils";
+export type {
+  BadgeColors,
+  BadgeInfo,
+  BadgeVariant,
+  BadgeSize,
+} from "../utils/pokemonBadgeUtils";

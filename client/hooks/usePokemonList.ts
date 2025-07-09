@@ -36,6 +36,7 @@ interface PokemonEdge {
 }
 
 import { GENERATION_RANGES } from "@/lib/data/generations";
+import { getTotalFormCount } from "@/lib/data/pokemonFormMappings";
 
 interface UsePokemonListOptions {
   generation?: number;
@@ -74,9 +75,6 @@ export function usePokemonList({
   // Initialize with server-side data (ISR)
   useEffect(() => {
     if (initialPokemon.length > 0 && pokemons.length === 0) {
-      console.log(
-        `Initializing with ${initialPokemon.length} server-side Pokemon for ISR`,
-      );
       dispatch(setPokemons(initialPokemon));
       dispatch(setHasNextPage(initialPokemon.length >= initialBatchSize));
       dispatch(setLoading(false));
@@ -122,7 +120,7 @@ export function usePokemonList({
     fetchMore,
   } = useQuery(selectedQuery, {
     variables: { limit: generationLimit, offset: generationOffset },
-    skip: !autoFetch,
+    skip: !autoFetch, // Enable for all generations including Generation 0
     notifyOnNetworkStatusChange: true,
     errorPolicy: "all",
   });
@@ -171,6 +169,11 @@ export function usePokemonList({
             moves: pokemon.moves,
             species: pokemon.species,
             gameIndices: pokemon.gameIndices,
+            // Add form-related fields
+            formName: pokemon.formName,
+            isRegionalVariant: pokemon.isRegionalVariant,
+            isMegaEvolution: pokemon.isMegaEvolution,
+            isDynamax: pokemon.isDynamax,
           } as Pokemon;
         })
         .filter((pokemon: Pokemon) => {
@@ -189,7 +192,9 @@ export function usePokemonList({
 
         // Check if we've loaded all Pokemon in this generation
         const totalPokemonInGeneration =
-          generationRange.max - generationRange.min + 1;
+          currentGeneration === 0
+            ? getTotalFormCount() // Get actual form count dynamically
+            : generationRange.max - generationRange.min + 1;
         const hasMoreInGeneration =
           pokemonList.length < totalPokemonInGeneration;
 
@@ -335,7 +340,9 @@ export function usePokemonList({
 
       // Calculate remaining Pokemon in generation
       const totalPokemonInGeneration =
-        generationRange.max - generationRange.min + 1;
+        currentGeneration === 0
+          ? getTotalFormCount() // Get actual form count dynamically
+          : generationRange.max - generationRange.min + 1;
       const remainingPokemon =
         totalPokemonInGeneration - currentLoadedInGeneration;
 
@@ -451,8 +458,7 @@ export function usePokemonList({
         return newPokemon.length;
       }
       return 0;
-    } catch (error) {
-      console.error("LoadMore error:", error);
+    } catch {
       // Silently handle errors - no error message to user
       return 0;
     } finally {
@@ -547,9 +553,6 @@ export function usePokemonList({
 
       // Failsafe: Handle timeout after 8 seconds with silent fallback
       const timeoutId = setTimeout(() => {
-        console.warn(
-          "Generation switching timeout - silently ending loading state",
-        );
         dispatch(setGenerationSwitching(false));
         dispatch(setLoading(false));
         // No error dispatch - maintain current Pokemon data display
@@ -590,8 +593,11 @@ export function usePokemonList({
     }
   };
 
+  // For Generation 0, use actual form count instead of range calculation
   const totalPokemonInGeneration =
-    generationRange.max - generationRange.min + 1;
+    currentGeneration === 0
+      ? getTotalFormCount() // Get actual form count dynamically
+      : generationRange.max - generationRange.min + 1;
   const canLoadMore = uniquePokemons.length < totalPokemonInGeneration;
 
   // Auto-load remaining Pokemon after initial load
@@ -619,6 +625,7 @@ export function usePokemonList({
     initialBatchSize,
     loadMore,
     totalPokemonInGeneration,
+    currentGeneration,
   ]);
 
   const finalHasNextPage = hasNextPage && canLoadMore;

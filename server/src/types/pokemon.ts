@@ -11,6 +11,10 @@ export interface Pokemon {
   moves: PokemonMove[];
   species?: PokemonSpecies | null;
   gameIndices: GameIndex[];
+  formName?: string | null;
+  isRegionalVariant?: boolean;
+  isMegaEvolution?: boolean;
+  isDynamax?: boolean;
 }
 
 export interface PokemonType {

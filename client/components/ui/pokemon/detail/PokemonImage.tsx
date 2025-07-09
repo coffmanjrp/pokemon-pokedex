@@ -1,12 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Pokemon, PokemonTypeName, POKEMON_TYPE_COLORS } from "@/types/pokemon";
 import {
   generatePokemonBlurDataURL,
   DEFAULT_BLUR_DATA_URL,
 } from "@/lib/blurDataUtils";
+import placeholderPokemon from "/placeholder-pokemon.png";
 
 interface PokemonImageProps {
   pokemon: Pokemon;
@@ -22,14 +23,23 @@ export function PokemonImage({
   priority = false,
 }: PokemonImageProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageSrc, setImageSrc] = useState<string | typeof placeholderPokemon>(
+    "",
+  );
 
   const getImageUrl = () => {
-    return (
-      pokemon.sprites.other?.officialArtwork?.frontDefault ||
-      pokemon.sprites.other?.home?.frontDefault ||
-      pokemon.sprites.frontDefault ||
-      "/placeholder-pokemon.png"
-    );
+    // Check if any sprite URL exists and is valid
+    const officialArtwork =
+      pokemon.sprites.other?.officialArtwork?.frontDefault;
+    const homeSprite = pokemon.sprites.other?.home?.frontDefault;
+    const defaultSprite = pokemon.sprites.frontDefault;
+
+    // Return the first valid URL, or placeholder if all are null/undefined
+    if (officialArtwork && officialArtwork !== "null") return officialArtwork;
+    if (homeSprite && homeSprite !== "null") return homeSprite;
+    if (defaultSprite && defaultSprite !== "null") return defaultSprite;
+
+    return placeholderPokemon;
   };
 
   // Pokemon のプライマリタイプを取得
@@ -39,6 +49,16 @@ export function PokemonImage({
   const blurDataURL = primaryType
     ? generatePokemonBlurDataURL(primaryType)
     : DEFAULT_BLUR_DATA_URL;
+
+  // Initialize image source
+  useEffect(() => {
+    const url = getImageUrl();
+    setImageSrc(url);
+    // If already using placeholder, set as loaded
+    if (url === placeholderPokemon) {
+      setImageLoaded(true);
+    }
+  }, [pokemon]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const getSizeClasses = () => {
     switch (size) {
@@ -89,7 +109,7 @@ export function PokemonImage({
       )}
 
       <Image
-        src={getImageUrl()}
+        src={imageSrc || placeholderPokemon}
         alt={pokemon.name}
         fill
         className={`object-contain drop-shadow-lg transition-opacity duration-500 rounded-lg ${
@@ -101,13 +121,14 @@ export function PokemonImage({
         placeholder="blur"
         blurDataURL={blurDataURL}
         loading={priority ? "eager" : "lazy"}
-        unoptimized={getImageUrl().includes(".gif")} // Preserve GIF animations
+        unoptimized={typeof imageSrc === "string" && imageSrc.includes(".gif")} // Preserve GIF animations
         fetchPriority={priority ? "high" : "low"}
         onLoad={() => setImageLoaded(true)}
-        onError={(e) => {
-          const target = e.target as HTMLImageElement;
-          target.src = "/placeholder-pokemon.png";
-          setImageLoaded(true);
+        onError={() => {
+          if (imageSrc !== placeholderPokemon) {
+            setImageSrc(placeholderPokemon);
+            setImageLoaded(true);
+          }
         }}
       />
     </div>

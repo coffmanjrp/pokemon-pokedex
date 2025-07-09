@@ -1,7 +1,7 @@
 import { Pokemon } from "@/types/pokemon";
 
 // Cache configuration
-const CACHE_VERSION = "1.4.0"; // Updated to include special Pokemon classification data (baby, legendary, mythical)
+const CACHE_VERSION = "1.5.0"; // Updated to include Pokemon form data (formName, isRegionalVariant, isMegaEvolution, isDynamax)
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 const MAX_CACHED_GENERATIONS = 5; // Limit to prevent excessive storage usage
 
@@ -19,6 +19,11 @@ interface CachedPokemon {
   isBaby?: boolean;
   isLegendary?: boolean;
   isMythical?: boolean;
+  // Pokemon form data
+  formName?: string;
+  isRegionalVariant?: boolean;
+  isMegaEvolution?: boolean;
+  isDynamax?: boolean;
 }
 
 interface GenerationCacheData {
@@ -64,6 +69,17 @@ const compressPokemon = (pokemon: Pokemon): CachedPokemon => ({
   ...(pokemon.species?.isMythical !== undefined && {
     isMythical: pokemon.species.isMythical,
   }),
+  // Preserve Pokemon form data
+  ...(pokemon.formName && { formName: pokemon.formName }),
+  ...(pokemon.isRegionalVariant !== undefined && {
+    isRegionalVariant: pokemon.isRegionalVariant,
+  }),
+  ...(pokemon.isMegaEvolution !== undefined && {
+    isMegaEvolution: pokemon.isMegaEvolution,
+  }),
+  ...(pokemon.isDynamax !== undefined && {
+    isDynamax: pokemon.isDynamax,
+  }),
 });
 
 /**
@@ -105,6 +121,11 @@ const decompressPokemon = (cached: CachedPokemon): Pokemon =>
     abilities: [],
     stats: [],
     moves: [],
+    // Restore Pokemon form data
+    formName: cached.formName,
+    isRegionalVariant: cached.isRegionalVariant,
+    isMegaEvolution: cached.isMegaEvolution,
+    isDynamax: cached.isDynamax,
   }) as unknown as Pokemon;
 
 /**

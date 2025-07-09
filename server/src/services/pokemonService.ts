@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Pokemon, PokemonConnection } from '../types/pokemon';
 import { cacheService } from './cacheService';
+import { REAL_FORM_IDS, getFormIdsForPagination, getSortedFormIdsForPagination, getTotalRealFormCount } from '../data/pokemonFormIds';
 
 const POKEAPI_BASE_URL = process.env['POKEAPI_BASE_URL'] || 'https://pokeapi.co/api/v2';
 
@@ -10,7 +11,77 @@ const axiosInstance = axios.create({
   maxRedirects: 3,
 });
 
+// Cache for Pokemon form to species ID mapping
+const formToSpeciesCache = new Map<number, number>();
+let isCacheInitialized = false;
+
 class PokemonService {
+  // Initialize form to species mapping cache
+  private async initializeFormSpeciesCache(): Promise<void> {
+    if (isCacheInitialized) return;
+    
+    console.log('[DEBUG] Initializing form to species cache...');
+    const cacheKey = 'pokemon:form-species-mapping';
+    
+    // Try to get from Redis first
+    const cachedMapping = await cacheService.get(cacheKey);
+    if (cachedMapping) {
+      const mappings = cachedMapping as Record<number, number>;
+      Object.entries(mappings).forEach(([formId, speciesId]) => {
+        formToSpeciesCache.set(parseInt(formId), speciesId as number);
+      });
+      isCacheInitialized = true;
+      console.log(`[DEBUG] Loaded ${formToSpeciesCache.size} mappings from cache`);
+      return;
+    }
+    
+    // Build the cache by fetching species data for all forms
+    const mappings: Record<number, number> = {};
+    const batchProcessor = async (formId: number) => {
+      try {
+        const pokemonData = await this.fetchFromPokeAPI(`/pokemon/${formId}`);
+        if (pokemonData && pokemonData.species) {
+          const speciesId = parseInt(pokemonData.species.url.match(/\/(\d+)\/?$/)?.[1] || formId.toString());
+          mappings[formId] = speciesId;
+          formToSpeciesCache.set(formId, speciesId);
+          console.log(`[DEBUG] Mapped form ${formId} -> species ${speciesId}`);
+        }
+      } catch (error) {
+        console.warn(`Could not fetch species mapping for form ${formId}:`, error);
+      }
+    };
+    
+    // Process in batches
+    await this.processWithConcurrencyLimit(
+      REAL_FORM_IDS.map(id => id),
+      batchProcessor,
+      5
+    );
+    
+    // Cache the mapping for 24 hours
+    await cacheService.set(cacheKey, mappings, 86400);
+    isCacheInitialized = true;
+    console.log(`[DEBUG] Initialized cache with ${formToSpeciesCache.size} mappings`);
+  }
+  
+  // Get sorted form IDs based on species ID
+  private async getSortedFormIds(): Promise<number[]> {
+    await this.initializeFormSpeciesCache();
+    
+    // Sort form IDs by their species ID
+    return [...REAL_FORM_IDS].sort((a, b) => {
+      const speciesIdA = formToSpeciesCache.get(a) || a;
+      const speciesIdB = formToSpeciesCache.get(b) || b;
+      
+      // Primary sort: species ID
+      if (speciesIdA !== speciesIdB) {
+        return speciesIdA - speciesIdB;
+      }
+      
+      // Secondary sort: form ID
+      return a - b;
+    });
+  }
   // Determine which endpoints should be cached
   private shouldCacheEndpoint(endpoint: string): boolean {
     // Cache essential data for card lists and basic Pokemon info
@@ -132,7 +203,9 @@ class PokemonService {
     if (pokemonData.species && pokemonData.species.url) {
       try {
         const speciesEndpoint = pokemonData.species.url.replace('https://pokeapi.co/api/v2', '');
+        console.log(`[Pokemon ${id}] Fetching species data from: ${speciesEndpoint}`);
         speciesData = await this.fetchFromPokeAPI(speciesEndpoint);
+        console.log(`[Pokemon ${id}] Species data fetched successfully`);
       } catch (error) {
         console.warn(`Could not fetch species data for Pokemon ${id}:`, error);
       }
@@ -206,6 +279,11 @@ class PokemonService {
   }
 
   async getPokemonsBasic(limit: number, offset: number): Promise<any> {
+    // Special handling for Generation 0 (Other) - Pokemon forms with IDs 10000+
+    if (offset >= 10000) {
+      return this.getPokemonFormsBasic(limit, offset);
+    }
+    
     const listData = await this.fetchFromPokeAPI(`/pokemon?limit=${limit}&offset=${offset}`);
     
     const pokemonProcessor = async (pokemon: any) => {
@@ -251,8 +329,83 @@ class PokemonService {
     };
   }
 
+  // Special handler for Pokemon forms (Generation 0)
+  async getPokemonFormsBasic(limit: number, offset: number): Promise<any> {
+    console.log(`[DEBUG] getPokemonFormsBasic called with limit: ${limit}, offset: ${offset}`);
+    // Calculate which form IDs to fetch based on offset
+    // Client sends offset as 10032 (10033 - 1), so we need to add 1
+    const startIndex = offset >= 10032 ? offset - 10032 : 0; // Convert offset to index in form IDs array
+    console.log(`[DEBUG] Calculated startIndex: ${startIndex}`);
+    
+    // Get sorted form IDs based on species ID
+    const sortedFormIds = await this.getSortedFormIds();
+    
+    // Debug: log first 10 sorted form IDs with their species
+    console.log('[DEBUG] First 10 sorted form IDs:');
+    sortedFormIds.slice(0, 10).forEach(formId => {
+      const speciesId = formToSpeciesCache.get(formId) || formId;
+      console.log(`  Form ID: ${formId} -> Species ID: ${speciesId}`);
+    });
+    
+    // Get the form IDs for this page
+    const formIds = sortedFormIds.slice(startIndex, startIndex + limit);
+    console.log(`[DEBUG] Form IDs for this page:`, formIds);
+    
+    const pokemonProcessor = async (formId: number) => {
+      const pokemonData = await this.fetchFromPokeAPI(`/pokemon/${formId}`);
+      
+      if (!pokemonData) {
+        console.warn(`Could not fetch Pokemon form data for ID ${formId}`);
+        return null;
+      }
+      
+      // Get basic species data (names and genera only)
+      let speciesData = null;
+      if (pokemonData.species && pokemonData.species.url) {
+        try {
+          const speciesEndpoint = pokemonData.species.url.replace('https://pokeapi.co/api/v2', '');
+          speciesData = await this.fetchFromPokeAPI(speciesEndpoint);
+        } catch (error) {
+          console.warn(`Could not fetch species data for Pokemon form ${formId}:`, error);
+        }
+      }
+      
+      return this.transformPokemonBasicData(pokemonData, speciesData);
+    };
+
+    // Use concurrency limit for Pokemon processing
+    const pokemonResults = await this.processWithConcurrencyLimit(
+      formIds.map(id => ({ id })), 
+      (item) => pokemonProcessor(item.id), 
+      3
+    );
+    const pokemons = pokemonResults.filter(pokemon => pokemon !== null);
+    
+    const edges = pokemons.map((pokemon, index) => ({
+      node: pokemon,
+      cursor: Buffer.from(`${offset + index}`).toString('base64'),
+    }));
+
+    const totalFormCount = sortedFormIds.length;
+    const hasMoreForms = startIndex + limit < totalFormCount;
+
+    return {
+      edges,
+      pageInfo: {
+        hasNextPage: hasMoreForms,
+        hasPreviousPage: startIndex > 0,
+        startCursor: edges[0]?.cursor || null,
+        endCursor: edges[edges.length - 1]?.cursor || null,
+      },
+      totalCount: totalFormCount,
+    };
+  }
+
   // Lightweight transformation for basic Pokemon data (browsing)
   private transformPokemonBasicData(data: any, speciesData: any = null): any {
+    // Extract form name from the Pokemon name
+    const formName = this.extractFormName(data.name);
+    
     return {
       id: data.id.toString(),
       name: data.name,
@@ -314,10 +467,18 @@ class PokemonService {
         isLegendary: false,
         isMythical: false,
       },
+      // Add form-related fields
+      formName: formName,
+      isRegionalVariant: this.isRegionalVariant(formName),
+      isMegaEvolution: this.isMegaEvolution(formName),
+      isDynamax: this.isDynamax(formName),
     };
   }
 
   private async transformPokemonData(data: any, speciesData: any = null): Promise<Pokemon> {
+    // Extract form name from the Pokemon name
+    const formName = this.extractFormName(data.name);
+    
     return {
       id: data.id.toString(),
       name: data.name,
@@ -404,8 +565,13 @@ class PokemonService {
         isBaby: speciesData.is_baby ?? false,
         isLegendary: speciesData.is_legendary ?? false,
         isMythical: speciesData.is_mythical ?? false,
-        evolutionChain: speciesData.evolution_chain ? 
-          await this.getEvolutionChain(speciesData.evolution_chain.url) : undefined,
+        evolutionChain: speciesData.evolution_chain ? (
+          console.log(`[Pokemon ${data.id}] Species has evolution chain:`, speciesData.evolution_chain),
+          await this.getEvolutionChain(speciesData.evolution_chain.url)
+        ) : (
+          console.log(`[Pokemon ${data.id}] No evolution chain in species data`),
+          undefined
+        ),
       } : {
         // Return minimal species object with empty arrays when species data is not available
         id: data.id.toString(),
@@ -421,12 +587,22 @@ class PokemonService {
         isMythical: false,
         evolutionChain: undefined,
       },
+      // Add form-related fields
+      formName: formName,
+      isRegionalVariant: this.isRegionalVariant(formName),
+      isMegaEvolution: this.isMegaEvolution(formName),
+      isDynamax: this.isDynamax(formName),
     };
   }
 
   private async getEvolutionChain(evolutionChainUrl: string) {
     try {
-      const evolutionData = await this.fetchFromPokeAPI(evolutionChainUrl.replace(POKEAPI_BASE_URL, ''));
+      console.log(`[Evolution Chain] Fetching from URL: ${evolutionChainUrl}`);
+      const endpoint = evolutionChainUrl.replace(POKEAPI_BASE_URL, '');
+      console.log(`[Evolution Chain] Endpoint: ${endpoint}`);
+      
+      const evolutionData = await this.fetchFromPokeAPI(endpoint);
+      console.log(`[Evolution Chain] Successfully fetched data for chain ID: ${this.extractIdFromUrl(evolutionChainUrl)}`);
       
       return {
         id: this.extractIdFromUrl(evolutionChainUrl),
@@ -434,7 +610,11 @@ class PokemonService {
         chain: await this.transformEvolutionChainData(evolutionData.chain),
       };
     } catch (error) {
-      console.error('Error fetching evolution chain:', error);
+      console.error(`[Evolution Chain] Error fetching from ${evolutionChainUrl}:`, error);
+      console.error('[Evolution Chain] Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+      });
       return undefined;
     }
   }
@@ -604,7 +784,7 @@ class PokemonService {
           const formName = variantData.name.replace(`${speciesData.name}-`, '');
           const isRegionalVariant = this.isRegionalVariant(formName);
           const isMegaEvolution = this.isMegaEvolution(formName);
-          const isDynamax = this.isGigantamax(formName);
+          const isDynamax = this.isDynamax(formName);
 
           forms.push({
             id: variantData.id.toString(),
@@ -646,19 +826,6 @@ class PokemonService {
       console.error('Error fetching Pokemon forms:', error);
       return [];
     }
-  }
-
-  private isRegionalVariant(formName: string): boolean {
-    const regionalForms = ['alolan', 'galarian', 'hisuian', 'paldean'];
-    return regionalForms.some(form => formName.includes(form));
-  }
-
-  private isMegaEvolution(formName: string): boolean {
-    return formName.includes('mega');
-  }
-
-  private isGigantamax(formName: string): boolean {
-    return formName.includes('gmax');
   }
 
   private async transformAbilities(abilitiesData: any[]): Promise<any[]> {
@@ -880,6 +1047,40 @@ class PokemonService {
   private extractIdFromUrl(url: string): string {
     const matches = url.match(/\/(\d+)\/$/);
     return matches?.[1] ?? '0';
+  }
+
+  // Extract form name from Pokemon name (e.g., "charizard-mega-x" -> "mega-x")
+  private extractFormName(pokemonName: string): string | null {
+    // List of known base Pokemon names that might have forms
+    const parts = pokemonName.split('-');
+    if (parts.length <= 1) {
+      return null;
+    }
+    
+    // Remove the base Pokemon name and return the form suffix
+    return parts.slice(1).join('-');
+  }
+
+  // Check if the Pokemon is a regional variant
+  private isRegionalVariant(formName: string | null): boolean {
+    if (!formName) return false;
+    
+    const regionalKeywords = ['alola', 'alolan', 'galar', 'galarian', 'hisui', 'hisuian', 'paldea', 'paldean'];
+    return regionalKeywords.some(keyword => formName.toLowerCase().includes(keyword));
+  }
+
+  // Check if the Pokemon is a Mega Evolution
+  private isMegaEvolution(formName: string | null): boolean {
+    if (!formName) return false;
+    
+    return formName.toLowerCase().includes('mega');
+  }
+
+  // Check if the Pokemon is a Gigantamax form
+  private isDynamax(formName: string | null): boolean {
+    if (!formName) return false;
+    
+    return formName.toLowerCase().includes('gmax');
   }
 }
 
