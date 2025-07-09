@@ -122,7 +122,7 @@ function PokemonListContent({
   const [initialLoadComplete, setInitialLoadComplete] = useState(
     initialPokemon.length > 0,
   );
-  const [showCompletionFooter, setShowCompletionFooter] = useState(true);
+  const [showCompletionFooter, setShowCompletionFooter] = useState(false);
   const completionFooterRef = useRef<HTMLElement>(null);
   const pokemonGridRef = useRef<PokemonGridHandle>(null);
 
@@ -247,7 +247,7 @@ function PokemonListContent({
     setCurrentGeneration(generation);
     changeGeneration(generation);
     // Reset completion footer when generation changes
-    setShowCompletionFooter(true);
+    setShowCompletionFooter(false);
     // Generation change doesn't show loading screen, only inline loading indicators
 
     // Clear search when changing generations
@@ -300,16 +300,16 @@ function PokemonListContent({
     search(searchQuery || "", { types: types as PokemonTypeName[] });
   };
 
-  // Auto-hide completion footer after 5 seconds with fade animation
+  // Manage completion footer visibility
   useEffect(() => {
-    if (
-      !loading &&
-      !hasNextPage &&
-      pokemons.length > 0 &&
-      showCompletionFooter
-    ) {
+    const isActive = loading || hasNextPage;
+
+    if (!isActive && pokemons.length > 0) {
+      // Show completion state when all loading is done
+      setShowCompletionFooter(true);
+
+      // Auto-hide after 5 seconds
       const timer = setTimeout(() => {
-        // Animate footer fade out before hiding
         if (completionFooterRef.current) {
           gsap.to(completionFooterRef.current, {
             opacity: 0,
@@ -321,14 +321,13 @@ function PokemonListContent({
             },
           });
         } else {
-          // Fallback if ref is not available
           setShowCompletionFooter(false);
         }
-      }, 5000); // Hide after 5 seconds
+      }, 5000);
 
       return () => clearTimeout(timer);
     }
-  }, [loading, hasNextPage, pokemons.length, showCompletionFooter]);
+  }, [loading, hasNextPage, pokemons.length]);
 
   // Handle scroll for header shrink/expand
   const handleScroll = useCallback(
@@ -525,13 +524,14 @@ function PokemonListContent({
             />
           </div>
 
-          {/* Progress Footer - Show based on loading state */}
+          {/* Progress Footer - Always show when we have Pokemon */}
           {pokemons.length > 0 && (
             <PokemonProgressFooter
               ref={completionFooterRef}
               lang={lang}
               loading={loading}
               hasNextPage={hasNextPage}
+              isActive={loading || hasNextPage}
               showCompletionFooter={showCompletionFooter}
               loadedCount={loadedCount}
               totalCount={totalCount}
