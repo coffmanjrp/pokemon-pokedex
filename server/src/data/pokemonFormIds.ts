@@ -181,10 +181,10 @@ const FORM_TO_BASE_ID_MAP: Record<number, number> = {
   10058: 380, 10059: 381, 10060: 445, 10061: 448, 10062: 460,
   
   // Alolan Forms
-  10091: 19, 10092: 20, 10093: 26, 10094: 27, 10095: 28, 10096: 37, 10097: 38,
+  10091: 19, 10092: 20, 10094: 27, 10095: 28, 10096: 37, 10097: 38,
   10098: 50, 10099: 51, 10100: 52, 10101: 53, 10102: 74, 10103: 75, 10104: 76,
   10105: 88, 10106: 89, 10107: 103, 10108: 105, 10109: 74, 10110: 75, 10111: 76,
-  10112: 88, 10113: 89, 10115: 105, 10149: 105,
+  10112: 88, 10113: 89, 10115: 105,
   
   // Galarian Forms
   10158: 52, 10159: 77, 10160: 78, 10161: 79, 10162: 80, 10163: 83, 10164: 110,
@@ -201,10 +201,8 @@ const FORM_TO_BASE_ID_MAP: Record<number, number> = {
   // Paldean Forms
   10251: 128, 10252: 128, 10253: 128, 10254: 194,
   
-  // Other Forms
-  10264: 800, 10265: 1007, 10266: 1008, 10267: 1007, 10268: 1008, 10269: 1007,
-  10270: 1008, 10271: 1007, 10272: 1008, 10273: 1007, 10274: 1008, 10275: 1017,
-  10276: 1024, 10277: 1024
+  // Other Forms (blacklisted forms removed)
+  10275: 1017, 10276: 1024, 10277: 1024
 };
 
 /**
@@ -221,9 +219,15 @@ function getBasePokemonId(formId: number): number {
  * @returns Array of form IDs sorted by base Pokemon ID, then by actual form ID
  */
 export function getSortedFormIdsByDisplayId(): number[] {
-  return [...REAL_FORM_IDS].sort((a, b) => {
+  console.log('[DEBUG] Starting getSortedFormIdsByDisplayId function');
+  console.log('[DEBUG] REAL_FORM_IDS length:', REAL_FORM_IDS.length);
+  console.log('[DEBUG] First 5 unsorted IDs:', REAL_FORM_IDS.slice(0, 5));
+  
+  const sorted = [...REAL_FORM_IDS].sort((a, b) => {
     const displayIdA = getBasePokemonId(a);
     const displayIdB = getBasePokemonId(b);
+    
+    console.log(`[DEBUG] Comparing ${a} (base: ${displayIdA}) vs ${b} (base: ${displayIdB})`);
     
     // Primary sort: display ID (base Pokemon ID)
     if (displayIdA !== displayIdB) {
@@ -233,6 +237,15 @@ export function getSortedFormIdsByDisplayId(): number[] {
     // Secondary sort: actual form ID
     return a - b;
   });
+  
+  // Debug output for first few entries
+  console.log('[DEBUG] First 10 sorted form IDs:');
+  sorted.slice(0, 10).forEach(formId => {
+    const baseId = getBasePokemonId(formId);
+    console.log(`  Form ID: ${formId} -> Base ID: ${baseId}`);
+  });
+  
+  return sorted;
 }
 
 /**
@@ -242,6 +255,9 @@ export function getSortedFormIdsByDisplayId(): number[] {
  * @returns Array of form IDs for the specified range, sorted by display ID
  */
 export function getSortedFormIdsForPagination(startIndex: number, limit: number): number[] {
+  console.log(`[DEBUG] getSortedFormIdsForPagination called with startIndex: ${startIndex}, limit: ${limit}`);
   const sortedFormIds = getSortedFormIdsByDisplayId();
-  return sortedFormIds.slice(startIndex, startIndex + limit);
+  const result = sortedFormIds.slice(startIndex, startIndex + limit);
+  console.log(`[DEBUG] Returning ${result.length} form IDs:`, result);
+  return result;
 }

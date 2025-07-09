@@ -41,7 +41,13 @@ function getFormTranslation(
  * Returns the species ID instead of the variant ID for consistent numbering
  */
 export function getPokemonDisplayId(pokemon: Pokemon): string {
-  // If this is a variant Pokemon and we have species data, use the species ID
+  // For Pokemon forms (Generation 0, ID >= 10000), always use species ID if available
+  const pokemonId = parseInt(pokemon.id);
+  if (pokemonId >= 10000 && pokemon.species?.id) {
+    return pokemon.species.id;
+  }
+
+  // For other variant Pokemon with species data, use the species ID
   if (pokemon.species?.id && pokemon.name.includes("-")) {
     return pokemon.species.id;
   }
