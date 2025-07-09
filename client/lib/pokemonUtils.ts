@@ -14,7 +14,7 @@ import { FaMars, FaVenus } from "react-icons/fa";
  * Returns the form suffix like "アローラのすがた", "メガ", etc.
  * @deprecated This function is deprecated and should use dictionary lookup instead
  */
- 
+
 function getFormTranslation(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _formName: string,
