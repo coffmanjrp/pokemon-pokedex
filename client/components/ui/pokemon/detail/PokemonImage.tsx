@@ -7,7 +7,9 @@ import {
   generatePokemonBlurDataURL,
   DEFAULT_BLUR_DATA_URL,
 } from "@/lib/blurDataUtils";
-const placeholderPokemon = "/placeholder-pokemon.png";
+// Use a simple SVG data URL as placeholder to avoid Next.js image optimization issues
+const placeholderPokemon =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 256 256'%3E%3Crect width='256' height='256' fill='%23f3f4f6'/%3E%3Ctext x='128' y='128' font-family='system-ui' font-size='120' text-anchor='middle' dominant-baseline='middle' fill='%23d1d5db'%3E%3F%3C/text%3E%3C/svg%3E";
 
 interface PokemonImageProps {
   pokemon: Pokemon;
@@ -119,7 +121,7 @@ export function PokemonImage({
         placeholder="blur"
         blurDataURL={blurDataURL}
         loading={priority ? "eager" : "lazy"}
-        unoptimized={typeof imageSrc === "string" && imageSrc.includes(".gif")} // Preserve GIF animations
+        unoptimized={typeof imageSrc === "string" && imageSrc.includes(".gif")} // Preserve GIF animations only
         fetchPriority={priority ? "high" : "low"}
         onLoad={() => setImageLoaded(true)}
         onError={() => {

@@ -439,7 +439,7 @@ function TestCard({
           <Image
             src={
               pokemon.sprites?.other?.["official-artwork"]?.front_default ||
-              "/placeholder-pokemon.png"
+              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' fill='%23f3f4f6'/%3E%3Ctext x='48' y='48' font-family='system-ui' font-size='48' text-anchor='middle' dominant-baseline='middle' fill='%23d1d5db'%3E%3F%3C/text%3E%3C/svg%3E"
             }
             alt={pokemon.name}
             width={96}
