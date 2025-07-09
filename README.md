@@ -13,7 +13,7 @@ Pokemon Pokedex application built with Next.js 15, TypeScript, and GraphQL.
 |----------|-------------|
 | **Frontend** | Next.js 15, TypeScript, TailwindCSS |
 | **State** | Redux Toolkit, Apollo Client |
-| **Backend** | Apollo Server, Express, Redis |
+| **Backend** | Apollo Server, Express |
 | **Data** | PokeAPI, GraphQL |
 
 ## 🚀 Quick Start
@@ -40,8 +40,8 @@ npm run dev
 Create `server/.env`:
 
 ```bash
-# Redis Configuration (Optional - falls back to in-memory cache)
-REDIS_URL=your_redis_server_url
+# Redis Configuration (Removed - using localStorage and CDN caching instead)
+# REDIS_URL=redis://localhost:6379
 
 # Server Configuration
 PORT=4000

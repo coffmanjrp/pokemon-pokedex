@@ -333,7 +333,7 @@ npm run build:gen-1             # Specific generation build
 
 ### Hybrid Architecture
 - **Frontend**: Vercel (Next.js optimized platform)
-- **Backend**: Railway (GraphQL + Redis)
+- **Backend**: Railway (GraphQL only)
 - **Status**: Production-ready with CORS wildcard pattern matching for dynamic URLs
 
 ### Environment Configuration
@@ -344,7 +344,7 @@ NEXT_PUBLIC_GRAPHQL_URL=https://your-backend.railway.app/graphql
 # Backend (Railway)
 CORS_ORIGIN=https://*.vercel.app
 PORT=4000
-REDIS_URL=redis://localhost:6379
+# Redis removed - using localStorage and CDN caching instead
 ```
 
 ### Production URLs
@@ -354,9 +354,9 @@ REDIS_URL=redis://localhost:6379
 ## External APIs
 
 - **PokeAPI**: Primary data source for Pokemon information (v2 API)
-- **Redis Cache**: Server-side caching with 5-minute TTL
 - **GraphQL Server**: Custom Apollo Server with intelligent caching
 - **Apollo Client Cache**: Browser-side caching for efficient data management
+- **CDN Cache**: Server-side caching with 24-hour TTL via Cache-Control headers
 
 ## Virtual Scrolling Implementation
 
@@ -430,9 +430,9 @@ Generation 0 displays special Pokemon forms including Mega Evolutions, Regional 
 - **Server-side**: Special handling in `getPokemonFormsBasic()` for offset >= 10000
 - **Non-sequential IDs**: Uses `REAL_FORM_IDS` array for pagination instead of continuous ranges
 - **Client-side**: Modified `getTotalFormCount()` to count only Generation 0 forms (10033-10277)
-- **Cache Support**: Full localStorage and Redis caching with UTF-8 encoding for form names
+- **Cache Support**: Full localStorage caching with UTF-8 encoding for form names
 - **Form ID Sorting**: Enhanced sorting system using base Pokemon species ID for logical ordering of forms
-- **Species Mapping**: Intelligent form-to-species mapping with Redis caching for optimal performance
+- **Species Mapping**: Intelligent form-to-species mapping with in-memory caching for optimal performance
 - **Display ID Management**: Proper display ID calculation for form Pokemon showing base species ID
 - **Module Resolution**: Blacklist data moved to both server and client directories for Railway deployment compatibility
 - **Navigation Enhancement**: URL parameter persistence and scroll position restoration for seamless user experience
