@@ -5,7 +5,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { typeDefs } from './schema';
 import { resolvers } from './resolvers';
-import { cacheService } from './services/cacheService';
 
 dotenv.config();
 
@@ -56,9 +55,7 @@ const isOriginAllowed = (origin: string, allowedOrigins: string[]): boolean => {
 const ALLOWED_ORIGINS = getAllowedOrigins();
 
 async function startServer() {
-  // Initialize cache service
-  console.log('Connecting to Redis cache...');
-  await cacheService.connect();
+  // Redis removed - using localStorage and CDN caching instead
 
   const app = express();
 
@@ -68,6 +65,15 @@ async function startServer() {
   });
 
   await server.start();
+
+  // Add Cache-Control headers for CDN caching
+  app.use((req, res, next) => {
+    // Set cache headers for GraphQL responses
+    if (req.path === '/graphql') {
+      res.set('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800');
+    }
+    next();
+  });
 
   app.use(
     '/graphql',
@@ -105,23 +111,10 @@ async function startServer() {
         timestamp: new Date().toISOString(),
         environment: process.env['NODE_ENV'] || 'development',
         port: PORT,
-        redis: {
-          connected: false,
-          error: null as string | null
-        },
         graphql: {
           status: 'running'
         }
       };
-
-      // Check Redis connection
-      try {
-        await cacheService.get('health-check');
-        health.redis.connected = true;
-      } catch (error) {
-        health.redis.connected = false;
-        health.redis.error = error instanceof Error ? error.message : 'Unknown error';
-      }
 
       res.json(health);
     } catch (error) {
@@ -136,14 +129,13 @@ async function startServer() {
   const httpServer = app.listen(Number(PORT), () => {
     console.log(`🚀 Server ready at http://localhost:${PORT}/graphql`);
     console.log(`🏥 Health check at http://localhost:${PORT}/health`);
-    console.log(`💾 Redis cache enabled`);
+    console.log(`💾 CDN caching enabled with 24-hour TTL`);
     console.log(`🌐 CORS enabled for origins:`, ALLOWED_ORIGINS);
   });
 
   // Graceful shutdown
   process.on('SIGTERM', async () => {
     console.log('SIGTERM received, shutting down gracefully...');
-    await cacheService.disconnect();
     httpServer.close(() => {
       console.log('Server closed');
       process.exit(0);

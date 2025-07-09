@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { Pokemon, PokemonConnection } from '../types/pokemon';
-import { cacheService } from './cacheService';
 import { REAL_FORM_IDS, getFormIdsForPagination, getSortedFormIdsForPagination, getTotalRealFormCount } from '../data/pokemonFormIds';
 
 const POKEAPI_BASE_URL = process.env['POKEAPI_BASE_URL'] || 'https://pokeapi.co/api/v2';
@@ -11,9 +10,16 @@ const axiosInstance = axios.create({
   maxRedirects: 3,
 });
 
-// Cache for Pokemon form to species ID mapping
+// In-memory cache for Pokemon form to species ID mapping
 const formToSpeciesCache = new Map<number, number>();
 let isCacheInitialized = false;
+
+// Add rate limiting
+let lastRequestTime = 0;
+const MIN_REQUEST_INTERVAL = 50; // 50ms between requests
+let totalRequests = 0;
+let requestsThisMinute = 0;
+let minuteResetTime = Date.now() + 60000;
 
 class PokemonService {
   // Initialize form to species mapping cache
@@ -21,19 +27,6 @@ class PokemonService {
     if (isCacheInitialized) return;
     
     console.log('[DEBUG] Initializing form to species cache...');
-    const cacheKey = 'pokemon:form-species-mapping';
-    
-    // Try to get from Redis first
-    const cachedMapping = await cacheService.get(cacheKey);
-    if (cachedMapping) {
-      const mappings = cachedMapping as Record<number, number>;
-      Object.entries(mappings).forEach(([formId, speciesId]) => {
-        formToSpeciesCache.set(parseInt(formId), speciesId as number);
-      });
-      isCacheInitialized = true;
-      console.log(`[DEBUG] Loaded ${formToSpeciesCache.size} mappings from cache`);
-      return;
-    }
     
     // Build the cache by fetching species data for all forms
     const mappings: Record<number, number> = {};
@@ -58,10 +51,8 @@ class PokemonService {
       5
     );
     
-    // Cache the mapping for 24 hours
-    await cacheService.set(cacheKey, mappings, 86400);
     isCacheInitialized = true;
-    console.log(`[DEBUG] Initialized cache with ${formToSpeciesCache.size} mappings`);
+    console.log(`[DEBUG] Initialized in-memory cache with ${formToSpeciesCache.size} mappings`);
   }
   
   // Get sorted form IDs based on species ID
@@ -82,40 +73,32 @@ class PokemonService {
       return a - b;
     });
   }
-  // Determine which endpoints should be cached
-  private shouldCacheEndpoint(endpoint: string): boolean {
-    // Cache essential data for card lists and basic Pokemon info
-    if (endpoint.includes('/pokemon/') && !endpoint.includes('/pokemon-species/')) {
-      return true; // Basic Pokemon data (for cards)
-    }
-    if (endpoint.includes('/pokemon-species/')) {
-      return true; // Species data (names, genera)
+  // Rate limiting helper with monitoring
+  private async enforceRateLimit(): Promise<void> {
+    const now = Date.now();
+    
+    // Reset minute counter if needed
+    if (now > minuteResetTime) {
+      console.log(`[Rate Limit] Requests in last minute: ${requestsThisMinute}`);
+      requestsThisMinute = 0;
+      minuteResetTime = now + 60000;
     }
     
-    // Don't cache heavy/infrequently accessed data
-    if (endpoint.includes('/move/')) {
-      return false; // Move details are heavy and rarely accessed
-    }
-    if (endpoint.includes('/evolution-chain/')) {
-      return false; // Evolution chains are complex and infrequently accessed
-    }
-    if (endpoint.includes('/ability/')) {
-      return false; // Ability details are rarely accessed in full
+    const timeSinceLastRequest = now - lastRequestTime;
+    
+    if (timeSinceLastRequest < MIN_REQUEST_INTERVAL) {
+      const delay = MIN_REQUEST_INTERVAL - timeSinceLastRequest;
+      await new Promise(resolve => setTimeout(resolve, delay));
     }
     
-    return true; // Cache other endpoints by default
-  }
-
-  // Determine cache duration based on endpoint type
-  private getCacheDuration(endpoint: string): number {
-    if (endpoint.includes('/pokemon/') && !endpoint.includes('/pokemon-species/')) {
-      return 3600; // 60 minutes for basic Pokemon data (frequently accessed)
-    }
-    if (endpoint.includes('/pokemon-species/')) {
-      return 3600; // 60 minutes for species data (frequently accessed)
-    }
+    lastRequestTime = Date.now();
+    totalRequests++;
+    requestsThisMinute++;
     
-    return 1800; // 30 minutes for other endpoints
+    // Log every 100 requests
+    if (totalRequests % 100 === 0) {
+      console.log(`[Rate Limit] Total requests: ${totalRequests}, This minute: ${requestsThisMinute}`);
+    }
   }
 
   // Limit concurrent requests to prevent overwhelming PokeAPI
@@ -139,36 +122,15 @@ class PokemonService {
   }
 
   private async fetchFromPokeAPI(endpoint: string, retryCount = 0): Promise<any> {
-    // Determine if this endpoint should be cached
-    const shouldCache = this.shouldCacheEndpoint(endpoint);
-    
-    if (shouldCache) {
-      // Check cache first
-      const cacheKey = `pokeapi:${endpoint}`;
-      const cachedData = await cacheService.get(cacheKey);
-      if (cachedData) {
-        console.log(`Cache hit for ${endpoint}`);
-        return cachedData;
-      }
-    }
+    // Apply rate limiting
+    await this.enforceRateLimit();
 
     const maxRetries = 3;
     const delay = (attempt: number) => new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempt))); // Exponential backoff
     
     try {
       const response = await axiosInstance.get(`${POKEAPI_BASE_URL}${endpoint}`);
-      const data = response.data;
-      
-      if (shouldCache) {
-        // Determine cache duration based on endpoint type
-        const cacheDuration = this.getCacheDuration(endpoint);
-        await cacheService.set(`pokeapi:${endpoint}`, data, cacheDuration);
-        console.log(`Cached ${endpoint} for ${cacheDuration / 60} minutes`);
-      } else {
-        console.log(`Skipped caching for ${endpoint} (not cacheable)`);
-      }
-      
-      return data;
+      return response.data;
     } catch (error: any) {
       console.error(`Error fetching from PokeAPI: ${endpoint}`, error.code || error.message);
       
