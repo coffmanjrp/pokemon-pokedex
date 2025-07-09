@@ -4,7 +4,7 @@
  * Used for displaying correct Pokemon numbers in badges and navigation
  */
 
-import blacklistConfig from "../../../shared/blacklist.json";
+import blacklistConfig from "./blacklist.json";
 
 export interface FormMapping {
   formId: number;

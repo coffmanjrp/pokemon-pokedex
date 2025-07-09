@@ -1,0 +1,6 @@
+{
+  "blacklistedFormIds": [
+    10093, 10149, 10264, 10265, 10266, 10267, 10268, 10269, 10270, 10271
+  ],
+  "reason": "These Pokemon forms have no sprite data available"
+}
