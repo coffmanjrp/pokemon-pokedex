@@ -19,10 +19,7 @@ import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { setSelectedPokemon } from "../../store/slices/pokemonSlice";
 import { setLanguage, setDictionary } from "../../store/slices/uiSlice";
 import { setReturnFromDetail } from "../../store/slices/navigationSlice";
-import {
-  getGenerationScroll,
-  isScrollDataValid,
-} from "../../lib/utils/scrollStorage";
+import { getScrollPositionForGeneration } from "../../lib/utils/scrollStorage";
 import { useEffect, useState, useRef, Suspense, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Pokemon, PokemonTypeName } from "@/types/pokemon";
@@ -158,9 +155,10 @@ function PokemonListContent({
 
         if (generationFromParam === currentGeneration) {
           // Check session storage for scroll position
-          const scrollData = getGenerationScroll(currentGeneration);
+          const scrollData = getScrollPositionForGeneration(currentGeneration);
 
-          if (scrollData && isScrollDataValid(scrollData)) {
+          if (scrollData && scrollData.timestamp > Date.now() - 300000) {
+            // 5 minutes validity
             // Small delay to ensure DOM is ready
             setTimeout(() => {
               if (

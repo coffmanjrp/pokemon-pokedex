@@ -26,7 +26,10 @@ import {
   saveScrollPosition,
   setLastVisitedPokemon,
 } from "@/store/slices/navigationSlice";
-import { saveScrollToStorage } from "@/lib/utils/scrollStorage";
+import {
+  saveScrollPositionToStorage,
+  saveLastVisitedPokemon as saveLastVisitedToStorage,
+} from "@/lib/utils/scrollStorage";
 
 interface PokemonCardProps {
   pokemon: Pokemon;
@@ -123,7 +126,8 @@ const PokemonCard = memo(function PokemonCard({
       dispatch(setLastVisitedPokemon(pokemon.id));
 
       // Save to sessionStorage
-      saveScrollToStorage(scrollData);
+      saveScrollPositionToStorage(scrollData);
+      saveLastVisitedToStorage(pokemon.id);
     }
 
     // Trigger animation without waiting for completion
