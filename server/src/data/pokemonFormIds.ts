@@ -4,7 +4,7 @@
  * Used for pagination in the "Other" generation to skip non-existent IDs
  */
 
-import blacklistConfig from '@shared/blacklist.json';
+import blacklistConfig from './blacklist.json';
 
 const ALL_FORM_IDS: number[] = [
   // Mega Evolutions
