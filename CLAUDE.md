@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. Pokemon detail pages use SSG for optimal performance with individual Pokemon data pre-generated at build time. Pokemon list pages use full client-side rendering with intelligent cache system for seamless generation switching. Hybrid deployment fully operational with frontend deployed on Vercel and backend on Railway. Complete 9-language support implemented (English, Japanese, Traditional Chinese, Simplified Chinese, Spanish, Korean, French, German, Italian) with comprehensive translations, Pokemon data localization through PokeAPI GraphQL integration, and complete UI coverage including SEO metadata. Icon system consolidation completed using react-icons library (Heroicons v2 for UI elements, Font Awesome for specialized symbols) for consistent styling, better accessibility, and improved maintainability. Pokemon classification system fully implemented with multilingual badge support (Baby→ベイビィ, Legendary→伝説, Mythical→幻) across all 9 languages, comprehensive animation system with 26 distinct effects including classification-based hover animations, and enhanced sandbox environment with categorized animation testing. Recent improvements include Pokemon cache system optimization with enhanced UTF-8 character encoding for Japanese Pokemon names, server-side Pokemon service enhancements with intelligent caching strategies, resolution of animation cleanup issues ensuring smooth user experience, virtual scrolling implementation with react-window for large datasets (threshold: 10+ Pokemon), dynamic header shrinking system with smooth GSAP animations that preserves search functionality through icon display, streamlined search interface with simplified input mechanism eliminating dropdown suggestions for improved UI stability and performance, complete move data multilingual support with tooltip-based descriptions using react-tooltip, damage class localization through dictionary system, and data source annotations. Generation 0 (Other) implementation now includes centralized blacklist system for excluding Pokemon forms without sprite data, enhanced Pokemon form ID display and sorting functionality based on base Pokemon species ID for improved user experience, and proper form-to-species mapping with intelligent caching for optimal performance. Pokemon badge system fully refactored with Strategy Pattern implementation for improved maintainability, unified color schemes for all badge types, and centralized badge logic in utility functions.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. Pokemon detail pages use SSG for optimal performance with individual Pokemon data pre-generated at build time. Pokemon list pages use full client-side rendering with intelligent cache system for seamless generation switching. Hybrid deployment fully operational with frontend deployed on Vercel and backend on Railway. Complete 9-language support implemented (English, Japanese, Traditional Chinese, Simplified Chinese, Spanish, Korean, French, German, Italian) with comprehensive translations, Pokemon data localization through PokeAPI GraphQL integration, and complete UI coverage including SEO metadata. Icon system consolidation completed using react-icons library (Heroicons v2 for UI elements, Font Awesome for specialized symbols) for consistent styling, better accessibility, and improved maintainability. Pokemon classification system fully implemented with multilingual badge support (Baby→ベイビィ, Legendary→伝説, Mythical→幻) across all 9 languages, comprehensive animation system with 26 distinct effects including classification-based hover animations, and enhanced sandbox environment with categorized animation testing. Recent improvements include Pokemon cache system optimization with enhanced UTF-8 character encoding for Japanese Pokemon names, server-side Pokemon service enhancements with intelligent caching strategies, resolution of animation cleanup issues ensuring smooth user experience, virtual scrolling implementation with react-window for large datasets (threshold: 10+ Pokemon), dynamic header shrinking system with smooth GSAP animations that preserves search functionality through icon display, streamlined search interface with simplified input mechanism eliminating dropdown suggestions for improved UI stability and performance, complete move data multilingual support with tooltip-based descriptions using react-tooltip, damage class localization through dictionary system, and data source annotations. Generation 0 (Other) implementation now includes centralized blacklist system for excluding Pokemon forms without sprite data, enhanced Pokemon form ID display and sorting functionality based on base Pokemon species ID for improved user experience, proper form-to-species mapping with intelligent caching for optimal performance, scroll position restoration system with session storage persistence for seamless navigation experience, and optimized user interface with hidden generation information in footer and loading screens for cleaner presentation. Pokemon badge system fully refactored with Strategy Pattern implementation for improved maintainability, unified color schemes for all badge types, and centralized badge logic in utility functions.
 
 ## Architecture
 
@@ -302,6 +302,12 @@ npm run build:gen-1             # Specific generation build
 - Use Redux state for current generation: `useAppSelector((state) => state.pokemon.currentGeneration)`
 - Sidebar handles generation filtering and updates Redux state
 
+### Generation 0 (Other) Navigation
+- **URL Parameter Persistence**: Generation 0 parameters are properly preserved during detail page navigation
+- **Detail Page URLs**: Include `?from=generation-0` parameter for proper back navigation
+- **Scroll Position Restoration**: Automatic scroll position restoration when returning from detail pages using session storage
+- **UI Optimization**: Generation information (number and ID ranges) hidden in footer and loading screens for cleaner presentation
+
 ### Language Navigation
 - Use `href="{/${language}/}"` instead of `href="/"` in navigation components
 - Extract current language using `usePathname()` and `getLocaleFromPathname()`
@@ -428,14 +434,22 @@ Generation 0 displays special Pokemon forms including Mega Evolutions, Regional 
 - **Form ID Sorting**: Enhanced sorting system using base Pokemon species ID for logical ordering of forms
 - **Species Mapping**: Intelligent form-to-species mapping with Redis caching for optimal performance
 - **Display ID Management**: Proper display ID calculation for form Pokemon showing base species ID
+- **Module Resolution**: Blacklist data moved to both server and client directories for Railway deployment compatibility
+- **Navigation Enhancement**: URL parameter persistence and scroll position restoration for seamless user experience
+- **UI Optimization**: Generation information hidden in footer and loading screens for cleaner presentation
 
 ### Key Files
 - `/server/src/data/pokemonFormIds.ts` - Server-side form ID list with blacklist filtering and sorting logic
 - `/client/lib/data/pokemonFormMappings.ts` - Client-side form mappings with blacklist filtering  
-- `/shared/blacklist.json` - Centralized blacklist configuration
+- `/server/src/data/blacklist.json` - Server-side blacklist configuration (copied from shared)
+- `/client/lib/data/blacklist.json` - Client-side blacklist configuration (copied from shared)
+- `/shared/blacklist.json` - Original centralized blacklist configuration (reference)
 - `/client/lib/data/generations.ts` - Generation 0 configuration with range 10033-10277
 - `/server/src/services/pokemonService.ts` - Enhanced Pokemon service with form sorting and caching
 - `/client/lib/pokemonUtils.ts` - Utility functions for Pokemon display ID and form handling
+- `/client/components/ui/pokemon/detail/PokemonDetailHeader.tsx` - Enhanced back navigation with URL parameter preservation
+- `/client/components/ui/pokemon/list/PokemonProgressFooter.tsx` - Progress footer with Generation 0 UI optimization
+- `/client/components/ui/pokemon/list/GenerationSwitchingOverlay.tsx` - Loading overlay with Generation 0 UI optimization
 
 ## Adding New Language Support
 
