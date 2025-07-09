@@ -7,7 +7,7 @@ import {
   generatePokemonBlurDataURL,
   DEFAULT_BLUR_DATA_URL,
 } from "@/lib/blurDataUtils";
-import placeholderPokemon from "@/public/placeholder-pokemon.png";
+import placeholderPokemon from "/placeholder-pokemon.png";
 
 interface PokemonImageProps {
   pokemon: Pokemon;
