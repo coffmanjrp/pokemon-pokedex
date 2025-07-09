@@ -7,14 +7,6 @@
         "@upstash/context7-mcp"
       ],
       "env": {}
-    },
-    "fetch": {
-      "type": "stdio",
-      "command": "npx",
-      "args": [
-        "@mcp/fetch@latest"
-      ],
-      "env": {}
     }
   }
 }
