@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import pokemonReducer from "./slices/pokemonSlice";
 import uiReducer from "./slices/uiSlice";
 import searchReducer from "./slices/searchSlice";
+import navigationReducer from "./slices/navigationSlice";
 
 export const store = configureStore({
   reducer: {
     pokemon: pokemonReducer,
     ui: uiReducer,
     search: searchReducer,
+    navigation: navigationReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -1,11 +1,16 @@
 "use client";
 
-import { useCallback, forwardRef } from "react";
+import { useCallback, forwardRef, useImperativeHandle, useRef } from "react";
 import { VariableSizeGrid as Grid } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { Pokemon } from "@/types/pokemon";
 import { PokemonCard } from "./PokemonCard";
 import { Locale } from "@/lib/dictionaries";
+
+export interface VirtualPokemonGridHandle {
+  scrollToItem: (index: number) => void;
+  scrollToTop: () => void;
+}
 
 interface VirtualPokemonGridProps {
   pokemons: Pokemon[];
@@ -97,74 +102,112 @@ const CellRenderer = ({
         className="h-full"
         priority={priority && index < 10}
         lang={language}
+        pokemonIndex={index}
         {...(currentGeneration !== undefined && { currentGeneration })}
       />
     </div>
   );
 };
 
-export const VirtualPokemonGrid = ({
-  pokemons,
-  onPokemonClick,
-  language = "en",
-  priority = false,
-  currentGeneration,
-  onScroll,
-}: VirtualPokemonGridProps) => {
-  // Calculate columns based on width
-  const getColumns = useCallback((width: number) => {
-    // Account for padding when calculating columns
-    const effectiveWidth = width - PADDING_SIZE * 2;
-    if (effectiveWidth < 640) return 1; // Mobile
-    if (effectiveWidth < 768) return 2; // Small tablet
-    if (effectiveWidth < 1024) return 3; // Tablet
-    if (effectiveWidth < 1280) return 4; // Small desktop
-    return 5; // Large desktop
-  }, []);
+export const VirtualPokemonGrid = forwardRef<
+  VirtualPokemonGridHandle,
+  VirtualPokemonGridProps
+>(
+  (
+    {
+      pokemons,
+      onPokemonClick,
+      language = "en",
+      priority = false,
+      currentGeneration,
+      onScroll,
+    },
+    ref,
+  ) => {
+    const gridRef = useRef<Grid>(null);
+    // Calculate columns based on width
+    const getColumns = useCallback((width: number) => {
+      // Account for padding when calculating columns
+      const effectiveWidth = width - PADDING_SIZE * 2;
+      if (effectiveWidth < 640) return 1; // Mobile
+      if (effectiveWidth < 768) return 2; // Small tablet
+      if (effectiveWidth < 1024) return 3; // Tablet
+      if (effectiveWidth < 1280) return 4; // Small desktop
+      return 5; // Large desktop
+    }, []);
 
-  // Fixed card height for each breakpoint
-  const getItemHeight = useCallback((width: number) => {
-    return width < 640 ? 300 : 337; // Include padding - slightly taller
-  }, []);
+    // Fixed card height for each breakpoint
+    const getItemHeight = useCallback((width: number) => {
+      return width < 640 ? 300 : 337; // Include padding - slightly taller
+    }, []);
 
-  return (
-    <AutoSizer>
-      {({ height, width }) => {
-        const columns = getColumns(width);
-        const rowCount = Math.ceil(pokemons.length / columns);
-        const itemHeight = getItemHeight(width);
+    // Expose methods to parent component
+    useImperativeHandle(
+      ref,
+      () => ({
+        scrollToItem: (index: number) => {
+          if (gridRef.current) {
+            const columns = getColumns(window.innerWidth);
+            const rowIndex = Math.floor(index / columns);
+            const columnIndex = index % columns;
+            gridRef.current.scrollToItem({
+              rowIndex,
+              columnIndex,
+              align: "center",
+            });
+          }
+        },
+        scrollToTop: () => {
+          if (gridRef.current) {
+            gridRef.current.scrollTo({ scrollLeft: 0, scrollTop: 0 });
+          }
+        },
+      }),
+      [getColumns],
+    );
 
-        // Calculate column width evenly, accounting for padding
-        const effectiveWidth = width - PADDING_SIZE * 2;
-        const columnWidth = () => Math.floor(effectiveWidth / columns);
+    return (
+      <AutoSizer>
+        {({ height, width }) => {
+          const columns = getColumns(width);
+          const rowCount = Math.ceil(pokemons.length / columns);
+          const itemHeight = getItemHeight(width);
 
-        // Fixed row height
-        const rowHeight = () => itemHeight;
+          // Calculate column width evenly, accounting for padding
+          const effectiveWidth = width - PADDING_SIZE * 2;
+          const columnWidth = () => Math.floor(effectiveWidth / columns);
 
-        return (
-          <Grid
-            columnCount={columns}
-            columnWidth={columnWidth}
-            height={height}
-            rowCount={rowCount}
-            rowHeight={rowHeight}
-            width={width}
-            innerElementType={innerElementType}
-            itemData={{
-              pokemons,
-              columns,
-              onPokemonClick,
-              language,
-              priority,
-              ...(currentGeneration !== undefined && { currentGeneration }),
-            }}
-            onScroll={onScroll}
-            className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100"
-          >
-            {CellRenderer}
-          </Grid>
-        );
-      }}
-    </AutoSizer>
-  );
-};
+          // Fixed row height
+          const rowHeight = () => itemHeight;
+
+          return (
+            <Grid
+              ref={gridRef}
+              columnCount={columns}
+              columnWidth={columnWidth}
+              height={height}
+              rowCount={rowCount}
+              rowHeight={rowHeight}
+              width={width}
+              innerElementType={innerElementType}
+              itemData={{
+                pokemons,
+                columns,
+                onPokemonClick,
+                language,
+                priority,
+                ...(currentGeneration !== undefined && { currentGeneration }),
+              }}
+              onScroll={onScroll}
+              className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100"
+            >
+              {CellRenderer}
+            </Grid>
+          );
+        }}
+      </AutoSizer>
+    );
+  },
+);
+
+VirtualPokemonGrid.displayName = "VirtualPokemonGrid";

@@ -1,6 +1,9 @@
 "use client";
 
-import { PokemonGrid } from "../../components/ui/pokemon/list/PokemonGrid";
+import {
+  PokemonGrid,
+  PokemonGridHandle,
+} from "../../components/ui/pokemon/list/PokemonGrid";
 import { AnimatedLoadingScreen } from "../../components/ui/animation/AnimatedLoadingScreen";
 import { Sidebar } from "../../components/layout/Sidebar";
 import { GenerationHeader } from "../../components/layout/GenerationHeader";
@@ -15,6 +18,11 @@ import { usePokemonSearch } from "../../hooks/usePokemonSearch";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { setSelectedPokemon } from "../../store/slices/pokemonSlice";
 import { setLanguage, setDictionary } from "../../store/slices/uiSlice";
+import { setReturnFromDetail } from "../../store/slices/navigationSlice";
+import {
+  getGenerationScroll,
+  isScrollDataValid,
+} from "../../lib/utils/scrollStorage";
 import { useEffect, useState, useRef, Suspense, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Pokemon, PokemonTypeName } from "@/types/pokemon";
@@ -116,6 +124,7 @@ function PokemonListContent({
   );
   const [showCompletionFooter, setShowCompletionFooter] = useState(true);
   const completionFooterRef = useRef<HTMLElement>(null);
+  const pokemonGridRef = useRef<PokemonGridHandle>(null);
 
   // Sync language and dictionary from server props to Redux store
   useEffect(() => {
@@ -136,6 +145,58 @@ function PokemonListContent({
       setShowLoadingScreen(false);
     }
   }, [loading, pokemons.length, initialLoadComplete]);
+
+  // Check if returning from detail page and restore scroll position
+  useEffect(() => {
+    if (!loading && pokemons.length > 0 && pokemonGridRef.current) {
+      const fromParam = searchParams.get("from");
+      if (fromParam && fromParam.startsWith("generation-")) {
+        // Extract generation number from "generation-X" format
+        const generationFromParam = parseInt(
+          fromParam.replace("generation-", ""),
+        );
+
+        if (generationFromParam === currentGeneration) {
+          // Check session storage for scroll position
+          const scrollData = getGenerationScroll(currentGeneration);
+
+          if (scrollData && isScrollDataValid(scrollData)) {
+            // Small delay to ensure DOM is ready
+            setTimeout(() => {
+              if (
+                scrollData.pokemonIndex !== undefined &&
+                pokemonGridRef.current
+              ) {
+                // Use index-based scrolling for virtual grid
+                pokemonGridRef.current.scrollToItem(scrollData.pokemonIndex);
+              } else if (scrollData.scrollTop !== undefined) {
+                // Use scroll position for standard grid
+                window.scrollTo({
+                  top: scrollData.scrollTop,
+                  behavior: "auto",
+                });
+              }
+
+              // Clear the "from" parameter after restoring
+              dispatch(setReturnFromDetail(false));
+              const newUrl = new URL(window.location.href);
+              newUrl.searchParams.delete("from");
+              router.replace(newUrl.pathname + newUrl.search, {
+                scroll: false,
+              });
+            }, 100);
+          }
+        }
+      }
+    }
+  }, [
+    loading,
+    pokemons.length,
+    currentGeneration,
+    searchParams,
+    router,
+    dispatch,
+  ]);
 
   const handleLoadingComplete = () => {
     // Fallback when data is not ready yet
@@ -407,6 +468,7 @@ function PokemonListContent({
               pokemons.length > 0 && (
                 <div className="flex-1 overflow-auto">
                   <PokemonGrid
+                    ref={pokemonGridRef}
                     pokemons={pokemons}
                     onPokemonClick={handlePokemonClick}
                     loading={loading}
