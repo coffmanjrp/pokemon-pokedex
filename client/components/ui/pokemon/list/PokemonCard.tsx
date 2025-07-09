@@ -7,7 +7,7 @@ import {
   getPokemonGenus,
   getPokemonDisplayId,
 } from "@/lib/pokemonUtils";
-import { useAppSelector } from "@/store/hooks";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { useRef, memo, useEffect, useState } from "react";
 import {
   createParticleEchoCombo,
@@ -22,6 +22,14 @@ import { PokemonBadge } from "../../common/PokemonBadge";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Locale } from "@/lib/dictionaries";
+import {
+  saveScrollPosition,
+  setLastVisitedPokemon,
+} from "@/store/slices/navigationSlice";
+import {
+  saveScrollPositionToStorage,
+  saveLastVisitedPokemon as saveLastVisitedToStorage,
+} from "@/lib/utils/scrollStorage";
 
 interface PokemonCardProps {
   pokemon: Pokemon;
@@ -30,6 +38,7 @@ interface PokemonCardProps {
   priority?: boolean;
   lang?: Locale;
   currentGeneration?: number;
+  pokemonIndex?: number; // Index in the current list
 }
 
 const PokemonCard = memo(function PokemonCard({
@@ -39,8 +48,10 @@ const PokemonCard = memo(function PokemonCard({
   priority = false,
   lang,
   currentGeneration,
+  pokemonIndex,
 }: PokemonCardProps) {
   const { language, dictionary } = useAppSelector((state) => state.ui);
+  const dispatch = useAppDispatch();
   const router = useRouter();
   const linkRef = useRef<HTMLAnchorElement>(null);
   const primaryType = pokemon.types[0]?.type.name as PokemonTypeName;
@@ -99,6 +110,25 @@ const PokemonCard = memo(function PokemonCard({
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
+
+    // Save scroll position before navigation
+    if (currentGeneration !== undefined) {
+      const scrollData = {
+        generation: currentGeneration,
+        scrollTop: window.scrollY,
+        ...(pokemonIndex !== undefined && { pokemonIndex }),
+        pokemonId: pokemon.id,
+        timestamp: Date.now(),
+      };
+
+      // Save to Redux
+      dispatch(saveScrollPosition(scrollData));
+      dispatch(setLastVisitedPokemon(pokemon.id));
+
+      // Save to sessionStorage
+      saveScrollPositionToStorage(scrollData);
+      saveLastVisitedToStorage(pokemon.id);
+    }
 
     // Trigger animation without waiting for completion
     triggerAnimation(e);
