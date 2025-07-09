@@ -8,6 +8,10 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "allowJs": true,
+    "baseUrl": "./",
+    "paths": {
+      "@shared/*": ["../shared/*"]
+    },
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
