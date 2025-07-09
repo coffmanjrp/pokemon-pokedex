@@ -12,10 +12,14 @@ import { FaMars, FaVenus } from "react-icons/fa";
 /**
  * Get form translation for use in Japanese Pokemon names
  * Returns the form suffix like "アローラのすがた", "メガ", etc.
+ * @deprecated This function is deprecated and should use dictionary lookup instead
  */
+
 function getFormTranslation(
-  formName: string,
-  language:
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _formName: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _language:
     | "en"
     | "ja"
     | "zh-Hant"
@@ -26,10 +30,6 @@ function getFormTranslation(
     | "it"
     | "de",
 ): string | null {
-  console.log(
-    `[getFormTranslation] Looking for translation of "${formName}" in language "${language}"`,
-  );
-
   // Special forms now handled by dictionary system
   // This function is deprecated and should use dictionary lookup instead
 
@@ -293,31 +293,19 @@ export function getPokemonName(
                 const megaText =
                   dictionary?.ui?.forms?.translations?.mega || "メガ";
                 const result = `${megaText}${speciesName.name}${formTranslation}`;
-                console.log(
-                  `[getPokemonName] Japanese Mega X/Y variant: ${pokemon.name} -> ${result}`,
-                );
                 return result;
               } else {
                 // For other Mega forms: "メガポケモン名" format
                 const result = `${formTranslation}${speciesName.name}`;
-                console.log(
-                  `[getPokemonName] Japanese Mega variant: ${pokemon.name} -> ${result}`,
-                );
                 return result;
               }
             } else if (isPrimalForm(formName)) {
               // Special handling for Primal forms: "ゲンシポケモン名" format
               const result = `${formTranslation}${speciesName.name}`;
-              console.log(
-                `[getPokemonName] Japanese Primal variant: ${pokemon.name} -> ${result}`,
-              );
               return result;
             } else {
               // For other forms: "ポケモン名（フォーム名）" format
               const result = `${speciesName.name}（${formTranslation}）`;
-              console.log(
-                `[getPokemonName] Japanese variant: ${pokemon.name} -> ${result}`,
-              );
               return result;
             }
           } else {
@@ -331,24 +319,15 @@ export function getPokemonName(
                 const megaText =
                   dictionary?.ui?.forms?.translations?.mega || "Mega";
                 const result = `${megaText} ${speciesName.name} ${formTranslation}`;
-                console.log(
-                  `[getPokemonName] ${language} Mega X/Y variant: ${pokemon.name} -> ${result}`,
-                );
                 return result;
               } else {
                 // For other Mega forms: "Mega Pokemon Name" format
                 const result = `${formTranslation} ${speciesName.name}`;
-                console.log(
-                  `[getPokemonName] ${language} Mega variant: ${pokemon.name} -> ${result}`,
-                );
                 return result;
               }
             } else {
               // For other forms: "Pokemon Name (Form Name)" format
               const result = `${speciesName.name} (${formTranslation})`;
-              console.log(
-                `[getPokemonName] ${language} variant: ${pokemon.name} -> ${result}`,
-              );
               return result;
             }
           }
@@ -399,9 +378,6 @@ export function getPokemonName(
     );
 
     if (speciesName?.name) {
-      console.log(
-        `[getPokemonName] ${language} name: ${pokemon.name} -> ${speciesName.name}`,
-      );
       return speciesName.name;
     }
   }
@@ -470,39 +446,24 @@ export function getEvolutionPokemonName(
                 (formName === "mega-x" || formName === "mega-y")
               ) {
                 const result = `メガ${speciesName.name}${formTranslation}`;
-                console.log(
-                  `[getEvolutionPokemonName] Japanese Mega X/Y variant: ${evolutionDetail.name} -> ${result}`,
-                );
                 return result;
               } else {
                 // For other Mega forms: "メガポケモン名" format
                 const result = `${formTranslation}${speciesName.name}`;
-                console.log(
-                  `[getEvolutionPokemonName] Japanese Mega variant: ${evolutionDetail.name} -> ${result}`,
-                );
                 return result;
               }
             } else if (isPrimalForm(formName)) {
               // Special handling for Primal forms: "ゲンシポケモン名" format
               const result = `${formTranslation}${speciesName.name}`;
-              console.log(
-                `[getEvolutionPokemonName] Japanese Primal variant: ${evolutionDetail.name} -> ${result}`,
-              );
               return result;
             } else {
               // For other forms: "ポケモン名（フォーム名）" format
               const result = `${speciesName.name}（${formTranslation}）`;
-              console.log(
-                `[getEvolutionPokemonName] Japanese variant: ${evolutionDetail.name} -> ${result}`,
-              );
               return result;
             }
           } else {
             // For Chinese and Spanish languages: "ポケモン名（フォーム名）" format
             const result = `${speciesName.name}（${formTranslation}）`;
-            console.log(
-              `[getEvolutionPokemonName] ${language} variant: ${evolutionDetail.name} -> ${result}`,
-            );
             return result;
           }
         }
@@ -551,9 +512,6 @@ export function getEvolutionPokemonName(
     );
 
     if (speciesName?.name) {
-      console.log(
-        `[getEvolutionPokemonName] ${language} name: ${evolutionDetail.name} -> ${speciesName.name}`,
-      );
       return speciesName.name;
     }
   }

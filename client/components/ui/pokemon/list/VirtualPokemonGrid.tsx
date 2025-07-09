@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, forwardRef, useImperativeHandle, useRef } from "react";
+import {
+  useCallback,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+  useEffect,
+} from "react";
 import { VariableSizeGrid as Grid } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { Pokemon } from "@/types/pokemon";
@@ -125,6 +132,7 @@ export const VirtualPokemonGrid = forwardRef<
     ref,
   ) => {
     const gridRef = useRef<Grid>(null);
+    const [isReady, setIsReady] = useState(false);
     // Calculate columns based on width
     const getColumns = useCallback((width: number) => {
       // Account for padding when calculating columns
@@ -141,20 +149,51 @@ export const VirtualPokemonGrid = forwardRef<
       return width < 640 ? 300 : 337; // Include padding - slightly taller
     }, []);
 
+    // Mark as ready when grid is mounted and has data
+    useEffect(() => {
+      if (pokemons.length > 0) {
+        // Small delay to ensure grid is fully rendered
+        const timeoutId = setTimeout(() => {
+          setIsReady(true);
+        }, 100);
+        return () => clearTimeout(timeoutId);
+      }
+    }, [pokemons.length]);
+
     // Expose methods to parent component
     useImperativeHandle(
       ref,
       () => ({
         scrollToItem: (index: number) => {
-          if (gridRef.current) {
-            const columns = getColumns(window.innerWidth);
+          if (gridRef.current && isReady) {
+            // Use a safe window width or fallback to 1024
+            const windowWidth =
+              typeof window !== "undefined" ? window.innerWidth : 1024;
+            const columns = getColumns(windowWidth);
             const rowIndex = Math.floor(index / columns);
             const columnIndex = index % columns;
+
             gridRef.current.scrollToItem({
               rowIndex,
               columnIndex,
               align: "center",
             });
+          } else {
+            // Retry after a short delay if grid is not ready
+            setTimeout(() => {
+              if (gridRef.current) {
+                const windowWidth =
+                  typeof window !== "undefined" ? window.innerWidth : 1024;
+                const columns = getColumns(windowWidth);
+                const rowIndex = Math.floor(index / columns);
+                const columnIndex = index % columns;
+                gridRef.current.scrollToItem({
+                  rowIndex,
+                  columnIndex,
+                  align: "center",
+                });
+              }
+            }, 100);
           }
         },
         scrollToTop: () => {
@@ -163,7 +202,7 @@ export const VirtualPokemonGrid = forwardRef<
           }
         },
       }),
-      [getColumns],
+      [getColumns, isReady],
     );
 
     return (

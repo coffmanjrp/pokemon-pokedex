@@ -22,7 +22,7 @@ function PokemonDetailHeaderContent({
   // If we have a generation parameter, construct the URL to go back to that generation
   const backUrl =
     fromGeneration && fromGeneration.startsWith("generation-")
-      ? `/${language}/?generation=${fromGeneration.split("-")[1]}&from=${fromGeneration}`
+      ? `/${language}/?generation=${fromGeneration.split("-")[1]}`
       : `/${language}/`;
 
   // Use dictionary directly from props to ensure server/client consistency

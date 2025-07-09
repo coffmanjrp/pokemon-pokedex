@@ -52,16 +52,19 @@ export function GenerationSwitchingOverlay({
               },
             )}
           </p>
-          <p className="text-sm text-gray-500">
-            {interpolate(
-              dictionary?.ui.generationSwitching.generationRange || fallback,
-              {
-                number: currentGeneration,
-                min: generationRange.min,
-                max: generationRange.max,
-              },
-            )}
-          </p>
+          {/* Hide generation range for Generation 0 */}
+          {currentGeneration !== 0 && (
+            <p className="text-sm text-gray-500">
+              {interpolate(
+                dictionary?.ui.generationSwitching.generationRange || fallback,
+                {
+                  number: currentGeneration,
+                  min: generationRange.min,
+                  max: generationRange.max,
+                },
+              )}
+            </p>
+          )}
         </div>
       </div>
     </div>

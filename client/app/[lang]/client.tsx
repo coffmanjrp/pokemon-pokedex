@@ -19,7 +19,10 @@ import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { setSelectedPokemon } from "../../store/slices/pokemonSlice";
 import { setLanguage, setDictionary } from "../../store/slices/uiSlice";
 import { setReturnFromDetail } from "../../store/slices/navigationSlice";
-import { getScrollPositionForGeneration } from "../../lib/utils/scrollStorage";
+import {
+  getScrollPositionForGeneration,
+  getReturnFromDetailFlag,
+} from "../../lib/utils/scrollStorage";
 import { useEffect, useState, useRef, Suspense, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Pokemon, PokemonTypeName } from "@/types/pokemon";
@@ -119,7 +122,7 @@ function PokemonListContent({
   const [initialLoadComplete, setInitialLoadComplete] = useState(
     initialPokemon.length > 0,
   );
-  const [showCompletionFooter, setShowCompletionFooter] = useState(true);
+  const [showCompletionFooter, setShowCompletionFooter] = useState(false);
   const completionFooterRef = useRef<HTMLElement>(null);
   const pokemonGridRef = useRef<PokemonGridHandle>(null);
 
@@ -147,42 +150,72 @@ function PokemonListContent({
   useEffect(() => {
     if (!loading && pokemons.length > 0 && pokemonGridRef.current) {
       const fromParam = searchParams.get("from");
-      if (fromParam && fromParam.startsWith("generation-")) {
-        // Extract generation number from "generation-X" format
-        const generationFromParam = parseInt(
-          fromParam.replace("generation-", ""),
-        );
+      const generationParam = searchParams.get("generation");
+      const hasReturnFlag = getReturnFromDetailFlag();
+
+      // fromパラメータがある場合、またはgenerationパラメータがあり戻りフラグがある場合
+      if (
+        (fromParam && fromParam.startsWith("generation-")) ||
+        (generationParam && hasReturnFlag)
+      ) {
+        // Extract generation number from "generation-X" format or from generationParam
+        const generationFromParam = fromParam
+          ? parseInt(fromParam.replace("generation-", ""))
+          : parseInt(generationParam || "1");
 
         if (generationFromParam === currentGeneration) {
           // Check session storage for scroll position
           const scrollData = getScrollPositionForGeneration(currentGeneration);
 
-          if (scrollData && scrollData.timestamp > Date.now() - 300000) {
-            // 5 minutes validity
-            // Small delay to ensure DOM is ready
-            setTimeout(() => {
+          if (scrollData && scrollData.timestamp > Date.now() - 1800000) {
+            // Multiple retry attempts for virtual scroll readiness
+            const attemptRestore = (attempt: number = 1) => {
+              // pokemonGridRefが準備できていない場合は早期リターン
+              if (!pokemonGridRef.current) {
+                if (attempt < 5) {
+                  setTimeout(() => attemptRestore(attempt + 1), 200);
+                }
+                return;
+              }
+
+              let restorationSucceeded = false;
+
               if (
                 scrollData.pokemonIndex !== undefined &&
                 pokemonGridRef.current
               ) {
                 // Use index-based scrolling for virtual grid
                 pokemonGridRef.current.scrollToItem(scrollData.pokemonIndex);
+                restorationSucceeded = true;
               } else if (scrollData.scrollTop !== undefined) {
                 // Use scroll position for standard grid
                 window.scrollTo({
                   top: scrollData.scrollTop,
                   behavior: "auto",
                 });
+                restorationSucceeded = true;
               }
 
-              // Clear the "from" parameter after restoring
-              dispatch(setReturnFromDetail(false));
-              const newUrl = new URL(window.location.href);
-              newUrl.searchParams.delete("from");
-              router.replace(newUrl.pathname + newUrl.search, {
-                scroll: false,
-              });
-            }, 100);
+              // スクロール復元が成功した場合のみURLパラメータを削除
+              if (restorationSucceeded) {
+                dispatch(setReturnFromDetail(false));
+
+                // Clear the return flag from session storage
+                sessionStorage.removeItem("pokemon-return-from-detail");
+
+                // Only remove "from" parameter if it exists
+                if (fromParam) {
+                  const newUrl = new URL(window.location.href);
+                  newUrl.searchParams.delete("from");
+                  router.replace(newUrl.pathname + newUrl.search, {
+                    scroll: false,
+                  });
+                }
+              }
+            };
+
+            // Wait longer for virtual grid to be ready and try multiple times
+            setTimeout(() => attemptRestore(1), 800);
           }
         }
       }
@@ -214,7 +247,7 @@ function PokemonListContent({
     setCurrentGeneration(generation);
     changeGeneration(generation);
     // Reset completion footer when generation changes
-    setShowCompletionFooter(true);
+    setShowCompletionFooter(false);
     // Generation change doesn't show loading screen, only inline loading indicators
 
     // Clear search when changing generations
@@ -267,16 +300,16 @@ function PokemonListContent({
     search(searchQuery || "", { types: types as PokemonTypeName[] });
   };
 
-  // Auto-hide completion footer after 5 seconds with fade animation
+  // Manage completion footer visibility
   useEffect(() => {
-    if (
-      !loading &&
-      !hasNextPage &&
-      pokemons.length > 0 &&
-      showCompletionFooter
-    ) {
+    const isActive = loading || hasNextPage;
+
+    if (!isActive && pokemons.length > 0) {
+      // Show completion state when all loading is done
+      setShowCompletionFooter(true);
+
+      // Auto-hide after 5 seconds
       const timer = setTimeout(() => {
-        // Animate footer fade out before hiding
         if (completionFooterRef.current) {
           gsap.to(completionFooterRef.current, {
             opacity: 0,
@@ -288,14 +321,13 @@ function PokemonListContent({
             },
           });
         } else {
-          // Fallback if ref is not available
           setShowCompletionFooter(false);
         }
-      }, 5000); // Hide after 5 seconds
+      }, 5000);
 
       return () => clearTimeout(timer);
     }
-  }, [loading, hasNextPage, pokemons.length, showCompletionFooter]);
+  }, [loading, hasNextPage, pokemons.length]);
 
   // Handle scroll for header shrink/expand
   const handleScroll = useCallback(
@@ -492,13 +524,14 @@ function PokemonListContent({
             />
           </div>
 
-          {/* Progress Footer - Show based on loading state */}
+          {/* Progress Footer - Always show when we have Pokemon */}
           {pokemons.length > 0 && (
             <PokemonProgressFooter
               ref={completionFooterRef}
               lang={lang}
               loading={loading}
               hasNextPage={hasNextPage}
+              isActive={loading || hasNextPage}
               showCompletionFooter={showCompletionFooter}
               loadedCount={loadedCount}
               totalCount={totalCount}

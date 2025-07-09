@@ -28,7 +28,7 @@ import {
 } from "@/store/slices/navigationSlice";
 import {
   saveScrollPositionToStorage,
-  saveLastVisitedPokemon as saveLastVisitedToStorage,
+  saveLastVisitedPokemon,
 } from "@/lib/utils/scrollStorage";
 
 interface PokemonCardProps {
@@ -61,7 +61,7 @@ const PokemonCard = memo(function PokemonCard({
   const currentLang = lang || language;
 
   // Build the detail page URL
-  const detailUrl = `/${currentLang}/pokemon/${pokemon.id}${currentGeneration ? `?from=generation-${currentGeneration}` : ""}`;
+  const detailUrl = `/${currentLang}/pokemon/${pokemon.id}${currentGeneration !== undefined ? `?from=generation-${currentGeneration}` : ""}`;
 
   // Prefetch on hover for instant navigation
   useEffect(() => {
@@ -127,7 +127,7 @@ const PokemonCard = memo(function PokemonCard({
 
       // Save to sessionStorage
       saveScrollPositionToStorage(scrollData);
-      saveLastVisitedToStorage(pokemon.id);
+      saveLastVisitedPokemon(pokemon.id);
     }
 
     // Trigger animation without waiting for completion
