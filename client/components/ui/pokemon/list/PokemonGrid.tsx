@@ -88,7 +88,8 @@ export const PokemonGrid = forwardRef<PokemonGridHandle, PokemonGridProps>(
     // Enable virtual scroll for large datasets
     useEffect(() => {
       // Enable virtual scroll when we have more than 10 Pokemon
-      setUseVirtualScroll(pokemons.length > 10);
+      const shouldUseVirtual = pokemons.length > 10;
+      setUseVirtualScroll(shouldUseVirtual);
     }, [pokemons.length]);
 
     // Expose methods to parent component
@@ -105,7 +106,7 @@ export const PokemonGrid = forwardRef<PokemonGridHandle, PokemonGridProps>(
               const children = gridElement.children;
               if (children[index]) {
                 children[index].scrollIntoView({
-                  behavior: "smooth",
+                  behavior: "auto",
                   block: "center",
                 });
               }
