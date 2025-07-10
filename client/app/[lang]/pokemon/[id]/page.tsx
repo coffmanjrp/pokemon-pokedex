@@ -167,17 +167,44 @@ export async function generateMetadata({
 }: {
   params: PokemonDetailPageProps["params"];
 }): Promise<Metadata> {
+  let id: string;
+  let lang: Locale;
+
   try {
-    const { id, lang } = await params;
+    const resolvedParams = await params;
+    id = resolvedParams.id;
+    lang = resolvedParams.lang;
+  } catch (error) {
+    console.error("[generateMetadata] Failed to resolve params:", error);
+    return {
+      title: "Pokemon | Pokedex",
+      description: "Pokemon information page",
+    };
+  }
+
+  try {
     const [dictionary, client] = await Promise.all([
       getDictionary(lang),
       getClient(),
     ]);
 
-    const { data } = await client.query({
+    console.log(`[generateMetadata] Fetching metadata for Pokemon ID: ${id}`);
+
+    const { data, error } = await client.query({
       query: GET_POKEMON,
       variables: { id },
+      errorPolicy: "all",
     });
+
+    if (error) {
+      console.error(`[generateMetadata] GraphQL error for ID ${id}:`, error);
+      // Return basic metadata instead of throwing
+      return {
+        title: `Pokemon #${id} | Pokedex`,
+        description:
+          dictionary.ui.error.pokemonNotFound || "Pokemon information",
+      };
+    }
 
     const pokemon: Pokemon = data?.pokemon;
 
@@ -298,10 +325,20 @@ export async function generateMetadata({
       },
     };
   } catch (error) {
-    console.error("Error generating metadata:", error);
+    console.error(`[generateMetadata] Unexpected error for ID ${id}:`, error);
+
+    // Provide fallback metadata with Pokemon ID
+    const fallbackTitle = id ? `Pokemon #${id} | Pokedex` : "Pokemon | Pokedex";
+
     return {
-      title: "Pokemon | Pokedex",
-      description: "Pokemon information page",
+      title: fallbackTitle,
+      description: "Pokemon information and stats",
+      openGraph: {
+        title: fallbackTitle,
+        description: "View detailed information about this Pokemon",
+        type: "website",
+        url: `https://pokemon-pokedex-client.vercel.app/${lang || "en"}/pokemon/${id || ""}`,
+      },
     };
   }
 }
@@ -312,7 +349,23 @@ export default async function PokemonDetailPage({
 }: {
   params: PokemonDetailPageProps["params"];
 }) {
-  const { id, lang } = await params;
+  let id: string;
+  let lang: Locale;
+
+  try {
+    const resolvedParams = await params;
+    id = resolvedParams.id;
+    lang = resolvedParams.lang;
+  } catch (error) {
+    console.error("[PokemonDetailPage] Failed to resolve params:", error);
+    notFound();
+  }
+
+  // Add environment debugging
+  console.log("[PokemonDetailPage] Environment check:");
+  console.log(`  - NODE_ENV: ${process.env.NODE_ENV}`);
+  console.log(`  - BUILD_MODE: ${process.env.BUILD_MODE}`);
+  console.log(`  - SERVER_MODE: ${process.env.NEXT_PUBLIC_SERVER_MODE}`);
 
   try {
     const [dictionary, client] = await Promise.all([
@@ -321,15 +374,30 @@ export default async function PokemonDetailPage({
     ]);
 
     console.log(`[PokemonDetailPage] Fetching Pokemon with ID: ${id}`);
-    console.log("[PokemonDetailPage] Using query:", GET_POKEMON);
 
-    const { data } = await client.query({
+    const { data, error } = await client.query({
       query: GET_POKEMON,
       variables: { id },
       errorPolicy: "all", // Continue even if there are GraphQL errors
     });
 
-    console.log(`[PokemonDetailPage] Response data:`, data);
+    if (error) {
+      console.error(`[PokemonDetailPage] GraphQL error for ID ${id}:`, {
+        message: error.message,
+        networkError: error.networkError,
+        graphQLErrors: error.graphQLErrors,
+      });
+
+      // If it's a build-time error, we might want to skip this page
+      if (process.env.NODE_ENV === "production" && !data?.pokemon) {
+        console.warn(
+          `[PokemonDetailPage] Skipping Pokemon ${id} due to GraphQL error during build`,
+        );
+        notFound();
+      }
+    }
+
+    console.log(`[PokemonDetailPage] Response received for ID ${id}`);
     console.log(
       `[PokemonDetailPage] Has evolution chain:`,
       data?.pokemon?.species?.evolutionChain ? "Yes" : "No",
@@ -338,7 +406,7 @@ export default async function PokemonDetailPage({
     const pokemon: Pokemon = data?.pokemon;
 
     if (!pokemon) {
-      console.warn(`Pokemon with ID ${id} not found, redirecting to 404`);
+      console.warn(`[PokemonDetailPage] Pokemon with ID ${id} not found`);
       notFound();
     }
 
@@ -350,8 +418,19 @@ export default async function PokemonDetailPage({
       />
     );
   } catch (error) {
-    console.error(`Error fetching Pokemon with ID ${id}:`, error);
-    // For invalid IDs that shouldn't have been generated, return 404
+    console.error(`[PokemonDetailPage] Critical error for ID ${id}:`, {
+      error,
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+
+    // More detailed error handling for build time
+    if (process.env.NODE_ENV === "production") {
+      console.warn(
+        `[PokemonDetailPage] Falling back to 404 for Pokemon ${id} due to error`,
+      );
+    }
+
     notFound();
   }
 }
