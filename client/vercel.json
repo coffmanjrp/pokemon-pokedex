@@ -13,15 +13,6 @@
       "maxDuration": 30
     }
   },
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next",
-      "config": {
-        "maxLambdaSize": "50mb"
-      }
-    }
-  ],
   "env": {
     "NEXT_PUBLIC_GRAPHQL_URL": "@pokemon-graphql-url",
     "NODE_OPTIONS": "--max-old-space-size=8192"
