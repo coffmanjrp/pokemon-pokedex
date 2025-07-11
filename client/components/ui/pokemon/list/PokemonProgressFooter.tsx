@@ -57,16 +57,8 @@ export const PokemonProgressFooter = forwardRef<
   // Helper function to get region name for current language
   const getRegionName = () => {
     switch (lang) {
-      case "en":
-        return generationRange.region.en;
       case "ja":
         return generationRange.region.ja;
-      case "zh-Hant":
-        return generationRange.region["zh-Hant"];
-      case "zh-Hans":
-        return generationRange.region["zh-Hans"];
-      case "es":
-        return generationRange.region.es;
       default:
         return generationRange.region.en;
     }

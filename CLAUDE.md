@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeScript, and TailwindCSS. Features a Ruby/Sapphire-inspired game design with modern responsive layout and comprehensive multilingual support.
 
-**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. Pokemon detail pages use SSG for optimal performance with individual Pokemon data pre-generated at build time. Pokemon list pages use full client-side rendering with intelligent cache system for seamless generation switching. Hybrid deployment fully operational with frontend deployed on Vercel and backend on Railway. Complete 9-language support implemented (English, Japanese, Traditional Chinese, Simplified Chinese, Spanish, Korean, French, German, Italian) with comprehensive translations, Pokemon data localization through PokeAPI GraphQL integration, and complete UI coverage including SEO metadata. Icon system consolidation completed using react-icons library (Heroicons v2 for UI elements, Font Awesome for specialized symbols) for consistent styling, better accessibility, and improved maintainability. Pokemon classification system fully implemented with multilingual badge support (Baby→ベイビィ, Legendary→伝説, Mythical→幻) across all 9 languages, comprehensive animation system with 26 distinct effects including classification-based hover animations, and enhanced sandbox environment with categorized animation testing. Recent improvements include Pokemon cache system optimization with enhanced UTF-8 character encoding for Japanese Pokemon names, server-side Pokemon service enhancements with intelligent caching strategies, resolution of animation cleanup issues ensuring smooth user experience, virtual scrolling implementation with react-window for large datasets (threshold: 10+ Pokemon), dynamic header shrinking system with smooth GSAP animations that preserves search functionality through icon display, streamlined search interface with simplified input mechanism eliminating dropdown suggestions for improved UI stability and performance, complete move data multilingual support with tooltip-based descriptions using react-tooltip, damage class localization through dictionary system, and data source annotations. Generation 0 (Other) implementation now includes centralized blacklist system for excluding Pokemon forms without sprite data, enhanced Pokemon form ID display and sorting functionality based on base Pokemon species ID for improved user experience, proper form-to-species mapping with intelligent caching for optimal performance, scroll position restoration system with session storage persistence for seamless navigation experience, and optimized user interface with hidden generation information in footer and loading screens for cleaner presentation. Pokemon badge system fully refactored with Strategy Pattern implementation for improved maintainability, unified color schemes for all badge types, and centralized badge logic in utility functions. Generation 0 URL parameter persistence and scroll position restoration system fully implemented with enhanced navigation that preserves user context when transitioning between detail and list pages. Enhanced progress footer system with GSAP-powered linear progress bar animations, continuous display from loading start to completion, and smooth state transitions during batch loading operations. Placeholder Pokemon images now use lightweight SVG Data URLs with "?" symbol instead of external PNG files, eliminating Next.js Image Optimization API errors and reducing build size by 1.2MB. **Redis cache removed** in favor of cost-effective localStorage (client) and CDN caching (server) strategy, with Cache-Control headers for 24-hour TTL and rate limiting for PokeAPI protection.
+**Current Status**: Production-ready Pokemon Pokedex with comprehensive detail pages, enhanced evolution chains, performance optimizations, and sidebar-based generation navigation. Pokemon detail pages use SSG for optimal performance with individual Pokemon data pre-generated at build time. Pokemon list pages use full client-side rendering with intelligent cache system for seamless generation switching. Hybrid deployment fully operational with frontend deployed on Vercel and backend on Railway. **Language support optimized to 2 languages (English and Japanese) for maximum Vercel build performance** - static pages reduced from 12,537 to 2,786 (78% reduction). All dictionary files preserved for Korean, French, German, Italian, Spanish, Traditional Chinese, and Simplified Chinese for future re-enablement. Icon system consolidation completed using react-icons library (Heroicons v2 for UI elements, Font Awesome for specialized symbols) for consistent styling, better accessibility, and improved maintainability. Pokemon classification system fully implemented with multilingual badge support (Baby→ベイビィ, Legendary→伝説, Mythical→幻) across both supported languages, comprehensive animation system with 26 distinct effects including classification-based hover animations, and enhanced sandbox environment with categorized animation testing. Recent improvements include Pokemon cache system optimization with enhanced UTF-8 character encoding for Japanese Pokemon names, server-side Pokemon service enhancements with intelligent caching strategies, resolution of animation cleanup issues ensuring smooth user experience, virtual scrolling implementation with react-window for large datasets (threshold: 10+ Pokemon), dynamic header shrinking system with smooth GSAP animations that preserves search functionality through icon display, streamlined search interface with simplified input mechanism eliminating dropdown suggestions for improved UI stability and performance, complete move data multilingual support with tooltip-based descriptions using react-tooltip, damage class localization through dictionary system, and data source annotations. Generation 0 (Other) implementation now includes centralized blacklist system for excluding Pokemon forms without sprite data, enhanced Pokemon form ID display and sorting functionality based on base Pokemon species ID for improved user experience, proper form-to-species mapping with intelligent caching for optimal performance, scroll position restoration system with session storage persistence for seamless navigation experience, and optimized user interface with hidden generation information in footer and loading screens for cleaner presentation. Pokemon badge system fully refactored with Strategy Pattern implementation for improved maintainability, unified color schemes for all badge types, and centralized badge logic in utility functions. Generation 0 URL parameter persistence and scroll position restoration system fully implemented with enhanced navigation that preserves user context when transitioning between detail and list pages. Enhanced progress footer system with GSAP-powered linear progress bar animations, continuous display from loading start to completion, and smooth state transitions during batch loading operations. Placeholder Pokemon images now use lightweight SVG Data URLs with "?" symbol instead of external PNG files, eliminating Next.js Image Optimization API errors and reducing build size by 1.2MB. **Redis cache removed** in favor of cost-effective localStorage (client) and CDN caching (server) strategy, with Cache-Control headers for 24-hour TTL and rate limiting for PokeAPI protection. **Vercel build optimizations** include custom vercel.json configuration, parallel generation builds, and TypeScript incremental compilation.
 
 ## Architecture
 
@@ -16,7 +16,7 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 - **Styling**: TailwindCSS with Ruby/Sapphire game-inspired design
 - **State Management**: Redux Toolkit
 - **GraphQL Client**: Apollo Client
-- **Internationalization**: Native App Router i18n with middleware-based language detection and server-side dictionary loading supporting 9 languages (English, Japanese, Traditional Chinese, Simplified Chinese, Spanish, Korean, French, German, Italian)
+- **Internationalization**: Native App Router i18n with middleware-based language detection and server-side dictionary loading supporting 2 languages (English, Japanese) - 7 additional languages temporarily disabled for Vercel build optimization
 
 ### Backend (GraphQL Server)
 - **Server**: Apollo Server with Express
@@ -45,6 +45,7 @@ Pokemon Pokedex application built with Next.js 15 (App Router), React 19, TypeSc
 - **Hybrid Grid System**: Automatic switching between standard grid (≤10 Pokemon) and virtual scrolling (11+ Pokemon)
 - **Generation Switching**: Enhanced reliability with 8-second timeout handling and seamless data preservation
 - **Apollo Client Integration**: Standard fetchMore() patterns with automatic cache management
+- **Enhanced Railway Reliability**: Improved Apollo Client retry logic with 7 retry attempts, 90-second timeouts, and exponential backoff for 502/503/504 errors to handle Railway server stability issues during Vercel SSG builds
 - **SEO & Metadata**: Comprehensive Open Graph, Twitter Cards, and multilingual metadata implementation
 - **Navigation Performance**: Next.js Link component with automatic prefetching and parallel animation processing
 - **SSR/CSR Consistency**: Eliminated Next.js 15 hydration errors through props-based dictionary architecture
@@ -135,7 +136,7 @@ pokemon-pokedex/
 │   │           └── evolution/    # Evolution chain components
 │   ├── lib/                      # Utility functions and configurations
 │   │   ├── data/                 # Centralized data files
-│   │   ├── dictionaries/         # Translation files (9 languages)
+│   │   ├── dictionaries/         # Translation files (5 active + 4 preserved)
 │   │   ├── utils/                # Utility functions
 │   │   └── pokemonCache.ts       # Pokemon cache system
 │   ├── hooks/                    # Custom React hooks
@@ -156,7 +157,7 @@ pokemon-pokedex/
 - **Generation Navigation**: Sidebar with generation buttons (1-9) and seamless generation switching
 - **Advanced Search**: Streamlined Pokemon search interface with real-time search, multi-language support (including Japanese hiragana/katakana conversion), type filtering, and search result clearing functionality
 - **Cache Performance**: Client-side intelligent caching with localStorage persistence and 24-hour TTL
-- **Multilingual Support**: Complete 9-language support (English/Japanese/Traditional Chinese/Simplified Chinese/Spanish/Korean/French/German/Italian) with middleware-based routing and unified dictionary system
+- **Multilingual Support**: Optimized 2-language support (English/Japanese) with middleware-based routing and unified dictionary system - 7 additional languages temporarily disabled for maximum Vercel build performance
 - **Pokemon Classification System**: Multilingual badge system for Baby (ベイビィ), Legendary (伝説), and Mythical (幻) Pokemon with visual indicators and specialized hover effects
 - **Interactive Animation System**: 26 distinct animation effects categorized into Regular Click Effects, Special Hover Effects, and Classification-based Hover Effects with smooth cleanup transitions
 - **Animation Sandbox**: Comprehensive testing environment with categorized animations, hover/click differentiation, and visual feedback indicators
@@ -282,12 +283,12 @@ npm run build:gen-1             # Specific generation build
 - **Benefits**: Eliminates nested if-statements, improves maintainability, enables easy addition of new badge types
 
 ### Internationalization
-- **Languages**: Complete 9-language support (English/Japanese/Traditional Chinese/Simplified Chinese/Spanish/Korean/French/German/Italian) with middleware-based routing
+- **Languages**: Optimized 2-language support (English/Japanese) with middleware-based routing - 7 additional languages temporarily disabled for Vercel build optimization
 - **Structure**: `/[lang]/` routes with server-side dictionary loading
 - **Translation**: Pokemon names, types, abilities, moves, game versions, forms, regions, and classification badges via PokeAPI integration
 - **Language Detection**: Intelligent detection with regional fallbacks
 - **Dictionary Architecture**: Components converted from hardcoded language conditions to dictionary-based translations
-- **Dictionary Files**: 9 language files in `client/lib/dictionaries/[lang].json` (en, ja, zh-Hans, zh-Hant, es, ko, fr, de, it)
+- **Dictionary Files**: 2 active language files in `client/lib/dictionaries/[lang].json` (en, ja) - zh-Hans, zh-Hant, es, ko, fr, de, it preserved for future re-enablement
 - **Classification Translations**: Baby→ベイビィ, Legendary→伝説, Mythical→幻 with complete localization coverage
 
 ### API Routes System
@@ -413,7 +414,7 @@ Dynamic header that shrinks on scroll to maximize content visibility while maint
 - **Server-side**: Pokemon service fetches damage class and target multilingual data from PokeAPI
 - **Client-side**: Utility functions in `pokemonUtils.ts` for move data localization
 - **UI Components**: InfoTooltip component for displaying move descriptions on hover
-- **Dictionary System**: Extended with `moveTargets` section for all 9 languages
+- **Dictionary System**: Extended with `moveTargets` section for all active languages
 
 ## Generation 0 (Other) - Pokemon Forms
 
@@ -477,6 +478,40 @@ The application now uses a cost-effective dual-layer caching approach:
 - **Performance**: localStorage provides instant data access
 - **Simplicity**: Fewer moving parts and dependencies
 - **Reliability**: No Redis connection issues
+
+## Build Optimization Strategy
+
+### Language Reduction for Vercel Build Performance
+The application now supports only 2 languages (English and Japanese) to maximize Vercel build performance and ensure successful deployments within time limits.
+
+#### Changes Made:
+- **Languages Disabled**: Korean (ko), French (fr), German (de), Italian (it), Spanish (es), Traditional Chinese (zh-Hant), Simplified Chinese (zh-Hans)
+- **Pages Reduced**: From 12,537 to 2,786 static pages (78% reduction)
+- **Build Time Target**: Reduced from 45+ minutes to under 20 minutes
+- **Dictionary Files Preserved**: All dictionary JSON files maintained for future re-enablement
+- **Infrastructure Maintained**: Language detection, routing, and dictionary loading system unchanged
+
+#### Apollo Client Enhancements:
+- **Increased Retry Logic**: From 5 to 7 retry attempts for SSR operations
+- **Extended Timeouts**: From 60s to 90s for Railway stability
+- **Better Error Handling**: Enhanced retry conditions for 502/503/504 errors from Railway
+- **Build Configuration**: Extended `staticPageGenerationTimeout` from 120s to 180s
+
+#### Vercel Build Optimizations:
+- **Custom Configuration**: `vercel.json` with optimized build settings and memory allocation
+- **Parallel Generation Builds**: New script for building multiple generations concurrently
+- **Function Timeouts**: Extended to 30 seconds for complex queries
+- **Node Memory**: Increased to 8GB with `NODE_OPTIONS` environment variable
+
+#### Re-enablement Process:
+To re-enable additional languages:
+1. Update `Locale` type in `client/lib/dictionaries.ts`
+2. Add languages back to `client/middleware.ts` locales array
+3. Update `client/lib/get-dictionary.ts` dictionary imports
+4. Restore language validation in `client/lib/languageStorage.ts`
+5. Update `LANGUAGE_OPTIONS` in `client/lib/data/languages.ts`
+6. Add metadata alternates URLs back to page components
+7. Update all language-specific switch statements and conditionals
 
 ## Adding New Language Support
 

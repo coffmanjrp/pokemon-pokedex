@@ -21,7 +21,4 @@ export interface LanguageLabels {
 export const LANGUAGE_OPTIONS: LanguageOption[] = [
   { value: "en", labelKey: "english", flag: "🇺🇸" },
   { value: "ja", labelKey: "japanese", flag: "🇯🇵" },
-  { value: "zh-Hant", labelKey: "traditionalChinese", flag: "🇹🇼" },
-  { value: "zh-Hans", labelKey: "simplifiedChinese", flag: "🇨🇳" },
-  { value: "es", labelKey: "spanish", flag: "🇪🇸" },
 ];
