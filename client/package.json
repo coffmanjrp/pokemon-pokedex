@@ -19,6 +19,7 @@
     "analyze:server": "BUNDLE_ANALYZE=server npm run build:legacy",
     "analyze:browser": "BUNDLE_ANALYZE=browser npm run build:legacy",
     "build:generational": "ENABLE_GENERATIONAL_BUILD=true npm run build",
+    "build:parallel": "node scripts/build-parallel-generations.js",
     "build:gen-1": "BUILD_GENERATION=1 npm run build:legacy",
     "build:gen-2": "BUILD_GENERATION=2 npm run build:legacy",
     "build:gen-3": "BUILD_GENERATION=3 npm run build:legacy",

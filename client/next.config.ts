@@ -41,7 +41,7 @@ const nextConfig: NextConfig = {
     esmExternals: true,
   },
   // Build timeout configurations for SSG
-  staticPageGenerationTimeout: 120, // 2 minutes per page
+  staticPageGenerationTimeout: 180, // 3 minutes per page (increased from 2)
   turbopack: {
     rules: {
       "*.svg": {

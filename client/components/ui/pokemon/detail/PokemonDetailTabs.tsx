@@ -36,10 +36,6 @@ export function PokemonDetailTabs({
         return entryLanguageName === "en";
       case "ja":
         return entryLanguageName === "ja" || entryLanguageName === "ja-Hrkt";
-      case "zh-Hant":
-        return entryLanguageName === "zh-Hant";
-      case "zh-Hans":
-        return entryLanguageName === "zh-Hans";
       default:
         return entryLanguageName === "en";
     }

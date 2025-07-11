@@ -13,18 +13,7 @@ export function getStoredLanguage(): Language | null {
 
   try {
     const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-    if (
-      stored &&
-      (stored === "en" ||
-        stored === "ja" ||
-        stored === "zh-Hant" ||
-        stored === "zh-Hans" ||
-        stored === "es" ||
-        stored === "ko" ||
-        stored === "fr" ||
-        stored === "it" ||
-        stored === "de")
-    ) {
+    if (stored && (stored === "en" || stored === "ja")) {
       return stored as Language;
     }
   } catch (error) {
@@ -85,17 +74,7 @@ export function getLanguageFromCookie(cookieString: string): Language | null {
 
   if (languageCookie) {
     const value = languageCookie.split("=")[1];
-    if (
-      value === "en" ||
-      value === "ja" ||
-      value === "zh-Hant" ||
-      value === "zh-Hans" ||
-      value === "es" ||
-      value === "ko" ||
-      value === "fr" ||
-      value === "it" ||
-      value === "de"
-    ) {
+    if (value === "en" || value === "ja") {
       return value as Language;
     }
   }

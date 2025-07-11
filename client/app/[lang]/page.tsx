@@ -107,11 +107,6 @@ export async function generateMetadata({
       languages: {
         en: "https://pokemon-pokedex-client.vercel.app/en",
         ja: "https://pokemon-pokedex-client.vercel.app/ja",
-        "zh-Hant": "https://pokemon-pokedex-client.vercel.app/zh-Hant",
-        "zh-Hans": "https://pokemon-pokedex-client.vercel.app/zh-Hans",
-        es: "https://pokemon-pokedex-client.vercel.app/es",
-        ko: "https://pokemon-pokedex-client.vercel.app/ko",
-        fr: "https://pokemon-pokedex-client.vercel.app/fr",
         "x-default": "https://pokemon-pokedex-client.vercel.app/en",
       },
     },

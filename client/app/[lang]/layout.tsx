@@ -2,17 +2,7 @@ import { Locale } from "@/lib/dictionaries";
 import ConditionalLayout from "./ConditionalLayout";
 
 export async function generateStaticParams() {
-  return [
-    { lang: "en" },
-    { lang: "ja" },
-    { lang: "zh-Hant" },
-    { lang: "zh-Hans" },
-    { lang: "es" },
-    { lang: "ko" },
-    { lang: "fr" },
-    { lang: "it" },
-    { lang: "de" },
-  ];
+  return [{ lang: "en" }, { lang: "ja" }];
 }
 
 interface LangLayoutProps {

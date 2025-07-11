@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
+import { gql } from "@apollo/client";
+import { createApolloClient } from "../../../utils/graphqlClient";
 
 // GraphQL client setup
-const client = new ApolloClient({
-  uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || "http://localhost:4000/graphql",
-  cache: new InMemoryCache(),
-});
+const client = createApolloClient();
 
 // GraphQL query focused on evolution chain only
 const GET_EVOLUTION_CHAIN = gql`

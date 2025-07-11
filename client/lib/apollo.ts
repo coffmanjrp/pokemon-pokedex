@@ -1,8 +1,22 @@
 import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
+import { RetryLink } from "@apollo/client/link/retry";
+import { ApolloLink } from "@apollo/client/link/core";
 
 // Dynamic GraphQL URL based on server mode
 const getGraphQLURL = () => {
   const serverMode = process.env.NEXT_PUBLIC_SERVER_MODE || "development";
+
+  // Debug logging for build-time environment
+  if (typeof window === "undefined") {
+    console.log("[Apollo] Build-time environment:");
+    console.log(`  - SERVER_MODE: ${serverMode}`);
+    console.log(
+      `  - GRAPHQL_URL_PROD: ${process.env.NEXT_PUBLIC_GRAPHQL_URL_PROD}`,
+    );
+    console.log(
+      `  - GRAPHQL_URL_DEV: ${process.env.NEXT_PUBLIC_GRAPHQL_URL_DEV}`,
+    );
+  }
 
   if (serverMode === "production") {
     return (
@@ -16,12 +30,40 @@ const getGraphQLURL = () => {
   }
 };
 
-const httpLink = createHttpLink({
-  uri: getGraphQLURL(),
+// Retry link for handling transient network errors
+const retryLink = new RetryLink({
+  delay: {
+    initial: 300,
+    max: 3000,
+    jitter: true,
+  },
+  attempts: {
+    max: 3,
+    retryIf: (error) => {
+      // Retry on network errors and 5xx status codes
+      return (
+        !!error &&
+        (error.networkError?.statusCode >= 500 ||
+          error.networkError?.code === "ECONNRESET" ||
+          error.networkError?.code === "ETIMEDOUT")
+      );
+    },
+  },
 });
 
+const httpLink = createHttpLink({
+  uri: getGraphQLURL(),
+  // Add timeout for build-time requests
+  fetchOptions: {
+    timeout: 30000, // 30 seconds timeout
+  },
+});
+
+// Combine retry and http links
+const link = ApolloLink.from([retryLink, httpLink]);
+
 export const apolloClient = new ApolloClient({
-  link: httpLink,
+  link,
   cache: new InMemoryCache({
     addTypename: false, // Disable __typename to prevent cache issues
     typePolicies: {
@@ -104,13 +146,65 @@ export const apolloClient = new ApolloClient({
 
 // Server-side client for SSG/SSR
 export function getClient() {
+  const graphQLURL = getGraphQLURL();
+
+  console.log(`[Apollo SSR] Creating client with URL: ${graphQLURL}`);
+
+  // Create retry link for SSR with enhanced settings
+  const ssrRetryLink = new RetryLink({
+    delay: {
+      initial: 1000, // Increased from 500ms
+      max: 10000, // Increased from 5000ms
+      jitter: true,
+    },
+    attempts: {
+      max: 7, // Increased from 5 for better reliability
+      retryIf: (error) => {
+        // Log errors during build
+        if (error) {
+          console.error("[Apollo SSR] GraphQL Error:", {
+            message: error.message,
+            networkError: error.networkError,
+            graphQLErrors: error.graphQLErrors,
+          });
+        }
+
+        // Retry on network errors including Railway-specific errors
+        const statusCode = error.networkError?.statusCode;
+        return (
+          !!error &&
+          (statusCode === 502 || // Bad Gateway
+            statusCode === 503 || // Service Unavailable
+            statusCode === 504 || // Gateway Timeout
+            statusCode >= 500 || // Any 5xx error
+            error.networkError?.code === "ECONNRESET" ||
+            error.networkError?.code === "ETIMEDOUT" ||
+            error.networkError?.code === "ENOTFOUND")
+        );
+      },
+    },
+  });
+
+  const ssrHttpLink = createHttpLink({
+    uri: graphQLURL,
+    fetchOptions: {
+      timeout: 90000, // 90 seconds timeout for build (increased from 60s)
+    },
+  });
+
+  const ssrLink = ApolloLink.from([ssrRetryLink, ssrHttpLink]);
+
   return new ApolloClient({
-    link: createHttpLink({
-      uri: getGraphQLURL(),
-    }),
+    link: ssrLink,
     cache: new InMemoryCache({
       addTypename: false, // Disable __typename for SSR consistency
     }),
     ssrMode: typeof window === "undefined",
+    defaultOptions: {
+      query: {
+        errorPolicy: "all", // Continue even with errors
+        fetchPolicy: "no-cache", // Always fetch fresh data during build
+      },
+    },
   });
 }
