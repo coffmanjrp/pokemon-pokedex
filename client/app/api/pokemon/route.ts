@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { GET_POKEMONS_BASIC, GET_POKEMON_BASIC } from "@/graphql/queries";
+import { createApolloClient } from "../utils/graphqlClient";
 
 // GraphQL client setup
-const client = new ApolloClient({
-  uri: process.env.NEXT_PUBLIC_GRAPHQL_URL || "http://localhost:4000/graphql",
-  cache: new InMemoryCache(),
-});
+const client = createApolloClient();
 
 export async function GET(request: NextRequest) {
   try {
