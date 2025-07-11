@@ -150,15 +150,15 @@ export function getClient() {
 
   console.log(`[Apollo SSR] Creating client with URL: ${graphQLURL}`);
 
-  // Create retry link for SSR
+  // Create retry link for SSR with enhanced settings
   const ssrRetryLink = new RetryLink({
     delay: {
-      initial: 500,
-      max: 5000,
+      initial: 1000, // Increased from 500ms
+      max: 10000, // Increased from 5000ms
       jitter: true,
     },
     attempts: {
-      max: 5, // More retries for build time
+      max: 7, // Increased from 5 for better reliability
       retryIf: (error) => {
         // Log errors during build
         if (error) {
@@ -169,10 +169,14 @@ export function getClient() {
           });
         }
 
-        // Retry on network errors
+        // Retry on network errors including Railway-specific errors
+        const statusCode = error.networkError?.statusCode;
         return (
           !!error &&
-          (error.networkError?.statusCode >= 500 ||
+          (statusCode === 502 || // Bad Gateway
+            statusCode === 503 || // Service Unavailable
+            statusCode === 504 || // Gateway Timeout
+            statusCode >= 500 || // Any 5xx error
             error.networkError?.code === "ECONNRESET" ||
             error.networkError?.code === "ETIMEDOUT" ||
             error.networkError?.code === "ENOTFOUND")
@@ -184,7 +188,7 @@ export function getClient() {
   const ssrHttpLink = createHttpLink({
     uri: graphQLURL,
     fetchOptions: {
-      timeout: 60000, // 60 seconds timeout for build
+      timeout: 90000, // 90 seconds timeout for build (increased from 60s)
     },
   });
 

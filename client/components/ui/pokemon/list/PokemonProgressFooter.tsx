@@ -67,8 +67,6 @@ export const PokemonProgressFooter = forwardRef<
         return generationRange.region["zh-Hans"];
       case "es":
         return generationRange.region.es;
-      case "ko":
-        return generationRange.region.ko;
       default:
         return generationRange.region.en;
     }

@@ -93,10 +93,10 @@ async function main() {
     const result = await buildGeneration(generation);
     results.push(result);
 
-    // Short pause between generations to prevent system overload
+    // Longer pause between generations to prevent Railway overload
     if (i < GENERATIONS.length - 1) {
-      console.log(`\n⏸️  Pausing 5 seconds before next generation...`);
-      await new Promise((resolve) => setTimeout(resolve, 5000));
+      console.log(`\n⏸️  Pausing 10 seconds before next generation...`);
+      await new Promise((resolve) => setTimeout(resolve, 10000));
     }
   }
 
