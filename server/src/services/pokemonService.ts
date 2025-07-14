@@ -639,7 +639,7 @@ class PokemonService {
           url: type.type.url,
         },
       })),
-      species: {
+      species: speciesData ? {
         id: speciesData.id.toString(),
         name: speciesData.name,
         names: speciesData.names.map((nameEntry: any) => ({
@@ -672,6 +672,11 @@ class PokemonService {
           name: speciesData.generation.name,
           url: speciesData.generation.url,
         },
+        genderRate: speciesData.gender_rate ?? 4, // Default to 50/50 ratio if not available
+        hasGenderDifferences: speciesData.has_gender_differences ?? false,
+        isBaby: speciesData.is_baby ?? false,
+        isLegendary: speciesData.is_legendary ?? false,
+        isMythical: speciesData.is_mythical ?? false,
         evolutionChain: undefined, // Avoid circular reference
         varieties: speciesData.varieties.map((variety: any) => ({
           isDefault: variety.is_default,
@@ -681,7 +686,7 @@ class PokemonService {
             url: variety.pokemon.url,
           },
         })),
-      },
+      } : undefined,
       evolutionDetails: (chainData.evolution_details || []).map((detail: any) => ({
         minLevel: detail.min_level,
         item: detail.item ? {

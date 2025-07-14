@@ -19,16 +19,7 @@ function getFormTranslation(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _formName: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _language:
-    | "en"
-    | "ja"
-    | "zh-Hant"
-    | "zh-Hans"
-    | "es"
-    | "ko"
-    | "fr"
-    | "it"
-    | "de",
+  _language: "en" | "ja",
 ): string | null {
   // Special forms now handled by dictionary system
   // This function is deprecated and should use dictionary lookup instead
@@ -123,27 +114,10 @@ export function getPokemonBaseName(
   }
 
   // For forms that should be displayed separately, return just the base name
-  if (
-    (language === "ja" ||
-      language === "zh-Hant" ||
-      language === "zh-Hans" ||
-      language === "es" ||
-      language === "ko" ||
-      language === "fr" ||
-      language === "it" ||
-      language === "de") &&
-    pokemon.species?.names
-  ) {
+  if (language === "ja" && pokemon.species?.names) {
     // Map language codes for PokeAPI
     const languageCodes = {
       ja: ["ja", "ja-Hrkt"],
-      "zh-Hant": ["zh-Hant"],
-      "zh-Hans": ["zh-Hans"],
-      es: ["es"],
-      ko: ["ko"],
-      fr: ["fr"],
-      it: ["it"],
-      de: ["de"],
     };
 
     const targetCodes = languageCodes[
@@ -228,27 +202,10 @@ export function getPokemonName(
     const formName = nameParts.slice(1).join("-");
 
     // Handle non-English languages with species names
-    if (
-      (language === "ja" ||
-        language === "zh-Hant" ||
-        language === "zh-Hans" ||
-        language === "es" ||
-        language === "ko" ||
-        language === "fr" ||
-        language === "it" ||
-        language === "de") &&
-      pokemon.species?.names
-    ) {
+    if (language === "ja" && pokemon.species?.names) {
       // Map language codes for PokeAPI
       const languageCodes = {
         ja: ["ja", "ja-Hrkt"],
-        "zh-Hant": ["zh-Hant"],
-        "zh-Hans": ["zh-Hans"],
-        es: ["es"],
-        ko: ["ko"],
-        fr: ["fr"],
-        it: ["it"],
-        de: ["de"],
       };
 
       const targetCodes = languageCodes[
@@ -347,27 +304,10 @@ export function getPokemonName(
   }
 
   // For non-variant Pokemon
-  if (
-    (language === "ja" ||
-      language === "zh-Hant" ||
-      language === "zh-Hans" ||
-      language === "es" ||
-      language === "ko" ||
-      language === "fr" ||
-      language === "it" ||
-      language === "de") &&
-    pokemon.species?.names
-  ) {
+  if (language === "ja" && pokemon.species?.names) {
     // Map language codes for PokeAPI
     const languageCodes = {
       ja: ["ja", "ja-Hrkt"],
-      "zh-Hant": ["zh-Hant"],
-      "zh-Hans": ["zh-Hans"],
-      es: ["es"],
-      ko: ["ko"],
-      fr: ["fr"],
-      it: ["it"],
-      de: ["de"],
     };
 
     const targetCodes = languageCodes[
@@ -403,27 +343,10 @@ export function getEvolutionPokemonName(
     const formName = nameParts.slice(1).join("-");
 
     // Handle non-English languages with species names
-    if (
-      (language === "ja" ||
-        language === "zh-Hant" ||
-        language === "zh-Hans" ||
-        language === "es" ||
-        language === "ko" ||
-        language === "fr" ||
-        language === "it" ||
-        language === "de") &&
-      evolutionDetail.species?.names
-    ) {
+    if (language === "ja" && evolutionDetail.species?.names) {
       // Map language codes for PokeAPI
       const languageCodes = {
         ja: ["ja", "ja-Hrkt"],
-        "zh-Hant": ["zh-Hant"],
-        "zh-Hans": ["zh-Hans"],
-        es: ["es"],
-        ko: ["ko"],
-        fr: ["fr"],
-        it: ["it"],
-        de: ["de"],
       };
 
       const targetCodes = languageCodes[
@@ -481,27 +404,10 @@ export function getEvolutionPokemonName(
   }
 
   // For non-variant Pokemon
-  if (
-    (language === "ja" ||
-      language === "zh-Hant" ||
-      language === "zh-Hans" ||
-      language === "es" ||
-      language === "ko" ||
-      language === "fr" ||
-      language === "it" ||
-      language === "de") &&
-    evolutionDetail.species?.names
-  ) {
+  if (language === "ja" && evolutionDetail.species?.names) {
     // Map language codes for PokeAPI
     const languageCodes = {
       ja: ["ja", "ja-Hrkt"],
-      "zh-Hant": ["zh-Hant"],
-      "zh-Hans": ["zh-Hans"],
-      es: ["es"],
-      ko: ["ko"],
-      fr: ["fr"],
-      it: ["it"],
-      de: ["de"],
     };
 
     const targetCodes = languageCodes[
@@ -538,13 +444,6 @@ export function getPokemonDescription(
   const languageMap: Record<string, string[]> = {
     en: ["en"],
     ja: ["ja", "ja-Hrkt"],
-    "zh-Hant": ["zh-Hant"],
-    "zh-Hans": ["zh-Hans"],
-    es: ["es"],
-    ko: ["ko"],
-    fr: ["fr"],
-    it: ["it"],
-    de: ["de"],
   };
 
   const targetCodes = languageMap[language] || ["en"];
@@ -583,13 +482,6 @@ function getGenusFallback(language: Locale): string {
   const fallbackTexts: Record<Locale, string> = {
     en: "Pokémon",
     ja: "ポケモン",
-    "zh-Hant": "寶可夢",
-    "zh-Hans": "宝可梦",
-    es: "Pokémon",
-    ko: "포켓몬",
-    fr: "Pokémon",
-    it: "Pokémon",
-    de: "Pokémon",
   };
 
   return fallbackTexts[language] || "Pokémon";
@@ -609,13 +501,6 @@ export function getPokemonGenus(pokemon: Pokemon, language: Locale): string {
   const languageMap: Record<string, string[]> = {
     en: ["en"],
     ja: ["ja", "ja-Hrkt"],
-    "zh-Hant": ["zh-Hant"],
-    "zh-Hans": ["zh-Hans"],
-    es: ["es"],
-    ko: ["ko"],
-    fr: ["fr"],
-    it: ["it"],
-    de: ["de"],
   };
 
   const targetCodes = languageMap[language] || ["en"];
@@ -694,10 +579,6 @@ export function getAbilityName(
       "zh-Hant": ["zh-Hant"],
       "zh-Hans": ["zh-Hans"],
       es: ["es"],
-      ko: ["ko"],
-      fr: ["fr"],
-      it: ["it"],
-      de: ["de"],
     };
     const targetLanguage = languageMap[language] || ["en"];
 
@@ -769,10 +650,6 @@ export function getGenerationName(
 
   if (language === "ja") {
     return `第${number}世代`;
-  } else if (language === "zh-Hant" || language === "zh-Hans") {
-    return `第${number}世代`;
-  } else if (language === "ko") {
-    return `제${number}세대`;
   } else {
     return `Generation ${number.toUpperCase()}`;
   }
@@ -922,10 +799,6 @@ export function getMoveName(move: Move, language: Locale): string {
       "zh-Hant": ["zh-Hant"],
       "zh-Hans": ["zh-Hans"],
       es: ["es"],
-      ko: ["ko"],
-      fr: ["fr"],
-      it: ["it"],
-      de: ["de"],
     };
     const targetLanguage = languageMap[language] || ["en"];
 
@@ -945,11 +818,8 @@ export function getMoveName(move: Move, language: Locale): string {
   const translation = MOVE_TRANSLATIONS[moveName];
 
   if (translation) {
-    // If Chinese/Korean language requested but translation doesn't exist, fall back to English
-    if (
-      (language === "zh-Hant" || language === "zh-Hans" || language === "ko") &&
-      !translation[language as "en" | "ja"]
-    ) {
+    // If Japanese language requested but translation doesn't exist, fall back to English
+    if (language === "ja" && !translation["ja"]) {
       return translation["en"] || move.name;
     }
     return (
@@ -1008,12 +878,6 @@ export function getGenderDisplayString(
     case "genderless":
       if (language === "ja") {
         return "不明";
-      } else if (language === "zh-Hant" || language === "zh-Hans") {
-        return "無性別";
-      } else if (language === "ko") {
-        return "성별불명";
-      } else if (language === "de") {
-        return "Geschlechtslos";
       } else {
         return "Genderless";
       }
@@ -1053,14 +917,6 @@ export function getGenderDisplayElement(
       let genderlessText: string;
       if (language === "ja") {
         genderlessText = "不明";
-      } else if (language === "zh-Hant" || language === "zh-Hans") {
-        genderlessText = "無性別";
-      } else if (language === "es") {
-        genderlessText = "Sin género";
-      } else if (language === "ko") {
-        genderlessText = "성별불명";
-      } else if (language === "de") {
-        genderlessText = "Geschlechtslos";
       } else {
         genderlessText = "Genderless";
       }
@@ -1136,13 +992,6 @@ export function getMoveFlavorText(move: Move, language: Locale): string {
   const languageMap: Record<string, string[]> = {
     en: ["en"],
     ja: ["ja", "ja-Hrkt"],
-    "zh-Hant": ["zh-Hant"],
-    "zh-Hans": ["zh-Hans"],
-    es: ["es"],
-    ko: ["ko"],
-    fr: ["fr"],
-    it: ["it"],
-    de: ["de"],
   };
 
   const targetCodes = languageMap[language] || ["en"];
@@ -1195,10 +1044,6 @@ export function getMoveDamageClassName(
       "zh-Hant": ["zh-Hant"],
       "zh-Hans": ["zh-Hans"],
       es: ["es"],
-      ko: ["ko"],
-      fr: ["fr"],
-      it: ["it"],
-      de: ["de"],
     };
     const targetLanguage = languageMap[language] || ["en"];
 
@@ -1243,10 +1088,6 @@ export function getMoveTargetName(
       "zh-Hant": ["zh-Hant"],
       "zh-Hans": ["zh-Hans"],
       es: ["es"],
-      ko: ["ko"],
-      fr: ["fr"],
-      it: ["it"],
-      de: ["de"],
     };
     const targetLanguage = languageMap[language] || ["en"];
 

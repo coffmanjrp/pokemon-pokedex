@@ -71,7 +71,9 @@
       "tryAgain": "Try Again",
       "pokemonNotFound": "Pokémon not found",
       "goHome": "Go Home",
-      "unknown": "Unknown"
+      "unknown": "Unknown",
+      "evolutionChainError": "Error loading evolution data",
+      "movesError": "Error loading moves data"
     },
     "common": {
       "loading": "Loading"

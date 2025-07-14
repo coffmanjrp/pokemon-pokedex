@@ -2,6 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-require-imports */
 const { spawn } = require("child_process");
+const os = require("os");
 
 // Pokemon generations data
 const GENERATIONS = [
@@ -15,6 +16,21 @@ const GENERATIONS = [
   { id: 8, name: "Generation VIII (Galar)", range: "810-905" },
   { id: 9, name: "Generation IX (Paldea)", range: "906-1025" },
 ];
+
+// Determine optimal parallelism based on CPU cores and memory
+function getOptimalParallelism() {
+  const cpuCount = os.cpus().length;
+  const totalMemory = os.totalmem() / (1024 * 1024 * 1024); // GB
+
+  // Conservative approach: use 2-3 parallel builds based on resources
+  if (totalMemory >= 16 && cpuCount >= 8) {
+    return 3;
+  } else if (totalMemory >= 8 && cpuCount >= 4) {
+    return 2;
+  } else {
+    return 1; // Fallback to sequential
+  }
+}
 
 async function runCommand(command, args, env = {}) {
   return new Promise((resolve, reject) => {
@@ -52,6 +68,7 @@ async function buildGeneration(generation) {
 
     await runCommand("npm", ["run", "build"], {
       BUILD_GENERATION: generation.id.toString(),
+      ENABLE_GENERATIONAL_BUILD: "true",
     });
 
     const duration = Math.round((Date.now() - startTime) / 1000);
@@ -69,50 +86,54 @@ async function buildGeneration(generation) {
   }
 }
 
-async function mergeBuildOutputs() {
-  console.log(`\n${"=".repeat(60)}`);
-  console.log(`🔄 Merging build outputs...`);
-  console.log(`${"=".repeat(60)}`);
+async function buildGenerationsInParallel(generations, parallelism) {
+  const results = [];
 
-  // For now, just log the completion
-  // In a more advanced implementation, you could merge .next directories
-  console.log(`✅ Build outputs are ready for deployment`);
+  // Process generations in batches
+  for (let i = 0; i < generations.length; i += parallelism) {
+    const batch = generations.slice(i, i + parallelism);
+    console.log(`\n🔄 Building batch: ${batch.map((g) => g.name).join(", ")}`);
+
+    // Build current batch in parallel
+    const batchPromises = batch.map((generation) =>
+      buildGeneration(generation),
+    );
+    const batchResults = await Promise.all(batchPromises);
+    results.push(...batchResults);
+
+    // Pause between batches to prevent overload
+    if (i + parallelism < generations.length) {
+      console.log(`\n⏸️  Pausing 15 seconds before next batch...`);
+      await new Promise((resolve) => setTimeout(resolve, 15000));
+    }
+  }
+
+  return results;
 }
 
 async function main() {
   const totalStartTime = Date.now();
-  const results = [];
+  const parallelism = getOptimalParallelism();
 
-  console.log(`🎮 Starting generational Pokemon build process`);
+  console.log(`🎮 Starting parallel generational Pokemon build process`);
   console.log(`📅 Started at: ${new Date().toISOString()}`);
   console.log(`🔢 Total generations to build: ${GENERATIONS.length}`);
+  console.log(`⚡ Parallel builds: ${parallelism}`);
+  console.log(`💻 CPU cores: ${os.cpus().length}`);
+  console.log(
+    `💾 Total memory: ${Math.round(os.totalmem() / (1024 * 1024 * 1024))}GB`,
+  );
 
-  // Build each generation sequentially
-  for (let i = 0; i < GENERATIONS.length; i++) {
-    const generation = GENERATIONS[i];
-    const result = await buildGeneration(generation);
-    results.push(result);
-
-    // Longer pause between generations to prevent Railway overload
-    if (i < GENERATIONS.length - 1) {
-      console.log(`\n⏸️  Pausing 10 seconds before next generation...`);
-      await new Promise((resolve) => setTimeout(resolve, 10000));
-    }
-  }
-
-  // Merge outputs if all builds succeeded
-  const successfulBuilds = results.filter((r) => r.success);
-  const failedBuilds = results.filter((r) => !r.success);
-
-  if (failedBuilds.length === 0) {
-    await mergeBuildOutputs();
-  }
+  // Build generations in parallel batches
+  const results = await buildGenerationsInParallel(GENERATIONS, parallelism);
 
   // Summary report
+  const successfulBuilds = results.filter((r) => r.success);
+  const failedBuilds = results.filter((r) => !r.success);
   const totalDuration = Math.round((Date.now() - totalStartTime) / 1000);
 
   console.log(`\n${"=".repeat(60)}`);
-  console.log(`📊 GENERATIONAL BUILD SUMMARY`);
+  console.log(`📊 PARALLEL BUILD SUMMARY`);
   console.log(`${"=".repeat(60)}`);
   console.log(
     `✅ Successful builds: ${successfulBuilds.length}/${GENERATIONS.length}`,

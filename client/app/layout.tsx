@@ -87,7 +87,13 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="//assets.pokemon.com" />
         <link
           rel="preconnect"
-          href={process.env.NEXT_PUBLIC_GRAPHQL_URL || "http://localhost:4000"}
+          href={
+            process.env.NEXT_PUBLIC_SERVER_MODE === "production"
+              ? process.env.NEXT_PUBLIC_GRAPHQL_URL_PROD ||
+                "http://localhost:4000"
+              : process.env.NEXT_PUBLIC_GRAPHQL_URL_DEV ||
+                "http://localhost:4000"
+          }
         />
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link

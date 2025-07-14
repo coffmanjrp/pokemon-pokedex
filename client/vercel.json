@@ -1,0 +1,50 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "functions": {
+    "app/[lang]/pokemon/[id]/page.tsx": {
+      "maxDuration": 30
+    },
+    "app/[lang]/page.tsx": {
+      "maxDuration": 30
+    },
+    "app/api/[lang]/pokemon/[id]/route.ts": {
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "NODE_OPTIONS": "--max-old-space-size=8192"
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=3600, stale-while-revalidate=86400"
+        }
+      ]
+    }
+  ],
+  "github": {
+    "silent": true
+  }
+}

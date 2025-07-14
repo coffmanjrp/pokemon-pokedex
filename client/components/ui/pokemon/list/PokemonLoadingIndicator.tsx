@@ -8,7 +8,7 @@ interface PokemonLoadingIndicatorProps {
   lang: Locale;
   currentGeneration: number;
   generationRange: {
-    region: { en: string; ja: string; "zh-Hant": string; "zh-Hans": string };
+    region: { en: string; ja: string };
     min: number;
     max: number;
   };
@@ -31,10 +31,6 @@ export function PokemonLoadingIndicator({
         return generationRange.region.en;
       case "ja":
         return generationRange.region.ja;
-      case "zh-Hant":
-        return generationRange.region["zh-Hant"];
-      case "zh-Hans":
-        return generationRange.region["zh-Hans"];
       default:
         return generationRange.region.en;
     }
