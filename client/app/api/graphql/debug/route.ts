@@ -88,7 +88,6 @@ export async function GET(request: NextRequest) {
     const endTime = Date.now();
 
     if (error) {
-      console.error("GraphQL Error:", error);
       return NextResponse.json(
         {
           error: "GraphQL query failed",
@@ -124,7 +123,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("API Route Error:", error);
     return NextResponse.json(
       {
         error: "Internal server error",

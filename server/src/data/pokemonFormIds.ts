@@ -219,15 +219,9 @@ function getBasePokemonId(formId: number): number {
  * @returns Array of form IDs sorted by base Pokemon ID, then by actual form ID
  */
 export function getSortedFormIdsByDisplayId(): number[] {
-  console.log('[DEBUG] Starting getSortedFormIdsByDisplayId function');
-  console.log('[DEBUG] REAL_FORM_IDS length:', REAL_FORM_IDS.length);
-  console.log('[DEBUG] First 5 unsorted IDs:', REAL_FORM_IDS.slice(0, 5));
-  
   const sorted = [...REAL_FORM_IDS].sort((a, b) => {
     const displayIdA = getBasePokemonId(a);
     const displayIdB = getBasePokemonId(b);
-    
-    console.log(`[DEBUG] Comparing ${a} (base: ${displayIdA}) vs ${b} (base: ${displayIdB})`);
     
     // Primary sort: display ID (base Pokemon ID)
     if (displayIdA !== displayIdB) {
@@ -236,13 +230,6 @@ export function getSortedFormIdsByDisplayId(): number[] {
     
     // Secondary sort: actual form ID
     return a - b;
-  });
-  
-  // Debug output for first few entries
-  console.log('[DEBUG] First 10 sorted form IDs:');
-  sorted.slice(0, 10).forEach(formId => {
-    const baseId = getBasePokemonId(formId);
-    console.log(`  Form ID: ${formId} -> Base ID: ${baseId}`);
   });
   
   return sorted;
@@ -255,9 +242,7 @@ export function getSortedFormIdsByDisplayId(): number[] {
  * @returns Array of form IDs for the specified range, sorted by display ID
  */
 export function getSortedFormIdsForPagination(startIndex: number, limit: number): number[] {
-  console.log(`[DEBUG] getSortedFormIdsForPagination called with startIndex: ${startIndex}, limit: ${limit}`);
   const sortedFormIds = getSortedFormIdsByDisplayId();
   const result = sortedFormIds.slice(startIndex, startIndex + limit);
-  console.log(`[DEBUG] Returning ${result.length} form IDs:`, result);
   return result;
 }

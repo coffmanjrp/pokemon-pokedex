@@ -63,8 +63,7 @@ export async function GET(
         "Vercel-CDN-Cache-Control": "public, max-age=86400",
       },
     });
-  } catch (error) {
-    console.error("Error proxying Pokemon image:", error);
+  } catch {
     return new NextResponse("Internal server error", { status: 500 });
   }
 }

@@ -238,7 +238,6 @@ export async function GET(
     });
 
     if (error) {
-      console.error("GraphQL Error:", error);
       return NextResponse.json(
         {
           error: "Failed to fetch evolution chain data",
@@ -378,7 +377,6 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("Evolution API Route Error:", error);
     return NextResponse.json(
       {
         error: "Internal server error",
