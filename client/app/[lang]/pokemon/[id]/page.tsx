@@ -381,10 +381,6 @@ export default async function PokemonDetailPage({
     }
 
     console.log(`[PokemonDetailPage] Response received for ID ${id}`);
-    console.log(
-      `[PokemonDetailPage] Has evolution chain:`,
-      data?.pokemon?.species?.evolutionChain ? "Yes" : "No",
-    );
 
     const pokemon: Pokemon = data?.pokemon;
 

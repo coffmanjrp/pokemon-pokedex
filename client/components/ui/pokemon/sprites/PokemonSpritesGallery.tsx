@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Pokemon } from "@/types/pokemon";
-import { PokemonMoves } from "../detail/PokemonMoves";
+import { PokemonMovesWrapper } from "../detail/PokemonMovesWrapper";
 import { PokemonDescription } from "../detail/PokemonDescription";
 import { PokemonGameHistory } from "../detail/PokemonGameHistory";
 import { InfoCard } from "../../common/InfoCard";
@@ -55,7 +55,6 @@ export function PokemonSpritesGallery({
       id: "moves" as ContentTabType,
       label: text.moves,
       icon: "⚔️",
-      count: pokemon.moves ? pokemon.moves.length : 0,
     },
     {
       id: "gameHistory" as ContentTabType,
@@ -70,8 +69,7 @@ export function PokemonSpritesGallery({
         pokemon.species?.flavorTextEntries &&
         pokemon.species.flavorTextEntries.length > 0
       );
-    if (tab.id === "moves")
-      return !!(pokemon.moves && pokemon.moves.length > 0);
+    if (tab.id === "moves") return true; // Always show moves tab, data will be loaded on demand
     if (tab.id === "gameHistory")
       return !!(pokemon.gameIndices && pokemon.gameIndices.length > 0);
     return false;
@@ -86,12 +84,12 @@ export function PokemonSpritesGallery({
         return <PokemonDescription pokemon={pokemon} language={language} />;
 
       case "moves":
-        return pokemon.moves ? (
-          <PokemonMoves moves={pokemon.moves} language={language} />
-        ) : (
-          <div className="text-center py-8 text-gray-500">
-            {text.noMovesData}
-          </div>
+        return (
+          <PokemonMovesWrapper
+            pokemonId={pokemon.id}
+            language={language}
+            isActive={activeContentTab === "moves"}
+          />
         );
 
       case "gameHistory":

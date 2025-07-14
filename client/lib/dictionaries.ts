@@ -75,6 +75,8 @@ export interface Dictionary {
       pokemonNotFound: string;
       goHome: string;
       unknown: string;
+      evolutionChainError: string;
+      movesError: string;
     };
     common: {
       loading: string;

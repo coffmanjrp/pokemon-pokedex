@@ -144,8 +144,16 @@ export const apolloClient = new ApolloClient({
   },
 });
 
+// Singleton instance for SSR client to share cache during build
+let ssrClient: ApolloClient<object> | null = null;
+
 // Server-side client for SSG/SSR
 export function getClient() {
+  // Return existing client if available (for cache sharing during build)
+  if (ssrClient) {
+    return ssrClient;
+  }
+
   const graphQLURL = getGraphQLURL();
 
   console.log(`[Apollo SSR] Creating client with URL: ${graphQLURL}`);
@@ -194,17 +202,24 @@ export function getClient() {
 
   const ssrLink = ApolloLink.from([ssrRetryLink, ssrHttpLink]);
 
-  return new ApolloClient({
+  ssrClient = new ApolloClient({
     link: ssrLink,
     cache: new InMemoryCache({
       addTypename: false, // Disable __typename for SSR consistency
+      typePolicies: {
+        Pokemon: {
+          keyFields: ["id"], // Use Pokemon ID as cache key
+        },
+      },
     }),
     ssrMode: typeof window === "undefined",
     defaultOptions: {
       query: {
         errorPolicy: "all", // Continue even with errors
-        fetchPolicy: "no-cache", // Always fetch fresh data during build
+        fetchPolicy: "cache-first", // Use cache-first for build performance
       },
     },
   });
+
+  return ssrClient;
 }

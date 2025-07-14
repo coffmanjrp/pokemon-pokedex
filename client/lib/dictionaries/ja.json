@@ -71,7 +71,9 @@
       "tryAgain": "もう一度試す",
       "pokemonNotFound": "ポケモンが見つかりません",
       "goHome": "ホームに戻る",
-      "unknown": "不明"
+      "unknown": "不明",
+      "evolutionChainError": "進化データの読み込みエラー",
+      "movesError": "わざデータの読み込みエラー"
     },
     "common": {
       "loading": "読み込み中"
