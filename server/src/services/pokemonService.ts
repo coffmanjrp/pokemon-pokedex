@@ -26,8 +26,6 @@ class PokemonService {
   private async initializeFormSpeciesCache(): Promise<void> {
     if (isCacheInitialized) return;
     
-    console.log('[DEBUG] Initializing form to species cache...');
-    
     // Build the cache by fetching species data for all forms
     const mappings: Record<number, number> = {};
     const batchProcessor = async (formId: number) => {
@@ -37,7 +35,6 @@ class PokemonService {
           const speciesId = parseInt(pokemonData.species.url.match(/\/(\d+)\/?$/)?.[1] || formId.toString());
           mappings[formId] = speciesId;
           formToSpeciesCache.set(formId, speciesId);
-          console.log(`[DEBUG] Mapped form ${formId} -> species ${speciesId}`);
         }
       } catch (error) {
         console.warn(`Could not fetch species mapping for form ${formId}:`, error);
@@ -52,7 +49,6 @@ class PokemonService {
     );
     
     isCacheInitialized = true;
-    console.log(`[DEBUG] Initialized in-memory cache with ${formToSpeciesCache.size} mappings`);
   }
   
   // Get sorted form IDs based on species ID
@@ -79,7 +75,6 @@ class PokemonService {
     
     // Reset minute counter if needed
     if (now > minuteResetTime) {
-      console.log(`[Rate Limit] Requests in last minute: ${requestsThisMinute}`);
       requestsThisMinute = 0;
       minuteResetTime = now + 60000;
     }
@@ -95,10 +90,7 @@ class PokemonService {
     totalRequests++;
     requestsThisMinute++;
     
-    // Log every 100 requests
-    if (totalRequests % 100 === 0) {
-      console.log(`[Rate Limit] Total requests: ${totalRequests}, This minute: ${requestsThisMinute}`);
-    }
+    // Rate limiting applied
   }
 
   // Limit concurrent requests to prevent overwhelming PokeAPI
@@ -132,8 +124,6 @@ class PokemonService {
       const response = await axiosInstance.get(`${POKEAPI_BASE_URL}${endpoint}`);
       return response.data;
     } catch (error: any) {
-      console.error(`Error fetching from PokeAPI: ${endpoint}`, error.code || error.message);
-      
       // Retry on network errors or server errors
       if (retryCount < maxRetries && (
         error.code === 'ECONNRESET' || 
@@ -141,14 +131,12 @@ class PokemonService {
         error.code === 'ENOTFOUND' ||
         (error.response && error.response.status >= 500)
       )) {
-        console.log(`Retrying ${endpoint} (attempt ${retryCount + 1}/${maxRetries})`);
         await delay(retryCount);
         return this.fetchFromPokeAPI(endpoint, retryCount + 1);
       }
       
       // Return null instead of throwing for non-critical data
       if (error.code === 'ECONNRESET' || error.code === 'ETIMEDOUT') {
-        console.log(`Failed to fetch ${endpoint} after ${maxRetries} retries, returning null`);
         return null;
       }
       
@@ -165,9 +153,7 @@ class PokemonService {
     if (pokemonData.species && pokemonData.species.url) {
       try {
         const speciesEndpoint = pokemonData.species.url.replace('https://pokeapi.co/api/v2', '');
-        console.log(`[Pokemon ${id}] Fetching species data from: ${speciesEndpoint}`);
         speciesData = await this.fetchFromPokeAPI(speciesEndpoint);
-        console.log(`[Pokemon ${id}] Species data fetched successfully`);
       } catch (error) {
         console.warn(`Could not fetch species data for Pokemon ${id}:`, error);
       }
@@ -293,25 +279,15 @@ class PokemonService {
 
   // Special handler for Pokemon forms (Generation 0)
   async getPokemonFormsBasic(limit: number, offset: number): Promise<any> {
-    console.log(`[DEBUG] getPokemonFormsBasic called with limit: ${limit}, offset: ${offset}`);
     // Calculate which form IDs to fetch based on offset
     // Client sends offset as 10032 (10033 - 1), so we need to add 1
     const startIndex = offset >= 10032 ? offset - 10032 : 0; // Convert offset to index in form IDs array
-    console.log(`[DEBUG] Calculated startIndex: ${startIndex}`);
     
     // Get sorted form IDs based on species ID
     const sortedFormIds = await this.getSortedFormIds();
     
-    // Debug: log first 10 sorted form IDs with their species
-    console.log('[DEBUG] First 10 sorted form IDs:');
-    sortedFormIds.slice(0, 10).forEach(formId => {
-      const speciesId = formToSpeciesCache.get(formId) || formId;
-      console.log(`  Form ID: ${formId} -> Species ID: ${speciesId}`);
-    });
-    
     // Get the form IDs for this page
     const formIds = sortedFormIds.slice(startIndex, startIndex + limit);
-    console.log(`[DEBUG] Form IDs for this page:`, formIds);
     
     const pokemonProcessor = async (formId: number) => {
       const pokemonData = await this.fetchFromPokeAPI(`/pokemon/${formId}`);
@@ -527,13 +503,9 @@ class PokemonService {
         isBaby: speciesData.is_baby ?? false,
         isLegendary: speciesData.is_legendary ?? false,
         isMythical: speciesData.is_mythical ?? false,
-        evolutionChain: speciesData.evolution_chain ? (
-          console.log(`[Pokemon ${data.id}] Species has evolution chain:`, speciesData.evolution_chain),
+        evolutionChain: speciesData.evolution_chain ? 
           await this.getEvolutionChain(speciesData.evolution_chain.url)
-        ) : (
-          console.log(`[Pokemon ${data.id}] No evolution chain in species data`),
-          undefined
-        ),
+        : undefined,
       } : {
         // Return minimal species object with empty arrays when species data is not available
         id: data.id.toString(),
@@ -559,12 +531,8 @@ class PokemonService {
 
   private async getEvolutionChain(evolutionChainUrl: string) {
     try {
-      console.log(`[Evolution Chain] Fetching from URL: ${evolutionChainUrl}`);
       const endpoint = evolutionChainUrl.replace(POKEAPI_BASE_URL, '');
-      console.log(`[Evolution Chain] Endpoint: ${endpoint}`);
-      
       const evolutionData = await this.fetchFromPokeAPI(endpoint);
-      console.log(`[Evolution Chain] Successfully fetched data for chain ID: ${this.extractIdFromUrl(evolutionChainUrl)}`);
       
       return {
         id: this.extractIdFromUrl(evolutionChainUrl),
@@ -572,11 +540,7 @@ class PokemonService {
         chain: await this.transformEvolutionChainData(evolutionData.chain),
       };
     } catch (error) {
-      console.error(`[Evolution Chain] Error fetching from ${evolutionChainUrl}:`, error);
-      console.error('[Evolution Chain] Error details:', {
-        message: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined,
-      });
+      // Return undefined if evolution chain fetch fails
       return undefined;
     }
   }
@@ -790,7 +754,7 @@ class PokemonService {
 
       return forms;
     } catch (error) {
-      console.error('Error fetching Pokemon forms:', error);
+      // Return empty array if form fetch fails
       return [];
     }
   }
@@ -833,7 +797,6 @@ class PokemonService {
           },
         };
       } catch (error) {
-        console.error(`Error fetching ability details for ${abilityInfo.ability.name}:`, error);
         // Return basic ability data if detailed fetch fails
         return {
           isHidden: abilityInfo.is_hidden,
@@ -975,7 +938,6 @@ class PokemonService {
           })),
         };
       } catch (error) {
-        console.error(`Error fetching move details for ${moveInfo.move.name}:`, error);
         // Return basic move data if detailed fetch fails
         return {
           move: {
