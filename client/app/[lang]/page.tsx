@@ -3,6 +3,11 @@ import { Locale, interpolate } from "@/lib/dictionaries";
 import { getDictionary } from "@/lib/get-dictionary";
 import { getFallbackMetadata } from "@/lib/fallbackText";
 import { PokemonListClient } from "./client";
+import {
+  generateStructuredData,
+  createStructuredDataScript,
+} from "@/lib/utils/structuredData";
+import { getCanonicalUrl, getAlternateUrls } from "@/lib/utils/metadata";
 
 // ISR configuration: revalidate every hour
 export const revalidate = 3600;
@@ -43,7 +48,9 @@ export async function generateMetadata({
   const selectedPokemon = featuredPokemon[dayOfYear % featuredPokemon.length]!;
 
   // High-quality official artwork URL from our own domain
-  const pokemonImageUrl = `https://pokemon-pokedex-client.vercel.app/api/images/pokemon/${selectedPokemon.id}`;
+  const pokemonImageUrl = getCanonicalUrl(
+    `/api/images/pokemon/${selectedPokemon.id}`,
+  );
 
   const title =
     dictionary.meta.homeTitle || getFallbackMetadata(lang, "homeTitle");
@@ -54,6 +61,9 @@ export async function generateMetadata({
 
   const keywords = dictionary.meta.homeKeywords;
 
+  const canonicalUrl = getCanonicalUrl(`/${lang}`);
+  const alternateUrls = getAlternateUrls("/", ["en", "ja"]);
+
   return {
     title,
     description,
@@ -62,7 +72,7 @@ export async function generateMetadata({
       title,
       description,
       type: "website",
-      url: `https://pokemon-pokedex-client.vercel.app/${lang}`,
+      url: canonicalUrl,
       siteName: dictionary.meta.title,
       images: [
         {
@@ -103,11 +113,10 @@ export async function generateMetadata({
       },
     },
     alternates: {
-      canonical: `https://pokemon-pokedex-client.vercel.app/${lang}`,
+      canonical: canonicalUrl,
       languages: {
-        en: "https://pokemon-pokedex-client.vercel.app/en",
-        ja: "https://pokemon-pokedex-client.vercel.app/ja",
-        "x-default": "https://pokemon-pokedex-client.vercel.app/en",
+        ...alternateUrls,
+        "x-default": getCanonicalUrl("/en"),
       },
     },
     category: "entertainment",
@@ -118,13 +127,26 @@ export default async function HomePage({ params }: HomePageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang);
 
+  // Generate structured data for SEO
+  const structuredData = generateStructuredData({
+    type: "website",
+    dictionary,
+    lang,
+  });
+
   // For ISR, only provide empty initial data to prevent generation mismatch issues
   // Let client-side handle all Pokemon loading based on current generation
   return (
-    <PokemonListClient
-      dictionary={dictionary}
-      lang={lang}
-      initialPokemon={[]}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={createStructuredDataScript(structuredData)}
+      />
+      <PokemonListClient
+        dictionary={dictionary}
+        lang={lang}
+        initialPokemon={[]}
+      />
+    </>
   );
 }

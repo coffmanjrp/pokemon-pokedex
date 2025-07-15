@@ -13,6 +13,11 @@ import {
 } from "@/lib/pokemonUtils";
 import { GENERATIONS } from "@/lib/data/generations";
 import PokemonDetailClient from "./client";
+import {
+  generateStructuredData,
+  createStructuredDataScript,
+} from "@/lib/utils/structuredData";
+import { getCanonicalUrl, getAlternateUrls } from "@/lib/utils/metadata";
 
 interface PokemonDetailPageProps {
   params: Promise<{
@@ -258,6 +263,9 @@ export async function generateMetadata({
       generation: generation,
     });
 
+    const canonicalUrl = getCanonicalUrl(`/${lang}/pokemon/${id}`);
+    const alternateUrls = getAlternateUrls(`/pokemon/${id}`, ["en", "ja"]);
+
     return {
       title,
       description,
@@ -266,11 +274,11 @@ export async function generateMetadata({
         title,
         description,
         type: "website",
-        url: `https://pokemon-pokedex-client.vercel.app/${lang}/pokemon/${id}`,
+        url: canonicalUrl,
         siteName: dictionary.meta.title,
         images: [
           {
-            url: `https://pokemon-pokedex-client.vercel.app/api/images/pokemon/${pokemon.id}`,
+            url: getCanonicalUrl(`/api/images/pokemon/${pokemon.id}`),
             width: 475,
             height: 475,
             alt: `${pokemonName} official artwork`,
@@ -282,9 +290,7 @@ export async function generateMetadata({
         card: "summary_large_image",
         title,
         description,
-        images: [
-          `https://pokemon-pokedex-client.vercel.app/api/images/pokemon/${pokemon.id}`,
-        ],
+        images: [getCanonicalUrl(`/api/images/pokemon/${pokemon.id}`)],
         creator: "@pokedex",
         site: "@pokedex",
       },
@@ -300,11 +306,8 @@ export async function generateMetadata({
         },
       },
       alternates: {
-        canonical: `https://pokemon-pokedex-client.vercel.app/${lang}/pokemon/${id}`,
-        languages: {
-          en: `https://pokemon-pokedex-client.vercel.app/en/pokemon/${id}`,
-          ja: `https://pokemon-pokedex-client.vercel.app/ja/pokemon/${id}`,
-        },
+        canonical: canonicalUrl,
+        languages: alternateUrls,
       },
     };
   } catch (error) {
@@ -320,7 +323,7 @@ export async function generateMetadata({
         title: fallbackTitle,
         description: "View detailed information about this Pokemon",
         type: "website",
-        url: `https://pokemon-pokedex-client.vercel.app/${lang || "en"}/pokemon/${id || ""}`,
+        url: getCanonicalUrl(`/${lang || "en"}/pokemon/${id || ""}`),
       },
     };
   }
@@ -389,12 +392,26 @@ export default async function PokemonDetailPage({
       notFound();
     }
 
+    // Generate structured data for SEO
+    const structuredData = generateStructuredData({
+      type: "pokemon",
+      pokemon,
+      dictionary,
+      lang,
+    });
+
     return (
-      <PokemonDetailClient
-        pokemon={pokemon}
-        lang={lang}
-        dictionary={dictionary}
-      />
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={createStructuredDataScript(structuredData)}
+        />
+        <PokemonDetailClient
+          pokemon={pokemon}
+          lang={lang}
+          dictionary={dictionary}
+        />
+      </>
     );
   } catch (error) {
     console.error(`[PokemonDetailPage] Critical error for ID ${id}:`, {
