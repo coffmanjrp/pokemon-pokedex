@@ -260,19 +260,37 @@ class ErrorHandlerService {
     if (!this.options.logToServer) return;
 
     try {
-      // TODO: Implement server logging
-      // Example: Send to logging service like Sentry, LogRocket, etc.
-      // await fetch('/api/errors', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(report),
-      // });
+      // Send error to API endpoint
+      const response = await fetch("/api/errors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          timestamp: report.timestamp,
+          code: report.error.code,
+          severity: report.error.severity,
+          message: report.error.message,
+          name: report.error.name,
+          url: report.url,
+          userAgent: report.userAgent,
+          context: report.error.context,
+          additionalContext: report.additionalContext,
+          stack: report.error.stack,
+        }),
+      });
 
-      // For now, just log that we would report this error
-      console.debug(
-        "[ErrorHandler] Would report error to server:",
-        report.error.code,
-      );
+      if (!response.ok) {
+        throw new Error(
+          `Failed to report error: ${response.status} ${response.statusText}`,
+        );
+      }
+
+      if (process.env.NODE_ENV === "development") {
+        console.debug(
+          "[ErrorHandler] Reported error to server:",
+          report.error.code,
+        );
+      }
     } catch (err) {
       console.error("Failed to report error to server:", err);
     }

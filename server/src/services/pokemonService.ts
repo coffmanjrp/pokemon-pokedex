@@ -26,7 +26,6 @@ class PokemonService {
   private async initializeFormSpeciesCache(): Promise<void> {
     if (isCacheInitialized) return;
     
-    console.log('[DEBUG] Initializing form to species cache...');
     
     // Build the cache by fetching species data for all forms
     const mappings: Record<number, number> = {};
@@ -37,7 +36,6 @@ class PokemonService {
           const speciesId = parseInt(pokemonData.species.url.match(/\/(\d+)\/?$/)?.[1] || formId.toString());
           mappings[formId] = speciesId;
           formToSpeciesCache.set(formId, speciesId);
-          console.log(`[DEBUG] Mapped form ${formId} -> species ${speciesId}`);
         }
       } catch (error) {
         console.warn(`Could not fetch species mapping for form ${formId}:`, error);
@@ -52,7 +50,6 @@ class PokemonService {
     );
     
     isCacheInitialized = true;
-    console.log(`[DEBUG] Initialized in-memory cache with ${formToSpeciesCache.size} mappings`);
   }
   
   // Get sorted form IDs based on species ID
@@ -293,25 +290,17 @@ class PokemonService {
 
   // Special handler for Pokemon forms (Generation 0)
   async getPokemonFormsBasic(limit: number, offset: number): Promise<any> {
-    console.log(`[DEBUG] getPokemonFormsBasic called with limit: ${limit}, offset: ${offset}`);
     // Calculate which form IDs to fetch based on offset
     // Client sends offset as 10032 (10033 - 1), so we need to add 1
     const startIndex = offset >= 10032 ? offset - 10032 : 0; // Convert offset to index in form IDs array
-    console.log(`[DEBUG] Calculated startIndex: ${startIndex}`);
     
     // Get sorted form IDs based on species ID
     const sortedFormIds = await this.getSortedFormIds();
     
     // Debug: log first 10 sorted form IDs with their species
-    console.log('[DEBUG] First 10 sorted form IDs:');
-    sortedFormIds.slice(0, 10).forEach(formId => {
-      const speciesId = formToSpeciesCache.get(formId) || formId;
-      console.log(`  Form ID: ${formId} -> Species ID: ${speciesId}`);
-    });
     
     // Get the form IDs for this page
     const formIds = sortedFormIds.slice(startIndex, startIndex + limit);
-    console.log(`[DEBUG] Form IDs for this page:`, formIds);
     
     const pokemonProcessor = async (formId: number) => {
       const pokemonData = await this.fetchFromPokeAPI(`/pokemon/${formId}`);

@@ -180,12 +180,30 @@ class ErrorLogger {
       const batch = unreported.slice(i, i + this.BATCH_SIZE);
 
       try {
-        // TODO: Implement actual API call
-        // await fetch('/api/errors/batch', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({ errors: batch }),
-        // });
+        // Send errors to API endpoint
+        const response = await fetch("/api/errors/batch", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            errors: batch.map((entry) => ({
+              id: entry.id,
+              timestamp: entry.timestamp,
+              code: entry.error.code,
+              severity: entry.error.severity,
+              message: entry.error.message,
+              url: entry.url,
+              userAgent: entry.userAgent,
+              context: entry.context,
+              stack: entry.error.stack,
+            })),
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to report errors: ${response.status} ${response.statusText}`,
+          );
+        }
 
         // Mark as reported
         const ids = batch.map((entry) => entry.id);
