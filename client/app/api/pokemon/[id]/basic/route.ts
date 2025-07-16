@@ -19,11 +19,7 @@ export async function GET(
       );
     }
 
-    // Debug: Log the exact query and variables being sent
-    console.log("Sending basic GraphQL query:", {
-      query: GET_POKEMON_BASIC.loc?.source?.body,
-      variables: { id },
-    });
+    // Prepare GraphQL query
 
     // Fetch data from GraphQL server using the basic GET_POKEMON_BASIC query
     const { data, error } = await client.query({
@@ -34,10 +30,6 @@ export async function GET(
     });
 
     if (error) {
-      console.error("GraphQL Error:", error);
-      console.error("GraphQL Errors Detail:", error.graphQLErrors);
-      console.error("Network Error Detail:", error.networkError);
-
       // Try to extract more detailed error information
       let errorDetails = error.message;
       let networkErrorDetails = null;
@@ -48,22 +40,8 @@ export async function GET(
         };
         if (networkResult?.errors) {
           errorDetails = JSON.stringify(networkResult.errors, null, 2);
-          console.error("Server GraphQL Errors:", networkResult.errors);
           networkErrorDetails = networkResult.errors;
         }
-      }
-
-      // Also try to read the response body if available
-      if (error.networkError && "response" in error.networkError) {
-        const response = error.networkError.response as {
-          status: number;
-          headers: { entries(): IterableIterator<[string, string]> };
-        };
-        console.error("Response status:", response.status);
-        console.error(
-          "Response headers:",
-          Object.fromEntries(response.headers.entries()),
-        );
       }
 
       return NextResponse.json(
@@ -100,7 +78,6 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("API Route Error:", error);
     return NextResponse.json(
       {
         error: "Internal server error",

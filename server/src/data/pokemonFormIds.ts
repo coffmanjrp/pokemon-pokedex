@@ -219,11 +219,9 @@ function getBasePokemonId(formId: number): number {
  * @returns Array of form IDs sorted by base Pokemon ID, then by actual form ID
  */
 export function getSortedFormIdsByDisplayId(): number[] {
-  
   const sorted = [...REAL_FORM_IDS].sort((a, b) => {
     const displayIdA = getBasePokemonId(a);
     const displayIdB = getBasePokemonId(b);
-    
     
     // Primary sort: display ID (base Pokemon ID)
     if (displayIdA !== displayIdB) {
@@ -233,7 +231,6 @@ export function getSortedFormIdsByDisplayId(): number[] {
     // Secondary sort: actual form ID
     return a - b;
   });
-  
   
   return sorted;
 }

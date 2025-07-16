@@ -21,7 +21,6 @@ export async function GET(request: NextRequest) {
       });
 
       if (error) {
-        console.error("GraphQL Error:", error);
         return NextResponse.json(
           { error: "Failed to fetch Pokemon data", details: error.message },
           { status: 500 },
@@ -55,7 +54,6 @@ export async function GET(request: NextRequest) {
     });
 
     if (error) {
-      console.error("GraphQL Error:", error);
       return NextResponse.json(
         { error: "Failed to fetch Pokemon list", details: error.message },
         { status: 500 },
@@ -84,7 +82,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("API Route Error:", error);
     return NextResponse.json(
       {
         error: "Internal server error",
