@@ -26,11 +26,20 @@
     }
   },
   "include": [
-    "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
+    ".next-gen-1/types/**/*.ts",
+    ".next-gen-2/types/**/*.ts",
+    ".next-gen-3/types/**/*.ts",
+    ".next-gen-4/types/**/*.ts",
+    ".next-gen-5/types/**/*.ts",
+    ".next-gen-6/types/**/*.ts",
+    ".next-gen-7/types/**/*.ts",
+    ".next-gen-8/types/**/*.ts",
     ".next/types/**/*.ts",
-    "jest.setup.js"
+    "jest.setup.js",
+    "next-env.d.ts",
+    ".next-gen-9/types/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }

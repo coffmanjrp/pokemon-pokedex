@@ -4,6 +4,8 @@ import type { NextConfig } from "next";
 import withBundleAnalyzer from "@next/bundle-analyzer";
 
 const nextConfig: NextConfig = {
+  // Dynamic output directory support for parallel builds
+  distDir: process.env.NEXT_OUT_DIR || ".next",
   images: {
     remotePatterns: [
       {

@@ -1,0 +1,23 @@
+{
+  "buildCommand": "cd client && npm run build:fast",
+  "outputDirectory": "client/.next",
+  "installCommand": "cd client && npm install",
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "functions": {
+    "client/app/[lang]/pokemon/[id]/page.tsx": {
+      "maxDuration": 30
+    },
+    "client/app/api/**/*": {
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "NODE_OPTIONS": "--max-old-space-size=8192",
+    "BUILD_PARALLELISM": "3"
+  },
+  "github": {
+    "silent": true
+  },
+  "crons": []
+}

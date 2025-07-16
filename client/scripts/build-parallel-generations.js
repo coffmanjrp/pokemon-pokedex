@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 const { spawn } = require("child_process");
 const os = require("os");
+const fs = require("fs");
 
 // Pokemon generations data
 const GENERATIONS = [
@@ -22,14 +23,30 @@ function getOptimalParallelism() {
   const cpuCount = os.cpus().length;
   const totalMemory = os.totalmem() / (1024 * 1024 * 1024); // GB
 
-  // Conservative approach: use 2-3 parallel builds based on resources
-  if (totalMemory >= 16 && cpuCount >= 8) {
-    return 3;
-  } else if (totalMemory >= 8 && cpuCount >= 4) {
-    return 2;
-  } else {
-    return 1; // Fallback to sequential
+  // Allow override via environment variable
+  if (process.env.BUILD_PARALLELISM) {
+    const override = parseInt(process.env.BUILD_PARALLELISM);
+    if (!isNaN(override) && override > 0) {
+      console.log(`⚡ Using BUILD_PARALLELISM override: ${override}`);
+      return override;
+    }
   }
+
+  // More aggressive parallelism based on resources
+  // Each Next.js build uses roughly 2-3GB of memory
+  const memoryBasedLimit = Math.floor(totalMemory / 3);
+  const cpuBasedLimit = Math.max(1, Math.floor(cpuCount / 2));
+
+  // Use the smaller of the two limits to avoid overloading
+  const optimalParallelism = Math.min(memoryBasedLimit, cpuBasedLimit, 4); // Cap at 4 for stability
+
+  console.log(`💡 Calculated optimal parallelism: ${optimalParallelism}`);
+  console.log(
+    `   (Memory: ${totalMemory.toFixed(1)}GB → ${memoryBasedLimit} parallel)`,
+  );
+  console.log(`   (CPUs: ${cpuCount} → ${cpuBasedLimit} parallel)`);
+
+  return Math.max(1, optimalParallelism);
 }
 
 async function runCommand(command, args, env = {}) {
@@ -59,22 +76,57 @@ async function runCommand(command, args, env = {}) {
 
 async function buildGeneration(generation) {
   const startTime = Date.now();
+  const startMemory = process.memoryUsage();
+  const buildDir = `.next-gen-${generation.id}`;
 
   try {
     console.log(`\n${"=".repeat(60)}`);
     console.log(`🎯 Building ${generation.name}`);
     console.log(`📊 Pokemon ID range: ${generation.range}`);
+    console.log(`📁 Output directory: ${buildDir}`);
+    console.log(
+      `💾 Start Memory: ${Math.round(startMemory.heapUsed / (1024 * 1024))}MB`,
+    );
     console.log(`${"=".repeat(60)}`);
+
+    // Clean up any existing build directory for this generation
+    if (fs.existsSync(buildDir)) {
+      console.log(`🧹 Cleaning up existing ${buildDir} directory...`);
+      fs.rmSync(buildDir, { recursive: true, force: true });
+    }
 
     await runCommand("npm", ["run", "build"], {
       BUILD_GENERATION: generation.id.toString(),
       ENABLE_GENERATIONAL_BUILD: "true",
+      NEXT_OUT_DIR: buildDir,
     });
 
     const duration = Math.round((Date.now() - startTime) / 1000);
-    console.log(`\n✅ ${generation.name} build completed in ${duration}s`);
+    const endMemory = process.memoryUsage();
+    const memoryIncrease = Math.round(
+      (endMemory.heapUsed - startMemory.heapUsed) / (1024 * 1024),
+    );
 
-    return { generation, success: true, duration };
+    console.log(`\n✅ ${generation.name} build completed`);
+    console.log(
+      `   ⏱️  Duration: ${Math.floor(duration / 60)}m ${duration % 60}s`,
+    );
+    console.log(`   💾 Memory increase: ${memoryIncrease}MB`);
+    console.log(
+      `   📈 Peak memory: ${Math.round(endMemory.heapUsed / (1024 * 1024))}MB`,
+    );
+
+    return {
+      generation,
+      success: true,
+      duration,
+      buildDir,
+      memoryUsage: {
+        start: Math.round(startMemory.heapUsed / (1024 * 1024)),
+        end: Math.round(endMemory.heapUsed / (1024 * 1024)),
+        increase: memoryIncrease,
+      },
+    };
   } catch (error) {
     const duration = Math.round((Date.now() - startTime) / 1000);
     console.error(
@@ -88,27 +140,52 @@ async function buildGeneration(generation) {
 
 async function buildGenerationsInParallel(generations, parallelism) {
   const results = [];
+  const totalBatches = Math.ceil(generations.length / parallelism);
 
   // Process generations in batches
   for (let i = 0; i < generations.length; i += parallelism) {
     const batch = generations.slice(i, i + parallelism);
-    console.log(`\n🔄 Building batch: ${batch.map((g) => g.name).join(", ")}`);
+    const batchNumber = Math.floor(i / parallelism) + 1;
+
+    console.log(`\n${"=".repeat(60)}`);
+    console.log(`🔄 Batch ${batchNumber}/${totalBatches}`);
+    console.log(`📦 Building: ${batch.map((g) => g.name).join(", ")}`);
+    console.log(`⏱️  Estimated time: ${batch.length * 3} minutes`);
+    console.log(`${"=".repeat(60)}`);
 
     // Build current batch in parallel
+    const batchStartTime = Date.now();
     const batchPromises = batch.map((generation) =>
       buildGeneration(generation),
     );
     const batchResults = await Promise.all(batchPromises);
     results.push(...batchResults);
 
-    // Pause between batches to prevent overload
+    const batchDuration = Math.round((Date.now() - batchStartTime) / 1000);
+    console.log(
+      `\n✅ Batch ${batchNumber} completed in ${Math.floor(batchDuration / 60)}m ${batchDuration % 60}s`,
+    );
+
+    // Shorter pause between batches (5 seconds instead of 15)
     if (i + parallelism < generations.length) {
-      console.log(`\n⏸️  Pausing 15 seconds before next batch...`);
-      await new Promise((resolve) => setTimeout(resolve, 15000));
+      console.log(`\n⏸️  Pausing 5 seconds before next batch...`);
+      await new Promise((resolve) => setTimeout(resolve, 5000));
     }
   }
 
   return results;
+}
+
+// Clean up generation-specific build directories
+function cleanupBuildDirectories() {
+  console.log(`\n🧹 Cleaning up generation build directories...`);
+  const files = fs.readdirSync(".");
+  files.forEach((file) => {
+    if (file.startsWith(".next-gen-")) {
+      console.log(`   Removing ${file}`);
+      fs.rmSync(file, { recursive: true, force: true });
+    }
+  });
 }
 
 async function main() {
@@ -146,7 +223,32 @@ async function main() {
   if (successfulBuilds.length > 0) {
     console.log(`\n✅ Successful generations:`);
     successfulBuilds.forEach((result) => {
-      console.log(`   • ${result.generation.name} (${result.duration}s)`);
+      const memInfo = result.memoryUsage
+        ? ` | Memory: ${result.memoryUsage.increase}MB increase`
+        : "";
+      const dirInfo = result.buildDir ? ` | Dir: ${result.buildDir}` : "";
+      console.log(
+        `   • ${result.generation.name} (${result.duration}s${memInfo}${dirInfo})`,
+      );
+    });
+
+    // Calculate average memory usage
+    const buildsWithMemory = successfulBuilds.filter((r) => r.memoryUsage);
+    if (buildsWithMemory.length > 0) {
+      const avgMemoryIncrease = Math.round(
+        buildsWithMemory.reduce((sum, r) => sum + r.memoryUsage.increase, 0) /
+          buildsWithMemory.length,
+      );
+      console.log(
+        `\n💾 Average memory increase per generation: ${avgMemoryIncrease}MB`,
+      );
+    }
+
+    console.log(`\n📁 Build directories created:`);
+    successfulBuilds.forEach((result) => {
+      if (result.buildDir) {
+        console.log(`   • ${result.buildDir}`);
+      }
     });
   }
 
@@ -160,6 +262,43 @@ async function main() {
   }
 
   console.log(`\n📅 Completed at: ${new Date().toISOString()}`);
+
+  // Auto merge if requested and all builds succeeded
+  if (
+    process.env.AUTO_MERGE === "true" &&
+    failedBuilds.length === 0 &&
+    successfulBuilds.length === GENERATIONS.length
+  ) {
+    console.log(`\n🔀 Starting automatic merge of build directories...`);
+    try {
+      const { execSync } = require("child_process");
+      execSync("npm run build:merge", { stdio: "inherit" });
+      console.log(`✅ Merge completed successfully!`);
+
+      // Clean up after successful merge if AUTO_CLEANUP is also true
+      if (process.env.AUTO_CLEANUP === "true") {
+        cleanupBuildDirectories();
+      }
+    } catch (error) {
+      console.error(`❌ Merge failed:`, error.message);
+    }
+  } else {
+    // Ask about cleanup if successful builds exist
+    if (successfulBuilds.length > 0 && process.env.AUTO_CLEANUP !== "true") {
+      console.log(`\n💡 To merge build directories, run:`);
+      console.log(`   npm run build:merge`);
+      console.log(`\n💡 To clean up build directories, run:`);
+      console.log(`   rm -rf .next-gen-*`);
+      console.log(
+        `\n   Or use AUTO_MERGE=true AUTO_CLEANUP=true for automatic processing`,
+      );
+    }
+
+    // Auto cleanup if requested
+    if (process.env.AUTO_CLEANUP === "true" && successfulBuilds.length > 0) {
+      cleanupBuildDirectories();
+    }
+  }
 
   // Exit with error code if any builds failed
   if (failedBuilds.length > 0) {
