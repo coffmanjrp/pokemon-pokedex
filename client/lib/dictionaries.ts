@@ -437,6 +437,31 @@ export interface Dictionary {
       [key: string]: string;
     };
   };
+  errors?: {
+    // Error messages
+    pokemonNotFound: string;
+    generationNotFound: string;
+    invalidPokemonId: string;
+    invalidGeneration: string;
+    apiError: string;
+    networkError: string;
+    graphqlError: string;
+    cacheError: string;
+    validationError: string;
+    unknownError: string;
+
+    // Recovery suggestions
+    suggestions?: {
+      checkInternet: string;
+      refreshPage: string;
+      checkPokemonId: string;
+      browsePokedex: string;
+      tryAgainLater: string;
+      contactSupport: string;
+      clearCache: string;
+      goHome: string;
+    };
+  };
   meta: {
     title: string;
     description: string;
