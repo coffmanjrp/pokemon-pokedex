@@ -85,6 +85,11 @@ npm run analyze:browser # Analyze browser bundle
 cd server && npm run dev      # Start GraphQL server in development
 cd server && npm run build    # Build GraphQL server  
 cd server && npm run start    # Start production GraphQL server
+
+# API Testing
+# Error logging endpoints are available:
+# POST /api/errors         # Single error reporting
+# POST /api/errors/batch   # Batch error reporting
 ```
 
 ## Development Environment
