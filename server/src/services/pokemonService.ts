@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Pokemon, PokemonConnection } from '../types/pokemon';
-import { REAL_FORM_IDS, getFormIdsForPagination, getSortedFormIdsForPagination, getTotalRealFormCount } from '../data/pokemonFormIds';
+import { REAL_FORM_IDS, getFormIdsForPagination, getSortedFormIdsForPagination, getTotalRealFormCount, getSortedFormIdsByDisplayId } from '../data/pokemonFormIds';
 
 const POKEAPI_BASE_URL = process.env['POKEAPI_BASE_URL'] || 'https://pokeapi.co/api/v2';
 
@@ -12,7 +12,6 @@ const axiosInstance = axios.create({
 
 // In-memory cache for Pokemon form to species ID mapping
 const formToSpeciesCache = new Map<number, number>();
-let isCacheInitialized = false;
 
 // Add rate limiting
 let lastRequestTime = 0;
@@ -22,52 +21,34 @@ let requestsThisMinute = 0;
 let minuteResetTime = Date.now() + 60000;
 
 class PokemonService {
-  // Initialize form to species mapping cache
-  private async initializeFormSpeciesCache(): Promise<void> {
-    if (isCacheInitialized) return;
+  // Get species ID for a form Pokemon (with lazy loading)
+  private async getFormSpeciesId(formId: number): Promise<number> {
+    // Check if we already have it cached
+    if (formToSpeciesCache.has(formId)) {
+      return formToSpeciesCache.get(formId)!;
+    }
     
-    // Build the cache by fetching species data for all forms
-    const mappings: Record<number, number> = {};
-    const batchProcessor = async (formId: number) => {
-      try {
-        const pokemonData = await this.fetchFromPokeAPI(`/pokemon/${formId}`);
-        if (pokemonData && pokemonData.species) {
-          const speciesId = parseInt(pokemonData.species.url.match(/\/(\d+)\/?$/)?.[1] || formId.toString());
-          mappings[formId] = speciesId;
-          formToSpeciesCache.set(formId, speciesId);
-        }
-      } catch (error) {
-        console.warn(`Could not fetch species mapping for form ${formId}:`, error);
+    try {
+      // Fetch the Pokemon data to get species info
+      const pokemonData = await this.fetchFromPokeAPI(`/pokemon/${formId}`);
+      if (pokemonData && pokemonData.species) {
+        const speciesId = parseInt(pokemonData.species.url.match(/\/(\d+)\/?$/)?.[1] || formId.toString());
+        formToSpeciesCache.set(formId, speciesId);
+        return speciesId;
       }
-    };
+    } catch (error) {
+      console.warn(`Could not fetch species mapping for form ${formId}:`, error);
+    }
     
-    // Process in batches
-    await this.processWithConcurrencyLimit(
-      REAL_FORM_IDS.map(id => id),
-      batchProcessor,
-      5
-    );
-    
-    isCacheInitialized = true;
+    // Fallback to the form ID itself if we can't fetch species data
+    return formId;
   }
   
-  // Get sorted form IDs based on species ID
+  // Get sorted form IDs based on species ID (using pre-sorted data)
   private async getSortedFormIds(): Promise<number[]> {
-    await this.initializeFormSpeciesCache();
-    
-    // Sort form IDs by their species ID
-    return [...REAL_FORM_IDS].sort((a, b) => {
-      const speciesIdA = formToSpeciesCache.get(a) || a;
-      const speciesIdB = formToSpeciesCache.get(b) || b;
-      
-      // Primary sort: species ID
-      if (speciesIdA !== speciesIdB) {
-        return speciesIdA - speciesIdB;
-      }
-      
-      // Secondary sort: form ID
-      return a - b;
-    });
+    // Use the pre-sorted form IDs from pokemonFormIds.ts
+    // This avoids the need to fetch all species data at once
+    return getSortedFormIdsByDisplayId();
   }
   // Rate limiting helper with monitoring
   private async enforceRateLimit(): Promise<void> {
