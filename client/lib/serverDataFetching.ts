@@ -6,7 +6,7 @@ import {
 } from "@/lib/supabase/pokemon";
 import { getEvolutionChainForPokemon } from "@/lib/supabase/evolution";
 import { apolloClient } from "@/lib/apollo";
-import { GET_POKEMON_DETAIL, GET_POKEMON_LIST } from "@/lib/graphql/queries";
+import { GET_POKEMON_DETAIL, GET_POKEMON_LIST } from "@/graphql/queries";
 import type { Pokemon, EvolutionChain } from "@/types/pokemon";
 
 // Server-side utility for fetching Pokemon detail
