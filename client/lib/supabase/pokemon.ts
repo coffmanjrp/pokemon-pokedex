@@ -5,23 +5,23 @@ import type { Database } from "@/types/supabase";
 
 // Transform Supabase data to match our Pokemon type
 function transformSupabasePokemon(
-  data: Database["public"]["Tables"]["pokemon"]["Row"],
+  data: Partial<Database["public"]["Tables"]["pokemon"]["Row"]>,
 ): Pokemon {
   return {
-    id: data.id,
-    name: data.name,
-    height: data.height,
-    weight: data.weight,
-    base_experience: data.base_experience,
-    types: data.types,
-    stats: data.stats,
-    abilities: data.abilities,
-    sprites: data.sprites,
-    moves: data.moves || [],
-    species: data.species_data,
+    id: data.id!,
+    name: data.name!,
+    height: data.height || null,
+    weight: data.weight || null,
+    base_experience: data.base_experience || null,
+    types: data.types || [],
+    stats: data.stats || [],
+    abilities: data.abilities || [],
+    sprites: data.sprites || {},
+    moves: [], // Always empty array for list view
+    species: data.species_data || {},
     forms: data.form_data || [],
     // Additional fields that might be needed
-    order: data.id,
+    order: data.id!,
     is_default: true,
     location_area_encounters: "",
     held_items: [],
@@ -31,20 +31,27 @@ function transformSupabasePokemon(
   };
 }
 
-// Get Pokemon by generation
+// Get Pokemon by generation with minimal data for list view
 export async function getPokemonByGeneration(generation: number) {
   try {
+    console.log(`Fetching Pokemon for generation ${generation}...`);
+
+    // Query with minimal fields and add a timeout
     const { data, error } = await supabase
       .from("pokemon")
-      .select("*")
+      .select("id, name, types, sprites")
       .eq("generation", generation)
-      .order("id");
+      .order("id")
+      .limit(300); // Add limit to prevent timeout on large datasets
 
     if (error) {
       console.error("Error fetching Pokemon by generation:", error);
       throw new Error(handleSupabaseError(error));
     }
 
+    console.log(
+      `Successfully fetched ${data?.length || 0} Pokemon for generation ${generation}`,
+    );
     return data?.map(transformSupabasePokemon) || [];
   } catch (error) {
     console.error("Error in getPokemonByGeneration:", error);

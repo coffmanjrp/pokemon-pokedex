@@ -5,7 +5,7 @@ import {
   getPokemonForms,
 } from "@/lib/supabase/pokemon";
 import { getEvolutionChainForPokemon } from "@/lib/supabase/evolution";
-import { apolloClient } from "@/lib/apolloClient";
+import { apolloClient } from "@/lib/apollo";
 import { GET_POKEMON_DETAIL, GET_POKEMON_LIST } from "@/lib/graphql/queries";
 import type { Pokemon, EvolutionChain } from "@/types/pokemon";
 

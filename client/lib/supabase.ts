@@ -16,6 +16,24 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: false, // We don't need auth for this app
   },
+  db: {
+    schema: "public",
+  },
+  global: {
+    headers: {
+      "x-client-info": "pokemon-pokedex",
+    },
+    fetch: (url, init) => {
+      // Add timeout to Supabase requests
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
+      return fetch(url, {
+        ...init,
+        signal: controller.signal,
+      }).finally(() => clearTimeout(timeout));
+    },
+  },
 });
 
 // Helper function to handle Supabase errors
