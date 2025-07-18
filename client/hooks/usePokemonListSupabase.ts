@@ -34,9 +34,14 @@ export function usePokemonListSupabase({
   autoFetch = true,
 }: UsePokemonListOptions = {}) {
   const dispatch = useAppDispatch();
-  const { currentGeneration, generationCache } = useAppSelector(
-    (state) => state.pokemon,
-  );
+  const {
+    currentGeneration,
+    generationData,
+    pokemons,
+    loading,
+    error,
+    hasNextPage,
+  } = useAppSelector((state) => state.pokemon);
 
   const [localGeneration, setLocalGeneration] = useState(generation);
   const loadingRef = useRef(false);
@@ -55,13 +60,22 @@ export function usePokemonListSupabase({
       try {
         // Check cache first
         const cachedData = getCachedGenerationData(gen);
-        if (cachedData && cachedData.pokemon.length > 0) {
+        if (
+          cachedData &&
+          cachedData.pokemons &&
+          cachedData.pokemons.length > 0
+        ) {
           if (mountedRef.current) {
-            dispatch(setPokemons(cachedData.pokemon));
-            dispatch(setHasNextPage(false));
-            dispatch(setEndCursor(null));
+            dispatch(setPokemons(cachedData.pokemons));
+            dispatch(setHasNextPage(cachedData.hasNextPage || false));
+            dispatch(setEndCursor(cachedData.endCursor || null));
             dispatch(
-              cacheGenerationData({ generation: gen, data: cachedData }),
+              cacheGenerationData({
+                generation: gen,
+                pokemons: cachedData.pokemons,
+                hasNextPage: cachedData.hasNextPage || false,
+                endCursor: cachedData.endCursor || null,
+              }),
             );
           }
           return;
@@ -86,12 +100,19 @@ export function usePokemonListSupabase({
 
         // Cache the data
         const cacheData = {
-          pokemon: pokemonData,
+          pokemons: pokemonData,
           hasNextPage: false,
           endCursor: null,
         };
 
-        dispatch(cacheGenerationData({ generation: gen, data: cacheData }));
+        dispatch(
+          cacheGenerationData({
+            generation: gen,
+            pokemons: pokemonData,
+            hasNextPage: false,
+            endCursor: null,
+          }),
+        );
         persistCacheData(gen, cacheData);
       } catch (error) {
         console.error("Error fetching Pokemon data:", error);
@@ -125,11 +146,15 @@ export function usePokemonListSupabase({
       setLocalGeneration(newGeneration);
 
       // Check if data is already cached in Redux
-      const cachedInRedux = generationCache[newGeneration];
-      if (cachedInRedux && cachedInRedux.pokemon.length > 0) {
-        dispatch(setPokemons(cachedInRedux.pokemon));
-        dispatch(setHasNextPage(cachedInRedux.hasNextPage));
-        dispatch(setEndCursor(cachedInRedux.endCursor));
+      const cachedInRedux = generationData[newGeneration];
+      if (
+        cachedInRedux &&
+        cachedInRedux.pokemons &&
+        cachedInRedux.pokemons.length > 0
+      ) {
+        dispatch(setPokemons(cachedInRedux.pokemons));
+        dispatch(setHasNextPage(cachedInRedux.hasNextPage || false));
+        dispatch(setEndCursor(cachedInRedux.endCursor || null));
         dispatch(setGenerationSwitching(false));
         return;
       }
@@ -137,7 +162,7 @@ export function usePokemonListSupabase({
       // Otherwise fetch from Supabase
       await fetchGenerationData(newGeneration);
     },
-    [currentGeneration, generationCache, dispatch, fetchGenerationData],
+    [currentGeneration, generationData, dispatch, fetchGenerationData],
   );
 
   // Initialize on mount
@@ -170,8 +195,27 @@ export function usePokemonListSupabase({
     }
   }, [currentGeneration, localGeneration, autoFetch, fetchGenerationData]);
 
+  // Get generation range (similar to usePokemonList)
+  const generationRange = (() => {
+    if (currentGeneration === 0) {
+      return { min: 10001, max: 11000 }; // Arbitrary range for forms
+    }
+    const genStart = (currentGeneration - 1) * 151 + 1;
+    const genEnd = currentGeneration * 151;
+    return { min: genStart, max: genEnd };
+  })();
+
   return {
-    setCurrentGeneration,
-    refetch: () => fetchGenerationData(currentGeneration),
+    pokemons: pokemons || [],
+    loading,
+    error,
+    hasNextPage,
+    loadMore: () => {}, // Supabase loads all at once, no pagination
+    refresh: () => fetchGenerationData(currentGeneration),
+    currentGeneration,
+    changeGeneration: setCurrentGeneration,
+    generationRange,
+    loadedCount: pokemons?.length || 0,
+    totalCount: pokemons?.length || 0,
   };
 }
