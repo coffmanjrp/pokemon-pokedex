@@ -41,6 +41,14 @@ npm run build                 # Standard build
 npm run type-check            # TypeScript checking
 npm run lint                  # ESLint
 npm run test                  # Jest tests
+
+# Data Sync (Server)
+cd server
+npm run sync:test             # Test sync with Pikachu
+npm run sync:pokemon [id]     # Sync specific Pokemon
+npm run sync:gen [1-9]        # Sync generation
+npm run sync:forms            # Sync special forms
+npm run sync:all              # Full sync (2-3 hours)
 ```
 
 ### Development Guide
@@ -79,7 +87,12 @@ pokemon-pokedex/
     │   ├── index.ts            # Server entry point
     │   ├── schema/             # GraphQL schema definitions
     │   ├── resolvers/          # GraphQL resolvers
-    │   └── services/           # Pokemon service with PokeAPI integration
+    │   ├── services/           # Pokemon service with PokeAPI integration
+    │   └── sync/               # Supabase data sync utilities
+    │       ├── pokemonDataMapper.ts    # Maps PokeAPI data to Supabase schema
+    │       ├── pokemonSyncService.ts   # Handles data synchronization
+    │       ├── supabaseClient.ts       # Supabase client configuration
+    │       └── syncRunner.ts           # CLI sync commands
     └── dist/                   # Compiled server code
 ```
 
@@ -117,7 +130,11 @@ For more solutions, see documentation in `/docs`
   - Database schema created
   - RLS policies configured
   - Connection tested successfully
-- 🚧 Phase 2: Data migration scripts (In Progress)
+- ✅ Phase 2: Data migration scripts completed
+  - Sync service implementation complete
+  - CLI commands for data sync available
+  - Supports individual Pokemon, generations, and forms
+  - Full sync capability (2-3 hours)
 - ⏳ Phase 3: Client integration
 - ⏳ Phase 4: Testing & optimization
 
@@ -127,7 +144,16 @@ For more solutions, see documentation in `/docs`
 ### Supabase Setup
 @docs/SUPABASE_SETUP.md
 
+### Data Sync Documentation
+@docs/DATA_SYNC.md
+
 ### Environment Variables
 - Added Supabase configuration to `.env.local` and `.env.production`
 - Service role key configured for server-side operations
 - All platforms (Vercel, Railway) configured with Supabase credentials
+
+### Next Steps
+1. Run initial data sync to populate Supabase
+2. Update client to use Supabase SDK instead of GraphQL
+3. Implement real-time features (optional)
+4. Deploy and monitor performance improvements
