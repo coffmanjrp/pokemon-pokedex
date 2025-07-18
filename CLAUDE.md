@@ -16,6 +16,7 @@ Pokemon Pokedex application built with Next.js 15, React 19, TypeScript, and Tai
 
 **Frontend**: Next.js 15 App Router, TypeScript, Redux Toolkit, Apollo Client  
 **Backend**: Apollo Server (Express), Railway deployment, PokeAPI integration  
+**Database**: Supabase (PostgreSQL) - Migration in progress  
 **Caching**: localStorage (24hr TTL) + CDN headers + Apollo InMemory  
 **Build**: Parallel generation builds (~12min), 2,786 static pages  
 
@@ -111,5 +112,22 @@ For more solutions, see documentation in `/docs`
 
 **Supabase Migration** (High Priority) - Database migration plan to resolve Railway instability and improve performance.
 
+### Migration Status
+- ✅ Phase 1: Supabase setup completed
+  - Database schema created
+  - RLS policies configured
+  - Connection tested successfully
+- 🚧 Phase 2: Data migration scripts (In Progress)
+- ⏳ Phase 3: Client integration
+- ⏳ Phase 4: Testing & optimization
+
 ### Migration Plan
 @docs/MIGRATION.md
+
+### Supabase Setup
+@docs/SUPABASE_SETUP.md
+
+### Environment Variables
+- Added Supabase configuration to `.env.local` and `.env.production`
+- Service role key configured for server-side operations
+- All platforms (Vercel, Railway) configured with Supabase credentials
