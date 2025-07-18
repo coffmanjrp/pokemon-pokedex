@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GET_POKEMON_BASIC } from "@/graphql/queries";
 import { createApolloClient } from "../../utils/graphqlClient";
+import { fetchPokemonDetail } from "@/lib/serverDataFetching";
+import { FEATURE_FLAGS } from "@/lib/featureFlags";
 
 // GraphQL client setup
 const client = createApolloClient();
@@ -19,14 +21,55 @@ export async function GET(
       );
     }
 
-    // Prepare GraphQL query
+    const pokemonId = parseInt(id);
+    if (isNaN(pokemonId)) {
+      return NextResponse.json(
+        { error: "Invalid Pokemon ID" },
+        { status: 400 },
+      );
+    }
 
-    // Fetch data from GraphQL server using the basic GET_POKEMON_BASIC query
+    // Use feature flag to determine data source
+    if (FEATURE_FLAGS.USE_SUPABASE_FOR_DETAIL) {
+      // Use Supabase
+      try {
+        const { pokemon, evolutionChain } = await fetchPokemonDetail(pokemonId);
+
+        if (!pokemon) {
+          return NextResponse.json(
+            { error: "Pokemon not found" },
+            { status: 404 },
+          );
+        }
+
+        return NextResponse.json(
+          { pokemon, evolutionChain },
+          {
+            status: 200,
+            headers: {
+              "Cache-Control":
+                "public, max-age=3600, stale-while-revalidate=86400",
+            },
+          },
+        );
+      } catch (error) {
+        console.error("Supabase fetch error:", error);
+        return NextResponse.json(
+          {
+            error: "Failed to fetch Pokemon data",
+            details: error instanceof Error ? error.message : "Unknown error",
+          },
+          { status: 500 },
+        );
+      }
+    }
+
+    // Use GraphQL (existing code)
     const { data, error } = await client.query({
       query: GET_POKEMON_BASIC,
       variables: { id },
       errorPolicy: "all",
-      fetchPolicy: "no-cache", // Same as debug endpoint
+      fetchPolicy: "no-cache",
     });
 
     if (error) {

@@ -12,7 +12,7 @@ import { PokemonProgressFooter } from "../../components/ui/pokemon/list/PokemonP
 import { GenerationSwitchingOverlay } from "../../components/ui/pokemon/list/GenerationSwitchingOverlay";
 import { SearchResults } from "../../components/ui/pokemon/list/SearchResults";
 import { NoSearchResults } from "../../components/ui/pokemon/list/NoSearchResults";
-import { usePokemonList } from "../../hooks/usePokemonList";
+import { usePokemonListUnified } from "../../hooks/usePokemonListUnified";
 import { useNavigationCache } from "../../hooks/useNavigationCache";
 import { usePokemonSearch } from "../../hooks/usePokemonSearch";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
@@ -94,7 +94,7 @@ function PokemonListContent({
     generationRange,
     loadedCount,
     totalCount,
-  } = usePokemonList({
+  } = usePokemonListUnified({
     generation: currentGeneration,
     initialPokemon: initialPokemon,
   });

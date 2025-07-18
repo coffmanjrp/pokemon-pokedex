@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getClient } from "@/lib/apollo";
-import { GET_POKEMON, GET_POKEMONS_BASIC } from "@/graphql/queries";
-import { Pokemon } from "@/types/pokemon";
+import { GET_POKEMONS_BASIC } from "@/graphql/queries";
+import { fetchPokemonDetail } from "@/lib/serverDataFetching";
 import { Locale, interpolate } from "@/lib/dictionaries";
 import { getDictionary } from "@/lib/get-dictionary";
 import {
@@ -178,35 +178,19 @@ export async function generateMetadata({
   }
 
   try {
-    const [dictionary, client] = await Promise.all([
-      getDictionary(lang),
-      getClient(),
-    ]);
+    const dictionary = await getDictionary(lang);
 
     console.log(`[generateMetadata] Fetching metadata for Pokemon ID: ${id}`);
 
-    const { data, error } = await client.query({
-      query: GET_POKEMON,
-      variables: { id },
-      errorPolicy: "all",
-    });
+    const { pokemon } = await fetchPokemonDetail(id);
 
-    if (error) {
-      console.error(`[generateMetadata] GraphQL error for ID ${id}:`, error);
+    if (!pokemon) {
+      console.log(`[generateMetadata] Pokemon not found for ID ${id}`);
       // Return basic metadata instead of throwing
       return {
         title: `Pokemon #${id} | Pokedex`,
         description:
           dictionary.ui.error.pokemonNotFound || "Pokemon information",
-      };
-    }
-
-    const pokemon: Pokemon = data?.pokemon;
-
-    if (!pokemon) {
-      return {
-        title: dictionary.ui.error.pokemonNotFound,
-        description: "The requested Pokemon could not be found.",
       };
     }
 
@@ -354,43 +338,32 @@ export default async function PokemonDetailPage({
   console.log(`  - SERVER_MODE: ${process.env.NEXT_PUBLIC_SERVER_MODE}`);
 
   try {
-    const [dictionary, client] = await Promise.all([
-      getDictionary(lang),
-      getClient(),
-    ]);
+    const dictionary = await getDictionary(lang);
 
     console.log(`[PokemonDetailPage] Fetching Pokemon with ID: ${id}`);
 
-    const { data, error } = await client.query({
-      query: GET_POKEMON,
-      variables: { id },
-      errorPolicy: "all", // Continue even if there are GraphQL errors
-    });
+    const { pokemon } = await fetchPokemonDetail(id);
 
-    if (error) {
-      console.error(`[PokemonDetailPage] GraphQL error for ID ${id}:`, {
-        message: error.message,
-        networkError: error.networkError,
-        graphQLErrors: error.graphQLErrors,
-      });
+    if (!pokemon) {
+      console.error(`[PokemonDetailPage] Pokemon not found for ID ${id}`);
 
       // If it's a build-time error, we might want to skip this page
-      if (process.env.NODE_ENV === "production" && !data?.pokemon) {
+      if (process.env.NODE_ENV === "production") {
         console.warn(
           `[PokemonDetailPage] Skipping Pokemon ${id} due to GraphQL error during build`,
         );
         notFound();
       }
+      // If we reach here at runtime, return an error UI
+      return (
+        <div>
+          <h1>Pokemon #{id} could not be loaded</h1>
+          <p>Please try again later.</p>
+        </div>
+      );
     }
 
     console.log(`[PokemonDetailPage] Response received for ID ${id}`);
-
-    const pokemon: Pokemon = data?.pokemon;
-
-    if (!pokemon) {
-      console.warn(`[PokemonDetailPage] Pokemon with ID ${id} not found`);
-      notFound();
-    }
 
     // Generate structured data for SEO
     const structuredData = generateStructuredData({
