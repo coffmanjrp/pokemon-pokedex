@@ -30,9 +30,42 @@ function transformSupabasePokemon(
     result.baseExperience = data.base_experience;
   }
 
-  // Handle species_data
+  // Handle species_data with property name conversion
   if (data.species_data) {
-    result.species = data.species_data as unknown as PokemonSpecies;
+    const speciesData = data.species_data as Record<string, unknown>;
+    result.species = {
+      id: String(speciesData.id || data.id),
+      name: (speciesData.name as string) || data.name!,
+      names: (speciesData.names as PokemonSpecies["names"]) || [],
+      flavorTextEntries:
+        (
+          speciesData.flavor_text_entries as Array<{
+            flavor_text?: string;
+            flavorText?: string;
+            language: { name: string };
+            version: { name: string };
+          }>
+        )?.map((entry) => ({
+          flavorText: entry.flavor_text || entry.flavorText || "",
+          language: entry.language,
+          version: entry.version,
+        })) || [],
+      genera: (speciesData.genera as PokemonSpecies["genera"]) || [],
+      generation: speciesData.generation as PokemonSpecies["generation"],
+      evolutionChain:
+        speciesData.evolution_chain as PokemonSpecies["evolutionChain"],
+      genderRate: (speciesData.gender_rate ?? speciesData.genderRate) as number,
+      hasGenderDifferences: (speciesData.has_gender_differences ??
+        speciesData.hasGenderDifferences ??
+        false) as boolean,
+      isBaby: (speciesData.is_baby ?? speciesData.isBaby ?? false) as boolean,
+      isLegendary: (speciesData.is_legendary ??
+        speciesData.isLegendary ??
+        false) as boolean,
+      isMythical: (speciesData.is_mythical ??
+        speciesData.isMythical ??
+        false) as boolean,
+    } as PokemonSpecies;
   }
 
   result.moves = [];
