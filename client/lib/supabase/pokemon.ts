@@ -19,19 +19,22 @@ function transformSupabasePokemon(
     name: data.name!,
     height: data.height || 0,
     weight: data.weight || 0,
-    types: (data.types as PokemonTypeSlot[]) || [],
-    stats: (data.stats as PokemonStat[]) || [],
-    abilities: (data.abilities as PokemonAbility[]) || [],
-    sprites: (data.sprites as PokemonSprites) || {},
+    types: (data.types as unknown as PokemonTypeSlot[]) || [],
+    stats: (data.stats as unknown as PokemonStat[]) || [],
+    abilities: (data.abilities as unknown as PokemonAbility[]) || [],
+    sprites: (data.sprites as unknown as PokemonSprites) || {},
   };
 
   // Optional properties
   if (data.base_experience !== null && data.base_experience !== undefined) {
     result.baseExperience = data.base_experience;
   }
+
+  // Handle species_data
   if (data.species_data) {
-    result.species = data.species_data as PokemonSpecies;
+    result.species = data.species_data as unknown as PokemonSpecies;
   }
+
   result.moves = [];
   result.gameIndices = [];
 
@@ -43,10 +46,11 @@ export async function getPokemonByGeneration(generation: number) {
   try {
     console.log(`Fetching Pokemon for generation ${generation}...`);
 
-    // Query with minimal fields and add a timeout
+    // Query with minimal fields plus localized names from species_data
+    // For now, fetch minimal data and species_data separately to avoid parsing issues
     const { data, error } = await supabase
       .from("pokemon")
-      .select("id, name, types, sprites")
+      .select("id, name, types, sprites, species_data")
       .eq("generation", generation)
       .order("id")
       .limit(300); // Add limit to prevent timeout on large datasets
