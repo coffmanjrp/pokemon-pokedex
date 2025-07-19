@@ -6,8 +6,16 @@ import type { Database } from "@/types/supabase";
 function transformSupabaseEvolution(
   data: Database["public"]["Tables"]["evolution_chains"]["Row"],
 ): EvolutionChain {
-  // Type assertion after validation
-  return data.chain_data as unknown as EvolutionChain;
+  // The chain_data contains the raw PokeAPI response which has a 'chain' property
+  // We need to extract and return just the chain structure
+  const rawData = data.chain_data as Record<string, unknown>;
+
+  // Return the evolution chain structure that matches our GraphQL expectations
+  return {
+    id: data.id.toString(),
+    url: `https://pokeapi.co/api/v2/evolution-chain/${data.id}/`,
+    chain: rawData.chain || rawData, // Try to get chain property, fallback to raw data
+  } as EvolutionChain;
 }
 
 // Get evolution chain by ID

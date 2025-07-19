@@ -123,9 +123,6 @@ function PokemonEvolutionChainContent({
 
   return (
     <div ref={containerRef}>
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        {dictionary.ui.pokemonDetails.evolutionChain}
-      </h2>
       {/* Mobile: Vertical layout, Desktop: Horizontal layout */}
       <div className="flex justify-center">
         <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-0 px-2 md:px-4">

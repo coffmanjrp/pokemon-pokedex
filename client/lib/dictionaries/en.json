@@ -254,6 +254,7 @@
       "games": "No game data available",
       "sprites": "No sprites available",
       "evolution": "No evolution data available",
+      "evolutionSoon": "Evolution data will be available soon",
       "abilities": "No abilities available",
       "general": "No data available"
     },

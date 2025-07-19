@@ -49,6 +49,7 @@ npm run sync:pokemon [id]     # Sync specific Pokemon
 npm run sync:gen [1-9]        # Sync generation
 npm run sync:forms            # Sync special forms
 npm run sync:all              # Full sync (2-3 hours)
+npm run sync:evolution:enriched  # Sync evolution chains with full Pokemon data
 ```
 
 ### Development Guide
@@ -144,14 +145,19 @@ For more solutions, see documentation in `/docs`
   - Sync service implementation complete
   - CLI commands for data sync available
   - All 1025 Pokemon synced to Supabase
-  - Special forms and evolution chains included
+  - Special forms synced
+  - Evolution chains with enriched data (Generation 1 complete)
 - ✅ Phase 3: Client integration completed
   - Supabase client SDK configured
   - Data fetch functions implemented
   - Custom hooks created (usePokemonListSupabase, usePokemonDetailSupabase)
+  - Evolution chain support with Supabase data
   - Feature flags for gradual migration
   - Unified hooks for backward compatibility
 - ⏳ Phase 4: Testing & optimization
+  - Complete evolution chain sync for all generations
+  - Performance benchmarking
+  - Full migration testing
 
 ### Migration Plan
 @docs/MIGRATION.md
@@ -177,10 +183,19 @@ For more solutions, see documentation in `/docs`
 - **Backward Compatibility**: Full GraphQL support maintained
 - **Performance**: Direct database queries, no GraphQL overhead
 
+### Evolution Chain Implementation Notes
+- Evolution chains stored with enriched data structure matching GraphQL
+- Supports all evolution conditions (level, item, trade, happiness, etc.)
+- Multi-language support for evolution messages
+- Proper camelCase property naming for TypeScript compatibility
+- Generation 1 evolution chains fully synced (78 chains)
+
 ### Next Steps
 1. ✅ ~~Run initial data sync to populate Supabase~~
 2. ✅ ~~Update client to use Supabase SDK instead of GraphQL~~
-3. Test and verify performance improvements
-4. Update page components to use unified hooks
-5. Migrate SSG to Supabase (optional)
-6. Remove Apollo Client dependencies (after full testing)
+3. ✅ ~~Implement evolution chain support with enriched data~~
+4. Complete evolution chain sync for remaining generations
+5. Test and verify performance improvements
+6. Update page components to use unified hooks
+7. Migrate SSG to Supabase (optional)
+8. Remove Apollo Client dependencies (after full testing)
