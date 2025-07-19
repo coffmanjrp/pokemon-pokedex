@@ -50,13 +50,28 @@ export class EnrichedEvolutionSyncService {
   /**
    * Sync evolution chains with enriched data matching GraphQL structure
    */
-  async syncEnrichedEvolutionChains(): Promise<void> {
+  async syncEnrichedEvolutionChains(startId?: number, endId?: number): Promise<void> {
     console.log('\n🔄 Starting enriched evolution chain sync...');
+    if (startId && endId) {
+      console.log(`📍 Syncing chains from ID ${startId} to ${endId}`);
+    }
 
     try {
       // Get unique evolution chain IDs
-      const chainIds = await this.getEvolutionChainIds();
-      console.log(`Found ${chainIds.length} unique evolution chains to sync`);
+      let chainIds: number[];
+      
+      if (startId && endId) {
+        // Sync specific range
+        chainIds = [];
+        for (let id = startId; id <= endId; id++) {
+          chainIds.push(id);
+        }
+      } else {
+        // Get from database
+        chainIds = await this.getEvolutionChainIds();
+      }
+      
+      console.log(`Found ${chainIds.length} evolution chains to sync`);
 
       let syncedCount = 0;
       let failedCount = 0;

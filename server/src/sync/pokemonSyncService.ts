@@ -129,8 +129,27 @@ export class PokemonSyncService {
           throw new Error(`Pokemon ${id} not found`);
         }
 
-        // Species data is already included in the Pokemon object
-        const species = pokemon.species || null;
+        // Get raw species data to preserve evolution_chain URL
+        let rawSpeciesData = null;
+        if (pokemon.species) {
+          try {
+            const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}/`);
+            if (response.ok) {
+              rawSpeciesData = await response.json();
+            }
+          } catch (error) {
+            console.error(`Error fetching raw species data for Pokemon ${id}:`, error);
+          }
+        }
+
+        // Merge evolution_chain URL into species data
+        let species = pokemon.species || null;
+        if (species && rawSpeciesData?.evolution_chain?.url) {
+          // Add evolution_chain URL to species data - using snake_case to match the mapper
+          (species as any).evolution_chain = {
+            url: rawSpeciesData.evolution_chain.url
+          };
+        }
 
         // Map to Supabase format
         const supabasePokemon = PokemonDataMapper.mapPokemonToSupabase(
@@ -176,20 +195,26 @@ export class PokemonSyncService {
       // Get unique evolution chain IDs from Pokemon data
       const { data: pokemonWithChains, error } = await supabase
         .from('pokemon')
-        .select('species_data')
-        .not('species_data', 'is', null);
+        .select('id, species_data')
+        .not('species_data->evolution_chain', 'is', null);
 
       if (error) throw error;
 
       // Extract evolution chain IDs from species data
+      console.log(`Checking ${pokemonWithChains?.length || 0} Pokemon for evolution chains...`);
+      
+      
       const chainIds = [...new Set(
         pokemonWithChains
           .map((p: any) => {
             const evolutionChainUrl = p.species_data?.evolution_chain?.url;
-            if (!evolutionChainUrl) return null;
+            if (!evolutionChainUrl) {
+              return null;
+            }
             // Extract ID from URL like "https://pokeapi.co/api/v2/evolution-chain/1/"
             const matches = evolutionChainUrl.match(/evolution-chain\/(\d+)\//);
-            return matches ? parseInt(matches[1]) : null;
+            const chainId = matches ? parseInt(matches[1]) : null;
+            return chainId;
           })
           .filter((id: any) => id != null)
       )];
@@ -294,8 +319,27 @@ export class PokemonSyncService {
         throw new Error(`Pokemon ${id} not found`);
       }
 
-      // Species data is already included in the Pokemon object
-      const species = pokemon.species || null;
+      // Get raw species data to preserve evolution_chain URL
+      let rawSpeciesData = null;
+      if (pokemon.species) {
+        try {
+          const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}/`);
+          if (response.ok) {
+            rawSpeciesData = await response.json();
+          }
+        } catch (error) {
+          console.error(`Error fetching raw species data for Pokemon ${id}:`, error);
+        }
+      }
+
+      // Merge evolution_chain URL into species data
+      let species = pokemon.species || null;
+      if (species && rawSpeciesData?.evolution_chain?.url) {
+        // Add evolution_chain URL to species data
+        (species as any).evolutionChain = {
+          url: rawSpeciesData.evolution_chain.url
+        };
+      }
 
       const generation = PokemonDataMapper.getGenerationFromId(id);
       const supabasePokemon = PokemonDataMapper.mapPokemonToSupabase(

@@ -10,6 +10,14 @@ function transformSupabaseEvolution(
   // We need to extract and return just the chain structure
   const rawData = data.chain_data as Record<string, unknown>;
 
+  // Debug logging to understand the structure
+  console.log(`[Evolution] Raw evolution chain data for ID ${data.id}:`, {
+    hasChainData: !!data.chain_data,
+    chainDataKeys: Object.keys(rawData || {}),
+    hasChainProperty: !!rawData?.chain,
+    firstLevelKeys: Object.keys(rawData || {}).slice(0, 5),
+  });
+
   // Return the evolution chain structure that matches our GraphQL expectations
   return {
     id: data.id.toString(),
@@ -48,7 +56,11 @@ export async function getEvolutionChainById(id: number) {
       return null;
     }
 
-    console.log(`[Evolution] Retrieved evolution chain data:`, data);
+    console.log(`[Evolution] Retrieved evolution chain data:`, {
+      id: data?.id,
+      hasChainData: !!data?.chain_data,
+      chainDataType: typeof data?.chain_data,
+    });
     return data ? transformSupabaseEvolution(data) : null;
   } catch (error) {
     console.log(
@@ -85,9 +97,9 @@ export async function getEvolutionChainForPokemon(pokemonId: number) {
 
     // Type assertion to access nested properties
     const speciesData = pokemonData?.species_data as Record<string, unknown>;
-    const evolutionChain = speciesData?.evolution_chain as
-      | { url?: string }
-      | undefined;
+    // Check both snake_case and camelCase formats
+    const evolutionChain = (speciesData?.evolution_chain ||
+      speciesData?.evolutionChain) as { url?: string } | undefined;
     const evolutionChainUrl = evolutionChain?.url;
 
     if (!evolutionChainUrl) {

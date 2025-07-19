@@ -1,15 +1,16 @@
 import { PokemonSyncService } from './pokemonSyncService';
 
 async function testSinglePokemonSync() {
-  console.log('🧪 Testing single Pokemon sync with evolution chain...');
+  const pokemonId = process.argv[2] ? parseInt(process.argv[2]) : 1;
+  console.log(`🧪 Testing single Pokemon sync for Pokemon #${pokemonId}...`);
   
   try {
     const syncService = new PokemonSyncService();
     
-    // Sync Bulbasaur (ID: 1) which has evolution chain
-    await syncService.syncSinglePokemon(1);
+    // Sync the specified Pokemon
+    await syncService.syncSinglePokemon(pokemonId);
     
-    console.log('✅ Single Pokemon sync completed!');
+    console.log(`✅ Single Pokemon sync completed for Pokemon #${pokemonId}!`);
     console.log('Now check if evolution chain data is included in species_data');
     
     process.exit(0);

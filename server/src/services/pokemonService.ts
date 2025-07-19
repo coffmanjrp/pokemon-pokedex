@@ -484,9 +484,7 @@ class PokemonService {
         isBaby: speciesData.is_baby ?? false,
         isLegendary: speciesData.is_legendary ?? false,
         isMythical: speciesData.is_mythical ?? false,
-        evolutionChain: speciesData.evolution_chain ? 
-          await this.getEvolutionChain(speciesData.evolution_chain.url)
-        : undefined,
+        evolutionChain: undefined, // Evolution chain will be fetched separately for GraphQL
       } : {
         // Return minimal species object with empty arrays when species data is not available
         id: data.id.toString(),

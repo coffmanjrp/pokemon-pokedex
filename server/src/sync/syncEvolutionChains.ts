@@ -1,26 +1,30 @@
 import { PokemonSyncService } from './pokemonSyncService';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+// Load environment variables
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 async function syncEvolutionChains() {
-  console.log('🚀 Starting evolution chain sync...');
+  console.log('🔧 Evolution Chain Sync Runner');
+  console.log('📍 Supabase URL:', process.env['SUPABASE_URL']);
+  console.log('🔑 Using service role key');
+  console.log('');
+
+  const syncService = new PokemonSyncService();
   
   try {
-    const syncService = new PokemonSyncService();
-    
-    // Use reflection to call the private method
-    // This is a workaround for standalone evolution sync
-    const result = await (syncService as any).syncEvolutionChains();
-    
-    console.log('✅ Evolution chain sync completed successfully!');
-    process.exit(0);
+    // Use private method via type assertion (for testing)
+    await (syncService as any).syncEvolutionChains();
+    console.log('\n✅ Evolution chains sync completed successfully!');
   } catch (error) {
-    console.error('❌ Error syncing evolution chains:', error);
+    console.error('\n❌ Evolution chains sync failed:', error);
     process.exit(1);
   }
 }
 
-// Run if called directly
-if (require.main === module) {
-  syncEvolutionChains();
-}
-
-export { syncEvolutionChains };
+// Run the sync
+syncEvolutionChains().catch(error => {
+  console.error('Fatal error:', error);
+  process.exit(1);
+});

@@ -88,8 +88,9 @@ async function main() {
         break;
 
       case 'test':
-        console.log('🧪 Running test sync with Pikachu (#25)...');
-        await syncService.syncSinglePokemon(25);
+        const testId = arg ? parseInt(arg) : 25;
+        console.log(`🧪 Running test sync with Pokemon #${testId}...`);
+        await syncService.syncSinglePokemon(testId);
         console.log('\n✅ Test sync completed successfully!');
         break;
 

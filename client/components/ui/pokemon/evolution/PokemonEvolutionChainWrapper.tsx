@@ -23,6 +23,16 @@ export function PokemonEvolutionChainWrapper({
     isActive,
   );
 
+  // Debug logging
+  console.log("[Evolution Wrapper] Component state:", {
+    pokemonId,
+    isActive,
+    loading,
+    hasEvolutionChain: !!evolutionChain,
+    hasError: !!error,
+    useSupabase: process.env.NEXT_PUBLIC_USE_SUPABASE_FOR_DETAIL,
+  });
+
   // Log detailed error information for debugging
   if (error) {
     console.log("[Evolution] Error loading evolution chain:", {
