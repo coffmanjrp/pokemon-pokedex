@@ -33,7 +33,7 @@ export function PokemonEvolutionChainWrapper({
 
   if (error) {
     // Log detailed error information for debugging
-    console.error("Error loading evolution chain:", {
+    console.log("[Evolution] Error loading evolution chain:", {
       pokemonId,
       error: error.message || error,
       graphQLErrors: error.graphQLErrors,

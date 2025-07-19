@@ -21,7 +21,10 @@ export async function fetchPokemonDetail(id: number) {
         try {
           evolutionChain = await getEvolutionChainForPokemon(id);
         } catch (error) {
-          console.error("Failed to fetch evolution chain:", error);
+          console.log(
+            "[ServerDataFetching] Failed to fetch evolution chain:",
+            error,
+          );
         }
       }
 
