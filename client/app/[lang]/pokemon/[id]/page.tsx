@@ -182,7 +182,7 @@ export async function generateMetadata({
 
     console.log(`[generateMetadata] Fetching metadata for Pokemon ID: ${id}`);
 
-    const { pokemon } = await fetchPokemonDetail(id);
+    const { pokemon } = await fetchPokemonDetail(parseInt(id));
 
     if (!pokemon) {
       console.log(`[generateMetadata] Pokemon not found for ID ${id}`);
@@ -342,7 +342,7 @@ export default async function PokemonDetailPage({
 
     console.log(`[PokemonDetailPage] Fetching Pokemon with ID: ${id}`);
 
-    const { pokemon } = await fetchPokemonDetail(id);
+    const { pokemon } = await fetchPokemonDetail(parseInt(id));
 
     if (!pokemon) {
       console.error(`[PokemonDetailPage] Pokemon not found for ID ${id}`);

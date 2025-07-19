@@ -60,6 +60,7 @@ export class PokemonDataMapper {
       is_mythical: species.isMythical || false,
       flavor_text_entries: species.flavorTextEntries || [],
       generation: species.generation || null,
+      evolution_chain: species.evolutionChain || null,
     };
   }
 

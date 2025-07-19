@@ -6,7 +6,7 @@ import {
 } from "@/lib/supabase/pokemon";
 import { getEvolutionChainForPokemon } from "@/lib/supabase/evolution";
 import { apolloClient } from "@/lib/apollo";
-import { GET_POKEMON_DETAIL, GET_POKEMON_LIST } from "@/graphql/queries";
+import { GET_POKEMON, GET_POKEMONS } from "@/graphql/queries";
 import type { Pokemon, EvolutionChain } from "@/types/pokemon";
 
 // Server-side utility for fetching Pokemon detail
@@ -34,7 +34,7 @@ export async function fetchPokemonDetail(id: number) {
     // Use GraphQL
     try {
       const { data } = await apolloClient.query({
-        query: GET_POKEMON_DETAIL,
+        query: GET_POKEMON,
         variables: { id },
       });
 
@@ -71,7 +71,7 @@ export async function fetchPokemonByGeneration(generation: number) {
     // Use GraphQL
     try {
       const { data } = await apolloClient.query({
-        query: GET_POKEMON_LIST,
+        query: GET_POKEMONS,
         variables: { generation },
       });
 

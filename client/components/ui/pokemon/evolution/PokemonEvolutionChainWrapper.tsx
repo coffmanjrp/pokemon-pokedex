@@ -63,7 +63,17 @@ export function PokemonEvolutionChainWrapper({
   }
 
   if (!evolutionChain) {
-    return null;
+    return (
+      <div className="text-center py-8 text-gray-500">
+        <p className="mb-2">
+          {dictionary?.ui.pokemon.noEvolution || "No evolution data available"}
+        </p>
+        <p className="text-sm text-gray-400">
+          {dictionary?.ui.pokemon.evolutionDataComingSoon ||
+            "Evolution data will be available soon"}
+        </p>
+      </div>
+    );
   }
 
   return (

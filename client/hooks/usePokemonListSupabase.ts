@@ -21,6 +21,7 @@ import {
   getPokemonForms,
 } from "@/lib/supabase/pokemon";
 import { Pokemon } from "@/types/pokemon";
+import { GENERATION_RANGES } from "@/lib/data/generations";
 
 interface UsePokemonListOptions {
   generation?: number;
@@ -75,6 +76,7 @@ export function usePokemonListSupabase({
                 pokemons: cachedData.pokemons,
                 hasNextPage: cachedData.hasNextPage || false,
                 endCursor: cachedData.endCursor || null,
+                loadedCount: cachedData.pokemons.length,
               }),
             );
           }
@@ -111,9 +113,16 @@ export function usePokemonListSupabase({
             pokemons: pokemonData,
             hasNextPage: false,
             endCursor: null,
+            loadedCount: pokemonData.length,
           }),
         );
-        persistCacheData(gen, cacheData);
+        persistCacheData(
+          gen,
+          cacheData.pokemons,
+          cacheData.hasNextPage,
+          cacheData.endCursor,
+          cacheData.pokemons.length,
+        );
       } catch (error) {
         console.error("Error fetching Pokemon data:", error);
         if (mountedRef.current) {
@@ -195,15 +204,14 @@ export function usePokemonListSupabase({
     }
   }, [currentGeneration, localGeneration, autoFetch, fetchGenerationData]);
 
-  // Get generation range (similar to usePokemonList)
-  const generationRange = (() => {
-    if (currentGeneration === 0) {
-      return { min: 10001, max: 11000 }; // Arbitrary range for forms
-    }
-    const genStart = (currentGeneration - 1) * 151 + 1;
-    const genEnd = currentGeneration * 151;
-    return { min: genStart, max: genEnd };
-  })();
+  // Get generation range from GENERATION_RANGES
+  const generationRange = GENERATION_RANGES[
+    currentGeneration as keyof typeof GENERATION_RANGES
+  ] || {
+    min: 1,
+    max: 1025,
+    region: { en: "Unknown", ja: "不明" },
+  };
 
   return {
     pokemons: pokemons || [],

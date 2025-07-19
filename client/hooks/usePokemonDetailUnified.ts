@@ -3,7 +3,7 @@
 import { FEATURE_FLAGS } from "@/lib/featureFlags";
 import { usePokemonDetailSupabase } from "./usePokemonDetailSupabase";
 import { useQuery } from "@apollo/client";
-import { GET_POKEMON_DETAIL } from "@/lib/graphql/queries";
+import { GET_POKEMON } from "@/graphql/queries";
 import type { Pokemon, EvolutionChain } from "@/types/pokemon";
 
 // Unified hook that switches between GraphQL and Supabase based on feature flag
@@ -12,7 +12,7 @@ export function usePokemonDetailUnified(pokemonId: number | string) {
 
   // Call both hooks unconditionally to satisfy React's rules of hooks
   const supabaseResult = usePokemonDetailSupabase(pokemonId);
-  const { data, loading, error } = useQuery(GET_POKEMON_DETAIL, {
+  const { data, loading, error } = useQuery(GET_POKEMON, {
     variables: { id },
     skip: !id || FEATURE_FLAGS.USE_SUPABASE_FOR_DETAIL,
   });

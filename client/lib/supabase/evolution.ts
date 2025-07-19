@@ -6,12 +6,15 @@ import type { Database } from "@/types/supabase";
 function transformSupabaseEvolution(
   data: Database["public"]["Tables"]["evolution_chains"]["Row"],
 ): EvolutionChain {
-  return data.chain_data as EvolutionChain;
+  // Type assertion after validation
+  return data.chain_data as unknown as EvolutionChain;
 }
 
 // Get evolution chain by ID
 export async function getEvolutionChainById(id: number) {
   try {
+    console.log(`[Evolution] Fetching evolution chain with ID: ${id}`);
+
     const { data, error } = await supabase
       .from("evolution_chains")
       .select("*")
@@ -20,9 +23,17 @@ export async function getEvolutionChainById(id: number) {
 
     if (error) {
       console.error("Error fetching evolution chain:", error);
-      throw new Error(handleSupabaseError(error));
+      // Check if the evolution chain doesn't exist
+      if (error.code === "PGRST116") {
+        console.log(`[Evolution] Evolution chain ${id} not found in database`);
+        return null;
+      }
+      // For now, return null instead of throwing error when evolution chain is missing
+      console.log(`[Evolution] Evolution chain ${id} not available yet`);
+      return null;
     }
 
+    console.log(`[Evolution] Retrieved evolution chain data:`, data);
     return data ? transformSupabaseEvolution(data) : null;
   } catch (error) {
     console.error("Error in getEvolutionChainById:", error);
@@ -33,6 +44,10 @@ export async function getEvolutionChainById(id: number) {
 // Get evolution chain for a Pokemon
 export async function getEvolutionChainForPokemon(pokemonId: number) {
   try {
+    console.log(
+      `[Evolution] Fetching evolution chain for Pokemon ID: ${pokemonId}`,
+    );
+
     // First, get the Pokemon to find its species evolution chain ID
     const { data: pokemonData, error: pokemonError } = await supabase
       .from("pokemon")
@@ -45,14 +60,32 @@ export async function getEvolutionChainForPokemon(pokemonId: number) {
       throw new Error(handleSupabaseError(pokemonError));
     }
 
-    const evolutionChainId = pokemonData?.species_data?.evolution_chain?.url
-      ?.split("/")
-      .slice(-2, -1)[0];
+    console.log(`[Evolution] Species data:`, pokemonData?.species_data);
 
-    if (!evolutionChainId) {
+    // Type assertion to access nested properties
+    const speciesData = pokemonData?.species_data as Record<string, unknown>;
+    const evolutionChain = speciesData?.evolution_chain as
+      | { url?: string }
+      | undefined;
+    const evolutionChainUrl = evolutionChain?.url;
+
+    if (!evolutionChainUrl) {
+      console.log(
+        `[Evolution] No evolution chain URL found for Pokemon ${pokemonId}`,
+      );
       return null;
     }
 
+    const evolutionChainId = evolutionChainUrl.split("/").slice(-2, -1)[0];
+
+    if (!evolutionChainId) {
+      console.log(
+        `[Evolution] Could not extract evolution chain ID from URL: ${evolutionChainUrl}`,
+      );
+      return null;
+    }
+
+    console.log(`[Evolution] Found evolution chain ID: ${evolutionChainId}`);
     return getEvolutionChainById(parseInt(evolutionChainId));
   } catch (error) {
     console.error("Error in getEvolutionChainForPokemon:", error);

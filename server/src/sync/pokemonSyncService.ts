@@ -176,25 +176,70 @@ export class PokemonSyncService {
       // Get unique evolution chain IDs from Pokemon data
       const { data: pokemonWithChains, error } = await supabase
         .from('pokemon')
-        .select('species_data->evolution_chain_id')
-        .not('species_data->evolution_chain_id', 'is', null);
+        .select('species_data')
+        .not('species_data', 'is', null);
 
       if (error) throw error;
 
+      // Extract evolution chain IDs from species data
       const chainIds = [...new Set(
         pokemonWithChains
-          .map((p: any) => p.evolution_chain_id)
+          .map((p: any) => {
+            const evolutionChainUrl = p.species_data?.evolution_chain?.url;
+            if (!evolutionChainUrl) return null;
+            // Extract ID from URL like "https://pokeapi.co/api/v2/evolution-chain/1/"
+            const matches = evolutionChainUrl.match(/evolution-chain\/(\d+)\//);
+            return matches ? parseInt(matches[1]) : null;
+          })
           .filter((id: any) => id != null)
       )];
 
-      console.log(`Found ${chainIds.length} unique evolution chains`);
+      console.log(`Found ${chainIds.length} unique evolution chains to sync`);
 
-      // Process evolution chains
-      // Note: Evolution chains are fetched as part of Pokemon data, 
-      // so we'll sync them when we sync Pokemon data
-      console.log(`Evolution chains will be synced with Pokemon data`);
+      // Process evolution chains in batches
+      const batchSize = 10;
+      let syncedCount = 0;
+      let failedCount = 0;
 
-      console.log(`✅ Evolution chains sync completed`);
+      for (let i = 0; i < chainIds.length; i += batchSize) {
+        const batch = chainIds.slice(i, i + batchSize);
+        const batchPromises = batch.map(async (chainId) => {
+          try {
+            // Fetch evolution chain from PokeAPI
+            const response = await fetch(`https://pokeapi.co/api/v2/evolution-chain/${chainId}/`);
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const evolutionData = await response.json();
+
+            // Store in Supabase
+            const { error: insertError } = await supabase
+              .from('evolution_chains')
+              .upsert({
+                id: chainId,
+                chain_data: evolutionData,
+              }, {
+                onConflict: 'id',
+              });
+
+            if (insertError) throw insertError;
+            syncedCount++;
+            console.log(`✅ Synced evolution chain ${chainId}`);
+          } catch (error) {
+            failedCount++;
+            console.error(`❌ Failed to sync evolution chain ${chainId}:`, error);
+          }
+        });
+
+        await Promise.all(batchPromises);
+        
+        // Rate limiting delay between batches
+        if (i + batchSize < chainIds.length) {
+          await this.delay(1000); // 1 second delay between batches
+        }
+      }
+
+      console.log(`✅ Evolution chains sync completed: ${syncedCount} synced, ${failedCount} failed`);
     } catch (error) {
       console.error(`❌ Error syncing evolution chains:`, error);
       throw error;

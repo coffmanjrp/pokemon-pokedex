@@ -1,5 +1,12 @@
 import { supabase, handleSupabaseError } from "@/lib/supabase";
-import type { Pokemon } from "@/types/pokemon";
+import type {
+  Pokemon,
+  PokemonTypeSlot,
+  PokemonStat,
+  PokemonAbility,
+  PokemonSprites,
+  PokemonSpecies,
+} from "@/types/pokemon";
 import { Locale } from "@/lib/dictionaries";
 import type { Database } from "@/types/supabase";
 
@@ -7,28 +14,28 @@ import type { Database } from "@/types/supabase";
 function transformSupabasePokemon(
   data: Partial<Database["public"]["Tables"]["pokemon"]["Row"]>,
 ): Pokemon {
-  return {
-    id: data.id!,
+  const result: Pokemon = {
+    id: String(data.id!),
     name: data.name!,
-    height: data.height || null,
-    weight: data.weight || null,
-    base_experience: data.base_experience || null,
-    types: data.types || [],
-    stats: data.stats || [],
-    abilities: data.abilities || [],
-    sprites: data.sprites || {},
-    moves: [], // Always empty array for list view
-    species: data.species_data || {},
-    forms: data.form_data || [],
-    // Additional fields that might be needed
-    order: data.id!,
-    is_default: true,
-    location_area_encounters: "",
-    held_items: [],
-    game_indices: [],
-    past_types: [],
-    past_abilities: [],
+    height: data.height || 0,
+    weight: data.weight || 0,
+    types: (data.types as PokemonTypeSlot[]) || [],
+    stats: (data.stats as PokemonStat[]) || [],
+    abilities: (data.abilities as PokemonAbility[]) || [],
+    sprites: (data.sprites as PokemonSprites) || {},
   };
+
+  // Optional properties
+  if (data.base_experience !== null && data.base_experience !== undefined) {
+    result.baseExperience = data.base_experience;
+  }
+  if (data.species_data) {
+    result.species = data.species_data as PokemonSpecies;
+  }
+  result.moves = [];
+  result.gameIndices = [];
+
+  return result;
 }
 
 // Get Pokemon by generation with minimal data for list view
