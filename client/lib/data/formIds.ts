@@ -60,6 +60,7 @@ const ALL_FORM_IDS: number[] = [
   10111,
   10112,
   10113,
+  10114,
   10115,
 
   // Galarian Forms

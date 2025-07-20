@@ -63,6 +63,7 @@ const ALL_FORM_IDS: number[] = [
   10111, // Alolan Golem (missing from original list)
   10112, // Alolan Grimer (missing from original list) 
   10113, // Alolan Muk (missing from original list)
+  10114, // Alolan Exeggutor
   10115, // Alolan Marowak (missing from original list)
   10149, // Alolan Marowak Totem (missing from original list)
 
@@ -219,7 +220,7 @@ const FORM_TO_BASE_ID_MAP: Record<number, number> = {
   10091: 19, 10092: 20, 10094: 27, 10095: 28, 10096: 37, 10097: 38,
   10098: 50, 10099: 51, 10100: 52, 10101: 53, 10102: 74, 10103: 75, 10104: 76,
   10105: 88, 10106: 89, 10107: 103, 10108: 105, 10109: 74, 10110: 75, 10111: 76,
-  10112: 88, 10113: 89, 10115: 105,
+  10112: 88, 10113: 89, 10114: 103, 10115: 105,
   
   // Galarian Forms
   10158: 52, 10159: 77, 10160: 78, 10161: 79, 10162: 80, 10163: 83, 10164: 110,

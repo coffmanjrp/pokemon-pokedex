@@ -59,6 +59,7 @@ export const COMPLETE_FORM_MAPPINGS = [
   { formId: 10111, basePokemonId: 76, formName: "alola", category: "alolan" }, // Alolan Golem
   { formId: 10112, basePokemonId: 88, formName: "alola", category: "alolan" }, // Alolan Grimer
   { formId: 10113, basePokemonId: 89, formName: "alola", category: "alolan" }, // Alolan Muk
+  { formId: 10114, basePokemonId: 103, formName: "alola", category: "alolan" }, // Alolan Exeggutor
   { formId: 10115, basePokemonId: 105, formName: "alola", category: "alolan" }, // Alolan Marowak
 
   // Special Pikachu forms
