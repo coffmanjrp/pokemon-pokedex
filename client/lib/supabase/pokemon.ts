@@ -6,6 +6,7 @@ import type {
   PokemonAbility,
   PokemonSprites,
   PokemonSpecies,
+  PokemonMove,
 } from "@/types/pokemon";
 import { Locale } from "@/lib/dictionaries";
 import type { Database } from "@/types/supabase";
@@ -68,7 +69,10 @@ function transformSupabasePokemon(
     } as PokemonSpecies;
   }
 
-  result.moves = [];
+  // Transform moves data from database
+  result.moves = (data.moves as unknown as PokemonMove[]) || [];
+
+  // gameIndices is not stored in Supabase yet
   result.gameIndices = [];
 
   return result;

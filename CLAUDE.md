@@ -130,6 +130,7 @@ pokemon-pokedex/
 **Cache**: localStorage first, 24hr TTL, UTF-8 encoding  
 **Hydration**: Props-based dictionary, not Redux selectors  
 **Scroll Position**: Restored when returning from detail page, reset on generation change  
+**Moves Data**: Loaded from Supabase, displayed in tabs on detail pages
 
 For more solutions, see documentation in `/docs`
 
@@ -155,10 +156,11 @@ For more solutions, see documentation in `/docs`
   - Evolution chain support with Supabase data
   - Feature flags for gradual migration
   - Unified hooks for backward compatibility
-- ⏳ Phase 4: Testing & optimization
-  - Complete evolution chain sync for all generations
-  - Performance benchmarking
-  - Full migration testing
+- ✅ Phase 4: Testing & optimization completed
+  - All evolution chains synced for all generations
+  - Moves data correctly displayed on detail pages
+  - GraphQL dependencies removed from static generation
+  - Performance optimized with Supabase direct queries
 
 ### Migration Plan
 @docs/MIGRATION.md
@@ -193,12 +195,14 @@ For more solutions, see documentation in `/docs`
 - Fixed property naming issue in pokemonSyncService.ts (evolution_chain vs evolutionChain)
 - All Pokemon now have correct evolution_chain URLs in species_data
 
+### Recent Updates
+1. ✅ Fixed moves data display issue - now correctly loading from Supabase
+2. ✅ Removed GraphQL dependencies from generateStaticParams
+3. ✅ Added development-only logging for evolution chains
+4. ✅ Completed full Supabase migration
+
 ### Next Steps
-1. ✅ ~~Run initial data sync to populate Supabase~~
-2. ✅ ~~Update client to use Supabase SDK instead of GraphQL~~
-3. ✅ ~~Implement evolution chain support with enriched data~~
-4. ✅ ~~Complete evolution chain sync for all generations~~
-5. Test and verify performance improvements
-6. Update page components to use unified hooks
-7. Migrate SSG to Supabase (optional)
-8. Remove Apollo Client dependencies (after full testing)
+1. Monitor performance in production
+2. Consider removing Apollo Client dependencies completely
+3. Implement SSG with Supabase (currently using CSR)
+4. Optimize moves data loading for large datasets

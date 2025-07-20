@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Pokemon } from "@/types/pokemon";
-import { PokemonMovesWrapper } from "../detail/PokemonMovesWrapper";
 import { PokemonDescription } from "../detail/PokemonDescription";
+import { PokemonMoves } from "../detail/PokemonMoves";
 import { PokemonGameHistory } from "../detail/PokemonGameHistory";
 import { InfoCard } from "../../common/InfoCard";
 import { TabNavigation } from "../../common/TabNavigation";
@@ -84,13 +84,7 @@ export function PokemonSpritesGallery({
         return <PokemonDescription pokemon={pokemon} language={language} />;
 
       case "moves":
-        return (
-          <PokemonMovesWrapper
-            pokemonId={pokemon.id}
-            language={language}
-            isActive={activeContentTab === "moves"}
-          />
-        );
+        return <PokemonMoves moves={pokemon.moves || []} language={language} />;
 
       case "gameHistory":
         return pokemon.gameIndices && pokemon.species?.generation ? (

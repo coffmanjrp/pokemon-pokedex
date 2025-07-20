@@ -11,12 +11,14 @@ function transformSupabaseEvolution(
   const rawData = data.chain_data as Record<string, unknown>;
 
   // Debug logging to understand the structure
-  console.log(`[Evolution] Raw evolution chain data for ID ${data.id}:`, {
-    hasChainData: !!data.chain_data,
-    chainDataKeys: Object.keys(rawData || {}),
-    hasChainProperty: !!rawData?.chain,
-    firstLevelKeys: Object.keys(rawData || {}).slice(0, 5),
-  });
+  if (process.env.NODE_ENV === "development") {
+    console.log(`[Evolution] Raw evolution chain data for ID ${data.id}:`, {
+      hasChainData: !!data.chain_data,
+      chainDataKeys: Object.keys(rawData || {}),
+      hasChainProperty: !!rawData?.chain,
+      firstLevelKeys: Object.keys(rawData || {}).slice(0, 5),
+    });
+  }
 
   // Return the evolution chain structure that matches our GraphQL expectations
   return {
@@ -29,7 +31,9 @@ function transformSupabaseEvolution(
 // Get evolution chain by ID
 export async function getEvolutionChainById(id: number) {
   try {
-    console.log(`[Evolution] Fetching evolution chain with ID: ${id}`);
+    if (process.env.NODE_ENV === "development") {
+      console.log(`[Evolution] Fetching evolution chain with ID: ${id}`);
+    }
 
     const { data, error } = await supabase
       .from("evolution_chains")
@@ -56,11 +60,13 @@ export async function getEvolutionChainById(id: number) {
       return null;
     }
 
-    console.log(`[Evolution] Retrieved evolution chain data:`, {
-      id: data?.id,
-      hasChainData: !!data?.chain_data,
-      chainDataType: typeof data?.chain_data,
-    });
+    if (process.env.NODE_ENV === "development") {
+      console.log(`[Evolution] Retrieved evolution chain data:`, {
+        id: data?.id,
+        hasChainData: !!data?.chain_data,
+        chainDataType: typeof data?.chain_data,
+      });
+    }
     return data ? transformSupabaseEvolution(data) : null;
   } catch (error) {
     console.log(
@@ -74,9 +80,11 @@ export async function getEvolutionChainById(id: number) {
 // Get evolution chain for a Pokemon
 export async function getEvolutionChainForPokemon(pokemonId: number) {
   try {
-    console.log(
-      `[Evolution] Fetching evolution chain for Pokemon ID: ${pokemonId}`,
-    );
+    if (process.env.NODE_ENV === "development") {
+      console.log(
+        `[Evolution] Fetching evolution chain for Pokemon ID: ${pokemonId}`,
+      );
+    }
 
     // First, get the Pokemon to find its species evolution chain ID
     const { data: pokemonData, error: pokemonError } = await supabase
@@ -93,7 +101,9 @@ export async function getEvolutionChainForPokemon(pokemonId: number) {
       return null;
     }
 
-    console.log(`[Evolution] Species data:`, pokemonData?.species_data);
+    if (process.env.NODE_ENV === "development") {
+      console.log(`[Evolution] Species data:`, pokemonData?.species_data);
+    }
 
     // Type assertion to access nested properties
     const speciesData = pokemonData?.species_data as Record<string, unknown>;
@@ -118,7 +128,9 @@ export async function getEvolutionChainForPokemon(pokemonId: number) {
       return null;
     }
 
-    console.log(`[Evolution] Found evolution chain ID: ${evolutionChainId}`);
+    if (process.env.NODE_ENV === "development") {
+      console.log(`[Evolution] Found evolution chain ID: ${evolutionChainId}`);
+    }
     return getEvolutionChainById(parseInt(evolutionChainId));
   } catch (error) {
     console.log(
