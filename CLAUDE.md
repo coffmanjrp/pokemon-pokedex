@@ -126,14 +126,16 @@ pokemon-pokedex/
 
 ## Common Issues & Solutions
 
-**Generation Navigation**: Use Redux state `state.pokemon.currentGeneration`  
+**Generation Navigation**: Use URL parameter as source of truth, sync with Redux state  
 **Language URLs**: Use `/${language}/` not `/` in navigation  
 **Mobile UI**: 44px touch targets, hamburger overlay  
 **Cache**: localStorage first, 24hr TTL, UTF-8 encoding  
 **Hydration**: Props-based dictionary, not Redux selectors  
 **Scroll Position**: Restored when returning from detail page, reset on generation change  
 **Moves Data**: Loaded from Supabase, displayed in tabs on detail pages  
-**Game History Tab**: Currently unavailable (gameIndices not yet synced to Supabase)
+**Game History Tab**: Currently unavailable (gameIndices not yet synced to Supabase)  
+**Redux Errors**: Wrap all useEffects with try-catch, avoid dispatching undefined actions  
+**TypeScript Strict**: Use conditional assignment for optional properties with exactOptionalPropertyTypes  
 
 For more solutions, see documentation in `/docs`
 
@@ -206,6 +208,11 @@ For more solutions, see documentation in `/docs`
 3. ✅ Added development-only logging for evolution chains
 4. ✅ Completed full Supabase migration
 5. ✅ Fixed Generation 0 forms display issue with pokemon_forms table
+6. ✅ Fixed generation persistence issue after page reload
+7. ✅ Resolved Redux "Actions must be plain objects" errors
+8. ✅ Fixed TypeScript strict mode errors with exactOptionalPropertyTypes
+9. ✅ Corrected pokemon_id mappings in pokemon_forms table (52 fixes)
+10. ✅ Fixed import path for useSupabasePokemonEvolution hook
 
 ### Next Steps
 1. Monitor performance in production
