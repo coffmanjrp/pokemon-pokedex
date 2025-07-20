@@ -227,7 +227,8 @@ export async function getPokemonForms() {
         )
       `,
       )
-      .order("pokemon_id");
+      .order("pokemon_id")
+      .order("id");
 
     if (error) {
       console.error("Error fetching Pokemon forms:", error);
