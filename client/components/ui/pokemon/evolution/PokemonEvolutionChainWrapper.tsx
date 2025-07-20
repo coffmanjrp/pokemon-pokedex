@@ -30,7 +30,6 @@ export function PokemonEvolutionChainWrapper({
     loading,
     hasEvolutionChain: !!evolutionChain,
     hasError: !!error,
-    useSupabase: process.env.NEXT_PUBLIC_USE_SUPABASE_FOR_DETAIL,
   });
 
   // Log detailed error information for debugging

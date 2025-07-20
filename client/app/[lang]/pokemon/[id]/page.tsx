@@ -10,7 +10,6 @@ import {
   getGenerationName,
 } from "@/lib/pokemonUtils";
 import { GENERATIONS } from "@/lib/data/generations";
-import { FEATURE_FLAGS } from "@/lib/featureFlags";
 import {
   getAllPokemonIdsForStaticGeneration,
   getPokemonIdsByGenerationForStaticGeneration,
@@ -45,41 +44,37 @@ export async function generateStaticParams() {
   console.log(
     `Build mode: ${enableGenerationalBuild ? "Generational" : "Standard"}`,
   );
-  console.log(
-    `SSG mode: ${FEATURE_FLAGS.USE_SUPABASE_FOR_SSG ? "Supabase" : "Fallback"}`,
-  );
+  console.log(`SSG mode: Supabase`);
 
   if (targetGeneration) {
     console.log(`Target generation: ${targetGeneration}`);
   }
 
   try {
-    // Use Supabase for SSG if enabled
-    if (FEATURE_FLAGS.USE_SUPABASE_FOR_SSG) {
-      let pokemonIds: number[] = [];
+    // Use Supabase for SSG
+    let pokemonIds: number[] = [];
 
-      if (targetGeneration !== null) {
-        // Fetch IDs for specific generation
-        pokemonIds =
-          await getPokemonIdsByGenerationForStaticGeneration(targetGeneration);
-      } else {
-        // Fetch all Pokemon IDs
-        pokemonIds = await getAllPokemonIdsForStaticGeneration();
-      }
-
-      // Generate paths for each Pokemon and language
-      for (const lang of languages) {
-        for (const id of pokemonIds) {
-          paths.push({
-            lang,
-            id: id.toString(),
-          });
-        }
-      }
-
-      console.log(`[SSG] Generated ${paths.length} paths using Supabase data`);
-      return paths;
+    if (targetGeneration !== null) {
+      // Fetch IDs for specific generation
+      pokemonIds =
+        await getPokemonIdsByGenerationForStaticGeneration(targetGeneration);
+    } else {
+      // Fetch all Pokemon IDs
+      pokemonIds = await getAllPokemonIdsForStaticGeneration();
     }
+
+    // Generate paths for each Pokemon and language
+    for (const lang of languages) {
+      for (const id of pokemonIds) {
+        paths.push({
+          lang,
+          id: id.toString(),
+        });
+      }
+    }
+
+    console.log(`[SSG] Generated ${paths.length} paths using Supabase data`);
+    return paths;
   } catch (error) {
     console.error(
       "[SSG] Error fetching from Supabase, falling back to generation ranges:",
@@ -301,7 +296,6 @@ export default async function PokemonDetailPage({
   console.log("[PokemonDetailPage] Environment check:");
   console.log(`  - NODE_ENV: ${process.env.NODE_ENV}`);
   console.log(`  - BUILD_MODE: ${process.env.BUILD_MODE}`);
-  console.log(`  - SERVER_MODE: ${process.env.NEXT_PUBLIC_SERVER_MODE}`);
 
   try {
     const dictionary = await getDictionary(lang);
