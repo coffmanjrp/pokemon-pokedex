@@ -35,6 +35,10 @@ export const COMPLETE_FORM_MAPPINGS = [
   { formId: 10060, basePokemonId: 460, formName: "mega", category: "mega" }, // Mega Abomasnow
   { formId: 10061, basePokemonId: 670, formName: "eternal", category: "other" }, // Floette Eternal
   { formId: 10062, basePokemonId: 380, formName: "mega", category: "mega" }, // Mega Latias
+  
+  // Primal Forms
+  { formId: 10077, basePokemonId: 382, formName: "primal", category: "primal" }, // Primal Kyogre
+  { formId: 10078, basePokemonId: 383, formName: "primal", category: "primal" }, // Primal Groudon
 
   // Alolan Forms
   { formId: 10091, basePokemonId: 19, formName: "alola", category: "alolan" }, // Alolan Rattata

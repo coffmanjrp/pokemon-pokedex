@@ -38,6 +38,10 @@ const ALL_FORM_IDS: number[] = [
   10060, // Mega Garchomp
   10061, // Mega Lucario
   10062, // Mega Abomasnow
+  
+  // Primal Forms
+  10077, // Primal Kyogre
+  10078, // Primal Groudon
 
   // Alolan Forms
   10091, // Alolan Rattata
@@ -215,6 +219,9 @@ const FORM_TO_BASE_ID_MAP: Record<number, number> = {
   10046: 212, 10047: 214, 10048: 229, 10049: 248, 10050: 257, 10051: 282,
   10052: 303, 10053: 306, 10054: 308, 10055: 310, 10056: 354, 10057: 359,
   10058: 380, 10059: 381, 10060: 445, 10061: 448, 10062: 460,
+  
+  // Primal Forms
+  10077: 382, 10078: 383,
   
   // Alolan Forms
   10091: 19, 10092: 20, 10094: 27, 10095: 28, 10096: 37, 10097: 38,

@@ -37,6 +37,10 @@ const ALL_FORM_IDS: number[] = [
   10061, // Mega Lucario
   10062, // Mega Abomasnow
 
+  // Primal Forms
+  10077, // Primal Kyogre
+  10078, // Primal Groudon
+
   // Alolan Forms
   10091,
   10092,
