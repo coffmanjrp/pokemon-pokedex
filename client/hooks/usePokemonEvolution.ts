@@ -2,7 +2,7 @@ import { useLazyQuery, ApolloError } from "@apollo/client";
 import { GET_POKEMON_EVOLUTION } from "@/graphql/queries";
 import { EvolutionDetail } from "@/types/pokemon";
 import { useEffect } from "react";
-import { useSupabasePokemonEvolution } from "@/hooks/supabase/usePokemonEvolution";
+import { useSupabasePokemonEvolution } from "./supabase/usePokemonEvolution";
 
 interface UsePokemonEvolutionResult {
   evolutionChain: EvolutionDetail | undefined;
