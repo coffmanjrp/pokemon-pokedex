@@ -7,6 +7,7 @@ import type {
   PokemonSprites,
   PokemonSpecies,
   PokemonMove,
+  OtherSprites,
 } from "@/types/pokemon";
 import { Locale } from "@/lib/dictionaries";
 import type { Database } from "@/types/supabase";
@@ -241,23 +242,39 @@ export async function getPokemonForms() {
       const formData = form.form_data as Record<string, unknown>;
 
       // Get base Pokemon data
-      const basePokemon = (form as { pokemon?: { species_data?: unknown } })
-        .pokemon;
-      const baseSpeciesData = basePokemon?.species_data as Record<
-        string,
-        unknown
-      >;
+      const basePokemon = (
+        form as {
+          pokemon?: { id?: number; name?: string; species_data?: unknown };
+        }
+      ).pokemon;
+      const baseSpeciesData = basePokemon?.species_data as
+        | Record<string, unknown>
+        | undefined;
 
       // Handle sprites with both camelCase and snake_case properties
       const rawSprites = (formData.sprites as Record<string, unknown>) || {};
-      const sprites: PokemonSprites = {
-        frontDefault:
-          rawSprites.front_default || rawSprites.frontDefault || null,
-        frontShiny: rawSprites.front_shiny || rawSprites.frontShiny || null,
-        backDefault: rawSprites.back_default || rawSprites.backDefault || null,
-        backShiny: rawSprites.back_shiny || rawSprites.backShiny || null,
-        other: rawSprites.other || {},
-      };
+      const frontDefault = rawSprites.front_default || rawSprites.frontDefault;
+      const frontShiny = rawSprites.front_shiny || rawSprites.frontShiny;
+      const backDefault = rawSprites.back_default || rawSprites.backDefault;
+      const backShiny = rawSprites.back_shiny || rawSprites.backShiny;
+
+      const sprites: PokemonSprites = {};
+
+      if (frontDefault) {
+        sprites.frontDefault = String(frontDefault);
+      }
+      if (frontShiny) {
+        sprites.frontShiny = String(frontShiny);
+      }
+      if (backDefault) {
+        sprites.backDefault = String(backDefault);
+      }
+      if (backShiny) {
+        sprites.backShiny = String(backShiny);
+      }
+      if (rawSprites.other) {
+        sprites.other = rawSprites.other as OtherSprites;
+      }
 
       // Create Pokemon object from form data
       const pokemon: Pokemon = {
@@ -281,10 +298,13 @@ export async function getPokemonForms() {
       };
 
       // Add species data from base Pokemon if available
-      if (baseSpeciesData) {
+      if (baseSpeciesData && basePokemon) {
         pokemon.species = {
-          id: String(baseSpeciesData.id || basePokemon.id),
-          name: (baseSpeciesData.name as string) || basePokemon.name,
+          id: String(baseSpeciesData.id || basePokemon.id || form.pokemon_id),
+          name:
+            (baseSpeciesData.name as string) ||
+            basePokemon.name ||
+            form.form_name,
           names: (baseSpeciesData.names as PokemonSpecies["names"]) || [],
           flavorTextEntries:
             (
