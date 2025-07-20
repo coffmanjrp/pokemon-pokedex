@@ -103,11 +103,17 @@ export class PokemonFormsSyncService {
       throw new Error(`No mapping found for form ${formId}`);
     }
 
+    // Extract form name from Pokemon name (part after hyphen)
+    // e.g., "lucario-mega" → "mega", "pikachu-original-cap" → "original-cap"
+    const formName = pokemon.name.includes('-') 
+      ? pokemon.name.split('-').slice(1).join('-')
+      : mapping.formName; // Fallback to mapping if no hyphen
+
     // Prepare form data for Supabase
     const formData: FormSyncData = {
       id: formId,
       pokemon_id: mapping.basePokemonId,
-      form_name: mapping.formName,
+      form_name: formName,
       form_data: {
         name: pokemon.name,
         types: pokemon.types,
