@@ -130,7 +130,8 @@ pokemon-pokedex/
 **Cache**: localStorage first, 24hr TTL, UTF-8 encoding  
 **Hydration**: Props-based dictionary, not Redux selectors  
 **Scroll Position**: Restored when returning from detail page, reset on generation change  
-**Moves Data**: Loaded from Supabase, displayed in tabs on detail pages
+**Moves Data**: Loaded from Supabase, displayed in tabs on detail pages  
+**Game History Tab**: Currently unavailable (gameIndices not yet synced to Supabase)
 
 For more solutions, see documentation in `/docs`
 
@@ -206,3 +207,10 @@ For more solutions, see documentation in `/docs`
 2. Consider removing Apollo Client dependencies completely
 3. Implement SSG with Supabase (currently using CSR)
 4. Optimize moves data loading for large datasets
+
+### Future TODOs (Low Priority)
+1. Implement gameIndices sync to Supabase
+   - Add game_indices field to database schema
+   - Update sync service to include gameIndices data
+   - Enable Game History tab on Pokemon detail pages
+2. Add more detailed Pokemon data (held items, encounter locations, etc.)

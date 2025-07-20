@@ -73,6 +73,8 @@ function transformSupabasePokemon(
   result.moves = (data.moves as unknown as PokemonMove[]) || [];
 
   // gameIndices is not stored in Supabase yet
+  // TODO: Implement game indices sync when needed
+  // This will enable the Game History tab on Pokemon detail pages
   result.gameIndices = [];
 
   return result;
