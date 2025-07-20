@@ -218,59 +218,55 @@ For more solutions, see documentation in `/docs`
 13. ✅ Renamed hooks from usePokemonListSupabase → usePokemonList for simplicity
 14. ✅ Added Gigantamax Pokemon support - 33 forms added to Generation 0
 15. ✅ Synced all Gigantamax forms to pokemon_forms table with proper mappings
+16. ✅ Fixed Generation 0 display - all 141 forms including Gigantamax now visible
 
 ### Next Steps & TODOs
 
-#### 🔴 High Priority (In Progress)
+#### 🔴 High Priority
 
-1. **SSG Implementation (Static Site Generation)** ✅ COMPLETED
-   - [x] Set NEXT_PUBLIC_USE_SUPABASE_FOR_SSG=true
-   - [x] Update generateStaticParams to fetch Pokemon IDs from Supabase
-   - [x] Update serverDataFetching for SSG support (already compatible)
-   - [x] Created helper functions for SSG with Supabase
-   - [x] Verify build time reduction: **13min → 3m 45s (71% reduction!)**
-   - **Achieved benefits**: 71% build time reduction, faster initial load, improved SEO
-
-2. **Apollo Client Removal** ✅ COMPLETED
-   - [x] Analyzed GraphQL dependencies in 18 files
-   - [x] Removed GraphQL code from all hooks and components
-   - [x] Removed @apollo/client and graphql from package.json
-   - [x] Deleted all GraphQL files and API routes
-   - [x] Updated next.config.ts to remove Apollo optimization
-   - [x] Simplified unified hooks to Supabase-only
-   - **Achieved benefits**: ~100KB bundle size reduction, simplified dependencies
+All high priority tasks have been completed! 🎉
 
 #### 🟡 Medium Priority
 
-3. **Performance Optimization**
+1. **Performance Optimization**
    - [ ] Implement pagination for large moves datasets
    - [ ] Add React Suspense for progressive loading
    - [ ] Improve virtual scrolling performance
    - [ ] Optimize Supabase caching strategy
 
-4. **Error Handling Improvements**
+2. **Error Handling Improvements**
    - [ ] Proper Supabase connection error handling
    - [ ] Implement automatic retry mechanism
    - [ ] User-friendly error messages
 
-5. **Search Enhancement**
+3. **Search Enhancement**
    - [ ] Leverage Supabase full-text search
    - [ ] Optimize Japanese language search
    - [ ] Improve type-based filtering performance
 
 #### 🟢 Low Priority
 
-6. **gameIndices Implementation**
+1. **gameIndices Implementation**
    - [ ] Add game_indices field to database schema
    - [ ] Update sync service to include gameIndices data
    - [ ] Enable Game History tab on Pokemon detail pages
 
-7. **Additional Data Implementation**
+2. **Additional Data Implementation**
    - [ ] Add held items information
    - [ ] Add encounter locations data
    - [ ] Expand evolution condition details
 
-8. **UI/UX Improvements**
+3. **UI/UX Improvements**
    - [ ] Improve loading states
    - [ ] Optimize animations
    - [ ] Enhance mobile UI
+
+### Completed High Priority Tasks Summary
+
+1. ✅ **SSG Implementation** - 71% build time reduction (13min → 3m 45s)
+2. ✅ **Apollo Client Removal** - ~100KB bundle size reduction, simplified dependencies
+3. ✅ **Gigantamax Pokemon Support** - All 33 forms added and synced to database
+4. ✅ **Environment Variable Cleanup** - Removed all GraphQL-related variables
+5. ✅ **Server Test Script Cleanup** - Removed 26 unnecessary test files
+
+All high priority optimization tasks have been successfully completed!
