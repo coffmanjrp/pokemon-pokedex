@@ -12,6 +12,7 @@
  */
 
 import { PokemonSyncService } from './pokemonSyncService';
+import { pokemonFormsSyncService } from './pokemonFormsSyncService';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 
@@ -83,8 +84,8 @@ async function main() {
         break;
 
       case 'forms':
-        console.log('📋 Syncing Pokemon forms...');
-        await syncService.syncPokemonForms();
+        console.log('📋 Syncing Pokemon forms to pokemon_forms table...');
+        await pokemonFormsSyncService.syncAllForms();
         break;
 
       case 'test':

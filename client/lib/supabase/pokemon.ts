@@ -202,23 +202,26 @@ export async function searchPokemon(query: string, _language: Locale = "en") {
   }
 }
 
-// Get Pokemon forms
+// Get Pokemon forms from pokemon_forms table
 export async function getPokemonForms() {
   try {
-    // Import form IDs from the data file
-    const { getValidFormIds } = await import("@/lib/data/pokemonFormIds");
-    const formIds = getValidFormIds();
+    console.log("Fetching Pokemon forms from pokemon_forms table...");
 
-    console.log(
-      `Fetching ${formIds.length} Pokemon forms from pokemon table...`,
-    );
-
-    // Fetch forms directly from pokemon table using their IDs
+    // Fetch forms from pokemon_forms table with their base Pokemon data
     const { data, error } = await supabase
-      .from("pokemon")
-      .select("*")
-      .in("id", formIds)
-      .order("id");
+      .from("pokemon_forms")
+      .select(
+        `
+        id,
+        pokemon_id,
+        form_name,
+        form_data,
+        is_regional_variant,
+        is_mega_evolution,
+        is_gigantamax
+      `,
+      )
+      .order("pokemon_id");
 
     if (error) {
       console.error("Error fetching Pokemon forms:", error);
@@ -227,14 +230,34 @@ export async function getPokemonForms() {
 
     console.log(`Successfully fetched ${data?.length || 0} Pokemon forms`);
 
-    // Transform to Pokemon type with form-specific flags
+    // Transform form data to match Pokemon type
     return (
-      data?.map((pokemon) => {
-        const transformed = transformSupabasePokemon(pokemon);
-        // Add form-specific flags for internal use
-        const formTransformed = transformed as Pokemon & { is_form?: boolean };
-        formTransformed.is_form = true;
-        return transformed;
+      data?.map((form) => {
+        // Extract form data
+        const formData = form.form_data as Record<string, unknown>;
+
+        // Create Pokemon object from form data
+        const pokemon: Pokemon = {
+          id: String(form.id),
+          name: (formData.name as string) || form.form_name,
+          height: (formData.height as number) || 0,
+          weight: (formData.weight as number) || 0,
+          types: (formData.types as PokemonTypeSlot[]) || [],
+          stats: (formData.stats as PokemonStat[]) || [],
+          abilities: (formData.abilities as PokemonAbility[]) || [],
+          sprites: (formData.sprites as PokemonSprites) || {},
+          moves: [], // Forms typically don't have separate moves
+          // Add form-specific properties
+          basePokemonId: form.pokemon_id,
+          formName: form.form_name,
+          isRegionalVariant: form.is_regional_variant,
+          isMegaEvolution: form.is_mega_evolution,
+          isDynamax: form.is_gigantamax,
+        } as Pokemon & {
+          basePokemonId?: number;
+        };
+
+        return pokemon;
       }) || []
     );
   } catch (error) {
