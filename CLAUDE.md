@@ -214,15 +214,55 @@ For more solutions, see documentation in `/docs`
 9. ✅ Corrected pokemon_id mappings in pokemon_forms table (52 fixes)
 10. ✅ Fixed import path for useSupabasePokemonEvolution hook
 
-### Next Steps
-1. Monitor performance in production
-2. Consider removing Apollo Client dependencies completely
-3. Implement SSG with Supabase (currently using CSR)
-4. Optimize moves data loading for large datasets
+### Next Steps & TODOs
 
-### Future TODOs (Low Priority)
-1. Implement gameIndices sync to Supabase
-   - Add game_indices field to database schema
-   - Update sync service to include gameIndices data
-   - Enable Game History tab on Pokemon detail pages
-2. Add more detailed Pokemon data (held items, encounter locations, etc.)
+#### 🔴 High Priority (In Progress)
+
+1. **SSG Implementation (Static Site Generation)**
+   - [x] Set NEXT_PUBLIC_USE_SUPABASE_FOR_SSG=true
+   - [x] Update generateStaticParams to fetch Pokemon IDs from Supabase
+   - [x] Update serverDataFetching for SSG support (already compatible)
+   - [ ] Verify build time reduction (target: 13min → <5min)
+   - **Expected benefits**: 88% build time reduction, faster initial load, improved SEO
+
+2. **Apollo Client Removal**
+   - [ ] Analyze GraphQL dependencies in 16 files
+   - [ ] Disable GraphQL code when Supabase flags are enabled
+   - [ ] Remove @apollo/client and graphql from package.json
+   - [ ] Delete unnecessary GraphQL files
+   - **Expected benefits**: ~100KB bundle size reduction, simplified dependencies
+
+#### 🟡 Medium Priority
+
+3. **Performance Optimization**
+   - [ ] Implement pagination for large moves datasets
+   - [ ] Add React Suspense for progressive loading
+   - [ ] Improve virtual scrolling performance
+   - [ ] Optimize Supabase caching strategy
+
+4. **Error Handling Improvements**
+   - [ ] Proper Supabase connection error handling
+   - [ ] Implement automatic retry mechanism
+   - [ ] User-friendly error messages
+
+5. **Search Enhancement**
+   - [ ] Leverage Supabase full-text search
+   - [ ] Optimize Japanese language search
+   - [ ] Improve type-based filtering performance
+
+#### 🟢 Low Priority
+
+6. **gameIndices Implementation**
+   - [ ] Add game_indices field to database schema
+   - [ ] Update sync service to include gameIndices data
+   - [ ] Enable Game History tab on Pokemon detail pages
+
+7. **Additional Data Implementation**
+   - [ ] Add held items information
+   - [ ] Add encounter locations data
+   - [ ] Expand evolution condition details
+
+8. **UI/UX Improvements**
+   - [ ] Improve loading states
+   - [ ] Optimize animations
+   - [ ] Enhance mobile UI

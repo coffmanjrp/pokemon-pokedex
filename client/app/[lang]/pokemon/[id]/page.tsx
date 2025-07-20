@@ -10,6 +10,12 @@ import {
   getGenerationName,
 } from "@/lib/pokemonUtils";
 import { GENERATIONS } from "@/lib/data/generations";
+import { FEATURE_FLAGS } from "@/lib/featureFlags";
+import {
+  getAllPokemonIdsForStaticGeneration,
+  getPokemonIdsByGenerationForStaticGeneration,
+  getFallbackPokemonIds,
+} from "@/lib/supabase/static";
 import PokemonDetailClient from "./client";
 import {
   generateStructuredData,
@@ -39,12 +45,50 @@ export async function generateStaticParams() {
   console.log(
     `Build mode: ${enableGenerationalBuild ? "Generational" : "Standard"}`,
   );
+  console.log(
+    `SSG mode: ${FEATURE_FLAGS.USE_SUPABASE_FOR_SSG ? "Supabase" : "Fallback"}`,
+  );
+
   if (targetGeneration) {
     console.log(`Target generation: ${targetGeneration}`);
   }
 
-  // Generation-based static path generation (Supabase migration complete)
-  if (targetGeneration) {
+  try {
+    // Use Supabase for SSG if enabled
+    if (FEATURE_FLAGS.USE_SUPABASE_FOR_SSG) {
+      let pokemonIds: number[] = [];
+
+      if (targetGeneration !== null) {
+        // Fetch IDs for specific generation
+        pokemonIds =
+          await getPokemonIdsByGenerationForStaticGeneration(targetGeneration);
+      } else {
+        // Fetch all Pokemon IDs
+        pokemonIds = await getAllPokemonIdsForStaticGeneration();
+      }
+
+      // Generate paths for each Pokemon and language
+      for (const lang of languages) {
+        for (const id of pokemonIds) {
+          paths.push({
+            lang,
+            id: id.toString(),
+          });
+        }
+      }
+
+      console.log(`[SSG] Generated ${paths.length} paths using Supabase data`);
+      return paths;
+    }
+  } catch (error) {
+    console.error(
+      "[SSG] Error fetching from Supabase, falling back to generation ranges:",
+      error,
+    );
+  }
+
+  // Fallback: Generation-based static path generation
+  if (targetGeneration !== null) {
     const generation = GENERATIONS.find((gen) => gen.id === targetGeneration);
     if (generation) {
       const { start, end } = generation.pokemonRange;
@@ -63,20 +107,18 @@ export async function generateStaticParams() {
     }
   }
 
-  // Standard build: all generations
-  for (const generation of GENERATIONS) {
-    const { start, end } = generation.pokemonRange;
-    for (const lang of languages) {
-      for (let i = start; i <= end; i++) {
-        paths.push({
-          lang,
-          id: i.toString(),
-        });
-      }
+  // Standard build: all generations (fallback)
+  const fallbackIds = getFallbackPokemonIds();
+  for (const lang of languages) {
+    for (const id of fallbackIds) {
+      paths.push({
+        lang,
+        id: id.toString(),
+      });
     }
   }
 
-  console.log(`Generated ${paths.length} static paths for all Pokemon`);
+  console.log(`Generated ${paths.length} static paths using fallback data`);
   return paths;
 }
 
