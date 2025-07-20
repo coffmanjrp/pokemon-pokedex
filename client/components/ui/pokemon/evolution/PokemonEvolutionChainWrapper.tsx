@@ -74,7 +74,7 @@ export function PokemonEvolutionChainWrapper({
             {dictionary?.ui.error.tryAgain || "Try Again"}
           </button>
         </div>
-      ) : !evolutionChain && pokemon ? (
+      ) : !evolutionChain && pokemon && pokemon.species ? (
         // Show single Pokemon if no evolution chain exists
         <PokemonEvolutionChain
           evolutionChain={{
