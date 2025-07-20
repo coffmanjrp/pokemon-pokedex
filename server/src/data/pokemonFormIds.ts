@@ -121,6 +121,41 @@ const ALL_FORM_IDS: number[] = [
   10253, // Paldean Tauros (Aqua Breed)
   10254, // Paldean Wooper
 
+  // Gigantamax Forms
+  10195, // Gigantamax Venusaur
+  10196, // Gigantamax Charizard
+  10197, // Gigantamax Blastoise
+  10198, // Gigantamax Butterfree
+  10199, // Gigantamax Pikachu
+  10200, // Gigantamax Meowth
+  10201, // Gigantamax Machamp
+  10202, // Gigantamax Gengar
+  10203, // Gigantamax Kingler
+  10204, // Gigantamax Lapras
+  10205, // Gigantamax Eevee
+  10206, // Gigantamax Snorlax
+  10207, // Gigantamax Garbodor
+  10208, // Gigantamax Melmetal
+  10209, // Gigantamax Rillaboom
+  10210, // Gigantamax Cinderace
+  10211, // Gigantamax Inteleon
+  10212, // Gigantamax Corviknight
+  10213, // Gigantamax Orbeetle
+  10214, // Gigantamax Drednaw
+  10215, // Gigantamax Coalossal
+  10216, // Gigantamax Flapple
+  10217, // Gigantamax Appletun
+  10218, // Gigantamax Sandaconda
+  10219, // Gigantamax Toxtricity
+  10220, // Gigantamax Centiskorch
+  10221, // Gigantamax Hatterene
+  10222, // Gigantamax Grimmsnarl
+  10223, // Gigantamax Alcremie
+  10224, // Gigantamax Copperajah
+  10225, // Gigantamax Duraludon
+  10226, // Gigantamax Urshifu (Single Strike)
+  10227, // Gigantamax Urshifu (Rapid Strike)
+
   // Other Forms (Koraidon/Miraidon forms)
   10264, // Ultimate Necrozma
   10265, // Koraidon (Apex Build)
@@ -200,6 +235,14 @@ const FORM_TO_BASE_ID_MAP: Record<number, number> = {
   
   // Paldean Forms
   10251: 128, 10252: 128, 10253: 128, 10254: 194,
+  
+  // Gigantamax Forms
+  10195: 3, 10196: 6, 10197: 9, 10198: 12, 10199: 25, 10200: 52,
+  10201: 68, 10202: 94, 10203: 99, 10204: 131, 10205: 133, 10206: 143,
+  10207: 569, 10208: 809, 10209: 812, 10210: 815, 10211: 818, 10212: 823,
+  10213: 826, 10214: 834, 10215: 839, 10216: 841, 10217: 842, 10218: 844,
+  10219: 849, 10220: 851, 10221: 858, 10222: 861, 10223: 869, 10224: 879,
+  10225: 884, 10226: 892, 10227: 892,
   
   // Other Forms (blacklisted forms removed)
   10275: 1017, 10276: 1024, 10277: 1024
