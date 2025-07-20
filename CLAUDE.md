@@ -14,10 +14,10 @@ Pokemon Pokedex application built with Next.js 15, React 19, TypeScript, and Tai
 
 ## Architecture Overview
 
-**Frontend**: Next.js 15 App Router, TypeScript, Redux Toolkit, Apollo Client  
+**Frontend**: Next.js 15 App Router, TypeScript, Redux Toolkit, Supabase Client  
 **Backend**: Apollo Server (Express), Railway deployment, PokeAPI integration  
 **Database**: Supabase (PostgreSQL) - Migration in progress  
-**Caching**: localStorage (24hr TTL) + CDN headers + Apollo InMemory  
+**Caching**: localStorage (24hr TTL) + CDN headers  
 **Build**: Parallel generation builds (~12min), 2,786 static pages  
 
 ### Detailed Architecture
@@ -185,12 +185,12 @@ For more solutions, see documentation in `/docs`
 - Feature flags configured:
   - `NEXT_PUBLIC_USE_SUPABASE_FOR_LIST=true`
   - `NEXT_PUBLIC_USE_SUPABASE_FOR_DETAIL=true`
-  - `NEXT_PUBLIC_USE_SUPABASE_FOR_SSG=false`
+  - `NEXT_PUBLIC_USE_SUPABASE_FOR_SSG=true`
 
 ### Current Implementation
 - **Data Source**: Supabase (feature flag enabled)
 - **Hooks**: Unified hooks (`usePokemonListUnified`, `usePokemonDetailUnified`)
-- **Backward Compatibility**: Full GraphQL support maintained
+- **Backward Compatibility**: GraphQL removed, full Supabase migration
 - **Performance**: Direct database queries, no GraphQL overhead
 
 ### Evolution Chain Implementation Notes
@@ -218,19 +218,22 @@ For more solutions, see documentation in `/docs`
 
 #### 🔴 High Priority (In Progress)
 
-1. **SSG Implementation (Static Site Generation)**
+1. **SSG Implementation (Static Site Generation)** ✅ COMPLETED
    - [x] Set NEXT_PUBLIC_USE_SUPABASE_FOR_SSG=true
    - [x] Update generateStaticParams to fetch Pokemon IDs from Supabase
    - [x] Update serverDataFetching for SSG support (already compatible)
+   - [x] Created helper functions for SSG with Supabase
    - [ ] Verify build time reduction (target: 13min → <5min)
    - **Expected benefits**: 88% build time reduction, faster initial load, improved SEO
 
-2. **Apollo Client Removal**
-   - [ ] Analyze GraphQL dependencies in 16 files
-   - [ ] Disable GraphQL code when Supabase flags are enabled
-   - [ ] Remove @apollo/client and graphql from package.json
-   - [ ] Delete unnecessary GraphQL files
-   - **Expected benefits**: ~100KB bundle size reduction, simplified dependencies
+2. **Apollo Client Removal** ✅ COMPLETED
+   - [x] Analyzed GraphQL dependencies in 18 files
+   - [x] Removed GraphQL code from all hooks and components
+   - [x] Removed @apollo/client and graphql from package.json
+   - [x] Deleted all GraphQL files and API routes
+   - [x] Updated next.config.ts to remove Apollo optimization
+   - [x] Simplified unified hooks to Supabase-only
+   - **Achieved benefits**: ~100KB bundle size reduction, simplified dependencies
 
 #### 🟡 Medium Priority
 

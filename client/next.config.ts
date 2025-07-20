@@ -34,11 +34,7 @@ const nextConfig: NextConfig = {
   },
   // Suppress hydration warnings for browser extensions
   experimental: {
-    optimizePackageImports: [
-      "react-hot-toast",
-      "@apollo/client",
-      "@tanstack/react-virtual",
-    ],
+    optimizePackageImports: ["react-hot-toast", "@tanstack/react-virtual"],
     // Enable aggressive tree shaking
     esmExternals: true,
   },
@@ -119,16 +115,6 @@ const nextConfig: NextConfig = {
         ...config.optimization.splitChunks,
         cacheGroups: {
           ...config.optimization.splitChunks.cacheGroups,
-          apollo: {
-            name: "apollo",
-            chunks: "all",
-            test: /[\\/]node_modules[\\/]@apollo[\\/]/,
-          },
-          graphql: {
-            name: "graphql",
-            chunks: "all",
-            test: /[\\/]node_modules[\\/]graphql[\\/]/,
-          },
         },
       },
     };
