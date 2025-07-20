@@ -35,6 +35,7 @@ export function PokemonTopNavigationTabs({
               lang={lang}
               dictionary={dictionary}
               isActive={true}
+              pokemon={pokemon}
             />
           </div>
         </div>

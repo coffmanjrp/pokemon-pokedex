@@ -4,12 +4,14 @@ import { Locale, Dictionary } from "@/lib/dictionaries";
 import { usePokemonEvolution } from "@/hooks/usePokemonEvolution";
 import { PokemonEvolutionChain } from "./PokemonEvolutionChain";
 import { LoadingSpinner } from "../../common/LoadingSpinner";
+import { Pokemon } from "@/types/pokemon";
 
 interface PokemonEvolutionChainWrapperProps {
   pokemonId: string;
   lang: Locale;
   dictionary: Dictionary;
   isActive?: boolean;
+  pokemon?: Pokemon; // Current Pokemon data for fallback display
 }
 
 export function PokemonEvolutionChainWrapper({
@@ -17,6 +19,7 @@ export function PokemonEvolutionChainWrapper({
   lang,
   dictionary,
   isActive = false,
+  pokemon,
 }: PokemonEvolutionChainWrapperProps) {
   const { evolutionChain, loading, error, refetch } = usePokemonEvolution(
     pokemonId,
@@ -71,6 +74,20 @@ export function PokemonEvolutionChainWrapper({
             {dictionary?.ui.error.tryAgain || "Try Again"}
           </button>
         </div>
+      ) : !evolutionChain && pokemon ? (
+        // Show single Pokemon if no evolution chain exists
+        <PokemonEvolutionChain
+          evolutionChain={{
+            id: pokemon.id,
+            name: pokemon.name,
+            sprites: pokemon.sprites,
+            types: pokemon.types,
+            species: pokemon.species,
+            evolvesTo: [],
+          }}
+          lang={lang}
+          dictionary={dictionary}
+        />
       ) : !evolutionChain ? (
         <div className="text-center py-8 text-gray-500">
           <p className="mb-2">
