@@ -220,6 +220,7 @@ For more solutions, see documentation in `/docs`
 15. ✅ Synced all Gigantamax forms to pokemon_forms table with proper mappings
 16. ✅ Fixed Generation 0 display - all 141 forms including Gigantamax now visible
 17. ✅ Fixed pokemon_forms table incorrect mappings - corrected basePokemonId in completeFormMappings.ts
+18. ✅ Fixed additional 38 incorrect form mappings identified in Generation 0 - all forms now display correct Pokemon data
 
 ### Next Steps & TODOs
 
