@@ -236,6 +236,13 @@ export async function getPokemonForms() {
 
     console.log(`Successfully fetched ${data?.length || 0} Pokemon forms`);
 
+    // Debug: Log Gigantamax forms
+    const gigantamaxForms = data?.filter((form) => form.is_gigantamax);
+    console.log(
+      `Found ${gigantamaxForms?.length || 0} Gigantamax forms:`,
+      gigantamaxForms?.map((f) => ({ id: f.id, name: f.form_name })),
+    );
+
     // Transform form data to match Pokemon type
     const transformedPokemon = data?.map((form) => {
       // Extract form data
