@@ -38,8 +38,8 @@ export function PokemonEvolutionChainWrapper({
     console.log("[Evolution] Error loading evolution chain:", {
       pokemonId,
       error: error.message || error,
-      graphQLErrors: error.graphQLErrors,
-      networkError: error.networkError,
+      graphQLErrors: "graphQLErrors" in error ? error.graphQLErrors : undefined,
+      networkError: "networkError" in error ? error.networkError : undefined,
     });
   }
 

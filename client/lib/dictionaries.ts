@@ -244,6 +244,7 @@ export interface Dictionary {
       games: string;
       sprites: string;
       evolution: string;
+      evolutionSoon: string;
       abilities: string;
       general: string;
     };

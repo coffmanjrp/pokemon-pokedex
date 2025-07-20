@@ -218,7 +218,12 @@ export async function getPokemonForms() {
         form_data,
         is_regional_variant,
         is_mega_evolution,
-        is_gigantamax
+        is_gigantamax,
+        pokemon!inner (
+          id,
+          name,
+          species_data
+        )
       `,
       )
       .order("pokemon_id");
@@ -231,35 +236,95 @@ export async function getPokemonForms() {
     console.log(`Successfully fetched ${data?.length || 0} Pokemon forms`);
 
     // Transform form data to match Pokemon type
-    return (
-      data?.map((form) => {
-        // Extract form data
-        const formData = form.form_data as Record<string, unknown>;
+    const transformedPokemon = data?.map((form) => {
+      // Extract form data
+      const formData = form.form_data as Record<string, unknown>;
 
-        // Create Pokemon object from form data
-        const pokemon: Pokemon = {
-          id: String(form.id),
-          name: (formData.name as string) || form.form_name,
-          height: (formData.height as number) || 0,
-          weight: (formData.weight as number) || 0,
-          types: (formData.types as PokemonTypeSlot[]) || [],
-          stats: (formData.stats as PokemonStat[]) || [],
-          abilities: (formData.abilities as PokemonAbility[]) || [],
-          sprites: (formData.sprites as PokemonSprites) || {},
-          moves: [], // Forms typically don't have separate moves
-          // Add form-specific properties
-          basePokemonId: form.pokemon_id,
-          formName: form.form_name,
-          isRegionalVariant: form.is_regional_variant,
-          isMegaEvolution: form.is_mega_evolution,
-          isDynamax: form.is_gigantamax,
-        } as Pokemon & {
-          basePokemonId?: number;
-        };
+      // Get base Pokemon data
+      const basePokemon = (form as { pokemon?: { species_data?: unknown } })
+        .pokemon;
+      const baseSpeciesData = basePokemon?.species_data as Record<
+        string,
+        unknown
+      >;
 
-        return pokemon;
-      }) || []
-    );
+      // Handle sprites with both camelCase and snake_case properties
+      const rawSprites = (formData.sprites as Record<string, unknown>) || {};
+      const sprites: PokemonSprites = {
+        frontDefault:
+          rawSprites.front_default || rawSprites.frontDefault || null,
+        frontShiny: rawSprites.front_shiny || rawSprites.frontShiny || null,
+        backDefault: rawSprites.back_default || rawSprites.backDefault || null,
+        backShiny: rawSprites.back_shiny || rawSprites.backShiny || null,
+        other: rawSprites.other || {},
+      };
+
+      // Create Pokemon object from form data
+      const pokemon: Pokemon = {
+        id: String(form.id),
+        name: (formData.name as string) || form.form_name,
+        height: (formData.height as number) || 0,
+        weight: (formData.weight as number) || 0,
+        types: (formData.types as PokemonTypeSlot[]) || [],
+        stats: (formData.stats as PokemonStat[]) || [],
+        abilities: (formData.abilities as PokemonAbility[]) || [],
+        sprites: sprites,
+        moves: [], // Forms typically don't have separate moves
+        // Add form-specific properties
+        basePokemonId: form.pokemon_id,
+        formName: form.form_name,
+        isRegionalVariant: form.is_regional_variant,
+        isMegaEvolution: form.is_mega_evolution,
+        isDynamax: form.is_gigantamax,
+      } as Pokemon & {
+        basePokemonId?: number;
+      };
+
+      // Add species data from base Pokemon if available
+      if (baseSpeciesData) {
+        pokemon.species = {
+          id: String(baseSpeciesData.id || basePokemon.id),
+          name: (baseSpeciesData.name as string) || basePokemon.name,
+          names: (baseSpeciesData.names as PokemonSpecies["names"]) || [],
+          flavorTextEntries:
+            (
+              baseSpeciesData.flavor_text_entries as Array<{
+                flavor_text?: string;
+                flavorText?: string;
+                language: { name: string };
+                version: { name: string };
+              }>
+            )?.map((entry) => ({
+              flavorText: entry.flavor_text || entry.flavorText || "",
+              language: entry.language,
+              version: entry.version,
+            })) || [],
+          genera: (baseSpeciesData.genera as PokemonSpecies["genera"]) || [],
+          generation:
+            baseSpeciesData.generation as PokemonSpecies["generation"],
+          evolutionChain:
+            baseSpeciesData.evolution_chain as PokemonSpecies["evolutionChain"],
+          genderRate: (baseSpeciesData.gender_rate ??
+            baseSpeciesData.genderRate) as number,
+          hasGenderDifferences: (baseSpeciesData.has_gender_differences ??
+            baseSpeciesData.hasGenderDifferences ??
+            false) as boolean,
+          isBaby: (baseSpeciesData.is_baby ??
+            baseSpeciesData.isBaby ??
+            false) as boolean,
+          isLegendary: (baseSpeciesData.is_legendary ??
+            baseSpeciesData.isLegendary ??
+            false) as boolean,
+          isMythical: (baseSpeciesData.is_mythical ??
+            baseSpeciesData.isMythical ??
+            false) as boolean,
+        } as PokemonSpecies;
+      }
+
+      return pokemon;
+    });
+
+    return transformedPokemon || [];
   } catch (error) {
     console.error("Error in getPokemonForms:", error);
     throw error;

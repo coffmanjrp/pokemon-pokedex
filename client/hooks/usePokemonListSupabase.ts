@@ -44,9 +44,11 @@ export function usePokemonListSupabase({
     hasNextPage,
   } = useAppSelector((state) => state.pokemon);
 
+  // Use Redux state's currentGeneration as the source of truth
   const [localGeneration, setLocalGeneration] = useState(generation);
   const loadingRef = useRef(false);
   const mountedRef = useRef(true);
+  const isFirstMountRef = useRef(true);
 
   // Fetch Pokemon data from Supabase
   const fetchGenerationData = useCallback(
@@ -126,13 +128,18 @@ export function usePokemonListSupabase({
       } catch (error) {
         console.error("Error fetching Pokemon data:", error);
         if (mountedRef.current) {
-          dispatch(
-            setError(
-              error instanceof Error
-                ? error.message
-                : "Failed to fetch Pokemon",
-            ),
-          );
+          const errorMessage =
+            error instanceof Error ? error.message : "Failed to fetch Pokemon";
+
+          // Log more details for debugging
+          console.error("Fetch error details:", {
+            generation: gen,
+            error: error,
+            errorMessage: errorMessage,
+            supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+          });
+
+          dispatch(setError(errorMessage));
         }
       } finally {
         if (mountedRef.current) {
@@ -178,12 +185,16 @@ export function usePokemonListSupabase({
   useEffect(() => {
     mountedRef.current = true;
 
-    if (
-      autoFetch &&
-      initialPokemon.length === 0 &&
-      currentGeneration === localGeneration
-    ) {
-      fetchGenerationData(currentGeneration);
+    // Always prefer the generation prop passed from parent
+    const targetGeneration = generation;
+
+    // Update Redux state to match the prop
+    if (currentGeneration !== targetGeneration) {
+      dispatch(setReduxCurrentGeneration(targetGeneration));
+    }
+
+    if (autoFetch && initialPokemon.length === 0) {
+      fetchGenerationData(targetGeneration);
     } else if (initialPokemon.length > 0) {
       dispatch(setPokemons(initialPokemon));
     }
@@ -192,10 +203,16 @@ export function usePokemonListSupabase({
       mountedRef.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [generation]);
 
-  // Handle generation changes
+  // Handle generation changes from Redux state (but skip on first mount)
   useEffect(() => {
+    // Skip this effect on first mount to avoid duplicate fetches
+    if (isFirstMountRef.current) {
+      isFirstMountRef.current = false;
+      return;
+    }
+
     if (currentGeneration !== localGeneration) {
       setLocalGeneration(currentGeneration);
       if (autoFetch) {
@@ -205,8 +222,10 @@ export function usePokemonListSupabase({
   }, [currentGeneration, localGeneration, autoFetch, fetchGenerationData]);
 
   // Get generation range from GENERATION_RANGES
+  // Use the generation prop passed from parent, not Redux state
+  const effectiveGeneration = generation;
   const generationRange = GENERATION_RANGES[
-    currentGeneration as keyof typeof GENERATION_RANGES
+    effectiveGeneration as keyof typeof GENERATION_RANGES
   ] || {
     min: 1,
     max: 1025,
@@ -219,8 +238,8 @@ export function usePokemonListSupabase({
     error,
     hasNextPage,
     loadMore: () => {}, // Supabase loads all at once, no pagination
-    refresh: () => fetchGenerationData(currentGeneration),
-    currentGeneration,
+    refresh: () => fetchGenerationData(effectiveGeneration),
+    currentGeneration: effectiveGeneration,
     changeGeneration: setCurrentGeneration,
     generationRange,
     loadedCount: pokemons?.length || 0,
