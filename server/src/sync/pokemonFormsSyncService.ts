@@ -1,7 +1,7 @@
 import { supabase } from './supabaseClient';
 import { pokemonService } from '../services/pokemonService';
 import { getSortedFormIdsByDisplayId } from '../data/pokemonFormIds';
-import { POKEMON_FORM_MAPPINGS } from '../data/pokemonFormMappings';
+import { COMPLETE_FORM_MAPPINGS } from '../data/completeFormMappings';
 
 interface FormSyncData {
   id: number;
@@ -98,7 +98,7 @@ export class PokemonFormsSyncService {
     }
 
     // Get base Pokemon ID from mapping
-    const mapping = POKEMON_FORM_MAPPINGS.find(m => m.formId === formId);
+    const mapping = COMPLETE_FORM_MAPPINGS.find(m => m.formId === formId);
     if (!mapping) {
       throw new Error(`No mapping found for form ${formId}`);
     }
@@ -140,7 +140,7 @@ export class PokemonFormsSyncService {
    * Get the base Pokemon ID for a form
    */
   private getBasePokemonId(formId: number): number {
-    const mapping = POKEMON_FORM_MAPPINGS.find(m => m.formId === formId);
+    const mapping = COMPLETE_FORM_MAPPINGS.find(m => m.formId === formId);
     return mapping?.basePokemonId || 0;
   }
 }

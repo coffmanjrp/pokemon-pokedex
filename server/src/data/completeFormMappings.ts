@@ -1,16 +1,9 @@
 /**
- * Pokemon Form ID Mappings for server-side sync
- * Maps Pokemon form IDs (10000+) to their base Pokemon IDs
+ * Complete Pokemon Form ID Mappings
+ * Based on pokemonFormIds.ts FORM_TO_BASE_ID_MAP
  */
 
-export interface FormMapping {
-  formId: number;
-  basePokemonId: number;
-  formName: string;
-  category: "mega" | "alolan" | "galarian" | "hisuian" | "paldean" | "gigantamax" | "other";
-}
-
-export const POKEMON_FORM_MAPPINGS: FormMapping[] = [
+export const COMPLETE_FORM_MAPPINGS = [
   // Mega Evolutions
   { formId: 10033, basePokemonId: 3, formName: "mega", category: "mega" },
   { formId: 10034, basePokemonId: 6, formName: "mega-x", category: "mega" },
@@ -46,7 +39,7 @@ export const POKEMON_FORM_MAPPINGS: FormMapping[] = [
   // Alolan Forms
   { formId: 10091, basePokemonId: 19, formName: "alola", category: "alolan" },
   { formId: 10092, basePokemonId: 20, formName: "alola", category: "alolan" },
-  { formId: 10093, basePokemonId: 26, formName: "alola", category: "alolan" },
+  { formId: 10093, basePokemonId: 26, formName: "alola", category: "alolan" }, // Missing from original
   { formId: 10094, basePokemonId: 27, formName: "alola", category: "alolan" },
   { formId: 10095, basePokemonId: 28, formName: "alola", category: "alolan" },
   { formId: 10096, basePokemonId: 37, formName: "alola", category: "alolan" },
@@ -62,13 +55,40 @@ export const POKEMON_FORM_MAPPINGS: FormMapping[] = [
   { formId: 10106, basePokemonId: 89, formName: "alola", category: "alolan" },
   { formId: 10107, basePokemonId: 103, formName: "alola", category: "alolan" },
   { formId: 10108, basePokemonId: 105, formName: "alola", category: "alolan" },
-  { formId: 10109, basePokemonId: 74, formName: "alola", category: "alolan" },
-  { formId: 10110, basePokemonId: 75, formName: "alola", category: "alolan" },
-  { formId: 10111, basePokemonId: 76, formName: "alola", category: "alolan" },
-  { formId: 10112, basePokemonId: 88, formName: "alola", category: "alolan" },
-  { formId: 10113, basePokemonId: 89, formName: "alola", category: "alolan" },
-  { formId: 10114, basePokemonId: 103, formName: "alola", category: "alolan" },
-  { formId: 10115, basePokemonId: 105, formName: "alola", category: "alolan" },
+  { formId: 10109, basePokemonId: 74, formName: "alola", category: "alolan" }, // Duplicate mapping
+  { formId: 10110, basePokemonId: 75, formName: "alola", category: "alolan" }, // Duplicate mapping
+  { formId: 10111, basePokemonId: 76, formName: "alola", category: "alolan" }, // Duplicate mapping
+  { formId: 10112, basePokemonId: 88, formName: "alola", category: "alolan" }, // Duplicate mapping
+  { formId: 10113, basePokemonId: 89, formName: "alola", category: "alolan" }, // Duplicate mapping
+  { formId: 10114, basePokemonId: 103, formName: "alola", category: "alolan" }, // Missing from original
+  { formId: 10115, basePokemonId: 105, formName: "alola", category: "alolan" }, // Duplicate mapping
+
+  // Special Pikachu forms
+  { formId: 10116, basePokemonId: 25, formName: "rock-star", category: "other" },
+  { formId: 10117, basePokemonId: 25, formName: "belle", category: "other" },
+  { formId: 10118, basePokemonId: 25, formName: "pop-star", category: "other" },
+  { formId: 10119, basePokemonId: 801, formName: "original", category: "other" }, // Magearna
+  { formId: 10120, basePokemonId: 555, formName: "galar-zen", category: "other" },
+  { formId: 10123, basePokemonId: 25, formName: "cap-original", category: "other" },
+  { formId: 10124, basePokemonId: 25, formName: "cap-hoenn", category: "other" },
+  { formId: 10125, basePokemonId: 25, formName: "cap-sinnoh", category: "other" },
+  { formId: 10126, basePokemonId: 25, formName: "cap-unova", category: "other" },
+  { formId: 10127, basePokemonId: 25, formName: "cap-kalos", category: "other" },
+  { formId: 10128, basePokemonId: 25, formName: "cap-alola", category: "other" },
+  { formId: 10129, basePokemonId: 25, formName: "cap-partner", category: "other" },
+  { formId: 10130, basePokemonId: 25, formName: "starter", category: "other" },
+  { formId: 10131, basePokemonId: 666, formName: "pattern", category: "other" },
+  { formId: 10132, basePokemonId: 666, formName: "pattern", category: "other" },
+  { formId: 10133, basePokemonId: 666, formName: "pattern", category: "other" },
+  { formId: 10134, basePokemonId: 666, formName: "pattern", category: "other" },
+  { formId: 10135, basePokemonId: 678, formName: "female", category: "other" },
+  { formId: 10147, basePokemonId: 745, formName: "midday", category: "other" },
+  { formId: 10148, basePokemonId: 25, formName: "cap-world", category: "other" },
+  { formId: 10149, basePokemonId: 745, formName: "dusk", category: "other" },
+  { formId: 10152, basePokemonId: 745, formName: "midnight", category: "other" },
+  { formId: 10155, basePokemonId: 25, formName: "partner-cap", category: "other" },
+  { formId: 10156, basePokemonId: 778, formName: "disguised", category: "other" },
+  { formId: 10157, basePokemonId: 778, formName: "busted", category: "other" },
 
   // Galarian Forms
   { formId: 10158, basePokemonId: 52, formName: "galar", category: "galarian" },
@@ -90,8 +110,22 @@ export const POKEMON_FORM_MAPPINGS: FormMapping[] = [
   { formId: 10174, basePokemonId: 555, formName: "galar", category: "galarian" },
   { formId: 10175, basePokemonId: 562, formName: "galar", category: "galarian" },
   { formId: 10176, basePokemonId: 618, formName: "galar", category: "galarian" },
+  { formId: 10177, basePokemonId: 865, formName: "normal", category: "other" }, // Sirfetch'd
+  { formId: 10178, basePokemonId: 866, formName: "normal", category: "other" }, // Mr. Rime
+  { formId: 10179, basePokemonId: 867, formName: "normal", category: "other" }, // Runerigus
+  { formId: 10180, basePokemonId: 862, formName: "normal", category: "other" }, // Obstagoon
+  { formId: 10181, basePokemonId: 863, formName: "normal", category: "other" }, // Perrserker
+  { formId: 10182, basePokemonId: 864, formName: "normal", category: "other" }, // Cursola
+  { formId: 10184, basePokemonId: 877, formName: "hangry", category: "other" },
+  { formId: 10185, basePokemonId: 875, formName: "noice", category: "other" },
+  { formId: 10186, basePokemonId: 876, formName: "male", category: "other" },
+  { formId: 10187, basePokemonId: 876, formName: "female", category: "other" },
+  { formId: 10193, basePokemonId: 888, formName: "crowned", category: "other" },
+  { formId: 10194, basePokemonId: 889, formName: "crowned", category: "other" },
+  { formId: 10195, basePokemonId: 890, formName: "eternamax", category: "other" },
 
   // Hisuian Forms
+  { formId: 10228, basePokemonId: 904, formName: "normal", category: "other" }, // Overqwil
   { formId: 10229, basePokemonId: 58, formName: "hisui", category: "hisuian" },
   { formId: 10230, basePokemonId: 59, formName: "hisui", category: "hisuian" },
   { formId: 10231, basePokemonId: 100, formName: "hisui", category: "hisuian" },
@@ -108,42 +142,24 @@ export const POKEMON_FORM_MAPPINGS: FormMapping[] = [
   { formId: 10242, basePokemonId: 706, formName: "hisui", category: "hisuian" },
   { formId: 10243, basePokemonId: 713, formName: "hisui", category: "hisuian" },
   { formId: 10244, basePokemonId: 724, formName: "hisui", category: "hisuian" },
+  { formId: 10245, basePokemonId: 901, formName: "normal", category: "other" }, // Ursaluna
+  { formId: 10246, basePokemonId: 902, formName: "male", category: "other" }, // Basculegion
+  { formId: 10247, basePokemonId: 902, formName: "female", category: "other" }, // Basculegion
+  { formId: 10248, basePokemonId: 900, formName: "normal", category: "other" }, // Kleavor
+  { formId: 10249, basePokemonId: 899, formName: "normal", category: "other" }, // Wyrdeer
 
   // Paldean Forms
   { formId: 10250, basePokemonId: 128, formName: "paldea-combat", category: "paldean" },
-  { formId: 10251, basePokemonId: 128, formName: "paldea-blaze", category: "paldean" },
-  { formId: 10252, basePokemonId: 128, formName: "paldea-aqua", category: "paldean" },
-  { formId: 10253, basePokemonId: 194, formName: "paldea", category: "paldean" },
-  { formId: 10254, basePokemonId: 980, formName: "paldea", category: "paldean" },
+  { formId: 10251, basePokemonId: 128, formName: "paldea-combat", category: "paldean" },
+  { formId: 10252, basePokemonId: 128, formName: "paldea-blaze", category: "paldean" },
+  { formId: 10253, basePokemonId: 128, formName: "paldea-aqua", category: "paldean" },
+  { formId: 10254, basePokemonId: 194, formName: "paldea", category: "paldean" },
 
   // Other special forms
-  { formId: 10119, basePokemonId: 801, formName: "original", category: "other" },
-  { formId: 10120, basePokemonId: 555, formName: "galar-zen", category: "other" },
-  { formId: 10177, basePokemonId: 865, formName: "normal", category: "other" },
-  { formId: 10178, basePokemonId: 866, formName: "normal", category: "other" },
-  { formId: 10179, basePokemonId: 867, formName: "normal", category: "other" },
-  { formId: 10180, basePokemonId: 862, formName: "normal", category: "other" },
-  { formId: 10181, basePokemonId: 863, formName: "normal", category: "other" },
-  { formId: 10182, basePokemonId: 864, formName: "normal", category: "other" },
-  { formId: 10184, basePokemonId: 877, formName: "hangry", category: "other" },
-  { formId: 10185, basePokemonId: 875, formName: "noice", category: "other" },
-  { formId: 10186, basePokemonId: 876, formName: "male", category: "other" },
-  { formId: 10187, basePokemonId: 876, formName: "female", category: "other" },
-  { formId: 10193, basePokemonId: 888, formName: "crowned", category: "other" },
-  { formId: 10194, basePokemonId: 889, formName: "crowned", category: "other" },
-  { formId: 10195, basePokemonId: 890, formName: "eternamax", category: "other" },
-  { formId: 10228, basePokemonId: 904, formName: "normal", category: "other" },
-  { formId: 10245, basePokemonId: 901, formName: "normal", category: "other" },
-  { formId: 10246, basePokemonId: 902, formName: "male", category: "other" },
-  { formId: 10247, basePokemonId: 902, formName: "female", category: "other" },
-  { formId: 10248, basePokemonId: 900, formName: "normal", category: "other" },
-  { formId: 10249, basePokemonId: 899, formName: "normal", category: "other" },
+  { formId: 10272, basePokemonId: 982, formName: "form", category: "other" }, // Dudunsparce
+  { formId: 10273, basePokemonId: 999, formName: "form", category: "other" }, // Gimmighoul
+  { formId: 10274, basePokemonId: 1000, formName: "form", category: "other" }, // Gholdengo
+  { formId: 10275, basePokemonId: 1017, formName: "form", category: "other" },
+  { formId: 10276, basePokemonId: 1024, formName: "form", category: "other" },
+  { formId: 10277, basePokemonId: 1024, formName: "form", category: "other" },
 ];
-
-/**
- * Get the base Pokemon ID for a given form ID
- */
-export function getBasePokemonId(formId: number): number | undefined {
-  const mapping = POKEMON_FORM_MAPPINGS.find(m => m.formId === formId);
-  return mapping?.basePokemonId;
-}

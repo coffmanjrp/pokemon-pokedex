@@ -11,7 +11,11 @@ async function syncAllPokemon() {
     
     for (const generation of generations) {
       console.log(`\n📦 Syncing Generation ${generation}...`);
-      await syncService.syncPokemonByGeneration(generation);
+      if (generation === 0) {
+        await syncService.syncPokemonForms();
+      } else {
+        await syncService.syncGeneration(generation);
+      }
       console.log(`✅ Generation ${generation} sync completed!`);
     }
     
