@@ -1,6 +1,5 @@
-import { EvolutionDetail } from "@/types/pokemon";
 import { useEffect, useState } from "react";
-import { getEvolutionChainForPokemon } from "@/lib/supabase/evolution";
+import type { EvolutionDetail } from "@/types/pokemon";
 
 interface UsePokemonEvolutionResult {
   evolutionChain: EvolutionDetail | undefined;
@@ -48,6 +47,11 @@ export function usePokemonEvolution(
     try {
       console.log(
         `[Supabase Evolution] Fetching evolution for Pokemon ${pokemonId}`,
+      );
+
+      // Dynamic import to avoid circular dependency in development
+      const { getEvolutionChainForPokemon } = await import(
+        "@/lib/supabase/evolution"
       );
 
       // Get raw evolution chain data
