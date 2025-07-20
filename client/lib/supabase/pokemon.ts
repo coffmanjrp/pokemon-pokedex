@@ -205,9 +205,19 @@ export async function searchPokemon(query: string, _language: Locale = "en") {
 // Get Pokemon forms
 export async function getPokemonForms() {
   try {
+    // Import form IDs from the data file
+    const { getValidFormIds } = await import("@/lib/data/pokemonFormIds");
+    const formIds = getValidFormIds();
+
+    console.log(
+      `Fetching ${formIds.length} Pokemon forms from pokemon table...`,
+    );
+
+    // Fetch forms directly from pokemon table using their IDs
     const { data, error } = await supabase
-      .from("pokemon_forms")
+      .from("pokemon")
       .select("*")
+      .in("id", formIds)
       .order("id");
 
     if (error) {
@@ -215,16 +225,17 @@ export async function getPokemonForms() {
       throw new Error(handleSupabaseError(error));
     }
 
-    // Transform form data to match Pokemon type
+    console.log(`Successfully fetched ${data?.length || 0} Pokemon forms`);
+
+    // Transform to Pokemon type with form-specific flags
     return (
-      data?.map((form) => ({
-        id: form.id,
-        name: form.form_name,
-        ...form.form_data,
-        // Mark as form
-        is_form: true,
-        base_pokemon_id: form.pokemon_id,
-      })) || []
+      data?.map((pokemon) => {
+        const transformed = transformSupabasePokemon(pokemon);
+        // Add form-specific flags for internal use
+        const formTransformed = transformed as Pokemon & { is_form?: boolean };
+        formTransformed.is_form = true;
+        return transformed;
+      }) || []
     );
   } catch (error) {
     console.error("Error in getPokemonForms:", error);

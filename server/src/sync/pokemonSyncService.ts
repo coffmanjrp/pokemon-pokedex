@@ -101,10 +101,14 @@ export class PokemonSyncService {
       console.log(`Found ${formIds.length} Pokemon forms to sync`);
 
       // Process forms in batches
-      const batchSize = 10;
+      const batchSize = 5; // Reduced batch size for stability
       for (let i = 0; i < formIds.length; i += batchSize) {
         const batch = formIds.slice(i, i + batchSize);
         await this.processPokemonBatch(batch, 0);
+        
+        // Progress update
+        const percentComplete = ((this.progress.processed / this.progress.total) * 100).toFixed(1);
+        console.log(`Progress: ${this.progress.processed}/${this.progress.total} (${percentComplete}%)`);
       }
 
       console.log(`✅ Pokemon forms sync completed`);

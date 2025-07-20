@@ -47,7 +47,7 @@ cd server
 npm run sync:test             # Test sync with Pikachu
 npm run sync:pokemon [id]     # Sync specific Pokemon
 npm run sync:gen [1-9]        # Sync generation
-npm run sync:forms            # Sync special forms
+npm run sync:forms            # Sync special forms to pokemon table
 npm run sync:all              # Full sync (2-3 hours)
 npm run sync:evolution:enriched  # Sync evolution chains with full Pokemon data
 ```
@@ -99,11 +99,13 @@ pokemon-pokedex/
     │   ├── schema/             # GraphQL schema definitions
     │   ├── resolvers/          # GraphQL resolvers
     │   ├── services/           # Pokemon service with PokeAPI integration
-    │   └── sync/               # Supabase data sync utilities
-    │       ├── pokemonDataMapper.ts    # Maps PokeAPI data to Supabase schema
-    │       ├── pokemonSyncService.ts   # Handles data synchronization
-    │       ├── supabaseClient.ts       # Supabase client configuration
-    │       └── syncRunner.ts           # CLI sync commands
+    │   ├── sync/               # Supabase data sync utilities
+    │   │   ├── pokemonDataMapper.ts    # Maps PokeAPI data to Supabase schema
+    │   │   ├── pokemonSyncService.ts   # Handles data synchronization
+    │   │   ├── supabaseClient.ts       # Supabase client configuration
+    │   │   └── syncRunner.ts           # CLI sync commands
+    │   └── data/
+    │       └── pokemonFormIds.ts       # Form Pokemon IDs (10000+ range)
     └── dist/                   # Compiled server code
 ```
 
@@ -148,8 +150,9 @@ For more solutions, see documentation in `/docs`
   - Sync service implementation complete
   - CLI commands for data sync available
   - All 1025 Pokemon synced to Supabase
-  - Special forms synced
+  - Special forms (108) synced directly to pokemon table
   - All 541 evolution chains synced with enriched data (Gen 1-9 complete)
+  - pokemon_forms table removed (forms stored in pokemon table)
 - ✅ Phase 3: Client integration completed
   - Supabase client SDK configured
   - Data fetch functions implemented
@@ -157,11 +160,13 @@ For more solutions, see documentation in `/docs`
   - Evolution chain support with Supabase data
   - Feature flags for gradual migration
   - Unified hooks for backward compatibility
+  - getPokemonForms updated to fetch from pokemon table
 - ✅ Phase 4: Testing & optimization completed
   - All evolution chains synced for all generations
   - Moves data correctly displayed on detail pages
   - GraphQL dependencies removed from static generation
   - Performance optimized with Supabase direct queries
+  - Generation 0 forms working with pokemon table
 
 ### Migration Plan
 @docs/MIGRATION.md
@@ -201,6 +206,8 @@ For more solutions, see documentation in `/docs`
 2. ✅ Removed GraphQL dependencies from generateStaticParams
 3. ✅ Added development-only logging for evolution chains
 4. ✅ Completed full Supabase migration
+5. ✅ Removed pokemon_forms table - all forms now in pokemon table
+6. ✅ Fixed Generation 0 forms display issue
 
 ### Next Steps
 1. Monitor performance in production
