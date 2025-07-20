@@ -117,6 +117,41 @@ const ALL_FORM_IDS: number[] = [
   10253,
   10254,
 
+  // Gigantamax Forms
+  10195, // Gigantamax Venusaur
+  10196, // Gigantamax Charizard
+  10197, // Gigantamax Blastoise
+  10198, // Gigantamax Butterfree
+  10199, // Gigantamax Pikachu
+  10200, // Gigantamax Meowth
+  10201, // Gigantamax Machamp
+  10202, // Gigantamax Gengar
+  10203, // Gigantamax Kingler
+  10204, // Gigantamax Lapras
+  10205, // Gigantamax Eevee
+  10206, // Gigantamax Snorlax
+  10207, // Gigantamax Garbodor
+  10208, // Gigantamax Melmetal
+  10209, // Gigantamax Rillaboom
+  10210, // Gigantamax Cinderace
+  10211, // Gigantamax Inteleon
+  10212, // Gigantamax Corviknight
+  10213, // Gigantamax Orbeetle
+  10214, // Gigantamax Drednaw
+  10215, // Gigantamax Coalossal
+  10216, // Gigantamax Flapple
+  10217, // Gigantamax Appletun
+  10218, // Gigantamax Sandaconda
+  10219, // Gigantamax Toxtricity
+  10220, // Gigantamax Centiskorch
+  10221, // Gigantamax Hatterene
+  10222, // Gigantamax Grimmsnarl
+  10223, // Gigantamax Alcremie
+  10224, // Gigantamax Copperajah
+  10225, // Gigantamax Duraludon
+  10226, // Gigantamax Urshifu (Single Strike)
+  10227, // Gigantamax Urshifu (Rapid Strike)
+
   // Other Forms
   10275,
   10276,

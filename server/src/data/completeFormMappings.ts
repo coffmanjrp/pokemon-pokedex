@@ -122,7 +122,41 @@ export const COMPLETE_FORM_MAPPINGS = [
   { formId: 10187, basePokemonId: 876, formName: "female", category: "other" },
   { formId: 10193, basePokemonId: 888, formName: "crowned", category: "other" },
   { formId: 10194, basePokemonId: 889, formName: "crowned", category: "other" },
-  { formId: 10195, basePokemonId: 890, formName: "eternamax", category: "other" },
+
+  // Gigantamax Forms
+  { formId: 10195, basePokemonId: 3, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Venusaur
+  { formId: 10196, basePokemonId: 6, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Charizard
+  { formId: 10197, basePokemonId: 9, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Blastoise
+  { formId: 10198, basePokemonId: 12, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Butterfree
+  { formId: 10199, basePokemonId: 25, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Pikachu
+  { formId: 10200, basePokemonId: 52, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Meowth
+  { formId: 10201, basePokemonId: 68, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Machamp
+  { formId: 10202, basePokemonId: 94, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Gengar
+  { formId: 10203, basePokemonId: 99, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Kingler
+  { formId: 10204, basePokemonId: 131, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Lapras
+  { formId: 10205, basePokemonId: 133, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Eevee
+  { formId: 10206, basePokemonId: 143, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Snorlax
+  { formId: 10207, basePokemonId: 569, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Garbodor
+  { formId: 10208, basePokemonId: 809, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Melmetal
+  { formId: 10209, basePokemonId: 812, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Rillaboom
+  { formId: 10210, basePokemonId: 815, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Cinderace
+  { formId: 10211, basePokemonId: 818, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Inteleon
+  { formId: 10212, basePokemonId: 823, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Corviknight
+  { formId: 10213, basePokemonId: 826, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Orbeetle
+  { formId: 10214, basePokemonId: 834, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Drednaw
+  { formId: 10215, basePokemonId: 839, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Coalossal
+  { formId: 10216, basePokemonId: 841, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Flapple
+  { formId: 10217, basePokemonId: 842, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Appletun
+  { formId: 10218, basePokemonId: 844, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Sandaconda
+  { formId: 10219, basePokemonId: 849, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Toxtricity
+  { formId: 10220, basePokemonId: 851, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Centiskorch
+  { formId: 10221, basePokemonId: 858, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Hatterene
+  { formId: 10222, basePokemonId: 861, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Grimmsnarl
+  { formId: 10223, basePokemonId: 869, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Alcremie
+  { formId: 10224, basePokemonId: 879, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Copperajah
+  { formId: 10225, basePokemonId: 884, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Duraludon
+  { formId: 10226, basePokemonId: 892, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Urshifu (Single Strike)
+  { formId: 10227, basePokemonId: 892, formName: "gigantamax", category: "gigantamax" }, // Gigantamax Urshifu (Rapid Strike)
 
   // Hisuian Forms
   { formId: 10228, basePokemonId: 904, formName: "normal", category: "other" }, // Overqwil

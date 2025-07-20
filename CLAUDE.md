@@ -152,7 +152,7 @@ For more solutions, see documentation in `/docs`
   - Sync service implementation complete
   - CLI commands for data sync available
   - All 1025 Pokemon synced to Supabase
-  - Special forms (108) synced to pokemon_forms table
+  - Special forms (141) synced to pokemon_forms table (including 33 Gigantamax forms)
   - All 541 evolution chains synced with enriched data (Gen 1-9 complete)
 - ✅ Phase 3: Client integration completed
   - Supabase client SDK configured
@@ -216,6 +216,8 @@ For more solutions, see documentation in `/docs`
 11. ✅ Implemented SSG with Supabase - build time reduced from 13min to 3m 45s (71% reduction!)
 12. ✅ Completely removed Apollo Client and GraphQL dependencies
 13. ✅ Renamed hooks from usePokemonListSupabase → usePokemonList for simplicity
+14. ✅ Added Gigantamax Pokemon support - 33 forms added to Generation 0
+15. ✅ Synced all Gigantamax forms to pokemon_forms table with proper mappings
 
 ### Next Steps & TODOs
 
