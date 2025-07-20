@@ -37,31 +37,30 @@ export const COMPLETE_FORM_MAPPINGS = [
   { formId: 10062, basePokemonId: 460, formName: "mega", category: "mega" },
 
   // Alolan Forms
-  { formId: 10091, basePokemonId: 19, formName: "alola", category: "alolan" },
-  { formId: 10092, basePokemonId: 20, formName: "alola", category: "alolan" },
-  { formId: 10093, basePokemonId: 26, formName: "alola", category: "alolan" }, // Missing from original
-  { formId: 10094, basePokemonId: 27, formName: "alola", category: "alolan" },
-  { formId: 10095, basePokemonId: 28, formName: "alola", category: "alolan" },
-  { formId: 10096, basePokemonId: 37, formName: "alola", category: "alolan" },
-  { formId: 10097, basePokemonId: 38, formName: "alola", category: "alolan" },
-  { formId: 10098, basePokemonId: 50, formName: "alola", category: "alolan" },
-  { formId: 10099, basePokemonId: 51, formName: "alola", category: "alolan" },
-  { formId: 10100, basePokemonId: 52, formName: "alola", category: "alolan" },
-  { formId: 10101, basePokemonId: 53, formName: "alola", category: "alolan" },
-  { formId: 10102, basePokemonId: 74, formName: "alola", category: "alolan" },
-  { formId: 10103, basePokemonId: 75, formName: "alola", category: "alolan" },
-  { formId: 10104, basePokemonId: 76, formName: "alola", category: "alolan" },
-  { formId: 10105, basePokemonId: 88, formName: "alola", category: "alolan" },
-  { formId: 10106, basePokemonId: 89, formName: "alola", category: "alolan" },
-  { formId: 10107, basePokemonId: 103, formName: "alola", category: "alolan" },
-  { formId: 10108, basePokemonId: 105, formName: "alola", category: "alolan" },
-  { formId: 10109, basePokemonId: 74, formName: "alola", category: "alolan" }, // Duplicate mapping
-  { formId: 10110, basePokemonId: 75, formName: "alola", category: "alolan" }, // Duplicate mapping
-  { formId: 10111, basePokemonId: 76, formName: "alola", category: "alolan" }, // Duplicate mapping
-  { formId: 10112, basePokemonId: 88, formName: "alola", category: "alolan" }, // Duplicate mapping
-  { formId: 10113, basePokemonId: 89, formName: "alola", category: "alolan" }, // Duplicate mapping
-  { formId: 10114, basePokemonId: 103, formName: "alola", category: "alolan" }, // Missing from original
-  { formId: 10115, basePokemonId: 105, formName: "alola", category: "alolan" }, // Duplicate mapping
+  { formId: 10091, basePokemonId: 19, formName: "alola", category: "alolan" }, // Alolan Rattata
+  { formId: 10092, basePokemonId: 20, formName: "alola", category: "alolan" }, // Alolan Raticate
+  { formId: 10094, basePokemonId: 25, formName: "normal", category: "other" }, // Pikachu cap forms
+  { formId: 10095, basePokemonId: 25, formName: "normal", category: "other" },
+  { formId: 10096, basePokemonId: 25, formName: "normal", category: "other" },
+  { formId: 10097, basePokemonId: 25, formName: "normal", category: "other" },
+  { formId: 10098, basePokemonId: 25, formName: "normal", category: "other" },
+  { formId: 10099, basePokemonId: 25, formName: "alola", category: "other" },
+  { formId: 10100, basePokemonId: 26, formName: "alola", category: "alolan" }, // Alolan Raichu
+  { formId: 10101, basePokemonId: 27, formName: "alola", category: "alolan" }, // Alolan Sandshrew
+  { formId: 10102, basePokemonId: 28, formName: "alola", category: "alolan" }, // Alolan Sandslash
+  { formId: 10103, basePokemonId: 37, formName: "alola", category: "alolan" }, // Alolan Vulpix
+  { formId: 10104, basePokemonId: 38, formName: "alola", category: "alolan" }, // Alolan Ninetales
+  { formId: 10105, basePokemonId: 50, formName: "alola", category: "alolan" }, // Alolan Diglett
+  { formId: 10106, basePokemonId: 51, formName: "alola", category: "alolan" }, // Alolan Dugtrio
+  { formId: 10107, basePokemonId: 52, formName: "alola", category: "alolan" }, // Alolan Meowth
+  { formId: 10108, basePokemonId: 53, formName: "alola", category: "alolan" }, // Alolan Persian
+  { formId: 10109, basePokemonId: 74, formName: "alola", category: "alolan" }, // Alolan Geodude
+  { formId: 10110, basePokemonId: 75, formName: "alola", category: "alolan" }, // Alolan Graveler
+  { formId: 10111, basePokemonId: 76, formName: "alola", category: "alolan" }, // Alolan Golem
+  { formId: 10112, basePokemonId: 88, formName: "alola", category: "alolan" }, // Alolan Grimer
+  { formId: 10113, basePokemonId: 89, formName: "alola", category: "alolan" }, // Alolan Muk
+  { formId: 10114, basePokemonId: 103, formName: "alola", category: "alolan" }, // Missing from original - Alolan Exeggutor
+  { formId: 10115, basePokemonId: 105, formName: "alola", category: "alolan" }, // Alolan Marowak
 
   // Special Pikachu forms
   { formId: 10116, basePokemonId: 25, formName: "rock-star", category: "other" },
@@ -91,9 +90,9 @@ export const COMPLETE_FORM_MAPPINGS = [
   { formId: 10157, basePokemonId: 778, formName: "busted", category: "other" },
 
   // Galarian Forms
-  { formId: 10158, basePokemonId: 52, formName: "galar", category: "galarian" },
-  { formId: 10159, basePokemonId: 77, formName: "galar", category: "galarian" },
-  { formId: 10160, basePokemonId: 78, formName: "galar", category: "galarian" },
+  { formId: 10158, basePokemonId: 52, formName: "galar", category: "galarian" }, // Galarian Meowth
+  { formId: 10159, basePokemonId: 77, formName: "galar", category: "galarian" }, // Galarian Ponyta
+  { formId: 10160, basePokemonId: 78, formName: "galar", category: "galarian" }, // Galarian Rapidash
   { formId: 10161, basePokemonId: 79, formName: "galar", category: "galarian" },
   { formId: 10162, basePokemonId: 80, formName: "galar", category: "galarian" },
   { formId: 10163, basePokemonId: 83, formName: "galar", category: "galarian" },
