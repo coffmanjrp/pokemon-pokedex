@@ -18,19 +18,9 @@
     "sync:test": "ts-node src/sync/syncRunner.ts test",
     "sync:evolution": "ts-node src/sync/syncEvolutionChains.ts",
     "sync:evolution:enriched": "ts-node src/sync/syncEnrichedEvolutions.ts",
-    "sync:test-single": "ts-node src/sync/testSinglePokemonSync.ts",
-    "sync:debug": "ts-node src/sync/debug.ts",
-    "sync:check-evolution": "ts-node src/sync/checkEvolutionChains.ts",
-    "sync:test-evolution": "ts-node src/sync/testEvolutionQuery.ts",
-    "sync:test-enriched": "ts-node src/sync/testEnrichedEvolutionQuery.ts",
-    "sync:test-details": "ts-node src/sync/testEvolutionDetails.ts",
     "sync:count-evolution": "ts-node src/sync/countEvolutionChains.ts",
     "sync:list-evolution": "ts-node src/sync/listAllEvolutionChains.ts",
-    "sync:check-count": "ts-node src/sync/checkPokemonCount.ts",
-    "sync:find-all-chains": "ts-node src/sync/findAllEvolutionChainIds.ts",
-    "sync:evolution:gen2plus": "ts-node src/sync/syncGen2PlusEvolutions.ts",
-    "sync:test-gen2": "ts-node src/sync/testGen2Evolution.ts",
-    "sync:check-synced": "ts-node src/sync/checkSyncedChains.ts"
+    "sync:find-all-chains": "ts-node src/sync/findAllEvolutionChainIds.ts"
   },
   "keywords": [
     "pokemon",
