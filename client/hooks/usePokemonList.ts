@@ -29,7 +29,7 @@ interface UsePokemonListOptions {
   autoFetch?: boolean;
 }
 
-export function usePokemonListSupabase({
+export function usePokemonList({
   generation = 1,
   initialPokemon = [],
   autoFetch = true,

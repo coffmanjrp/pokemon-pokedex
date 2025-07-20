@@ -12,7 +12,7 @@ interface UsePokemonDetailResult {
   error: Error | null;
 }
 
-export function usePokemonDetailSupabase(
+export function usePokemonDetail(
   pokemonId: number | string,
 ): UsePokemonDetailResult {
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
