@@ -110,7 +110,7 @@ pokemon-pokedex/
 ## Key Features
 
 - **Pokemon Display**: SSG detail pages, CSR list pages with virtual scrolling
-- **Navigation**: 9 generations + forms, seamless switching with cache
+- **Navigation**: 9 generations + forms, seamless switching with cache, scroll position restoration
 - **Search**: Multi-language with Japanese support, type filtering
 - **Animations**: 26 GSAP effects with classification-based triggers
 - **Performance**: localStorage + CDN caching, parallel builds, optimized images
@@ -129,6 +129,7 @@ pokemon-pokedex/
 **Mobile UI**: 44px touch targets, hamburger overlay  
 **Cache**: localStorage first, 24hr TTL, UTF-8 encoding  
 **Hydration**: Props-based dictionary, not Redux selectors  
+**Scroll Position**: Restored when returning from detail page, reset on generation change  
 
 For more solutions, see documentation in `/docs`
 

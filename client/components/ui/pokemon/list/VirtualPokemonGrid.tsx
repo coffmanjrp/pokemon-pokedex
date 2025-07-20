@@ -165,44 +165,87 @@ export const VirtualPokemonGrid = forwardRef<
       ref,
       () => ({
         scrollToItem: (index: number) => {
-          if (gridRef.current && isReady) {
-            // Use a safe window width or fallback to 1024
+          if (process.env.NODE_ENV === "development") {
+            console.log("[VirtualPokemonGrid] scrollToItem called:", {
+              index,
+              isReady,
+              hasGridRef: !!gridRef.current,
+              pokemonCount: pokemons.length,
+            });
+          }
+
+          const performScroll = () => {
+            if (!gridRef.current) {
+              if (process.env.NODE_ENV === "development") {
+                console.warn("[VirtualPokemonGrid] gridRef is null");
+              }
+              return false;
+            }
+
             const windowWidth =
               typeof window !== "undefined" ? window.innerWidth : 1024;
             const columns = getColumns(windowWidth);
             const rowIndex = Math.floor(index / columns);
             const columnIndex = index % columns;
 
+            if (process.env.NODE_ENV === "development") {
+              console.log("[VirtualPokemonGrid] Scrolling to:", {
+                rowIndex,
+                columnIndex,
+                columns,
+              });
+            }
+
             gridRef.current.scrollToItem({
               rowIndex,
               columnIndex,
-              align: "center",
+              align: "start", // Changed from "center" to "start" for more predictable behavior
             });
+            return true;
+          };
+
+          if (isReady) {
+            performScroll();
           } else {
-            // Retry after a short delay if grid is not ready
-            setTimeout(() => {
-              if (gridRef.current) {
-                const windowWidth =
-                  typeof window !== "undefined" ? window.innerWidth : 1024;
-                const columns = getColumns(windowWidth);
-                const rowIndex = Math.floor(index / columns);
-                const columnIndex = index % columns;
-                gridRef.current.scrollToItem({
-                  rowIndex,
-                  columnIndex,
-                  align: "center",
-                });
+            // Retry with increasing delays if not ready
+            const attempts = [100, 300, 500, 1000];
+            let attemptIndex = 0;
+
+            const tryScroll = () => {
+              if (attemptIndex >= attempts.length) {
+                if (process.env.NODE_ENV === "development") {
+                  console.error(
+                    "[VirtualPokemonGrid] Failed to scroll after multiple attempts",
+                  );
+                }
+                return;
               }
-            }, 100);
+
+              setTimeout(() => {
+                if (!performScroll() && attemptIndex < attempts.length - 1) {
+                  attemptIndex++;
+                  tryScroll();
+                }
+              }, attempts[attemptIndex]);
+            };
+
+            tryScroll();
           }
         },
         scrollToTop: () => {
           if (gridRef.current) {
+            if (process.env.NODE_ENV === "development") {
+              console.log("[VirtualPokemonGrid] scrollToTop called");
+            }
             gridRef.current.scrollTo({ scrollLeft: 0, scrollTop: 0 });
+          } else {
+            if (process.env.NODE_ENV === "development") {
+              console.warn("[VirtualPokemonGrid] scrollToTop: gridRef is null");
+            }
           }
         },
       }),
-      [getColumns, isReady],
+      [getColumns, isReady, pokemons.length],
     );
 
     return (
