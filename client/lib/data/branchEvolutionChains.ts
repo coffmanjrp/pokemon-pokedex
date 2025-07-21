@@ -7,16 +7,16 @@ export const BRANCH_EVOLUTION_CHAIN_IDS = [
   26, // Poliwag → Poliwhirl → Poliwrath/Politoed
   33, // Slowpoke → Slowbro/Slowking (+ Galarian forms)
   140, // Ralts → Kirlia → Gardevoir/Gallade
-  52, // Tyrogue → Hitmonlee/Hitmonchan/Hitmontop
-  66, // Nincada → Ninjask/Shedinja
-  185, // Snorunt → Glalie/Froslass
-  202, // Clamperl → Huntail/Gorebyss
-  15, // Wurmple → Silcoon/Cascoon → Beautifly/Dustox
-  206, // Burmy → Wormadam(3 forms)/Mothim
-  300, // Applin → Flapple/Appletun
-  361, // Toxel → Toxtricity(2 forms)
-  441, // Rockruff → Lycanroc(3 forms)
-  530, // Charcadet → Armarouge/Ceruledge
+  47, // Tyrogue → Hitmonlee/Hitmonchan/Hitmontop
+  144, // Nincada → Ninjask/Shedinja
+  186, // Snorunt → Glalie/Froslass
+  188, // Clamperl → Huntail/Gorebyss
+  15, // Wurmple → Silcoon/Cascoon → Beautifly/Dustox - needs verification
+  206, // Burmy → Wormadam(3 forms)/Mothim - needs verification
+  300, // Applin → Flapple/Appletun - needs verification
+  361, // Toxel → Toxtricity(2 forms) - needs verification
+  441, // Rockruff → Lycanroc(3 forms) - needs verification
+  530, // Charcadet → Armarouge/Ceruledge - needs verification
 ];
 
 /**

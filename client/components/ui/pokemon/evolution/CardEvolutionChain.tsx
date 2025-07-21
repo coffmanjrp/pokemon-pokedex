@@ -23,6 +23,27 @@ interface CardEvolutionChainProps {
   ) => void;
 }
 
+// Helper function to collect all evolution options in a branching chain
+function collectBranchEvolutions(chain: EvolutionDetail): EvolutionDetail[] {
+  const evolutions: EvolutionDetail[] = [];
+
+  // For Pokemon with branching evolutions (like Poliwhirl → Poliwrath/Politoed)
+  if (chain.evolvesTo && chain.evolvesTo.length > 0) {
+    for (const evolution of chain.evolvesTo) {
+      // If this evolution has multiple branches, collect all of them
+      if (evolution.evolvesTo && evolution.evolvesTo.length > 0) {
+        // This is a middle evolution with branches (like Poliwhirl)
+        evolutions.push(...evolution.evolvesTo);
+      } else {
+        // This is a direct evolution (like Eevee's evolutions)
+        evolutions.push(evolution);
+      }
+    }
+  }
+
+  return evolutions;
+}
+
 export function CardEvolutionChain({
   evolutionChain,
   lang,
@@ -30,7 +51,8 @@ export function CardEvolutionChain({
   onPokemonClick,
   onFormClick,
 }: CardEvolutionChainProps) {
-  const evolutions = evolutionChain.evolvesTo || [];
+  // Collect all evolution branches
+  const evolutions = collectBranchEvolutions(evolutionChain);
   const fallback = getFallbackText(lang);
 
   // Check for duplicate conditions
