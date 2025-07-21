@@ -133,6 +133,7 @@ function PokemonEvolutionChainContent({
           lang={lang}
           dictionary={dictionary}
           onPokemonClick={triggerEvolutionAnimation}
+          onFormClick={triggerFormAnimation}
         />
       </div>
     );

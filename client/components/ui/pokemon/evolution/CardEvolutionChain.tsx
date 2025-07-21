@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
-import { EvolutionDetail } from "@/types/pokemon";
+import { EvolutionDetail, FormVariant } from "@/types/pokemon";
 import { Dictionary, Locale } from "@/lib/dictionaries";
 import { EvolutionCard } from "./EvolutionCard";
+import { FormVariationCard } from "./FormVariationCard";
 import { EvolutionConditionBadge } from "./EvolutionConditionBadge";
 import { EvolutionArrow } from "./EvolutionArrow";
 import { getFallbackText } from "@/lib/fallbackText";
@@ -15,6 +16,11 @@ interface CardEvolutionChainProps {
   lang: Locale;
   dictionary: Dictionary;
   onPokemonClick: (e: React.MouseEvent, pokemon: EvolutionDetail) => void;
+  onFormClick?: (
+    e: React.MouseEvent,
+    form: FormVariant,
+    pokemonName: string,
+  ) => void;
 }
 
 export function CardEvolutionChain({
@@ -22,6 +28,7 @@ export function CardEvolutionChain({
   lang,
   dictionary,
   onPokemonClick,
+  onFormClick,
 }: CardEvolutionChainProps) {
   const evolutions = evolutionChain.evolvesTo || [];
   const fallback = getFallbackText(lang);
@@ -54,7 +61,7 @@ export function CardEvolutionChain({
   // For Pokemon with no evolutions, show single card
   if (evolutions.length === 0) {
     return (
-      <div className="flex justify-center">
+      <div className="flex flex-col items-center">
         <EvolutionCard
           pokemon={evolutionChain}
           dictionary={dictionary}
@@ -62,6 +69,30 @@ export function CardEvolutionChain({
           onClick={onPokemonClick}
           fallback={fallback}
         />
+
+        {/* Form Variations */}
+        {evolutionChain.forms &&
+          Array.isArray(evolutionChain.forms) &&
+          evolutionChain.forms.length > 0 && (
+            <div className="mt-4 space-y-2">
+              <div className="text-xs text-gray-600 font-medium text-center">
+                {dictionary.ui.pokemonDetails.forms}
+              </div>
+              <div className="flex flex-wrap gap-2 justify-center max-w-xs">
+                {evolutionChain.forms.map((form: FormVariant) => (
+                  <FormVariationCard
+                    key={form.id}
+                    form={form}
+                    pokemonName={evolutionChain.name}
+                    lang={lang}
+                    onClick={onFormClick || (() => {})}
+                    dictionary={dictionary}
+                    fallback={fallback}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
       </div>
     );
   }
@@ -72,13 +103,39 @@ export function CardEvolutionChain({
       <div className="hidden md:block">
         <div className="flex items-center justify-center">
           {/* Base Pokemon */}
-          <EvolutionCard
-            pokemon={evolutionChain}
-            dictionary={dictionary}
-            lang={lang}
-            onClick={onPokemonClick}
-            fallback={fallback}
-          />
+          <div className="flex flex-col items-center">
+            <EvolutionCard
+              pokemon={evolutionChain}
+              dictionary={dictionary}
+              lang={lang}
+              onClick={onPokemonClick}
+              fallback={fallback}
+            />
+
+            {/* Form Variations */}
+            {evolutionChain.forms &&
+              Array.isArray(evolutionChain.forms) &&
+              evolutionChain.forms.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  <div className="text-xs text-gray-600 font-medium text-center">
+                    {dictionary.ui.pokemonDetails.forms}
+                  </div>
+                  <div className="flex flex-wrap gap-2 justify-center max-w-xs">
+                    {evolutionChain.forms.map((form: FormVariant) => (
+                      <FormVariationCard
+                        key={form.id}
+                        form={form}
+                        pokemonName={evolutionChain.name}
+                        lang={lang}
+                        onClick={onFormClick || (() => {})}
+                        dictionary={dictionary}
+                        fallback={fallback}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+          </div>
 
           {/* Arrow */}
           <EvolutionArrow
@@ -117,6 +174,30 @@ export function CardEvolutionChain({
                     shortened={hasSimilarConditions}
                   />
                 )}
+
+                {/* Form Variations */}
+                {evolution.forms &&
+                  Array.isArray(evolution.forms) &&
+                  evolution.forms.length > 0 && (
+                    <div className="mt-2 space-y-2">
+                      <div className="text-xs text-gray-600 font-medium text-center">
+                        {dictionary.ui.pokemonDetails.forms}
+                      </div>
+                      <div className="flex flex-wrap gap-2 justify-center max-w-xs">
+                        {evolution.forms.map((form: FormVariant) => (
+                          <FormVariationCard
+                            key={form.id}
+                            form={form}
+                            pokemonName={evolution.name}
+                            lang={lang}
+                            onClick={onFormClick || (() => {})}
+                            dictionary={dictionary}
+                            fallback={fallback}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
               </div>
             ))}
           </div>
@@ -127,7 +208,7 @@ export function CardEvolutionChain({
       <div className="md:hidden">
         <div className="space-y-6">
           {/* Base Pokemon */}
-          <div className="flex justify-center">
+          <div className="flex flex-col items-center">
             <EvolutionCard
               pokemon={evolutionChain}
               dictionary={dictionary}
@@ -135,6 +216,30 @@ export function CardEvolutionChain({
               onClick={onPokemonClick}
               fallback={fallback}
             />
+
+            {/* Form Variations */}
+            {evolutionChain.forms &&
+              Array.isArray(evolutionChain.forms) &&
+              evolutionChain.forms.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  <div className="text-xs text-gray-600 font-medium text-center">
+                    {dictionary.ui.pokemonDetails.forms}
+                  </div>
+                  <div className="flex flex-wrap gap-2 justify-center max-w-xs">
+                    {evolutionChain.forms.map((form: FormVariant) => (
+                      <FormVariationCard
+                        key={form.id}
+                        form={form}
+                        pokemonName={evolutionChain.name}
+                        lang={lang}
+                        onClick={onFormClick || (() => {})}
+                        dictionary={dictionary}
+                        fallback={fallback}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
           </div>
 
           {/* Arrow */}
@@ -169,6 +274,30 @@ export function CardEvolutionChain({
                     shortened={hasSimilarConditions}
                   />
                 )}
+
+                {/* Form Variations */}
+                {evolution.forms &&
+                  Array.isArray(evolution.forms) &&
+                  evolution.forms.length > 0 && (
+                    <div className="mt-2 space-y-1">
+                      <div className="text-xs text-gray-600 font-medium text-center">
+                        {dictionary.ui.pokemonDetails.forms}
+                      </div>
+                      <div className="flex flex-wrap gap-1 justify-center">
+                        {evolution.forms.map((form: FormVariant) => (
+                          <FormVariationCard
+                            key={form.id}
+                            form={form}
+                            pokemonName={evolution.name}
+                            lang={lang}
+                            onClick={onFormClick || (() => {})}
+                            dictionary={dictionary}
+                            fallback={fallback}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
               </div>
             ))}
           </div>

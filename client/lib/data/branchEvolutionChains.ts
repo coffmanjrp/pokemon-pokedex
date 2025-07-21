@@ -38,13 +38,13 @@ export function getEvolutionChainId(pokemon: {
   // Extract from species.evolution_chain URL
   if (pokemon.species?.evolutionChain?.url) {
     const match = pokemon.species.evolutionChain.url.match(/\/(\d+)\/$/);
-    return match ? parseInt(match[1]) : null;
+    return match && match[1] ? parseInt(match[1], 10) : null;
   }
 
   // Alternative path for GraphQL response
   if (pokemon.species?.evolution_chain?.url) {
     const match = pokemon.species.evolution_chain.url.match(/\/(\d+)\/$/);
-    return match ? parseInt(match[1]) : null;
+    return match && match[1] ? parseInt(match[1], 10) : null;
   }
 
   return null;
