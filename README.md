@@ -106,6 +106,15 @@ npm run lint            # ESLint
 npm run type-check      # TypeScript checks
 ```
 
+## 📚 Documentation
+
+- [**Quick Reference**](CLAUDE.md) - Quick guide for development
+- [**Architecture**](docs/ARCHITECTURE.md) - System design and components
+- [**Development**](docs/DEVELOPMENT.md) - Setup and workflows
+- [**Features**](docs/FEATURES.md) - Feature documentation
+- [**Deployment**](docs/DEPLOYMENT.md) - Deployment strategies
+- [**Migration**](docs/MIGRATION.md) - Database migration plans
+
 ## 📄 License
 
 MIT License - see [LICENSE](LICENSE) file for details.
@@ -119,4 +128,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-**Built with ❤️ for Pokemon fans** | [Development Guide](CLAUDE.md)
+**Built with ❤️ for Pokemon fans**

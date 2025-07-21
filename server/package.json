@@ -10,7 +10,19 @@
     "lint": "eslint src --ext .ts",
     "type-check": "tsc --noEmit",
     "railway:build": "npm run build",
-    "railway:start": "npm run start"
+    "railway:start": "npm run start",
+    "sync:all": "ts-node src/sync/syncRunner.ts all",
+    "sync:pokemon": "ts-node src/sync/syncRunner.ts pokemon",
+    "sync:gen": "ts-node src/sync/syncRunner.ts gen",
+    "sync:forms": "ts-node src/sync/syncRunner.ts forms",
+    "sync:test": "ts-node src/sync/syncRunner.ts test",
+    "sync:evolution": "ts-node src/sync/syncEvolutionChains.ts",
+    "sync:evolution:enriched": "ts-node src/sync/syncEnrichedEvolutions.ts",
+    "sync:count-evolution": "ts-node src/sync/countEvolutionChains.ts",
+    "sync:list-evolution": "ts-node src/sync/listAllEvolutionChains.ts",
+    "sync:find-all-chains": "ts-node src/sync/findAllEvolutionChainIds.ts",
+    "sync:update-evolution-ids": "ts-node src/sync/updateEvolutionChainIds.ts",
+    "sync:find-missing-evolution": "ts-node src/sync/findMissingEvolutionChains.ts"
   },
   "keywords": [
     "pokemon",
@@ -23,21 +35,25 @@
   "license": "MIT",
   "dependencies": {
     "@apollo/server": "^4.10.0",
+    "@supabase/supabase-js": "^2.52.0",
     "axios": "^1.6.2",
     "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
+    "dotenv": "^16.6.1",
     "express": "^4.18.2",
     "graphql": "^16.8.1",
-    "graphql-tag": "^2.12.6"
+    "graphql-tag": "^2.12.6",
+    "node-fetch": "^2.7.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.10.5",
+    "@types/node-fetch": "^2.6.11",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
     "@typescript-eslint/parser": "^6.14.0",
     "eslint": "^8.55.0",
     "ts-node-dev": "^2.0.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }
 }

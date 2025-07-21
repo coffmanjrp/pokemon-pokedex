@@ -38,6 +38,10 @@ const ALL_FORM_IDS: number[] = [
   10060, // Mega Garchomp
   10061, // Mega Lucario
   10062, // Mega Abomasnow
+  
+  // Primal Forms
+  10077, // Primal Kyogre
+  10078, // Primal Groudon
 
   // Alolan Forms
   10091, // Alolan Rattata
@@ -63,6 +67,7 @@ const ALL_FORM_IDS: number[] = [
   10111, // Alolan Golem (missing from original list)
   10112, // Alolan Grimer (missing from original list) 
   10113, // Alolan Muk (missing from original list)
+  10114, // Alolan Exeggutor
   10115, // Alolan Marowak (missing from original list)
   10149, // Alolan Marowak Totem (missing from original list)
 
@@ -120,6 +125,41 @@ const ALL_FORM_IDS: number[] = [
   10252, // Paldean Tauros (Blaze Breed)
   10253, // Paldean Tauros (Aqua Breed)
   10254, // Paldean Wooper
+
+  // Gigantamax Forms
+  10195, // Gigantamax Venusaur
+  10196, // Gigantamax Charizard
+  10197, // Gigantamax Blastoise
+  10198, // Gigantamax Butterfree
+  10199, // Gigantamax Pikachu
+  10200, // Gigantamax Meowth
+  10201, // Gigantamax Machamp
+  10202, // Gigantamax Gengar
+  10203, // Gigantamax Kingler
+  10204, // Gigantamax Lapras
+  10205, // Gigantamax Eevee
+  10206, // Gigantamax Snorlax
+  10207, // Gigantamax Garbodor
+  10208, // Gigantamax Melmetal
+  10209, // Gigantamax Rillaboom
+  10210, // Gigantamax Cinderace
+  10211, // Gigantamax Inteleon
+  10212, // Gigantamax Corviknight
+  10213, // Gigantamax Orbeetle
+  10214, // Gigantamax Drednaw
+  10215, // Gigantamax Coalossal
+  10216, // Gigantamax Flapple
+  10217, // Gigantamax Appletun
+  10218, // Gigantamax Sandaconda
+  10219, // Gigantamax Toxtricity
+  10220, // Gigantamax Centiskorch
+  10221, // Gigantamax Hatterene
+  10222, // Gigantamax Grimmsnarl
+  10223, // Gigantamax Alcremie
+  10224, // Gigantamax Copperajah
+  10225, // Gigantamax Duraludon
+  10226, // Gigantamax Urshifu (Single Strike)
+  10227, // Gigantamax Urshifu (Rapid Strike)
 
   // Other Forms (Koraidon/Miraidon forms)
   10264, // Ultimate Necrozma
@@ -180,11 +220,14 @@ const FORM_TO_BASE_ID_MAP: Record<number, number> = {
   10052: 303, 10053: 306, 10054: 308, 10055: 310, 10056: 354, 10057: 359,
   10058: 380, 10059: 381, 10060: 445, 10061: 448, 10062: 460,
   
+  // Primal Forms
+  10077: 382, 10078: 383,
+  
   // Alolan Forms
   10091: 19, 10092: 20, 10094: 27, 10095: 28, 10096: 37, 10097: 38,
   10098: 50, 10099: 51, 10100: 52, 10101: 53, 10102: 74, 10103: 75, 10104: 76,
   10105: 88, 10106: 89, 10107: 103, 10108: 105, 10109: 74, 10110: 75, 10111: 76,
-  10112: 88, 10113: 89, 10115: 105,
+  10112: 88, 10113: 89, 10114: 103, 10115: 105,
   
   // Galarian Forms
   10158: 52, 10159: 77, 10160: 78, 10161: 79, 10162: 80, 10163: 83, 10164: 110,
@@ -200,6 +243,14 @@ const FORM_TO_BASE_ID_MAP: Record<number, number> = {
   
   // Paldean Forms
   10251: 128, 10252: 128, 10253: 128, 10254: 194,
+  
+  // Gigantamax Forms
+  10195: 3, 10196: 6, 10197: 9, 10198: 12, 10199: 25, 10200: 52,
+  10201: 68, 10202: 94, 10203: 99, 10204: 131, 10205: 133, 10206: 143,
+  10207: 569, 10208: 809, 10209: 812, 10210: 815, 10211: 818, 10212: 823,
+  10213: 826, 10214: 834, 10215: 839, 10216: 841, 10217: 842, 10218: 844,
+  10219: 849, 10220: 851, 10221: 858, 10222: 861, 10223: 869, 10224: 879,
+  10225: 884, 10226: 892, 10227: 892,
   
   // Other Forms (blacklisted forms removed)
   10275: 1017, 10276: 1024, 10277: 1024

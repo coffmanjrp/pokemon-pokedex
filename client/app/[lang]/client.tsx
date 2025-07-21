@@ -12,11 +12,14 @@ import { PokemonProgressFooter } from "../../components/ui/pokemon/list/PokemonP
 import { GenerationSwitchingOverlay } from "../../components/ui/pokemon/list/GenerationSwitchingOverlay";
 import { SearchResults } from "../../components/ui/pokemon/list/SearchResults";
 import { NoSearchResults } from "../../components/ui/pokemon/list/NoSearchResults";
-import { usePokemonList } from "../../hooks/usePokemonList";
-import { useNavigationCache } from "../../hooks/useNavigationCache";
+import { usePokemonListUnified } from "../../hooks/usePokemonListUnified";
+// import { useNavigationCache } from "../../hooks/useNavigationCache";
 import { usePokemonSearch } from "../../hooks/usePokemonSearch";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
-import { setSelectedPokemon } from "../../store/slices/pokemonSlice";
+import {
+  setSelectedPokemon,
+  setCurrentGeneration,
+} from "../../store/slices/pokemonSlice";
 import { setLanguage, setDictionary } from "../../store/slices/uiSlice";
 import { setReturnFromDetail } from "../../store/slices/navigationSlice";
 import {
@@ -46,11 +49,12 @@ function PokemonListContent({
   const { language: currentLanguage, dictionary: currentDictionary } =
     useAppSelector((state) => state.ui);
 
-  // Navigation cache restoration
-  const { restoreFromURL } = useNavigationCache();
+  // Navigation cache restoration - comment out for now to isolate the issue
+  // const navigationCache = useNavigationCache();
+  // const restoreFromURL = navigationCache?.restoreFromURL;
 
   // Initialize generation from URL parameter on first load
-  const [currentGeneration, setCurrentGeneration] = useState(() => {
+  const generationFromURL = (() => {
     const generationParam = searchParams.get("generation");
     if (generationParam) {
       const generation = parseInt(generationParam, 10);
@@ -59,7 +63,7 @@ function PokemonListContent({
       }
     }
     return 1;
-  });
+  })();
 
   // Header visibility state
   const [headerState, setHeaderState] = useState<"visible" | "shrink">(
@@ -67,23 +71,6 @@ function PokemonListContent({
   );
   const lastScrollYRef = useRef(0);
 
-  // Track if cache restoration has been attempted to prevent infinite loops
-  const cacheRestoredRef = useRef(false);
-
-  // Restore from cache after component mount to avoid setState during render
-  useEffect(() => {
-    if (cacheRestoredRef.current) return; // Prevent multiple executions
-
-    const generationParam = searchParams.get("generation");
-    if (generationParam) {
-      const generation = parseInt(generationParam, 10);
-      if (generation >= 0 && generation <= 9) {
-        // Try to restore from cache
-        restoreFromURL();
-      }
-    }
-    cacheRestoredRef.current = true;
-  }, [searchParams, restoreFromURL]);
   const {
     pokemons,
     loading,
@@ -94,8 +81,9 @@ function PokemonListContent({
     generationRange,
     loadedCount,
     totalCount,
-  } = usePokemonList({
-    generation: currentGeneration,
+    currentGeneration,
+  } = usePokemonListUnified({
+    generation: generationFromURL, // Use URL generation for initial load
     initialPokemon: initialPokemon,
   });
   const { generationSwitching } = useAppSelector((state) => state.pokemon);
@@ -128,97 +116,160 @@ function PokemonListContent({
 
   // Sync language and dictionary from server props to Redux store
   useEffect(() => {
-    if (currentLanguage !== lang) {
-      dispatch(setLanguage(lang));
-    }
-    // Update dictionary when language changes or when dictionary is not set
-    if (!currentDictionary || currentLanguage !== lang) {
-      dispatch(setDictionary(dictionary));
+    try {
+      if (currentLanguage !== lang) {
+        dispatch(setLanguage(lang));
+      }
+      // Update dictionary when language changes or when dictionary is not set
+      if (!currentDictionary || currentLanguage !== lang) {
+        dispatch(setDictionary(dictionary));
+      }
+    } catch (error) {
+      console.error("Error in language/dictionary sync:", error);
     }
   }, [lang, currentLanguage, dictionary, currentDictionary, dispatch]);
 
   // Handle initial loading completion
   useEffect(() => {
-    if (!loading && pokemons.length > 0 && !initialLoadComplete) {
-      setInitialLoadComplete(true);
-      // End loading immediately after data fetch completion
-      setShowLoadingScreen(false);
+    try {
+      if (!loading && pokemons.length > 0 && !initialLoadComplete) {
+        setInitialLoadComplete(true);
+        // End loading immediately after data fetch completion
+        setShowLoadingScreen(false);
+      }
+    } catch (error) {
+      console.error("Error in initial loading completion:", error);
     }
   }, [loading, pokemons.length, initialLoadComplete]);
 
   // Check if returning from detail page and restore scroll position
   useEffect(() => {
-    if (!loading && pokemons.length > 0 && pokemonGridRef.current) {
-      const fromParam = searchParams.get("from");
-      const generationParam = searchParams.get("generation");
-      const hasReturnFlag = getReturnFromDetailFlag();
+    try {
+      if (!loading && pokemons.length > 0) {
+        const fromParam = searchParams.get("from");
+        const generationParam = searchParams.get("generation");
+        const hasReturnFlag = getReturnFromDetailFlag();
 
-      // fromパラメータがある場合、またはgenerationパラメータがあり戻りフラグがある場合
-      if (
-        (fromParam && fromParam.startsWith("generation-")) ||
-        (generationParam && hasReturnFlag)
-      ) {
-        // Extract generation number from "generation-X" format or from generationParam
-        const generationFromParam = fromParam
-          ? parseInt(fromParam.replace("generation-", ""))
-          : parseInt(generationParam || "1");
+        if (process.env.NODE_ENV === "development") {
+          console.log("[PokemonListClient] Checking scroll restoration:", {
+            fromParam,
+            generationParam,
+            hasReturnFlag,
+            currentGeneration,
+            pokemonCount: pokemons.length,
+            hasGridRef: !!pokemonGridRef.current,
+          });
+        }
 
-        if (generationFromParam === currentGeneration) {
-          // Check session storage for scroll position
-          const scrollData = getScrollPositionForGeneration(currentGeneration);
+        // Check if user is returning from detail page (either with "from" parameter or return flag)
+        if (
+          (fromParam && fromParam.startsWith("generation-")) ||
+          (generationParam && hasReturnFlag)
+        ) {
+          // Extract generation number from "generation-X" format or from generationParam
+          const generationFromParam = fromParam
+            ? parseInt(fromParam.replace("generation-", ""))
+            : parseInt(generationParam || "1");
 
-          if (scrollData && scrollData.timestamp > Date.now() - 1800000) {
-            // Multiple retry attempts for virtual scroll readiness
-            const attemptRestore = (attempt: number = 1) => {
-              // pokemonGridRefが準備できていない場合は早期リターン
-              if (!pokemonGridRef.current) {
-                if (attempt < 5) {
-                  setTimeout(() => attemptRestore(attempt + 1), 200);
+          if (generationFromParam === currentGeneration) {
+            // Check session storage for scroll position
+            const scrollData =
+              getScrollPositionForGeneration(currentGeneration);
+
+            if (scrollData && scrollData.timestamp > Date.now() - 1800000) {
+              if (process.env.NODE_ENV === "development") {
+                console.log(
+                  "[PokemonListClient] Scroll data found:",
+                  scrollData,
+                );
+              }
+
+              // Multiple retry attempts for virtual scroll readiness
+              const attemptRestore = (attempt: number = 1) => {
+                if (process.env.NODE_ENV === "development") {
+                  console.log(
+                    `[PokemonListClient] Restore attempt ${attempt}:`,
+                    {
+                      hasGridRef: !!pokemonGridRef.current,
+                    },
+                  );
                 }
-                return;
-              }
 
-              let restorationSucceeded = false;
+                let restorationSucceeded = false;
 
-              if (
-                scrollData.pokemonIndex !== undefined &&
-                pokemonGridRef.current
-              ) {
-                // Use index-based scrolling for virtual grid
-                pokemonGridRef.current.scrollToItem(scrollData.pokemonIndex);
-                restorationSucceeded = true;
-              } else if (scrollData.scrollTop !== undefined) {
-                // Use scroll position for standard grid
-                window.scrollTo({
-                  top: scrollData.scrollTop,
-                  behavior: "auto",
-                });
-                restorationSucceeded = true;
-              }
-
-              // スクロール復元が成功した場合のみURLパラメータを削除
-              if (restorationSucceeded) {
-                dispatch(setReturnFromDetail(false));
-
-                // Clear the return flag from session storage
-                sessionStorage.removeItem("pokemon-return-from-detail");
-
-                // Only remove "from" parameter if it exists
-                if (fromParam) {
-                  const newUrl = new URL(window.location.href);
-                  newUrl.searchParams.delete("from");
-                  router.replace(newUrl.pathname + newUrl.search, {
-                    scroll: false,
+                if (
+                  scrollData.pokemonIndex !== undefined &&
+                  pokemonGridRef.current
+                ) {
+                  // Use index-based scrolling for virtual grid
+                  if (process.env.NODE_ENV === "development") {
+                    console.log(
+                      "[PokemonListClient] Calling scrollToItem with index:",
+                      scrollData.pokemonIndex,
+                    );
+                  }
+                  pokemonGridRef.current.scrollToItem(scrollData.pokemonIndex);
+                  restorationSucceeded = true;
+                } else if (scrollData.scrollTop !== undefined) {
+                  // Use scroll position for standard grid
+                  if (process.env.NODE_ENV === "development") {
+                    console.log(
+                      "[PokemonListClient] Using window.scrollTo with position:",
+                      scrollData.scrollTop,
+                    );
+                  }
+                  window.scrollTo({
+                    top: scrollData.scrollTop,
+                    behavior: "auto",
                   });
+                  restorationSucceeded = true;
                 }
-              }
-            };
 
-            // Wait longer for virtual grid to be ready and try multiple times
-            setTimeout(() => attemptRestore(1), 800);
+                // If restoration didn't succeed and we have more attempts
+                if (!restorationSucceeded && attempt < 5) {
+                  setTimeout(() => attemptRestore(attempt + 1), 300 * attempt);
+                  return;
+                }
+
+                // Clean up URL parameters only if restoration succeeded
+                if (restorationSucceeded) {
+                  if (process.env.NODE_ENV === "development") {
+                    console.log(
+                      "[PokemonListClient] Scroll restoration succeeded",
+                    );
+                  }
+
+                  try {
+                    dispatch(setReturnFromDetail(false));
+                  } catch (error) {
+                    console.error(
+                      "Error dispatching setReturnFromDetail:",
+                      error,
+                    );
+                  }
+
+                  // Clear the return flag from session storage
+                  sessionStorage.removeItem("pokemon-return-from-detail");
+
+                  // Only remove "from" parameter if it exists
+                  if (fromParam) {
+                    const newUrl = new URL(window.location.href);
+                    newUrl.searchParams.delete("from");
+                    router.replace(newUrl.pathname + newUrl.search, {
+                      scroll: false,
+                    });
+                  }
+                }
+              };
+
+              // Start restore attempts with initial delay
+              setTimeout(() => attemptRestore(1), 500);
+            }
           }
         }
       }
+    } catch (error) {
+      console.error("Error in scroll restoration effect:", error);
     }
   }, [
     loading,
@@ -244,8 +295,17 @@ function PokemonListContent({
   };
 
   const handleGenerationChange = (generation: number) => {
-    setCurrentGeneration(generation);
+    // Update Redux state to ensure consistency
+    try {
+      dispatch(setCurrentGeneration(generation));
+    } catch (error) {
+      console.error("Error dispatching setCurrentGeneration:", error);
+    }
     changeGeneration(generation);
+    // Update URL with new generation
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("generation", generation.toString());
+    router.push(`/${lang}?${newSearchParams.toString()}`);
     // Reset completion footer when generation changes
     setShowCompletionFooter(false);
     // Generation change doesn't show loading screen, only inline loading indicators
@@ -253,6 +313,33 @@ function PokemonListContent({
     // Clear search when changing generations
     if (isSearchMode) {
       clearSearchResults();
+    }
+
+    // Reset scroll position to top when changing generations
+    if (pokemonGridRef.current) {
+      pokemonGridRef.current.scrollToTop();
+    } else {
+      // Fallback to window.scrollTo if grid ref is not available
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
+
+    // Clear stored scroll position for the new generation to ensure fresh start
+    if (typeof window !== "undefined") {
+      const scrollKey = `pokemon-scroll-positions`;
+      try {
+        const storedPositions = sessionStorage.getItem(scrollKey);
+        if (storedPositions) {
+          const positions = JSON.parse(storedPositions);
+          if (positions[generation]) {
+            delete positions[generation];
+            sessionStorage.setItem(scrollKey, JSON.stringify(positions));
+          }
+        }
+      } catch (error) {
+        if (process.env.NODE_ENV === "development") {
+          console.warn("Failed to clear scroll position:", error);
+        }
+      }
     }
 
     // Update URL with generation parameter
@@ -302,30 +389,34 @@ function PokemonListContent({
 
   // Manage completion footer visibility
   useEffect(() => {
-    const isActive = loading || hasNextPage;
+    try {
+      const isActive = loading || hasNextPage;
 
-    if (!isActive && pokemons.length > 0) {
-      // Show completion state when all loading is done
-      setShowCompletionFooter(true);
+      if (!isActive && pokemons.length > 0) {
+        // Show completion state when all loading is done
+        setShowCompletionFooter(true);
 
-      // Auto-hide after 5 seconds
-      const timer = setTimeout(() => {
-        if (completionFooterRef.current) {
-          gsap.to(completionFooterRef.current, {
-            opacity: 0,
-            y: 20,
-            duration: 0.5,
-            ease: "power2.inOut",
-            onComplete: () => {
-              setShowCompletionFooter(false);
-            },
-          });
-        } else {
-          setShowCompletionFooter(false);
-        }
-      }, 5000);
+        // Auto-hide after 5 seconds
+        const timer = setTimeout(() => {
+          if (completionFooterRef.current) {
+            gsap.to(completionFooterRef.current, {
+              opacity: 0,
+              y: 20,
+              duration: 0.5,
+              ease: "power2.inOut",
+              onComplete: () => {
+                setShowCompletionFooter(false);
+              },
+            });
+          } else {
+            setShowCompletionFooter(false);
+          }
+        }, 5000);
 
-      return () => clearTimeout(timer);
+        return () => clearTimeout(timer);
+      }
+    } catch (error) {
+      console.error("Error in completion footer effect:", error);
     }
   }, [loading, hasNextPage, pokemons.length]);
 
@@ -361,22 +452,26 @@ function PokemonListContent({
 
   // Animate completion footer entrance
   useEffect(() => {
-    if (
-      !loading &&
-      !hasNextPage &&
-      pokemons.length > 0 &&
-      showCompletionFooter &&
-      completionFooterRef.current
-    ) {
-      // Reset opacity and position for entrance animation
-      gsap.set(completionFooterRef.current, { opacity: 0, y: 20 });
-      gsap.to(completionFooterRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        ease: "back.out(1.7)",
-        delay: 0.2, // Small delay for better UX
-      });
+    try {
+      if (
+        !loading &&
+        !hasNextPage &&
+        pokemons.length > 0 &&
+        showCompletionFooter &&
+        completionFooterRef.current
+      ) {
+        // Reset opacity and position for entrance animation
+        gsap.set(completionFooterRef.current, { opacity: 0, y: 20 });
+        gsap.to(completionFooterRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "back.out(1.7)",
+          delay: 0.2, // Small delay for better UX
+        });
+      }
+    } catch (error) {
+      console.error("Error in completion footer animation:", error);
     }
   }, [loading, hasNextPage, pokemons.length, showCompletionFooter]);
 

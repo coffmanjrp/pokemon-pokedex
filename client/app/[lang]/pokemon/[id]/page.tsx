@@ -1,8 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getClient } from "@/lib/apollo";
-import { GET_POKEMON, GET_POKEMONS_BASIC } from "@/graphql/queries";
-import { Pokemon } from "@/types/pokemon";
+import { fetchPokemonDetail } from "@/lib/serverDataFetching";
 import { Locale, interpolate } from "@/lib/dictionaries";
 import { getDictionary } from "@/lib/get-dictionary";
 import {
@@ -12,7 +10,17 @@ import {
   getGenerationName,
 } from "@/lib/pokemonUtils";
 import { GENERATIONS } from "@/lib/data/generations";
+import {
+  getAllPokemonIdsForStaticGeneration,
+  getPokemonIdsByGenerationForStaticGeneration,
+  getFallbackPokemonIds,
+} from "@/lib/supabase/static";
 import PokemonDetailClient from "./client";
+import {
+  generateStructuredData,
+  createStructuredDataScript,
+} from "@/lib/utils/structuredData";
+import { getCanonicalUrl, getAlternateUrls } from "@/lib/utils/metadata";
 
 interface PokemonDetailPageProps {
   params: Promise<{
@@ -36,104 +44,48 @@ export async function generateStaticParams() {
   console.log(
     `Build mode: ${enableGenerationalBuild ? "Generational" : "Standard"}`,
   );
+  console.log(`SSG mode: Supabase`);
+
   if (targetGeneration) {
     console.log(`Target generation: ${targetGeneration}`);
   }
 
   try {
-    // Use GraphQL to get all existing Pokemon IDs
-    const client = await getClient();
+    // Use Supabase for SSG
+    let pokemonIds: number[] = [];
 
-    // First get total count to determine how many to fetch
-    const { data: countData } = await client.query({
-      query: GET_POKEMONS_BASIC,
-      variables: { limit: 1, offset: 0 },
-    });
-
-    const totalPokemon = countData?.pokemonsBasic?.totalCount || 1302;
-
-    // Fetch all Pokemon to get valid IDs only
-    const { data } = await client.query({
-      query: GET_POKEMONS_BASIC,
-      variables: { limit: totalPokemon, offset: 0 },
-    });
-
-    // Extract only valid Pokemon IDs that actually exist
-    let validPokemonIds =
-      data?.pokemonsBasic?.edges?.map(
-        (edge: { node: { id: string } }) => edge.node.id,
-      ) || [];
-
-    // Filter Pokemon IDs based on generation if specified
-    if (targetGeneration) {
-      const generation = GENERATIONS.find((gen) => gen.id === targetGeneration);
-      if (generation) {
-        const { start, end } = generation.pokemonRange;
-        validPokemonIds = validPokemonIds.filter((id: string) => {
-          const pokemonId = parseInt(id);
-          return pokemonId >= start && pokemonId <= end;
-        });
-        console.log(
-          `Filtered to generation ${targetGeneration} (${generation.name.en}): ${validPokemonIds.length} Pokemon (ID ${start}-${end})`,
-        );
-      } else {
-        console.warn(`Invalid generation: ${targetGeneration}`);
-        return [];
-      }
+    if (targetGeneration !== null) {
+      // Fetch IDs for specific generation
+      pokemonIds =
+        await getPokemonIdsByGenerationForStaticGeneration(targetGeneration);
+    } else {
+      // Fetch all Pokemon IDs
+      pokemonIds = await getAllPokemonIdsForStaticGeneration();
     }
 
-    // Generate paths for valid Pokemon IDs
+    // Generate paths for each Pokemon and language
     for (const lang of languages) {
-      for (const pokemonId of validPokemonIds) {
+      for (const id of pokemonIds) {
         paths.push({
           lang,
-          id: pokemonId.toString(),
+          id: id.toString(),
         });
       }
     }
 
-    const generationInfo = targetGeneration
-      ? ` for Generation ${targetGeneration}`
-      : "";
-    console.log(
-      `Generating ${paths.length} static paths for ${validPokemonIds.length} valid Pokemon${generationInfo} in ${languages.length} languages`,
-    );
-
-    if (validPokemonIds.length > 0) {
-      console.log(
-        `Pokemon ID range: ${Math.min(...validPokemonIds.map((id: string) => parseInt(id)))}-${Math.max(...validPokemonIds.map((id: string) => parseInt(id)))}`,
-      );
-    }
-
+    console.log(`[SSG] Generated ${paths.length} paths using Supabase data`);
     return paths;
   } catch (error) {
     console.error(
-      "Error fetching Pokemon data from GraphQL, using generation-based fallback:",
+      "[SSG] Error fetching from Supabase, falling back to generation ranges:",
       error,
     );
+  }
 
-    // Generation-based fallback
-    if (targetGeneration) {
-      const generation = GENERATIONS.find((gen) => gen.id === targetGeneration);
-      if (generation) {
-        const { start, end } = generation.pokemonRange;
-        for (const lang of languages) {
-          for (let i = start; i <= end; i++) {
-            paths.push({
-              lang,
-              id: i.toString(),
-            });
-          }
-        }
-        console.log(
-          `Using generation ${targetGeneration} fallback: ${paths.length} paths (ID ${start}-${end})`,
-        );
-        return paths;
-      }
-    }
-
-    // Standard fallback: all generations
-    for (const generation of GENERATIONS) {
+  // Fallback: Generation-based static path generation
+  if (targetGeneration !== null) {
+    const generation = GENERATIONS.find((gen) => gen.id === targetGeneration);
+    if (generation) {
       const { start, end } = generation.pokemonRange;
       for (const lang of languages) {
         for (let i = start; i <= end; i++) {
@@ -143,12 +95,26 @@ export async function generateStaticParams() {
           });
         }
       }
+      console.log(
+        `Generated ${paths.length} paths for generation ${targetGeneration} (ID ${start}-${end})`,
+      );
+      return paths;
     }
-    console.log(
-      `Using full fallback: ${paths.length} paths for all generations`,
-    );
-    return paths;
   }
+
+  // Standard build: all generations (fallback)
+  const fallbackIds = getFallbackPokemonIds();
+  for (const lang of languages) {
+    for (const id of fallbackIds) {
+      paths.push({
+        lang,
+        id: id.toString(),
+      });
+    }
+  }
+
+  console.log(`Generated ${paths.length} static paths using fallback data`);
+  return paths;
 }
 
 // Generate metadata for each Pokemon page
@@ -173,35 +139,19 @@ export async function generateMetadata({
   }
 
   try {
-    const [dictionary, client] = await Promise.all([
-      getDictionary(lang),
-      getClient(),
-    ]);
+    const dictionary = await getDictionary(lang);
 
     console.log(`[generateMetadata] Fetching metadata for Pokemon ID: ${id}`);
 
-    const { data, error } = await client.query({
-      query: GET_POKEMON,
-      variables: { id },
-      errorPolicy: "all",
-    });
+    const { pokemon } = await fetchPokemonDetail(parseInt(id));
 
-    if (error) {
-      console.error(`[generateMetadata] GraphQL error for ID ${id}:`, error);
+    if (!pokemon) {
+      console.log(`[generateMetadata] Pokemon not found for ID ${id}`);
       // Return basic metadata instead of throwing
       return {
         title: `Pokemon #${id} | Pokedex`,
         description:
           dictionary.ui.error.pokemonNotFound || "Pokemon information",
-      };
-    }
-
-    const pokemon: Pokemon = data?.pokemon;
-
-    if (!pokemon) {
-      return {
-        title: dictionary.ui.error.pokemonNotFound,
-        description: "The requested Pokemon could not be found.",
       };
     }
 
@@ -258,6 +208,9 @@ export async function generateMetadata({
       generation: generation,
     });
 
+    const canonicalUrl = getCanonicalUrl(`/${lang}/pokemon/${id}`);
+    const alternateUrls = getAlternateUrls(`/pokemon/${id}`, ["en", "ja"]);
+
     return {
       title,
       description,
@@ -266,11 +219,11 @@ export async function generateMetadata({
         title,
         description,
         type: "website",
-        url: `https://pokemon-pokedex-client.vercel.app/${lang}/pokemon/${id}`,
+        url: canonicalUrl,
         siteName: dictionary.meta.title,
         images: [
           {
-            url: `https://pokemon-pokedex-client.vercel.app/api/images/pokemon/${pokemon.id}`,
+            url: getCanonicalUrl(`/api/images/pokemon/${pokemon.id}`),
             width: 475,
             height: 475,
             alt: `${pokemonName} official artwork`,
@@ -282,9 +235,7 @@ export async function generateMetadata({
         card: "summary_large_image",
         title,
         description,
-        images: [
-          `https://pokemon-pokedex-client.vercel.app/api/images/pokemon/${pokemon.id}`,
-        ],
+        images: [getCanonicalUrl(`/api/images/pokemon/${pokemon.id}`)],
         creator: "@pokedex",
         site: "@pokedex",
       },
@@ -300,11 +251,8 @@ export async function generateMetadata({
         },
       },
       alternates: {
-        canonical: `https://pokemon-pokedex-client.vercel.app/${lang}/pokemon/${id}`,
-        languages: {
-          en: `https://pokemon-pokedex-client.vercel.app/en/pokemon/${id}`,
-          ja: `https://pokemon-pokedex-client.vercel.app/ja/pokemon/${id}`,
-        },
+        canonical: canonicalUrl,
+        languages: alternateUrls,
       },
     };
   } catch (error) {
@@ -320,7 +268,7 @@ export async function generateMetadata({
         title: fallbackTitle,
         description: "View detailed information about this Pokemon",
         type: "website",
-        url: `https://pokemon-pokedex-client.vercel.app/${lang || "en"}/pokemon/${id || ""}`,
+        url: getCanonicalUrl(`/${lang || "en"}/pokemon/${id || ""}`),
       },
     };
   }
@@ -348,53 +296,55 @@ export default async function PokemonDetailPage({
   console.log("[PokemonDetailPage] Environment check:");
   console.log(`  - NODE_ENV: ${process.env.NODE_ENV}`);
   console.log(`  - BUILD_MODE: ${process.env.BUILD_MODE}`);
-  console.log(`  - SERVER_MODE: ${process.env.NEXT_PUBLIC_SERVER_MODE}`);
 
   try {
-    const [dictionary, client] = await Promise.all([
-      getDictionary(lang),
-      getClient(),
-    ]);
+    const dictionary = await getDictionary(lang);
 
     console.log(`[PokemonDetailPage] Fetching Pokemon with ID: ${id}`);
 
-    const { data, error } = await client.query({
-      query: GET_POKEMON,
-      variables: { id },
-      errorPolicy: "all", // Continue even if there are GraphQL errors
-    });
+    const { pokemon } = await fetchPokemonDetail(parseInt(id));
 
-    if (error) {
-      console.error(`[PokemonDetailPage] GraphQL error for ID ${id}:`, {
-        message: error.message,
-        networkError: error.networkError,
-        graphQLErrors: error.graphQLErrors,
-      });
+    if (!pokemon) {
+      console.error(`[PokemonDetailPage] Pokemon not found for ID ${id}`);
 
       // If it's a build-time error, we might want to skip this page
-      if (process.env.NODE_ENV === "production" && !data?.pokemon) {
+      if (process.env.NODE_ENV === "production") {
         console.warn(
           `[PokemonDetailPage] Skipping Pokemon ${id} due to GraphQL error during build`,
         );
         notFound();
       }
+      // If we reach here at runtime, return an error UI
+      return (
+        <div>
+          <h1>Pokemon #{id} could not be loaded</h1>
+          <p>Please try again later.</p>
+        </div>
+      );
     }
 
     console.log(`[PokemonDetailPage] Response received for ID ${id}`);
 
-    const pokemon: Pokemon = data?.pokemon;
-
-    if (!pokemon) {
-      console.warn(`[PokemonDetailPage] Pokemon with ID ${id} not found`);
-      notFound();
-    }
+    // Generate structured data for SEO
+    const structuredData = generateStructuredData({
+      type: "pokemon",
+      pokemon,
+      dictionary,
+      lang,
+    });
 
     return (
-      <PokemonDetailClient
-        pokemon={pokemon}
-        lang={lang}
-        dictionary={dictionary}
-      />
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={createStructuredDataScript(structuredData)}
+        />
+        <PokemonDetailClient
+          pokemon={pokemon}
+          lang={lang}
+          dictionary={dictionary}
+        />
+      </>
     );
   } catch (error) {
     console.error(`[PokemonDetailPage] Critical error for ID ${id}:`, {

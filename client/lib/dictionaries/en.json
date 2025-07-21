@@ -73,7 +73,12 @@
       "goHome": "Go Home",
       "unknown": "Unknown",
       "evolutionChainError": "Error loading evolution data",
-      "movesError": "Error loading moves data"
+      "movesError": "Error loading moves data",
+      "genericError": "An error occurred",
+      "networkError": "Network error occurred",
+      "serverError": "Server error occurred",
+      "notFoundError": "Resource not found",
+      "validationError": "Invalid data provided"
     },
     "common": {
       "loading": "Loading"
@@ -95,6 +100,7 @@
       "gameHistory": "Game History",
       "sprites": "Sprites & Artwork",
       "evolutionChain": "Evolution Chain",
+      "evolutionOptions": "Evolution Options",
       "type": "Type:",
       "category": "Category:",
       "power": "Power:",
@@ -249,6 +255,7 @@
       "games": "No game data available",
       "sprites": "No sprites available",
       "evolution": "No evolution data available",
+      "evolutionSoon": "Evolution data will be available soon",
       "abilities": "No abilities available",
       "general": "No data available"
     },
@@ -446,6 +453,7 @@
     "description": "Discover and explore the wonderful world of Pokémon. Search, filter, and learn about your favorite creatures!",
     "homeTitle": "Pokemon Pokedex | Complete Multi-Generation Pokemon Database",
     "homeDescription": "Comprehensive Pokemon database featuring 1302+ Pokemon with detailed stats, official artwork, type effectiveness, evolution chains, and move sets. Complete coverage from Generation 1 to 9 with advanced search and filtering capabilities.",
+    "listDescription": "Browse all Pokemon from {{region}} region. Filter by type, search by name, and explore detailed information for each Pokemon including stats, evolution chains, and moves.",
     "pokemonTitle": "{{name}} (#{{id}}) - {{type}} Pokémon | Pokédex",
     "pokemonDescription": "{{name}} is a {{type}} type Pokémon with {{hp}} HP, {{attack}} Attack, and {{defense}} Defense. {{description}}",
     "pokemonDescriptionShort": "{{name}} - {{type}} type Pokémon from Generation {{generation}}. Height: {{height}}m, Weight: {{weight}}kg.",

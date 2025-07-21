@@ -97,7 +97,17 @@ export const PokemonGrid = forwardRef<PokemonGridHandle, PokemonGridProps>(
       ref,
       () => ({
         scrollToItem: (index: number) => {
+          if (process.env.NODE_ENV === "development") {
+            console.log("[PokemonGrid] scrollToItem called:", {
+              index,
+              useVirtualScroll,
+              hasVirtualGridRef: !!virtualGridRef.current,
+              hasParentRef: !!parentRef.current,
+            });
+          }
+
           if (useVirtualScroll && virtualGridRef.current) {
+            // Delegate to virtual grid
             virtualGridRef.current.scrollToItem(index);
           } else if (parentRef.current) {
             // For standard grid, find the element and scroll to it
@@ -105,12 +115,46 @@ export const PokemonGrid = forwardRef<PokemonGridHandle, PokemonGridProps>(
             if (gridElement) {
               const children = gridElement.children;
               if (children[index]) {
+                if (process.env.NODE_ENV === "development") {
+                  console.log(
+                    "[PokemonGrid] Scrolling to element in standard grid",
+                  );
+                }
                 children[index].scrollIntoView({
                   behavior: "auto",
                   block: "center",
                 });
+              } else if (process.env.NODE_ENV === "development") {
+                console.warn(
+                  `[PokemonGrid] Child element at index ${index} not found`,
+                );
               }
             }
+          } else {
+            // Fallback: try to calculate scroll position based on index
+            if (process.env.NODE_ENV === "development") {
+              console.log("[PokemonGrid] Using fallback scroll calculation");
+            }
+
+            // Approximate scroll position based on grid layout
+            const columns =
+              window.innerWidth < 640
+                ? 1
+                : window.innerWidth < 768
+                  ? 2
+                  : window.innerWidth < 1024
+                    ? 3
+                    : window.innerWidth < 1280
+                      ? 4
+                      : 5;
+            const rowHeight = window.innerWidth < 640 ? 300 : 337;
+            const row = Math.floor(index / columns);
+            const approximateScrollTop = row * rowHeight;
+
+            window.scrollTo({
+              top: approximateScrollTop,
+              behavior: "auto",
+            });
           }
         },
         scrollToTop: () => {

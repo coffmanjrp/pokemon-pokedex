@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "../components/providers/Providers";
 import { ToastProvider } from "@/components/ui/common/ToastProvider";
+import { getBaseUrl } from "@/lib/utils/metadata";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,17 +27,17 @@ export const metadata: Metadata = {
   authors: [{ name: "Pokemon Pokedex Team" }],
   creator: "Pokemon Pokedex",
   publisher: "Pokemon Pokedex",
-  metadataBase: new URL("https://pokemon-pokedex-client.vercel.app"),
+  metadataBase: new URL(getBaseUrl()),
   openGraph: {
     title: "Pokemon Pokedex | Complete Multi-Generation Pokemon Database",
     description:
       "Comprehensive Pokemon database featuring 1302+ Pokemon with detailed stats, official artwork, evolution chains, and more. Explore all generations in one place.",
     type: "website",
-    url: "https://pokemon-pokedex-client.vercel.app",
+    url: getBaseUrl(),
     siteName: "Pokemon Pokedex",
     images: [
       {
-        url: "https://pokemon-pokedex-client.vercel.app/api/images/pokemon/25",
+        url: `${getBaseUrl()}/api/images/pokemon/25`,
         width: 475,
         height: 475,
         alt: "Pikachu - Pokemon Pokedex",
@@ -55,7 +56,7 @@ export const metadata: Metadata = {
     title: "Pokemon Pokedex | Complete Multi-Generation Pokemon Database",
     description:
       "Comprehensive Pokemon database featuring 1302+ Pokemon with detailed stats, official artwork, evolution chains, and more.",
-    images: ["https://pokemon-pokedex-client.vercel.app/api/images/pokemon/25"],
+    images: [`${getBaseUrl()}/api/images/pokemon/25`],
     creator: "@pokemon",
     site: "@pokemon",
   },
@@ -85,16 +86,6 @@ export default function RootLayout({
         {/* DNS prefetch and preconnect for faster API calls */}
         <link rel="dns-prefetch" href="//raw.githubusercontent.com" />
         <link rel="dns-prefetch" href="//assets.pokemon.com" />
-        <link
-          rel="preconnect"
-          href={
-            process.env.NEXT_PUBLIC_SERVER_MODE === "production"
-              ? process.env.NEXT_PUBLIC_GRAPHQL_URL_PROD ||
-                "http://localhost:4000"
-              : process.env.NEXT_PUBLIC_GRAPHQL_URL_DEV ||
-                "http://localhost:4000"
-          }
-        />
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link
           rel="preconnect"

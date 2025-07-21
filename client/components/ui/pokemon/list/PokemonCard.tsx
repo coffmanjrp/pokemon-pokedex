@@ -121,6 +121,10 @@ const PokemonCard = memo(function PokemonCard({
         timestamp: Date.now(),
       };
 
+      if (process.env.NODE_ENV === "development") {
+        console.log("[PokemonCard] Saving scroll position:", scrollData);
+      }
+
       // Save to Redux
       dispatch(saveScrollPosition(scrollData));
       dispatch(setLastVisitedPokemon(pokemon.id));

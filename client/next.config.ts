@@ -4,6 +4,8 @@ import type { NextConfig } from "next";
 import withBundleAnalyzer from "@next/bundle-analyzer";
 
 const nextConfig: NextConfig = {
+  // Dynamic output directory support for parallel builds
+  distDir: process.env.NEXT_OUT_DIR || ".next",
   images: {
     remotePatterns: [
       {
@@ -32,11 +34,7 @@ const nextConfig: NextConfig = {
   },
   // Suppress hydration warnings for browser extensions
   experimental: {
-    optimizePackageImports: [
-      "react-hot-toast",
-      "@apollo/client",
-      "@tanstack/react-virtual",
-    ],
+    optimizePackageImports: ["react-hot-toast", "@tanstack/react-virtual"],
     // Enable aggressive tree shaking
     esmExternals: true,
   },
@@ -117,16 +115,6 @@ const nextConfig: NextConfig = {
         ...config.optimization.splitChunks,
         cacheGroups: {
           ...config.optimization.splitChunks.cacheGroups,
-          apollo: {
-            name: "apollo",
-            chunks: "all",
-            test: /[\\/]node_modules[\\/]@apollo[\\/]/,
-          },
-          graphql: {
-            name: "graphql",
-            chunks: "all",
-            test: /[\\/]node_modules[\\/]graphql[\\/]/,
-          },
         },
       },
     };
