@@ -212,8 +212,8 @@ For more solutions, see documentation in `/docs`
   - Optimized queries can now use Supabase joins for single-query fetches
   - See `evolutionOptimized.ts` for advanced query examples
   - **Performance**: Single query instead of 2 separate queries
-  - **Coverage**: 729/1168 Pokemon (62.4%) have evolution_chain_id
-  - **Missing Data**: 439 Pokemon need sync (mainly Gen 3, 7, 9)
+  - **Coverage**: 1025/1169 Pokemon (87.7%) have evolution_chain_id
+  - **Remaining**: 144 Generation 0 forms (Mega, Regional, etc.) inherently lack evolution chains
 
 ### Recent Updates
 1. ✅ Fixed moves data display issue - now correctly loading from Supabase
@@ -241,17 +241,13 @@ For more solutions, see documentation in `/docs`
 23. ✅ Created evolutionOptimized.ts with examples of optimized queries using joins
 24. ✅ Implemented optimized evolution chain queries using Supabase JOINs
 25. ✅ Updated usePokemonEvolution hook to use optimized queries
-26. ✅ Identified 439 Pokemon missing evolution chains (Gen 3, 7, 9 need sync)
+26. ✅ Synced missing evolution chains - improved coverage from 62.4% to 87.7%
 
 ### Next Steps & TODOs
 
 #### 🔴 High Priority
 
-1. **Sync Missing Evolution Chains**
-   - [ ] Sync 439 Pokemon missing evolution_chain_id
-   - [ ] Focus on Generation 3 (126 Pokemon), Generation 7 (48 Pokemon), Generation 9 (105 Pokemon)
-   - [ ] Run `npm run sync:gen 3`, `npm run sync:gen 7`, `npm run sync:gen 9`
-   - [ ] Verify all Pokemon have evolution chains displayed
+*No high priority tasks currently pending. All critical optimization and data sync tasks have been completed.*
 
 #### 🟡 Medium Priority
 
@@ -295,5 +291,7 @@ For more solutions, see documentation in `/docs`
 3. ✅ **Gigantamax Pokemon Support** - All 33 forms added and synced to database
 4. ✅ **Environment Variable Cleanup** - Removed all GraphQL-related variables
 5. ✅ **Server Test Script Cleanup** - Removed 26 unnecessary test files
+6. ✅ **Evolution Chain Optimization** - Direct evolution_chain_id column with foreign key constraint
+7. ✅ **Missing Evolution Data Sync** - Coverage improved from 62.4% to 87.7%
 
 All high priority optimization tasks have been successfully completed!
