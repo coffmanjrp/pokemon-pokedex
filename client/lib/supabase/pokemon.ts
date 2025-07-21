@@ -167,6 +167,8 @@ export async function getPokemonById(id: number) {
           basePokemonId: formData.pokemon_id,
           basePokemonName: basePokemon?.name,
           formName: formData.form_name,
+          // Include base Pokemon's species_data for proper name and description display
+          species_data: basePokemon?.species_data,
         };
 
         return transformSupabasePokemon(

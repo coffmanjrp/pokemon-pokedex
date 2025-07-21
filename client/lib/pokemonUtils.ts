@@ -193,6 +193,84 @@ export function getPokemonName(
   language: Locale,
   dictionary?: Dictionary,
 ): string {
+  // Special handling for Generation 0 Pokemon (forms with ID >= 10000)
+  const pokemonId = parseInt(pokemon.id);
+  if (pokemonId >= 10000) {
+    // For Generation 0 forms, we always want to use the form's name with proper localization
+    const nameParts = pokemon.name.split("-");
+    const baseName = nameParts[0];
+    const formName = nameParts.slice(1).join("-");
+
+    // Use species data for localized names
+    if (language === "ja" && pokemon.species?.names) {
+      const languageCodes = {
+        ja: ["ja", "ja-Hrkt"],
+      };
+
+      const targetCodes = languageCodes[
+        language as keyof typeof languageCodes
+      ] || ["en"];
+      const speciesName = pokemon.species.names.find((nameEntry) =>
+        targetCodes.includes(nameEntry.language.name),
+      );
+
+      if (speciesName?.name) {
+        // Handle form name translation
+        if (dictionary?.ui?.forms?.translations) {
+          let formTranslation = null;
+
+          if (formName.includes("mega-x")) {
+            formTranslation = "X";
+          } else if (formName.includes("mega-y")) {
+            formTranslation = "Y";
+          } else if (formName.includes("mega")) {
+            formTranslation = dictionary.ui.forms.translations.mega || "メガ";
+          } else {
+            // Try to find other form translations
+            for (const [key, translation] of Object.entries(
+              dictionary.ui.forms.translations,
+            )) {
+              if (formName.includes(key)) {
+                formTranslation = translation;
+                break;
+              }
+            }
+          }
+
+          if (formTranslation) {
+            // Special handling for Mega Evolution in Japanese
+            if (isMegaEvolution(formName)) {
+              // Special format for Mega Charizard and Mega Mewtwo X/Y forms
+              if (
+                (baseName === "charizard" || baseName === "mewtwo") &&
+                (formName === "mega-x" || formName === "mega-y")
+              ) {
+                const megaText =
+                  dictionary?.ui?.forms?.translations?.mega || "メガ";
+                return `${megaText}${speciesName.name}${formTranslation}`;
+              } else {
+                // For other Mega forms: "メガポケモン名" format
+                return `${formTranslation}${speciesName.name}`;
+              }
+            } else if (isPrimalForm(formName)) {
+              // Special handling for Primal forms: "ゲンシポケモン名" format
+              return `${formTranslation}${speciesName.name}`;
+            } else {
+              // For other forms: "ポケモン名（フォーム名）" format
+              return `${speciesName.name}（${formTranslation}）`;
+            }
+          }
+        }
+
+        // Return the localized name if no form translation found
+        return speciesName.name;
+      }
+    }
+
+    // For English or when localized name is not available
+    return getFormDisplayName(baseName || pokemon.name, formName, language);
+  }
+
   // Check if this is a variant Pokemon
   const nameParts = pokemon.name.split("-");
   const isVariant = nameParts.length > 1;
