@@ -5,7 +5,7 @@ import { usePokemonEvolution } from "@/hooks/usePokemonEvolution";
 import { PokemonEvolutionChain } from "./PokemonEvolutionChain";
 import { LoadingSpinner } from "../../common/LoadingSpinner";
 import { Pokemon } from "@/types/pokemon";
-import { shouldUseCardEvolutionLayout } from "@/lib/data/branchEvolutionChains";
+import { shouldUseCardEvolutionLayout } from "@/lib/evolution/branchEvolutionUtils";
 
 interface PokemonEvolutionChainWrapperProps {
   pokemonId: string;
