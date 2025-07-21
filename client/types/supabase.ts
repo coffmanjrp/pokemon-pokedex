@@ -24,6 +24,7 @@ export interface Database {
           species_data: Json;
           form_data: Json | null;
           generation: number;
+          evolution_chain_id: number | null;
           created_at: string;
           updated_at: string;
         };
@@ -41,6 +42,7 @@ export interface Database {
           species_data: Json;
           form_data?: Json | null;
           generation: number;
+          evolution_chain_id?: number | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -58,6 +60,7 @@ export interface Database {
           species_data?: Json;
           form_data?: Json | null;
           generation?: number;
+          evolution_chain_id?: number | null;
           created_at?: string;
           updated_at?: string;
         };

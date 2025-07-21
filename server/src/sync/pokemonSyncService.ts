@@ -148,18 +148,27 @@ export class PokemonSyncService {
 
         // Merge evolution_chain URL into species data
         let species = pokemon.species || null;
+        let evolutionChainId: number | null = null;
+        
         if (species && rawSpeciesData?.evolution_chain?.url) {
           // Add evolution_chain URL to species data - using snake_case to match the mapper
           (species as any).evolution_chain = {
             url: rawSpeciesData.evolution_chain.url
           };
+          
+          // Extract evolution chain ID from URL
+          const matches = rawSpeciesData.evolution_chain.url.match(/evolution-chain\/(\d+)\//);
+          if (matches && matches[1]) {
+            evolutionChainId = parseInt(matches[1]);
+          }
         }
 
         // Map to Supabase format
         const supabasePokemon = PokemonDataMapper.mapPokemonToSupabase(
           pokemon,
           species,
-          generation
+          generation,
+          evolutionChainId
         );
 
         // Upsert to Supabase
@@ -338,18 +347,27 @@ export class PokemonSyncService {
 
       // Merge evolution_chain URL into species data
       let species = pokemon.species || null;
+      let evolutionChainId: number | null = null;
+      
       if (species && rawSpeciesData?.evolution_chain?.url) {
         // Add evolution_chain URL to species data
         (species as any).evolutionChain = {
           url: rawSpeciesData.evolution_chain.url
         };
+        
+        // Extract evolution chain ID from URL
+        const matches = rawSpeciesData.evolution_chain.url.match(/evolution-chain\/(\d+)\//);
+        if (matches && matches[1]) {
+          evolutionChainId = parseInt(matches[1]);
+        }
       }
 
       const generation = PokemonDataMapper.getGenerationFromId(id);
       const supabasePokemon = PokemonDataMapper.mapPokemonToSupabase(
         pokemon,
         species,
-        generation
+        generation,
+        evolutionChainId
       );
 
       const { error } = await supabase

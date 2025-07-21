@@ -11,7 +11,8 @@ export class PokemonDataMapper {
   static mapPokemonToSupabase(
     pokemon: Pokemon,
     species: PokemonSpecies | null,
-    generation: number
+    generation: number,
+    evolutionChainId?: number | null
   ): SupabasePokemon {
     return {
       id: parseInt(pokemon.id, 10),
@@ -27,6 +28,7 @@ export class PokemonDataMapper {
       species_data: this.mapSpeciesData(species),
       form_data: this.mapFormData(pokemon),
       generation,
+      evolution_chain_id: evolutionChainId || null,
     };
   }
 

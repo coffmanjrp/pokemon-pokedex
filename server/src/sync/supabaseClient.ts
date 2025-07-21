@@ -38,6 +38,7 @@ export interface SupabasePokemon {
   species_data: any;
   form_data?: any;
   generation: number;
+  evolution_chain_id?: number | null;
 }
 
 export interface SupabaseEvolutionChain {

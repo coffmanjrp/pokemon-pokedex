@@ -50,6 +50,7 @@ npm run sync:gen [1-9]        # Sync generation
 npm run sync:forms            # Sync special forms to pokemon_forms table
 npm run sync:all              # Full sync (2-3 hours)
 npm run sync:evolution:enriched  # Sync evolution chains with full Pokemon data
+npm run sync:update-evolution-ids  # Update evolution_chain_id for existing Pokemon
 ```
 
 ### Development Guide
@@ -201,6 +202,11 @@ For more solutions, see documentation in `/docs`
 - All 541 evolution chains synced (Gen 1-9)
 - Fixed property naming issue in pokemonSyncService.ts (evolution_chain vs evolutionChain)
 - All Pokemon now have correct evolution_chain URLs in species_data
+- **NEW**: Direct `evolution_chain_id` column added to `pokemon` table for performance
+  - Eliminates need to parse JSON for evolution chain lookups
+  - Sync process automatically extracts and saves evolution chain ID
+  - Client code uses direct ID first, falls back to URL parsing for compatibility
+  - Migration script available: `npm run sync:update-evolution-ids`
 
 ### Recent Updates
 1. ✅ Fixed moves data display issue - now correctly loading from Supabase
@@ -221,6 +227,9 @@ For more solutions, see documentation in `/docs`
 16. ✅ Fixed Generation 0 display - all 141 forms including Gigantamax now visible
 17. ✅ Fixed pokemon_forms table incorrect mappings - corrected basePokemonId in completeFormMappings.ts
 18. ✅ Fixed additional 38 incorrect form mappings identified in Generation 0 - all forms now display correct Pokemon data
+19. ✅ Added evolution_chain_id column for direct evolution chain lookups
+20. ✅ Updated sync process to save evolution_chain_id directly
+21. ✅ Created updateEvolutionChainIds.ts script for migrating existing data
 
 ### Next Steps & TODOs
 

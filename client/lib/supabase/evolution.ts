@@ -86,23 +86,36 @@ export async function getEvolutionChainForPokemon(pokemonId: number) {
       );
     }
 
-    // First, get the Pokemon to find its species evolution chain ID
+    // First, get the Pokemon to find its evolution chain ID
     const { data: pokemonData, error: pokemonError } = await supabase
       .from("pokemon")
-      .select("species_data")
+      .select("evolution_chain_id, species_data")
       .eq("id", pokemonId)
       .single();
 
     if (pokemonError) {
       console.log(
-        `[Evolution] Error fetching Pokemon species data for ID ${pokemonId}:`,
+        `[Evolution] Error fetching Pokemon data for ID ${pokemonId}:`,
         pokemonError,
       );
       return null;
     }
 
+    // First try to use the direct evolution_chain_id column
+    if (pokemonData?.evolution_chain_id) {
+      if (process.env.NODE_ENV === "development") {
+        console.log(
+          `[Evolution] Using direct evolution_chain_id: ${pokemonData.evolution_chain_id}`,
+        );
+      }
+      return getEvolutionChainById(pokemonData.evolution_chain_id);
+    }
+
+    // Fallback to extracting from species_data (for backward compatibility)
     if (process.env.NODE_ENV === "development") {
-      console.log(`[Evolution] Species data:`, pokemonData?.species_data);
+      console.log(
+        `[Evolution] No direct evolution_chain_id, falling back to species_data`,
+      );
     }
 
     // Type assertion to access nested properties
@@ -129,7 +142,9 @@ export async function getEvolutionChainForPokemon(pokemonId: number) {
     }
 
     if (process.env.NODE_ENV === "development") {
-      console.log(`[Evolution] Found evolution chain ID: ${evolutionChainId}`);
+      console.log(
+        `[Evolution] Found evolution chain ID from URL: ${evolutionChainId}`,
+      );
     }
     return getEvolutionChainById(parseInt(evolutionChainId));
   } catch (error) {

@@ -20,7 +20,8 @@
     "sync:evolution:enriched": "ts-node src/sync/syncEnrichedEvolutions.ts",
     "sync:count-evolution": "ts-node src/sync/countEvolutionChains.ts",
     "sync:list-evolution": "ts-node src/sync/listAllEvolutionChains.ts",
-    "sync:find-all-chains": "ts-node src/sync/findAllEvolutionChainIds.ts"
+    "sync:find-all-chains": "ts-node src/sync/findAllEvolutionChainIds.ts",
+    "sync:update-evolution-ids": "ts-node src/sync/updateEvolutionChainIds.ts"
   },
   "keywords": [
     "pokemon",
