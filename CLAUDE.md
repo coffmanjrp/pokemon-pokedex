@@ -207,6 +207,9 @@ For more solutions, see documentation in `/docs`
   - Sync process automatically extracts and saves evolution chain ID
   - Client code uses direct ID first, falls back to URL parsing for compatibility
   - Migration script available: `npm run sync:update-evolution-ids`
+  - Foreign key constraint links to `evolution_chains.id` for data integrity
+  - Optimized queries can now use Supabase joins for single-query fetches
+  - See `evolutionOptimized.ts` for advanced query examples
 
 ### Recent Updates
 1. ✅ Fixed moves data display issue - now correctly loading from Supabase
@@ -230,6 +233,8 @@ For more solutions, see documentation in `/docs`
 19. ✅ Added evolution_chain_id column for direct evolution chain lookups
 20. ✅ Updated sync process to save evolution_chain_id directly
 21. ✅ Created updateEvolutionChainIds.ts script for migrating existing data
+22. ✅ Added foreign key constraint between pokemon.evolution_chain_id and evolution_chains.id
+23. ✅ Created evolutionOptimized.ts with examples of optimized queries using joins
 
 ### Next Steps & TODOs
 
