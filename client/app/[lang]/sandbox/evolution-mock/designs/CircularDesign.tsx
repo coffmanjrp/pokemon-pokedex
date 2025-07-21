@@ -84,12 +84,14 @@ export function CircularDesign({
                     lang={lang}
                     size="md"
                   />
-                  <EvolutionCondition
-                    evolutionDetails={evolution.evolutionDetails}
-                    dictionary={dictionary}
-                    lang={lang}
-                    variant="compact"
-                  />
+                  {evolution.evolutionDetails && (
+                    <EvolutionCondition
+                      evolutionDetails={evolution.evolutionDetails}
+                      dictionary={dictionary}
+                      lang={lang}
+                      variant="compact"
+                    />
+                  )}
                 </div>
               </div>
             );
@@ -154,12 +156,14 @@ export function CircularDesign({
                 {evolution.species?.names?.find((n) => n.language.name === lang)
                   ?.name || evolution.name}
               </span>
-              <EvolutionCondition
-                evolutionDetails={evolution.evolutionDetails}
-                dictionary={dictionary}
-                lang={lang}
-                variant="compact"
-              />
+              {evolution.evolutionDetails && (
+                <EvolutionCondition
+                  evolutionDetails={evolution.evolutionDetails}
+                  dictionary={dictionary}
+                  lang={lang}
+                  variant="compact"
+                />
+              )}
             </div>
           ))}
         </div>

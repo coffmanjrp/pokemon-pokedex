@@ -9,6 +9,7 @@ interface EvolutionConditionBadgeProps {
   dictionary: Dictionary;
   lang: Locale;
   variant?: "default" | "compact";
+  shortened?: boolean;
 }
 
 export function EvolutionConditionBadge({
@@ -16,17 +17,44 @@ export function EvolutionConditionBadge({
   dictionary,
   lang,
   variant = "default",
+  shortened = false,
 }: EvolutionConditionBadgeProps) {
-  if (!evolutionDetails || evolutionDetails.length === 0) {
+  if (
+    !evolutionDetails ||
+    evolutionDetails.length === 0 ||
+    !evolutionDetails[0]
+  ) {
     return null;
   }
 
-  const condition = renderEvolutionCondition(
+  let condition = renderEvolutionCondition(
     evolutionDetails[0],
     lang,
     dictionary,
     getFallbackText(lang),
   );
+
+  // Apply shortening if requested
+  if (shortened && condition.includes("+")) {
+    const shortenEvolutionCondition = (
+      cond: string,
+      language: string,
+    ): string => {
+      // Remove common prefixes when there are additional conditions
+      const patterns =
+        language === "ja"
+          ? [/^レベルアップ \+ /, /^レベル\d+ \+ /, /^通信交換 \+ /]
+          : [/^Level up \+ /i, /^Level \d+ \+ /i, /^Trade \+ /i];
+
+      let shortened = cond;
+      for (const pattern of patterns) {
+        shortened = shortened.replace(pattern, "");
+      }
+      return shortened;
+    };
+
+    condition = shortenEvolutionCondition(condition, lang);
+  }
 
   const baseClasses =
     "bg-blue-50 rounded-lg text-blue-800 font-medium text-center border border-blue-100 shadow-sm";

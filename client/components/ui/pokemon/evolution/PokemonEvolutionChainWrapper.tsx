@@ -5,6 +5,7 @@ import { usePokemonEvolution } from "@/hooks/usePokemonEvolution";
 import { PokemonEvolutionChain } from "./PokemonEvolutionChain";
 import { LoadingSpinner } from "../../common/LoadingSpinner";
 import { Pokemon } from "@/types/pokemon";
+import { shouldUseCardEvolutionLayout } from "@/lib/data/branchEvolutionChains";
 
 interface PokemonEvolutionChainWrapperProps {
   pokemonId: string;
@@ -87,6 +88,11 @@ export function PokemonEvolutionChainWrapper({
           }}
           lang={lang}
           dictionary={dictionary}
+          variant={
+            pokemon && shouldUseCardEvolutionLayout(pokemon)
+              ? "card"
+              : "default"
+          }
         />
       ) : !evolutionChain ? (
         <div className="text-center py-8 text-gray-500">
@@ -104,6 +110,11 @@ export function PokemonEvolutionChainWrapper({
           evolutionChain={evolutionChain}
           lang={lang}
           dictionary={dictionary}
+          variant={
+            pokemon && shouldUseCardEvolutionLayout(pokemon)
+              ? "card"
+              : "default"
+          }
         />
       )}
     </div>

@@ -17,12 +17,16 @@ export function EvolutionCondition({
   lang,
   variant = "default",
 }: EvolutionConditionProps) {
-  if (!evolutionDetails || evolutionDetails.length === 0) {
+  if (
+    !evolutionDetails ||
+    evolutionDetails.length === 0 ||
+    !evolutionDetails[0]
+  ) {
     return null;
   }
 
   const condition = renderEvolutionCondition(
-    evolutionDetails[0]!,
+    evolutionDetails[0],
     lang,
     dictionary,
     getFallbackText(lang),

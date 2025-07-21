@@ -10,17 +10,20 @@ import { useEvolutionAnimation } from "@/hooks/useEvolutionAnimation";
 import { EvolutionCard } from "./EvolutionCard";
 import { FormVariationCard } from "./FormVariationCard";
 import { EvolutionArrow } from "./EvolutionArrow";
+import { CardEvolutionChain } from "./CardEvolutionChain";
 
 interface PokemonEvolutionChainProps {
   evolutionChain: EvolutionDetail;
   lang: Locale;
   dictionary: Dictionary;
+  variant?: "default" | "card";
 }
 
 function PokemonEvolutionChainContent({
   evolutionChain,
   lang,
   dictionary,
+  variant = "default",
 }: PokemonEvolutionChainProps) {
   const searchParams = useSearchParams();
   const fromGeneration = searchParams.get("from");
@@ -121,6 +124,21 @@ function PokemonEvolutionChainContent({
     return null;
   }
 
+  // Use card layout for branch evolutions
+  if (variant === "card") {
+    return (
+      <div ref={containerRef}>
+        <CardEvolutionChain
+          evolutionChain={evolutionChain}
+          lang={lang}
+          dictionary={dictionary}
+          onPokemonClick={triggerEvolutionAnimation}
+        />
+      </div>
+    );
+  }
+
+  // Default linear layout
   return (
     <div ref={containerRef}>
       {/* Mobile: Vertical layout, Desktop: Horizontal layout */}
@@ -137,6 +155,7 @@ export function PokemonEvolutionChain({
   evolutionChain,
   lang,
   dictionary,
+  variant = "default",
 }: PokemonEvolutionChainProps) {
   if (!evolutionChain) {
     return null;
@@ -150,6 +169,7 @@ export function PokemonEvolutionChain({
         evolutionChain={evolutionChain}
         lang={lang}
         dictionary={dictionary}
+        variant={variant}
       />
     </Suspense>
   );

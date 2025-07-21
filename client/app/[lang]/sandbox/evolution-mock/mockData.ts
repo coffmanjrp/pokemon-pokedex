@@ -71,7 +71,7 @@ export const eeveeEvolutionMockData: EvolutionDetail = {
         ],
         flavorTextEntries: [],
         genera: [],
-        generation: { name: "generation-i", url: "" },
+        generation: { id: "1", name: "generation-i", url: "" },
       } as PokemonSpecies,
       evolutionDetails: [
         {
@@ -120,7 +120,7 @@ export const eeveeEvolutionMockData: EvolutionDetail = {
         ],
         flavorTextEntries: [],
         genera: [],
-        generation: { name: "generation-i", url: "" },
+        generation: { id: "1", name: "generation-i", url: "" },
       } as PokemonSpecies,
       evolutionDetails: [
         {
@@ -169,7 +169,7 @@ export const eeveeEvolutionMockData: EvolutionDetail = {
         ],
         flavorTextEntries: [],
         genera: [],
-        generation: { name: "generation-i", url: "" },
+        generation: { id: "1", name: "generation-i", url: "" },
       } as PokemonSpecies,
       evolutionDetails: [
         {
@@ -218,7 +218,7 @@ export const eeveeEvolutionMockData: EvolutionDetail = {
         ],
         flavorTextEntries: [],
         genera: [],
-        generation: { name: "generation-i", url: "" },
+        generation: { id: "1", name: "generation-i", url: "" },
       } as PokemonSpecies,
       evolutionDetails: [
         {
@@ -265,7 +265,7 @@ export const eeveeEvolutionMockData: EvolutionDetail = {
         ],
         flavorTextEntries: [],
         genera: [],
-        generation: { name: "generation-i", url: "" },
+        generation: { id: "1", name: "generation-i", url: "" },
       } as PokemonSpecies,
       evolutionDetails: [
         {
@@ -312,7 +312,7 @@ export const eeveeEvolutionMockData: EvolutionDetail = {
         ],
         flavorTextEntries: [],
         genera: [],
-        generation: { name: "generation-i", url: "" },
+        generation: { id: "1", name: "generation-i", url: "" },
       } as PokemonSpecies,
       evolutionDetails: [
         {
@@ -361,7 +361,7 @@ export const eeveeEvolutionMockData: EvolutionDetail = {
         ],
         flavorTextEntries: [],
         genera: [],
-        generation: { name: "generation-i", url: "" },
+        generation: { id: "1", name: "generation-i", url: "" },
       } as PokemonSpecies,
       evolutionDetails: [
         {
@@ -410,12 +410,12 @@ export const eeveeEvolutionMockData: EvolutionDetail = {
         ],
         flavorTextEntries: [],
         genera: [],
-        generation: { name: "generation-i", url: "" },
+        generation: { id: "1", name: "generation-i", url: "" },
       } as PokemonSpecies,
       evolutionDetails: [
         {
           minHappiness: 160,
-          knownMoveType: {
+          knownMove: {
             name: "fairy",
             url: "https://pokeapi.co/api/v2/type/18/",
           },

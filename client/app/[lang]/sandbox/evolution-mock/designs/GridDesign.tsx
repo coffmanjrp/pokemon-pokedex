@@ -36,14 +36,16 @@ export function GridDesign({
                   lang={lang}
                   size="md"
                 />
-                <div className="mt-2">
-                  <EvolutionCondition
-                    evolutionDetails={evolution.evolutionDetails}
-                    dictionary={dictionary}
-                    lang={lang}
-                    variant="compact"
-                  />
-                </div>
+                {evolution.evolutionDetails && (
+                  <div className="mt-2">
+                    <EvolutionCondition
+                      evolutionDetails={evolution.evolutionDetails}
+                      dictionary={dictionary}
+                      lang={lang}
+                      variant="compact"
+                    />
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -104,14 +106,16 @@ export function GridDesign({
                   lang={lang}
                   size="md"
                 />
-                <div className="mt-2">
-                  <EvolutionCondition
-                    evolutionDetails={evolution.evolutionDetails}
-                    dictionary={dictionary}
-                    lang={lang}
-                    variant="compact"
-                  />
-                </div>
+                {evolution.evolutionDetails && (
+                  <div className="mt-2">
+                    <EvolutionCondition
+                      evolutionDetails={evolution.evolutionDetails}
+                      dictionary={dictionary}
+                      lang={lang}
+                      variant="compact"
+                    />
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -145,12 +149,14 @@ export function GridDesign({
                   lang={lang}
                   size="sm"
                 />
-                <EvolutionCondition
-                  evolutionDetails={evolution.evolutionDetails}
-                  dictionary={dictionary}
-                  lang={lang}
-                  variant="compact"
-                />
+                {evolution.evolutionDetails && (
+                  <EvolutionCondition
+                    evolutionDetails={evolution.evolutionDetails}
+                    dictionary={dictionary}
+                    lang={lang}
+                    variant="compact"
+                  />
+                )}
               </div>
             ))}
           </div>
