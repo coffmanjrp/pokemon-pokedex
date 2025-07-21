@@ -12,6 +12,13 @@ interface SyncProgress {
   errors: Array<{ id: number; error: string }>;
 }
 
+interface RawSpeciesData {
+  evolution_chain?: {
+    url: string;
+  };
+  [key: string]: any;
+}
+
 export class PokemonSyncService {
   private progress: SyncProgress = {
     total: 0,
@@ -134,7 +141,7 @@ export class PokemonSyncService {
         }
 
         // Get raw species data to preserve evolution_chain URL
-        let rawSpeciesData = null;
+        let rawSpeciesData: RawSpeciesData | null = null;
         if (pokemon.species) {
           try {
             const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}/`);
@@ -333,7 +340,7 @@ export class PokemonSyncService {
       }
 
       // Get raw species data to preserve evolution_chain URL
-      let rawSpeciesData = null;
+      let rawSpeciesData: RawSpeciesData | null = null;
       if (pokemon.species) {
         try {
           const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}/`);
