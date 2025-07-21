@@ -1,6 +1,6 @@
 "use client";
 
-import { Locale } from "@/lib/dictionaries";
+import { Locale, interpolate } from "@/lib/dictionaries";
 import { useAppSelector } from "@/store/hooks";
 import { getFallbackText } from "@/lib/fallbackText";
 
@@ -11,6 +11,7 @@ interface FooterProps {
 export function Footer({ lang }: FooterProps) {
   const { dictionary } = useAppSelector((state) => state.ui);
   const fallback = getFallbackText(lang);
+  const currentYear = new Date().getFullYear();
 
   return (
     <footer className="bg-gray-50 border-t border-gray-200 mt-12 lg:ml-80">
@@ -18,7 +19,9 @@ export function Footer({ lang }: FooterProps) {
         <div className="space-y-4 text-center text-sm text-gray-600">
           {/* Copyright Notice */}
           <p className="font-medium">
-            {dictionary?.footer.copyright || fallback}
+            {interpolate(dictionary?.footer.copyright || fallback, {
+              currentYear,
+            })}
           </p>
 
           {/* Trademark Notice */}

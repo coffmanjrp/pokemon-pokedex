@@ -464,7 +464,7 @@
     "locale": "ja_JP"
   },
   "footer": {
-    "copyright": "ポケットモンスター © 1995-2025 Nintendo/Creatures Inc./GAME FREAK inc.",
+    "copyright": "ポケットモンスター © 1995-{{currentYear}} Nintendo/Creatures Inc./GAME FREAK inc.",
     "trademark": "ポケットモンスターおよびポケモンは任天堂の商標です。",
     "disclaimer": "当サイトは非公式のファンサイトであり、任天堂、Creatures Inc.、GAME FREAK inc.とは一切関係ありません。",
     "dataSource": "データ提供元："
