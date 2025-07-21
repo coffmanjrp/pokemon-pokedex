@@ -51,6 +51,7 @@ npm run sync:forms            # Sync special forms to pokemon_forms table
 npm run sync:all              # Full sync (2-3 hours)
 npm run sync:evolution:enriched  # Sync evolution chains with full Pokemon data
 npm run sync:update-evolution-ids  # Update evolution_chain_id for existing Pokemon
+npm run sync:find-missing-evolution  # Find Pokemon missing evolution data
 ```
 
 ### Development Guide
@@ -210,6 +211,9 @@ For more solutions, see documentation in `/docs`
   - Foreign key constraint links to `evolution_chains.id` for data integrity
   - Optimized queries can now use Supabase joins for single-query fetches
   - See `evolutionOptimized.ts` for advanced query examples
+  - **Performance**: Single query instead of 2 separate queries
+  - **Coverage**: 729/1168 Pokemon (62.4%) have evolution_chain_id
+  - **Missing Data**: 439 Pokemon need sync (mainly Gen 3, 7, 9)
 
 ### Recent Updates
 1. ✅ Fixed moves data display issue - now correctly loading from Supabase
@@ -235,12 +239,19 @@ For more solutions, see documentation in `/docs`
 21. ✅ Created updateEvolutionChainIds.ts script for migrating existing data
 22. ✅ Added foreign key constraint between pokemon.evolution_chain_id and evolution_chains.id
 23. ✅ Created evolutionOptimized.ts with examples of optimized queries using joins
+24. ✅ Implemented optimized evolution chain queries using Supabase JOINs
+25. ✅ Updated usePokemonEvolution hook to use optimized queries
+26. ✅ Identified 439 Pokemon missing evolution chains (Gen 3, 7, 9 need sync)
 
 ### Next Steps & TODOs
 
 #### 🔴 High Priority
 
-All high priority tasks have been completed! 🎉
+1. **Sync Missing Evolution Chains**
+   - [ ] Sync 439 Pokemon missing evolution_chain_id
+   - [ ] Focus on Generation 3 (126 Pokemon), Generation 7 (48 Pokemon), Generation 9 (105 Pokemon)
+   - [ ] Run `npm run sync:gen 3`, `npm run sync:gen 7`, `npm run sync:gen 9`
+   - [ ] Verify all Pokemon have evolution chains displayed
 
 #### 🟡 Medium Priority
 

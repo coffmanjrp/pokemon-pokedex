@@ -41,7 +41,7 @@ export async function getEvolutionChainOptimized(pokemonId: number) {
     }
 
     // Transform the data to match our EvolutionChain type
-    const evolutionChain = data.evolution_chain as {
+    const evolutionChain = data.evolution_chain as unknown as {
       id: number;
       chain_data: Record<string, unknown>;
     };
@@ -152,7 +152,7 @@ export async function getEvolutionChainsForPokemonBatch(pokemonIds: number[]) {
 
     data?.forEach((pokemon) => {
       if (pokemon.evolution_chain) {
-        const chain = pokemon.evolution_chain as {
+        const chain = pokemon.evolution_chain as unknown as {
           id: number;
           chain_data: Record<string, unknown>;
         };

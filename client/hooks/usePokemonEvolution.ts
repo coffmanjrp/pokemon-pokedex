@@ -50,12 +50,12 @@ export function usePokemonEvolution(
       );
 
       // Dynamic import to avoid circular dependency in development
-      const { getEvolutionChainForPokemon } = await import(
-        "@/lib/supabase/evolution"
+      const { getEvolutionChainOptimized } = await import(
+        "@/lib/supabase/evolutionOptimized"
       );
 
-      // Get raw evolution chain data
-      const rawChain = await getEvolutionChainForPokemon(parseInt(pokemonId));
+      // Get raw evolution chain data using optimized query
+      const rawChain = await getEvolutionChainOptimized(parseInt(pokemonId));
 
       if (!rawChain) {
         console.log(
