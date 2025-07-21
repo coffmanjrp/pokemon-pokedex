@@ -1,4 +1,10 @@
-import { Pokemon, EvolutionDetail, Move, GenderInfo } from "@/types/pokemon";
+import {
+  Pokemon,
+  EvolutionDetail,
+  Move,
+  GenderInfo,
+  SpeciesName,
+} from "@/types/pokemon";
 import { Locale, Dictionary } from "@/lib/dictionaries";
 import { getFormDisplayName, isMegaEvolution } from "@/lib/formUtils";
 // Form translations moved to dictionary system
@@ -189,7 +195,9 @@ export function getPrevNextPokemonId(currentId: number): {
  * Falls back to English name if target language is not available
  */
 export function getPokemonName(
-  pokemon: Pokemon,
+  pokemon:
+    | Pokemon
+    | { id: string; name: string; species?: { names: SpeciesName[] } },
   language: Locale,
   dictionary?: Dictionary,
 ): string {
