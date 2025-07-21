@@ -345,7 +345,7 @@ export class PokemonSyncService {
         try {
           const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}/`);
           if (response.ok) {
-            rawSpeciesData = await response.json();
+            rawSpeciesData = await response.json() as RawSpeciesData;
           }
         } catch (error) {
           console.error(`Error fetching raw species data for Pokemon ${id}:`, error);
