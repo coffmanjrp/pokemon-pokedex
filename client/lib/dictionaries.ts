@@ -477,6 +477,12 @@ export interface Dictionary {
     fallbackImageAlt: string;
     locale: string;
   };
+  footer: {
+    copyright: string;
+    trademark: string;
+    disclaimer: string;
+    dataSource: string;
+  };
 }
 
 export const getLocaleFromPathname = (pathname: string): Locale => {

@@ -17,11 +17,12 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Pokemon Pokedex | Complete Multi-Generation Pokemon Database",
-    template: "%s | Pokemon Pokedex",
+    default:
+      "Unofficial Pokemon Pokedex | Complete Multi-Generation Pokemon Database",
+    template: "%s | Unofficial Pokemon Pokedex",
   },
   description:
-    "Comprehensive Pokemon database featuring 1302+ Pokemon from all generations. Explore detailed stats, official artwork, evolution chains, type effectiveness, and move sets. Built with modern web technologies for the best Pokemon experience.",
+    "Unofficial comprehensive Pokemon database featuring 1302+ Pokemon from all generations. Explore detailed stats, official artwork, evolution chains, type effectiveness, and move sets. This is a fan-made site not affiliated with Nintendo.",
   keywords:
     "pokemon, pokedex, pokemon database, pokemon stats, pokemon search, evolution chain, type effectiveness, official artwork, generation, nintendo, game freak",
   authors: [{ name: "Pokemon Pokedex Team" }],
@@ -29,9 +30,10 @@ export const metadata: Metadata = {
   publisher: "Pokemon Pokedex",
   metadataBase: new URL(getBaseUrl()),
   openGraph: {
-    title: "Pokemon Pokedex | Complete Multi-Generation Pokemon Database",
+    title:
+      "Unofficial Pokemon Pokedex | Complete Multi-Generation Pokemon Database",
     description:
-      "Comprehensive Pokemon database featuring 1302+ Pokemon with detailed stats, official artwork, evolution chains, and more. Explore all generations in one place.",
+      "Unofficial comprehensive Pokemon database featuring 1302+ Pokemon with detailed stats, official artwork, evolution chains, and more. Fan-made site exploring all generations in one place.",
     type: "website",
     url: getBaseUrl(),
     siteName: "Pokemon Pokedex",
@@ -53,9 +55,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pokemon Pokedex | Complete Multi-Generation Pokemon Database",
+    title:
+      "Unofficial Pokemon Pokedex | Complete Multi-Generation Pokemon Database",
     description:
-      "Comprehensive Pokemon database featuring 1302+ Pokemon with detailed stats, official artwork, evolution chains, and more.",
+      "Unofficial comprehensive Pokemon database featuring 1302+ Pokemon with detailed stats, official artwork, evolution chains, and more. Fan-made site.",
     images: [`${getBaseUrl()}/api/images/pokemon/25`],
     creator: "@pokemon",
     site: "@pokemon",
