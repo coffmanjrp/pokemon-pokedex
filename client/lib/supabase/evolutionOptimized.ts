@@ -171,3 +171,89 @@ export async function getEvolutionChainsForPokemonBatch(pokemonIds: number[]) {
     return new Map<number, EvolutionChain>();
   }
 }
+
+/**
+ * Get evolution chain for a Pokemon form (Generation 0)
+ * This function uses the pokemon_forms relationship to find the base Pokemon's evolution chain
+ */
+export async function getEvolutionChainForForm(formId: number) {
+  try {
+    console.log(
+      `[Evolution] Fetching evolution chain for form Pokemon ${formId}`,
+    );
+
+    // Query pokemon_forms table to get the base Pokemon ID and its evolution chain
+    const { data, error } = await supabase
+      .from("pokemon_forms")
+      .select(
+        `
+        id,
+        pokemon_id,
+        form_name,
+        pokemon:pokemon!pokemon_id (
+          id,
+          name,
+          evolution_chain_id,
+          evolution_chain:evolution_chains!evolution_chain_id (
+            id,
+            chain_data
+          )
+        )
+      `,
+      )
+      .eq("id", formId)
+      .single();
+
+    if (error) {
+      console.log(`[Evolution] Error fetching form's evolution chain:`, error);
+      return null;
+    }
+
+    // Check if we have the base Pokemon and its evolution chain
+    const basePokemon = data?.pokemon as unknown as {
+      id: number;
+      name: string;
+      evolution_chain_id: number | null;
+      evolution_chain?: {
+        id: number;
+        chain_data: Record<string, unknown>;
+      };
+    };
+
+    if (!basePokemon?.evolution_chain) {
+      console.log(
+        `[Evolution] No evolution chain found for form Pokemon ${formId}'s base Pokemon`,
+      );
+      return null;
+    }
+
+    // Transform the data to match our EvolutionChain type
+    const evolutionChain = basePokemon.evolution_chain;
+
+    return {
+      id: evolutionChain.id.toString(),
+      url: `https://pokeapi.co/api/v2/evolution-chain/${evolutionChain.id}/`,
+      chain: evolutionChain.chain_data.chain || evolutionChain.chain_data,
+      // Include metadata about the form
+      formMetadata: {
+        formId,
+        formName: data.form_name,
+        basePokemonId: basePokemon.id,
+        basePokemonName: basePokemon.name,
+      },
+    } as EvolutionChain & {
+      formMetadata?: {
+        formId: number;
+        formName: string;
+        basePokemonId: number;
+        basePokemonName: string;
+      };
+    };
+  } catch (error) {
+    console.log(
+      "[Evolution] Unexpected error in getEvolutionChainForForm:",
+      error,
+    );
+    return null;
+  }
+}

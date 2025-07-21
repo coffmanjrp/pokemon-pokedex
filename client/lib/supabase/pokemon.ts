@@ -14,7 +14,11 @@ import type { Database } from "@/types/supabase";
 
 // Transform Supabase data to match our Pokemon type
 function transformSupabasePokemon(
-  data: Partial<Database["public"]["Tables"]["pokemon"]["Row"]>,
+  data: Partial<Database["public"]["Tables"]["pokemon"]["Row"]> & {
+    basePokemonId?: number;
+    basePokemonName?: string;
+    formName?: string;
+  },
 ): Pokemon {
   const result: Pokemon = {
     id: String(data.id!),
@@ -30,6 +34,19 @@ function transformSupabasePokemon(
   // Optional properties
   if (data.base_experience !== null && data.base_experience !== undefined) {
     result.baseExperience = data.base_experience;
+  }
+
+  // Add form-specific properties if this is a form Pokemon
+  if (data.basePokemonId) {
+    (result as Pokemon & { basePokemonId: number }).basePokemonId =
+      data.basePokemonId;
+  }
+  if (data.basePokemonName) {
+    (result as Pokemon & { basePokemonName: string }).basePokemonName =
+      data.basePokemonName;
+  }
+  if (data.formName) {
+    (result as Pokemon & { formName: string }).formName = data.formName;
   }
 
   // Handle species_data with property name conversion
@@ -113,6 +130,58 @@ export async function getPokemonByGeneration(generation: number) {
 // Get single Pokemon by ID
 export async function getPokemonById(id: number) {
   try {
+    // Check if this is a Generation 0 form Pokemon
+    if (id >= 10000) {
+      // First try to fetch from pokemon_forms table
+      const { data: formData, error: formError } = await supabase
+        .from("pokemon_forms")
+        .select(
+          `
+          id,
+          pokemon_id,
+          form_name,
+          form_data,
+          pokemon:pokemon!pokemon_id (
+            id,
+            name,
+            species_data
+          )
+        `,
+        )
+        .eq("id", id)
+        .single();
+
+      if (!formError && formData) {
+        // Extract form data
+        const formDataRecord = formData.form_data as Record<string, unknown>;
+        const basePokemon = (
+          formData as {
+            pokemon?: { id?: number; name?: string; species_data?: unknown };
+          }
+        ).pokemon;
+
+        // Create a Pokemon object with basePokemonId included
+        const formPokemon = {
+          ...formDataRecord,
+          id,
+          basePokemonId: formData.pokemon_id,
+          basePokemonName: basePokemon?.name,
+          formName: formData.form_name,
+        };
+
+        return transformSupabasePokemon(
+          formPokemon as Partial<
+            Database["public"]["Tables"]["pokemon"]["Row"]
+          > & {
+            basePokemonId?: number;
+            basePokemonName?: string;
+            formName?: string;
+          },
+        );
+      }
+    }
+
+    // Regular Pokemon or fallback for forms
     const { data, error } = await supabase
       .from("pokemon")
       .select("*")

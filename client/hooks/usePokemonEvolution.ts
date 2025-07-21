@@ -50,12 +50,22 @@ export function usePokemonEvolution(
       );
 
       // Dynamic import to avoid circular dependency in development
-      const { getEvolutionChainOptimized } = await import(
-        "@/lib/supabase/evolutionOptimized"
-      );
+      const { getEvolutionChainOptimized, getEvolutionChainForForm } =
+        await import("@/lib/supabase/evolutionOptimized");
 
-      // Get raw evolution chain data using optimized query
-      const rawChain = await getEvolutionChainOptimized(parseInt(pokemonId));
+      const pokemonIdNum = parseInt(pokemonId);
+      let rawChain;
+
+      // Check if this is a Generation 0 form Pokemon (ID >= 10000)
+      if (pokemonIdNum >= 10000) {
+        console.log(
+          `[Supabase Evolution] Detected Generation 0 form Pokemon ${pokemonIdNum}, using form-specific query`,
+        );
+        rawChain = await getEvolutionChainForForm(pokemonIdNum);
+      } else {
+        // Get raw evolution chain data using optimized query for regular Pokemon
+        rawChain = await getEvolutionChainOptimized(pokemonIdNum);
+      }
 
       if (!rawChain) {
         console.log(
