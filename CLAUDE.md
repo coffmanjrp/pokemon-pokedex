@@ -15,10 +15,10 @@ Pokemon Pokedex application built with Next.js 15, React 19, TypeScript, and Tai
 ## Architecture Overview
 
 **Frontend**: Next.js 15 App Router, TypeScript, Redux Toolkit, Supabase Client  
-**Backend**: Apollo Server (Express), Railway deployment, PokeAPI integration  
-**Database**: Supabase (PostgreSQL) - Migration in progress  
+**Backend**: Data sync server only (GraphQL removed), Railway deployment  
+**Database**: Supabase (PostgreSQL) - Migration completed ✅  
 **Caching**: localStorage (24hr TTL) + CDN headers  
-**Build**: Parallel generation builds (~12min), 2,786 static pages  
+**Build**: Parallel generation builds (~3m 45s with SSG), 2,786 static pages  
 
 ### Detailed Architecture
 @docs/ARCHITECTURE.md
@@ -79,35 +79,39 @@ pokemon-pokedex/
 │   │           └── evolution/    # Evolution chain components
 │   ├── lib/                      # Utility functions and configurations
 │   │   ├── data/                 # Centralized data files
-│   │   ├── dictionaries/         # Translation files (5 active + 4 preserved)
+│   │   │   ├── branchEvolutionChainIds.ts  # Branch evolution chain IDs
+│   │   │   └── formIds.ts        # Pokemon form IDs
+│   │   ├── evolution/            # Evolution-related utilities
+│   │   │   ├── branchEvolutionUtils.ts     # Branch evolution helpers
+│   │   │   └── evolutionConditionShortener.ts  # Condition display logic
+│   │   ├── dictionaries/         # Translation files (2 active languages)
 │   │   ├── utils/                # Utility functions
 │   │   ├── supabase/             # Supabase data access layer
 │   │   │   ├── pokemon.ts        # Pokemon data queries
-│   │   │   └── evolution.ts      # Evolution chain queries
-│   │   ├── pokemonCache.ts       # Pokemon cache system
+│   │   │   ├── evolution.ts      # Evolution chain queries
+│   │   │   └── evolutionOptimized.ts  # Optimized JOIN queries
+│   │   ├── errors/               # Error handling system
 │   │   ├── supabase.ts           # Supabase client configuration
-│   │   └── featureFlags.ts       # Feature flag configuration
+│   │   └── pokemonUtils.ts       # Pokemon utility functions
 │   ├── hooks/                    # Custom React hooks
-│   │   ├── usePokemonListSupabase.ts      # Supabase list hook
-│   │   ├── usePokemonDetailSupabase.ts    # Supabase detail hook
-│   │   ├── usePokemonListUnified.ts       # Unified list hook
-│   │   └── usePokemonDetailUnified.ts     # Unified detail hook
+│   │   ├── usePokemonList.ts     # Pokemon list hook
+│   │   ├── usePokemonDetail.ts   # Pokemon detail hook
+│   │   └── usePokemonEvolution.ts # Evolution chain hook
 │   ├── store/                    # Redux Toolkit configuration
 │   └── types/                    # TypeScript type definitions
+│       ├── pokemon.ts            # Pokemon type definitions
 │       └── supabase.ts           # Supabase database types
-└── server/                       # GraphQL server
+└── server/                       # Data sync server
     ├── src/
-    │   ├── index.ts            # Server entry point
-    │   ├── schema/             # GraphQL schema definitions
-    │   ├── resolvers/          # GraphQL resolvers
-    │   ├── services/           # Pokemon service with PokeAPI integration
-    │   ├── sync/               # Supabase data sync utilities
+    │   ├── sync/                # Supabase data sync utilities
     │   │   ├── pokemonDataMapper.ts    # Maps PokeAPI data to Supabase schema
     │   │   ├── pokemonSyncService.ts   # Handles data synchronization
+    │   │   ├── enrichedEvolutionSyncService.ts  # Evolution chain sync
     │   │   ├── supabaseClient.ts       # Supabase client configuration
     │   │   └── syncRunner.ts           # CLI sync commands
     │   └── data/
-    │       └── pokemonFormIds.ts       # Form Pokemon IDs (10000+ range)
+    │       ├── pokemonFormIds.ts       # Form Pokemon IDs (10000+ range)
+    │       └── completeFormMappings.ts # Form to base Pokemon mappings
     └── dist/                   # Compiled server code
 ```
 
@@ -120,6 +124,7 @@ pokemon-pokedex/
 - **Performance**: localStorage + CDN caching, parallel builds, optimized images
 - **SEO**: Structured data, sitemaps, Open Graph, multi-language support
 - **Error Handling**: Custom error classes with recovery strategies
+- **Evolution UI**: Card-style layout for 20 branch evolution Pokemon
 
 ### Feature Details
 @docs/FEATURES.md
@@ -242,6 +247,10 @@ For more solutions, see documentation in `/docs`
 24. ✅ Implemented optimized evolution chain queries using Supabase JOINs
 25. ✅ Updated usePokemonEvolution hook to use optimized queries
 26. ✅ Synced missing evolution chains - improved coverage from 62.4% to 87.7%
+27. ✅ Implemented card-style evolution UI for 20 branch evolution Pokemon
+28. ✅ Fixed multi-stage branch evolution display (e.g., Poliwag → Poliwhirl → Poliwrath/Politoed)
+29. ✅ Refactored evolution utilities to /lib/evolution directory
+30. ✅ Added comprehensive branch evolution support with proper TypeScript types
 
 ### Next Steps & TODOs
 
@@ -293,5 +302,7 @@ For more solutions, see documentation in `/docs`
 5. ✅ **Server Test Script Cleanup** - Removed 26 unnecessary test files
 6. ✅ **Evolution Chain Optimization** - Direct evolution_chain_id column with foreign key constraint
 7. ✅ **Missing Evolution Data Sync** - Coverage improved from 62.4% to 87.7%
+8. ✅ **Branch Evolution UI** - Card-style layout for 20 Pokemon with branching evolutions
+9. ✅ **Complete Supabase Migration** - All data fetching now uses Supabase directly
 
 All high priority optimization tasks have been successfully completed!
