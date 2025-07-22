@@ -71,10 +71,18 @@
       "tryAgain": "重试",
       "pokemonNotFound": "找不到宝可梦",
       "goHome": "返回首页",
-      "unknown": "未知"
+      "unknown": "未知",
+      "evolutionChainError": "进化数据加载错误",
+      "movesError": "招式数据加载错误",
+      "genericError": "发生错误",
+      "networkError": "网络错误",
+      "serverError": "服务器错误",
+      "notFoundError": "资源未找到",
+      "validationError": "提供的数据无效"
     },
     "common": {
-      "loading": "加载中"
+      "loading": "加载中",
+      "tagline": "非官方宝可梦数据库"
     },
     "notFound": {
       "title": "找不到宝可梦",
@@ -247,6 +255,7 @@
       "games": "无游戏数据",
       "sprites": "无图像可用",
       "evolution": "无进化数据",
+      "evolutionSoon": "进化数据即将推出",
       "abilities": "无特性数据",
       "general": "无数据可用"
     },
@@ -443,8 +452,9 @@
   "meta": {
     "title": "宝可梦图鉴",
     "description": "完整的宝可梦图鉴，包含所有世代的宝可梦详细信息、属性、能力值和进化链。",
-    "homeTitle": "宝可梦图鉴 - 探索所有世代的宝可梦",
-    "homeDescription": "浏览完整的宝可梦图鉴，查看来自所有世代的宝可梦详细信息、属性、能力值、招式和进化链。",
+    "homeTitle": "非官方宝可梦图鉴 | 完整的多世代宝可梦数据库",
+    "homeDescription": "非官方的综合性宝可梦数据库，收录1302+只宝可梦的详细数据、官方插图、属性相克、进化链和招式表。涵盖第1至第9世代的完整内容。这是一个粉丝制作的网站，与任天堂无关。",
+    "listDescription": "浏览{{region}}地区的所有宝可梦。按属性筛选，按名称搜索，探索每只宝可梦的详细信息，包括能力值、进化链和招式。",
     "pokemonTitle": "{{name}} - 宝可梦图鉴",
     "pokemonDescription": "查看{{name}}的详细信息，包括属性、能力值、招式、进化链和更多内容。",
     "pokemonDescriptionShort": "{{name}}的完整宝可梦信息。",
@@ -453,5 +463,11 @@
     "pokemonImageAlt": "{{name}} - 宝可梦图鉴",
     "fallbackImageAlt": "宝可梦图鉴 - 完整的宝可梦数据库",
     "locale": "zh_CN"
+  },
+  "footer": {
+    "copyright": "宝可梦 © 1995-{{currentYear}} Nintendo/Creatures Inc./GAME FREAK inc.",
+    "trademark": "宝可梦和宝可梦角色名称是任天堂的商标。",
+    "disclaimer": "这是一个非官方的、非商业性的粉丝网站，与任天堂、Creatures Inc.或GAME FREAK inc.无关。",
+    "dataSource": "数据来源："
   }
 }

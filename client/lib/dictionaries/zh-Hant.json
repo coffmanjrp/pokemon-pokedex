@@ -71,10 +71,18 @@
       "tryAgain": "重試",
       "pokemonNotFound": "找不到寶可夢",
       "goHome": "返回首頁",
-      "unknown": "未知"
+      "unknown": "未知",
+      "evolutionChainError": "進化資料載入錯誤",
+      "movesError": "招式資料載入錯誤",
+      "genericError": "發生錯誤",
+      "networkError": "網路錯誤",
+      "serverError": "伺服器錯誤",
+      "notFoundError": "資源未找到",
+      "validationError": "提供的資料無效"
     },
     "common": {
-      "loading": "載入中"
+      "loading": "載入中",
+      "tagline": "非官方寶可夢資料庫"
     },
     "notFound": {
       "title": "找不到寶可夢",
@@ -247,6 +255,7 @@
       "games": "無遊戲數據",
       "sprites": "無圖像可用",
       "evolution": "無進化數據",
+      "evolutionSoon": "進化資料即將推出",
       "abilities": "無特性數據",
       "general": "無數據可用"
     },
@@ -443,8 +452,9 @@
   "meta": {
     "title": "寶可夢圖鑑",
     "description": "完整的寶可夢圖鑑，包含所有世代的寶可夢詳細資訊、屬性、能力值和進化鏈。",
-    "homeTitle": "寶可夢圖鑑 - 探索所有世代的寶可夢",
-    "homeDescription": "瀏覽完整的寶可夢圖鑑，查看來自所有世代的寶可夢詳細資訊、屬性、能力值、招式和進化鏈。",
+    "homeTitle": "非官方寶可夢圖鑑 | 完整的多世代寶可夢資料庫",
+    "homeDescription": "非官方的綜合性寶可夢資料庫，收錄1302+隻寶可夢的詳細資料、官方插圖、屬性相剋、進化鏈和招式表。涵蓋第1至第9世代的完整內容。這是一個粉絲製作的網站，與任天堂無關。",
+    "listDescription": "瀏覽{{region}}地區的所有寶可夢。按屬性篩選，按名稱搜尋，探索每隻寶可夢的詳細資訊，包括能力值、進化鏈和招式。",
     "pokemonTitle": "{{name}} - 寶可夢圖鑑",
     "pokemonDescription": "查看{{name}}的詳細資訊，包括屬性、能力值、招式、進化鏈和更多內容。",
     "pokemonDescriptionShort": "{{name}}的完整寶可夢資訊。",
@@ -453,5 +463,11 @@
     "pokemonImageAlt": "{{name}} - 寶可夢圖鑑",
     "fallbackImageAlt": "寶可夢圖鑑 - 完整的寶可夢資料庫",
     "locale": "zh_TW"
+  },
+  "footer": {
+    "copyright": "寶可夢 © 1995-{{currentYear}} Nintendo/Creatures Inc./GAME FREAK inc.",
+    "trademark": "寶可夢和寶可夢角色名稱是任天堂的商標。",
+    "disclaimer": "這是一個非官方的、非商業性的粉絲網站，與任天堂、Creatures Inc.或GAME FREAK inc.無關。",
+    "dataSource": "資料來源："
   }
 }

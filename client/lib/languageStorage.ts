@@ -1,4 +1,4 @@
-import { Language } from "@/store/slices/uiSlice";
+import { Locale } from "@/lib/dictionaries";
 
 const LANGUAGE_STORAGE_KEY = "pokemon-pokedex-language";
 const LANGUAGE_COOKIE_KEY = "pokemon-pokedex-lang";
@@ -7,14 +7,20 @@ const LANGUAGE_COOKIE_KEY = "pokemon-pokedex-lang";
  * Get stored language preference from localStorage
  * Returns null if not available or not supported
  */
-export function getStoredLanguage(): Language | null {
+export function getStoredLanguage(): Locale | null {
   // Check if we're on the client side
   if (typeof window === "undefined") return null;
 
   try {
     const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-    if (stored && (stored === "en" || stored === "ja")) {
-      return stored as Language;
+    if (
+      stored &&
+      (stored === "en" ||
+        stored === "ja" ||
+        stored === "zh-Hans" ||
+        stored === "zh-Hant")
+    ) {
+      return stored as Locale;
     }
   } catch (error) {
     // localStorage might not be available (e.g., in private mode)
@@ -30,7 +36,7 @@ export function getStoredLanguage(): Language | null {
 /**
  * Save language preference to localStorage and cookie
  */
-export function setStoredLanguage(language: Language): void {
+export function setStoredLanguage(language: Locale): void {
   // Check if we're on the client side
   if (typeof window === "undefined") return;
 
@@ -66,7 +72,7 @@ export function clearStoredLanguage(): void {
 /**
  * Get language preference from cookie (for server-side access)
  */
-export function getLanguageFromCookie(cookieString: string): Language | null {
+export function getLanguageFromCookie(cookieString: string): Locale | null {
   const cookies = cookieString.split(";").map((c) => c.trim());
   const languageCookie = cookies.find((c) =>
     c.startsWith(`${LANGUAGE_COOKIE_KEY}=`),
@@ -74,8 +80,13 @@ export function getLanguageFromCookie(cookieString: string): Language | null {
 
   if (languageCookie) {
     const value = languageCookie.split("=")[1];
-    if (value === "en" || value === "ja") {
-      return value as Language;
+    if (
+      value === "en" ||
+      value === "ja" ||
+      value === "zh-Hans" ||
+      value === "zh-Hant"
+    ) {
+      return value as Locale;
     }
   }
 
