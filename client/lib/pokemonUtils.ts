@@ -25,7 +25,7 @@ function getFormTranslation(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _formName: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _language: "en" | "ja",
+  _language: Locale,
 ): string | null {
   // Special forms now handled by dictionary system
   // This function is deprecated and should use dictionary lookup instead
@@ -210,9 +210,14 @@ export function getPokemonName(
     const formName = nameParts.slice(1).join("-");
 
     // Use species data for localized names
-    if (language === "ja" && pokemon.species?.names) {
+    if (
+      (language === "ja" || language === "zh-Hans" || language === "zh-Hant") &&
+      pokemon.species?.names
+    ) {
       const languageCodes = {
         ja: ["ja", "ja-Hrkt"],
+        "zh-Hans": ["zh-Hans"],
+        "zh-Hant": ["zh-Hant"],
       };
 
       const targetCodes = languageCodes[
@@ -288,10 +293,15 @@ export function getPokemonName(
     const formName = nameParts.slice(1).join("-");
 
     // Handle non-English languages with species names
-    if (language === "ja" && pokemon.species?.names) {
+    if (
+      (language === "ja" || language === "zh-Hans" || language === "zh-Hant") &&
+      pokemon.species?.names
+    ) {
       // Map language codes for PokeAPI
       const languageCodes = {
         ja: ["ja", "ja-Hrkt"],
+        "zh-Hans": ["zh-Hans"],
+        "zh-Hant": ["zh-Hant"],
       };
 
       const targetCodes = languageCodes[
@@ -390,10 +400,15 @@ export function getPokemonName(
   }
 
   // For non-variant Pokemon
-  if (language === "ja" && pokemon.species?.names) {
+  if (
+    (language === "ja" || language === "zh-Hans" || language === "zh-Hant") &&
+    pokemon.species?.names
+  ) {
     // Map language codes for PokeAPI
     const languageCodes = {
       ja: ["ja", "ja-Hrkt"],
+      "zh-Hans": ["zh-Hans"],
+      "zh-Hant": ["zh-Hant"],
     };
 
     const targetCodes = languageCodes[
@@ -429,10 +444,15 @@ export function getEvolutionPokemonName(
     const formName = nameParts.slice(1).join("-");
 
     // Handle non-English languages with species names
-    if (language === "ja" && evolutionDetail.species?.names) {
+    if (
+      (language === "ja" || language === "zh-Hans" || language === "zh-Hant") &&
+      evolutionDetail.species?.names
+    ) {
       // Map language codes for PokeAPI
       const languageCodes = {
         ja: ["ja", "ja-Hrkt"],
+        "zh-Hans": ["zh-Hans"],
+        "zh-Hant": ["zh-Hant"],
       };
 
       const targetCodes = languageCodes[
@@ -490,10 +510,15 @@ export function getEvolutionPokemonName(
   }
 
   // For non-variant Pokemon
-  if (language === "ja" && evolutionDetail.species?.names) {
+  if (
+    (language === "ja" || language === "zh-Hans" || language === "zh-Hant") &&
+    evolutionDetail.species?.names
+  ) {
     // Map language codes for PokeAPI
     const languageCodes = {
       ja: ["ja", "ja-Hrkt"],
+      "zh-Hans": ["zh-Hans"],
+      "zh-Hant": ["zh-Hant"],
     };
 
     const targetCodes = languageCodes[
@@ -530,6 +555,8 @@ export function getPokemonDescription(
   const languageMap: Record<string, string[]> = {
     en: ["en"],
     ja: ["ja", "ja-Hrkt"],
+    "zh-Hans": ["zh-Hans"],
+    "zh-Hant": ["zh-Hant"],
   };
 
   const targetCodes = languageMap[language] || ["en"];
@@ -568,6 +595,8 @@ function getGenusFallback(language: Locale): string {
   const fallbackTexts: Record<Locale, string> = {
     en: "Pokémon",
     ja: "ポケモン",
+    "zh-Hans": "宝可梦",
+    "zh-Hant": "寶可夢",
   };
 
   return fallbackTexts[language] || "Pokémon";
@@ -587,6 +616,8 @@ export function getPokemonGenus(pokemon: Pokemon, language: Locale): string {
   const languageMap: Record<string, string[]> = {
     en: ["en"],
     ja: ["ja", "ja-Hrkt"],
+    "zh-Hans": ["zh-Hans"],
+    "zh-Hant": ["zh-Hant"],
   };
 
   const targetCodes = languageMap[language] || ["en"];
@@ -1078,6 +1109,8 @@ export function getMoveFlavorText(move: Move, language: Locale): string {
   const languageMap: Record<string, string[]> = {
     en: ["en"],
     ja: ["ja", "ja-Hrkt"],
+    "zh-Hans": ["zh-Hans"],
+    "zh-Hant": ["zh-Hant"],
   };
 
   const targetCodes = languageMap[language] || ["en"];

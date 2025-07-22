@@ -23,25 +23,45 @@ interface CardEvolutionChainProps {
   ) => void;
 }
 
-// Helper function to collect all evolution options in a branching chain
-function collectBranchEvolutions(chain: EvolutionDetail): EvolutionDetail[] {
-  const evolutions: EvolutionDetail[] = [];
+// Helper function to determine evolution chain structure
+function analyzeEvolutionChain(chain: EvolutionDetail): {
+  hasMiddleEvolution: boolean;
+  middleEvolution?: EvolutionDetail;
+  finalEvolutions: EvolutionDetail[];
+} {
+  // Check if this is a simple branching evolution (like Eevee)
+  if (chain.evolvesTo && chain.evolvesTo.length > 1) {
+    // Direct branching from base form
+    return {
+      hasMiddleEvolution: false,
+      finalEvolutions: chain.evolvesTo,
+    };
+  }
 
-  // For Pokemon with branching evolutions (like Poliwhirl → Poliwrath/Politoed)
-  if (chain.evolvesTo && chain.evolvesTo.length > 0) {
-    for (const evolution of chain.evolvesTo) {
-      // If this evolution has multiple branches, collect all of them
-      if (evolution.evolvesTo && evolution.evolvesTo.length > 0) {
-        // This is a middle evolution with branches (like Poliwhirl)
-        evolutions.push(...evolution.evolvesTo);
-      } else {
-        // This is a direct evolution (like Eevee's evolutions)
-        evolutions.push(evolution);
-      }
+  // Check if this has a middle evolution that branches (like Poliwag → Poliwhirl → branches)
+  if (chain.evolvesTo && chain.evolvesTo.length === 1) {
+    const middleEvo = chain.evolvesTo[0];
+    if (middleEvo && middleEvo.evolvesTo && middleEvo.evolvesTo.length > 0) {
+      // This is a chain with middle evolution
+      return {
+        hasMiddleEvolution: true,
+        middleEvolution: middleEvo,
+        finalEvolutions: middleEvo.evolvesTo,
+      };
+    } else {
+      // Single evolution chain, no branching
+      return {
+        hasMiddleEvolution: false,
+        finalEvolutions: chain.evolvesTo,
+      };
     }
   }
 
-  return evolutions;
+  // No evolutions
+  return {
+    hasMiddleEvolution: false,
+    finalEvolutions: [],
+  };
 }
 
 export function CardEvolutionChain({
@@ -51,12 +71,14 @@ export function CardEvolutionChain({
   onPokemonClick,
   onFormClick,
 }: CardEvolutionChainProps) {
-  // Collect all evolution branches
-  const evolutions = collectBranchEvolutions(evolutionChain);
+  // Analyze the evolution chain structure
+  const chainAnalysis = analyzeEvolutionChain(evolutionChain);
+  const { hasMiddleEvolution, middleEvolution, finalEvolutions } =
+    chainAnalysis;
   const fallback = getFallbackText(lang);
 
   // Check for duplicate conditions
-  const conditions = evolutions.map((evolution) => {
+  const conditions = finalEvolutions.map((evolution) => {
     if (
       evolution.evolutionDetails &&
       evolution.evolutionDetails.length > 0 &&
@@ -81,7 +103,7 @@ export function CardEvolutionChain({
   );
 
   // For Pokemon with no evolutions, show single card
-  if (evolutions.length === 0) {
+  if (finalEvolutions.length === 0) {
     return (
       <div className="flex flex-col items-center">
         <EvolutionCard
@@ -161,22 +183,70 @@ export function CardEvolutionChain({
 
           {/* Arrow */}
           <EvolutionArrow
-            nextEvolutionId="branch"
+            nextEvolutionId={
+              hasMiddleEvolution ? middleEvolution?.id || "middle" : "branch"
+            }
             showCondition={false}
             variant="horizontal"
           />
 
-          {/* Evolution Options */}
+          {/* Middle Evolution (if exists) */}
+          {hasMiddleEvolution && middleEvolution && (
+            <>
+              <div className="flex flex-col items-center">
+                <EvolutionCard
+                  pokemon={middleEvolution}
+                  dictionary={dictionary}
+                  lang={lang}
+                  onClick={onPokemonClick}
+                  fallback={fallback}
+                />
+
+                {/* Form Variations for middle evolution */}
+                {middleEvolution.forms &&
+                  Array.isArray(middleEvolution.forms) &&
+                  middleEvolution.forms.length > 0 && (
+                    <div className="mt-4 space-y-2">
+                      <div className="text-xs text-gray-600 font-medium text-center">
+                        {dictionary.ui.pokemonDetails.forms}
+                      </div>
+                      <div className="flex flex-wrap gap-2 justify-center max-w-xs">
+                        {middleEvolution.forms.map((form: FormVariant) => (
+                          <FormVariationCard
+                            key={form.id}
+                            form={form}
+                            pokemonName={middleEvolution.name}
+                            lang={lang}
+                            onClick={onFormClick || (() => {})}
+                            dictionary={dictionary}
+                            fallback={fallback}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+              </div>
+
+              {/* Arrow to final evolutions */}
+              <EvolutionArrow
+                nextEvolutionId="branch"
+                showCondition={false}
+                variant="horizontal"
+              />
+            </>
+          )}
+
+          {/* Final Evolution Options */}
           <div
             className={`grid gap-6 ${
-              evolutions.length <= 2
+              finalEvolutions.length <= 2
                 ? "grid-cols-2"
-                : evolutions.length <= 4
+                : finalEvolutions.length <= 4
                   ? "grid-cols-2"
                   : "grid-cols-4"
             }`}
           >
-            {evolutions.map((evolution) => (
+            {finalEvolutions.map((evolution) => (
               <div
                 key={evolution.id}
                 className="flex flex-col items-center space-y-3"
@@ -267,15 +337,65 @@ export function CardEvolutionChain({
           {/* Arrow */}
           <div className="flex justify-center">
             <EvolutionArrow
-              nextEvolutionId="branch"
+              nextEvolutionId={
+                hasMiddleEvolution ? middleEvolution?.id || "middle" : "branch"
+              }
               showCondition={false}
               variant="vertical"
             />
           </div>
 
-          {/* Evolution Options */}
+          {/* Middle Evolution (if exists) */}
+          {hasMiddleEvolution && middleEvolution && (
+            <>
+              <div className="flex flex-col items-center">
+                <EvolutionCard
+                  pokemon={middleEvolution}
+                  dictionary={dictionary}
+                  lang={lang}
+                  onClick={onPokemonClick}
+                  fallback={fallback}
+                />
+
+                {/* Form Variations for middle evolution */}
+                {middleEvolution.forms &&
+                  Array.isArray(middleEvolution.forms) &&
+                  middleEvolution.forms.length > 0 && (
+                    <div className="mt-4 space-y-2">
+                      <div className="text-xs text-gray-600 font-medium text-center">
+                        {dictionary.ui.pokemonDetails.forms}
+                      </div>
+                      <div className="flex flex-wrap gap-2 justify-center max-w-xs">
+                        {middleEvolution.forms.map((form: FormVariant) => (
+                          <FormVariationCard
+                            key={form.id}
+                            form={form}
+                            pokemonName={middleEvolution.name}
+                            lang={lang}
+                            onClick={onFormClick || (() => {})}
+                            dictionary={dictionary}
+                            fallback={fallback}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+              </div>
+
+              {/* Arrow to final evolutions */}
+              <div className="flex justify-center">
+                <EvolutionArrow
+                  nextEvolutionId="branch"
+                  showCondition={false}
+                  variant="vertical"
+                />
+              </div>
+            </>
+          )}
+
+          {/* Final Evolution Options */}
           <div className="grid grid-cols-2 gap-3 px-2">
-            {evolutions.map((evolution) => (
+            {finalEvolutions.map((evolution) => (
               <div
                 key={evolution.id}
                 className="flex flex-col items-center space-y-2 max-w-[160px]"

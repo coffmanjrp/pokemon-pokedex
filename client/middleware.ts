@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getLanguageFromCookie } from "@/lib/languageStorage";
 
-const locales = ["en", "ja"];
+const locales = ["en", "ja", "zh-Hans", "zh-Hant"];
 const defaultLocale = "en";
 
 // Check User-Agent for language indicators
@@ -30,6 +30,51 @@ function getUserAgentLanguage(request: NextRequest): string | null {
     }
   }
 
+  // Check for Traditional Chinese indicators first (more specific)
+  const traditionalChineseIndicators = [
+    "zh-tw",
+    "zh-hk",
+    "zh-mo",
+    "taiwan",
+    "hong kong",
+    "hongkong",
+    "macau",
+    "繁體",
+    "繁体",
+    "正體",
+    "臺灣",
+    "台灣",
+    "台湾",
+    "香港",
+  ];
+
+  for (const indicator of traditionalChineseIndicators) {
+    if (userAgentLower.includes(indicator.toLowerCase())) {
+      return "zh-Hant";
+    }
+  }
+
+  // Check for Simplified Chinese indicators
+  const simplifiedChineseIndicators = [
+    "zh-cn",
+    "zh-sg",
+    "china",
+    "chinese",
+    "中文",
+    "中国",
+    "简体",
+    "簡體",
+    "大陆",
+    "大陸",
+    "新加坡",
+  ];
+
+  for (const indicator of simplifiedChineseIndicators) {
+    if (userAgentLower.includes(indicator.toLowerCase())) {
+      return "zh-Hans";
+    }
+  }
+
   return null;
 }
 
@@ -50,7 +95,7 @@ function getLocale(request: NextRequest): string {
     return cookieLang;
   }
 
-  // 2. Check User-Agent for Japanese detection
+  // 2. Check User-Agent for language detection (Japanese, Chinese)
   const userAgentLang = getUserAgentLanguage(request);
   if (userAgentLang && locales.includes(userAgentLang)) {
     return userAgentLang;
