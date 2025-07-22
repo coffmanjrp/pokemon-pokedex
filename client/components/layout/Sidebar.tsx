@@ -93,6 +93,9 @@ export function Sidebar({
           {/* Header with Logo - positioned to avoid hamburger menu on mobile only */}
           <div className="pt-16 lg:pt-6 pb-6 px-6 border-b border-gray-200">
             <Logo />
+            <p className="text-xs text-gray-500 mt-4 text-left">
+              {dictionary.ui.common.tagline}
+            </p>
           </div>
 
           {/* Generation Buttons */}

@@ -80,6 +80,7 @@ export interface Dictionary {
     };
     common: {
       loading: string;
+      tagline: string;
     };
     notFound: {
       title: string;

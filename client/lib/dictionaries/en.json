@@ -81,7 +81,8 @@
       "validationError": "Invalid data provided"
     },
     "common": {
-      "loading": "Loading"
+      "loading": "Loading",
+      "tagline": "Unofficial fan-made Pokémon database"
     },
     "notFound": {
       "title": "Pokemon Not Found",
