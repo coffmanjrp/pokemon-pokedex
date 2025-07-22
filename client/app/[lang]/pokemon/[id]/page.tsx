@@ -32,7 +32,7 @@ interface PokemonDetailPageProps {
 // Generate static params for SSG with generational build support
 export async function generateStaticParams() {
   const paths = [];
-  const languages = ["en", "ja", "zh-Hans", "zh-Hant"];
+  const languages = ["en", "ja", "zh-Hans", "zh-Hant", "es"];
 
   // Check environment variables for generational build control
   const enableGenerationalBuild =

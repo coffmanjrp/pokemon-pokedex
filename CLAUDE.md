@@ -132,6 +132,13 @@ pokemon-pokedex/
 ### Language Implementation
 @docs/LANGUAGE_IMPLEMENTATION.md
 
+### Supported Languages
+- English (en)
+- Japanese (ja) 
+- Traditional Chinese (zh-Hant)
+- Simplified Chinese (zh-Hans)
+- Spanish (es)
+
 
 
 ## Common Issues & Solutions
