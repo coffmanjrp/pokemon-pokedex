@@ -80,6 +80,7 @@ export interface Dictionary {
     };
     common: {
       loading: string;
+      tagline: string;
     };
     notFound: {
       title: string;
@@ -476,6 +477,12 @@ export interface Dictionary {
     pokemonImageAlt: string;
     fallbackImageAlt: string;
     locale: string;
+  };
+  footer: {
+    copyright: string;
+    trademark: string;
+    disclaimer: string;
+    dataSource: string;
   };
 }
 

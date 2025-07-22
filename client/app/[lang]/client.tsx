@@ -590,8 +590,8 @@ function PokemonListContent({
               )
             ) : (
               // Normal Generation View
-              pokemons.length > 0 && (
-                <div className="flex-1 overflow-auto">
+              <div className="flex-1 overflow-auto">
+                {pokemons.length > 0 && (
                   <PokemonGrid
                     ref={pokemonGridRef}
                     pokemons={pokemons}
@@ -606,8 +606,8 @@ function PokemonListContent({
                     currentGeneration={currentGeneration}
                     onScroll={handleScroll}
                   />
-                </div>
-              )
+                )}
+              </div>
             )}
 
             {/* Generation Switching Overlay */}

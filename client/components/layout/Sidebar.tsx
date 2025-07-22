@@ -13,6 +13,7 @@ import { setStoredLanguage } from "@/lib/languageStorage";
 import { GENERATIONS } from "@/lib/data/generations";
 import { Logo } from "./Logo";
 import { LanguageSelector } from "./LanguageSelector";
+import { CopyrightNotice } from "./CopyrightNotice";
 import { HiBars3, HiXMark } from "react-icons/hi2";
 
 interface SidebarProps {
@@ -92,6 +93,9 @@ export function Sidebar({
           {/* Header with Logo - positioned to avoid hamburger menu on mobile only */}
           <div className="pt-16 lg:pt-6 pb-6 px-6 border-b border-gray-200">
             <Logo />
+            <p className="text-xs text-gray-500 mt-4 text-left">
+              {dictionary.ui.common.tagline}
+            </p>
           </div>
 
           {/* Generation Buttons */}
@@ -140,6 +144,8 @@ export function Sidebar({
               onLanguageChange={handleLanguageChange}
               dictionary={dictionary}
             />
+
+            <CopyrightNotice dictionary={dictionary} />
           </div>
         </div>
       </nav>

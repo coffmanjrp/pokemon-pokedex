@@ -251,6 +251,12 @@ For more solutions, see documentation in `/docs`
 28. ✅ Fixed multi-stage branch evolution display (e.g., Poliwag → Poliwhirl → Poliwrath/Politoed)
 29. ✅ Refactored evolution utilities to /lib/evolution directory
 30. ✅ Added comprehensive branch evolution support with proper TypeScript types
+31. ✅ Added copyright disclaimer and unofficial site notice to sidebar
+32. ✅ Made copyright year dynamic
+33. ✅ Removed unused Footer.tsx component
+34. ✅ Added footer to Pokemon detail pages with consistent styling
+35. ✅ Added tagline under logo indicating unofficial fan-made database
+36. ✅ Fixed TypeScript type definitions for tagline property
 
 ### Next Steps & TODOs
 

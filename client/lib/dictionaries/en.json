@@ -81,7 +81,8 @@
       "validationError": "Invalid data provided"
     },
     "common": {
-      "loading": "Loading"
+      "loading": "Loading",
+      "tagline": "Unofficial fan-made Pokémon database"
     },
     "notFound": {
       "title": "Pokemon Not Found",
@@ -451,8 +452,8 @@
   "meta": {
     "title": "Pokédex - Discover the World of Pokémon",
     "description": "Discover and explore the wonderful world of Pokémon. Search, filter, and learn about your favorite creatures!",
-    "homeTitle": "Pokemon Pokedex | Complete Multi-Generation Pokemon Database",
-    "homeDescription": "Comprehensive Pokemon database featuring 1302+ Pokemon with detailed stats, official artwork, type effectiveness, evolution chains, and move sets. Complete coverage from Generation 1 to 9 with advanced search and filtering capabilities.",
+    "homeTitle": "Unofficial Pokemon Pokedex | Complete Multi-Generation Pokemon Database",
+    "homeDescription": "Unofficial comprehensive Pokemon database featuring 1302+ Pokemon with detailed stats, official artwork, type effectiveness, evolution chains, and move sets. Complete coverage from Generation 1 to 9. This is a fan-made site not affiliated with Nintendo.",
     "listDescription": "Browse all Pokemon from {{region}} region. Filter by type, search by name, and explore detailed information for each Pokemon including stats, evolution chains, and moves.",
     "pokemonTitle": "{{name}} (#{{id}}) - {{type}} Pokémon | Pokédex",
     "pokemonDescription": "{{name}} is a {{type}} type Pokémon with {{hp}} HP, {{attack}} Attack, and {{defense}} Defense. {{description}}",
@@ -462,5 +463,11 @@
     "pokemonImageAlt": "{{name}} - Pokemon Pokedex",
     "fallbackImageAlt": "Pokemon Pokedex - Comprehensive Pokemon Database",
     "locale": "en_US"
+  },
+  "footer": {
+    "copyright": "Pokémon © 1995-{{currentYear}} Nintendo/Creatures Inc./GAME FREAK inc.",
+    "trademark": "Pokémon and Pokémon character names are trademarks of Nintendo.",
+    "disclaimer": "This is an unofficial, non-commercial fan site not affiliated with Nintendo, Creatures Inc., or GAME FREAK inc.",
+    "dataSource": "Data source:"
   }
 }

@@ -5,6 +5,7 @@ import { Locale, Dictionary } from "@/lib/dictionaries";
 import { PokemonBasicInfo } from "./PokemonBasicInfo";
 import { PokemonSpritesGallery } from "../sprites/PokemonSpritesGallery";
 import { PokemonEvolutionChainWrapper } from "../evolution/PokemonEvolutionChainWrapper";
+import { DetailPageFooter } from "@/components/layout/DetailPageFooter";
 
 interface PokemonTopNavigationTabsProps {
   pokemon: Pokemon;
@@ -52,6 +53,9 @@ export function PokemonTopNavigationTabs({
     <div className="min-h-screen bg-gray-50">
       {/* Direct Content - About tab content only */}
       {renderTabContent()}
+
+      {/* Footer */}
+      <DetailPageFooter dictionary={dictionary} />
     </div>
   );
 }
