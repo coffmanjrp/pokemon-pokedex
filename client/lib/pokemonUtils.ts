@@ -25,7 +25,7 @@ function getFormTranslation(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _formName: string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _language: "en" | "ja",
+  _language: Locale,
 ): string | null {
   // Special forms now handled by dictionary system
   // This function is deprecated and should use dictionary lookup instead
