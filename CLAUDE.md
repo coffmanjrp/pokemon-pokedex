@@ -254,6 +254,7 @@ For more solutions, see documentation in `/docs`
 31. ✅ Added copyright disclaimer and unofficial site notice to sidebar
 32. ✅ Made copyright year dynamic
 33. ✅ Removed unused Footer.tsx component
+34. ✅ Added footer to Pokemon detail pages with consistent styling
 
 ### Next Steps & TODOs
 
