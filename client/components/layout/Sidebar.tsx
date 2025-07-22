@@ -13,6 +13,7 @@ import { setStoredLanguage } from "@/lib/languageStorage";
 import { GENERATIONS } from "@/lib/data/generations";
 import { Logo } from "./Logo";
 import { LanguageSelector } from "./LanguageSelector";
+import { CopyrightNotice } from "./CopyrightNotice";
 import { HiBars3, HiXMark } from "react-icons/hi2";
 
 interface SidebarProps {
@@ -140,6 +141,8 @@ export function Sidebar({
               onLanguageChange={handleLanguageChange}
               dictionary={dictionary}
             />
+
+            <CopyrightNotice dictionary={dictionary} />
           </div>
         </div>
       </nav>
