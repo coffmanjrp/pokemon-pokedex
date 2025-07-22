@@ -1,4 +1,4 @@
-export type Locale = "en" | "ja" | "zh-Hans" | "zh-Hant";
+export type Locale = "en" | "ja" | "zh-Hans" | "zh-Hant" | "es";
 
 // Dictionary type definition
 export interface Dictionary {
@@ -77,6 +77,11 @@ export interface Dictionary {
       unknown: string;
       evolutionChainError: string;
       movesError: string;
+      genericError: string;
+      networkError: string;
+      serverError: string;
+      notFoundError: string;
+      validationError: string;
     };
     common: {
       loading: string;
@@ -99,6 +104,7 @@ export interface Dictionary {
       gameHistory: string;
       sprites: string;
       evolutionChain: string;
+      evolutionOptions: string;
       type: string;
       category: string;
       power: string;
@@ -469,6 +475,7 @@ export interface Dictionary {
     description: string;
     homeTitle: string;
     homeDescription: string;
+    listDescription: string;
     pokemonTitle: string;
     pokemonDescription: string;
     pokemonDescriptionShort: string;
@@ -489,7 +496,7 @@ export interface Dictionary {
 export const getLocaleFromPathname = (pathname: string): Locale => {
   const segments = pathname.split("/");
   const locale = segments[1] as Locale;
-  return locale && ["en", "ja", "zh-Hans", "zh-Hant"].includes(locale)
+  return locale && ["en", "ja", "zh-Hans", "zh-Hant", "es"].includes(locale)
     ? locale
     : "en";
 };
@@ -503,7 +510,7 @@ export const generateAlternateLanguageUrl = (
 
   if (
     currentLocale &&
-    ["en", "ja", "zh-Hans", "zh-Hant"].includes(currentLocale)
+    ["en", "ja", "zh-Hans", "zh-Hant", "es"].includes(currentLocale)
   ) {
     segments[1] = newLocale;
     return segments.join("/");

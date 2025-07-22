@@ -67,14 +67,22 @@
       "loadingPokedex": "Cargando Pokédex..."
     },
     "error": {
-      "title": "Algo salió mal",
+      "title": "Error al cargar Pokémon",
       "tryAgain": "Intentar de nuevo",
       "pokemonNotFound": "Pokémon no encontrado",
       "goHome": "Ir al inicio",
-      "unknown": "Error desconocido"
+      "unknown": "Desconocido",
+      "evolutionChainError": "Error al cargar datos de evolución",
+      "movesError": "Error al cargar datos de movimientos",
+      "genericError": "Ocurrió un error",
+      "networkError": "Error de red",
+      "serverError": "Error del servidor",
+      "notFoundError": "Recurso no encontrado",
+      "validationError": "Datos inválidos"
     },
     "common": {
-      "loading": "Cargando..."
+      "loading": "Cargando",
+      "tagline": "Base de datos no oficial de Pokémon"
     },
     "notFound": {
       "title": "Página no encontrada",
@@ -93,6 +101,7 @@
       "gameHistory": "Historia de Juegos",
       "sprites": "Imágenes",
       "evolutionChain": "Cadena Evolutiva",
+      "evolutionOptions": "Opciones de Evolución",
       "type": "Tipo",
       "category": "Categoría",
       "power": "Poder",
@@ -227,9 +236,9 @@
       "simplifiedChinese": "简体中文",
       "spanish": "Español",
       "korean": "한국어",
-      "french": "Francés",
+      "french": "Français",
       "italian": "Italiano",
-      "german": "Alemán",
+      "german": "Deutsch",
       "toggle": "Cambiar idioma"
     },
     "sandbox": {
@@ -247,6 +256,7 @@
       "games": "No hay datos de juegos disponibles",
       "sprites": "No hay sprites disponibles",
       "evolution": "No hay datos de evolución disponibles",
+      "evolutionSoon": "Los datos de evolución estarán disponibles pronto",
       "abilities": "No hay habilidades disponibles",
       "general": "No hay datos disponibles"
     },
@@ -443,8 +453,9 @@
   "meta": {
     "title": "Pokédex - Explora el Mundo Pokémon",
     "description": "Descubre todos los Pokémon con nuestro Pokédex completo. Explora estadísticas, tipos, habilidades, movimientos y cadenas evolutivas de todas las generaciones.",
-    "homeTitle": "Pokédex - Base de Datos Completa de Pokémon",
-    "homeDescription": "Tu Pokédex definitiva con información completa de todas las generaciones. Explora estadísticas detalladas, tipos, habilidades y evoluciones de más de 1000 Pokémon.",
+    "homeTitle": "Pokédex No Oficial | Base de Datos Completa Multi-Generacional de Pokémon",
+    "homeDescription": "Base de datos completa no oficial de Pokémon con más de 1302 Pokémon, estadísticas detalladas, arte oficial, efectividad de tipos, cadenas evolutivas y conjuntos de movimientos. Cobertura completa de Generación 1 a 9. Este es un sitio de fans no afiliado con Nintendo.",
+    "listDescription": "Explora todos los Pokémon de la región {{region}}. Filtra por tipo, busca por nombre y descubre información detallada de cada Pokémon incluyendo estadísticas, cadenas evolutivas y movimientos.",
     "pokemonTitle": "{{name}} (#{{id}}) - Pokémon {{type}} | Pokédex",
     "pokemonDescription": "{{name}} es un Pokémon tipo {{type}} con {{hp}} PS, {{attack}} de Ataque y {{defense}} de Defensa. {{description}}",
     "pokemonDescriptionShort": "{{name}} - Pokémon tipo {{type}} de la Generación {{generation}}. Altura: {{height}}m, Peso: {{weight}}kg.",
@@ -452,6 +463,12 @@
     "homeKeywords": "Pokédex, Pokémon, estadísticas, tipos, habilidades, movimientos, evolución, generaciones, base de datos",
     "pokemonImageAlt": "Arte oficial de {{name}} - Pokémon {{type}}",
     "fallbackImageAlt": "Imagen de Pokémon",
-    "locale": "es"
+    "locale": "es_ES"
+  },
+  "footer": {
+    "copyright": "Pokémon © 1995-{{currentYear}} Nintendo/Creatures Inc./GAME FREAK inc.",
+    "trademark": "Pokémon y los nombres de los personajes Pokémon son marcas registradas de Nintendo.",
+    "disclaimer": "Este es un sitio no oficial, no comercial, hecho por fans, no afiliado con Nintendo, Creatures Inc., o GAME FREAK inc.",
+    "dataSource": "Fuente de datos:"
   }
 }

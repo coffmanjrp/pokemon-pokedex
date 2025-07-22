@@ -23,4 +23,5 @@ export const LANGUAGE_OPTIONS: LanguageOption[] = [
   { value: "ja", labelKey: "japanese", flag: "🇯🇵" },
   { value: "zh-Hans", labelKey: "simplifiedChinese", flag: "🇨🇳" },
   { value: "zh-Hant", labelKey: "traditionalChinese", flag: "🇹🇼" },
+  { value: "es", labelKey: "spanish", flag: "🇪🇸" },
 ];
