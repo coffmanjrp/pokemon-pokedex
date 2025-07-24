@@ -71,10 +71,18 @@
       "tryAgain": "Riprova",
       "pokemonNotFound": "Pokémon non trovato",
       "goHome": "Vai alla Home",
-      "unknown": "Sconosciuto"
+      "unknown": "Sconosciuto",
+      "evolutionChainError": "Errore nel caricamento dei dati di evoluzione",
+      "movesError": "Errore nel caricamento dei dati delle mosse",
+      "genericError": "Si è verificato un errore",
+      "networkError": "Si è verificato un errore di rete",
+      "serverError": "Si è verificato un errore del server",
+      "notFoundError": "Risorsa non trovata",
+      "validationError": "Dati non validi forniti"
     },
     "common": {
-      "loading": "Caricamento"
+      "loading": "Caricamento",
+      "tagline": "Database Pokémon non ufficiale creato dai fan"
     },
     "notFound": {
       "title": "Pokémon Non Trovato",
@@ -93,6 +101,7 @@
       "gameHistory": "Storia dei Giochi",
       "sprites": "Sprite e Artwork",
       "evolutionChain": "Catena Evolutiva",
+      "evolutionOptions": "Opzioni di Evoluzione",
       "type": "Tipo:",
       "category": "Categoria:",
       "power": "Potenza:",
@@ -229,7 +238,7 @@
       "korean": "한국어",
       "french": "Français",
       "italian": "Italiano",
-      "german": "Tedesco",
+      "german": "Deutsch",
       "toggle": "Cambia lingua"
     },
     "sandbox": {
@@ -247,6 +256,7 @@
       "games": "Nessun dato dei giochi disponibile",
       "sprites": "Nessuno sprite disponibile",
       "evolution": "Nessun dato dell'evoluzione disponibile",
+      "evolutionSoon": "I dati di evoluzione saranno disponibili presto",
       "abilities": "Nessuna abilità disponibile",
       "general": "Nessun dato disponibile"
     },
@@ -445,6 +455,7 @@
     "description": "Scopri ed esplora il meraviglioso mondo dei Pokémon. Cerca, filtra e impara sui tuoi creature preferite!",
     "homeTitle": "Pokédex Pokémon | Database Completo Multi-Generazione",
     "homeDescription": "Database completo dei Pokémon con oltre 1302 Pokémon con statistiche dettagliate, artwork ufficiali, efficacia dei tipi, catene evolutive e set di mosse. Copertura completa dalla Generazione 1 alla 9 con capacità avanzate di ricerca e filtraggio.",
+    "listDescription": "Sfoglia tutti i Pokémon della regione {{region}}. Filtra per tipo, cerca per nome ed esplora informazioni dettagliate per ogni Pokémon incluse statistiche, catene evolutive e mosse.",
     "pokemonTitle": "{{name}} (#{{id}}) - Pokémon di tipo {{type}} | Pokédex",
     "pokemonDescription": "{{name}} è un Pokémon di tipo {{type}} con {{hp}} PS, {{attack}} Attacco e {{defense}} Difesa. {{description}}",
     "pokemonDescriptionShort": "{{name}} - Pokémon di tipo {{type}} della Generazione {{generation}}. Altezza: {{height}}m, Peso: {{weight}}kg.",
@@ -453,5 +464,11 @@
     "pokemonImageAlt": "{{name}} - Pokédex Pokémon",
     "fallbackImageAlt": "Pokédex Pokémon - Database Completo dei Pokémon",
     "locale": "it_IT"
+  },
+  "footer": {
+    "copyright": "Pokémon © 1995-{{currentYear}} Nintendo/Creatures Inc./GAME FREAK inc.",
+    "trademark": "Pokémon e i nomi dei personaggi Pokémon sono marchi di Nintendo.",
+    "disclaimer": "Questo è un sito fan non ufficiale e non commerciale, non affiliato con Nintendo, Creatures Inc., o GAME FREAK inc.",
+    "dataSource": "Fonte dati:"
   }
 }

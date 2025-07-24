@@ -124,6 +124,9 @@ export function getPokemonBaseName(
     // Map language codes for PokeAPI
     const languageCodes = {
       ja: ["ja", "ja-Hrkt"],
+      it: ["it"],
+      de: ["de"],
+      fr: ["fr"],
     };
 
     const targetCodes = languageCodes[
@@ -214,7 +217,10 @@ export function getPokemonName(
       (language === "ja" ||
         language === "zh-Hans" ||
         language === "zh-Hant" ||
-        language === "es") &&
+        language === "es" ||
+        language === "it" ||
+        language === "de" ||
+        language === "fr") &&
       pokemon.species?.names
     ) {
       const languageCodes = {
@@ -222,6 +228,9 @@ export function getPokemonName(
         "zh-Hans": ["zh-Hans"],
         "zh-Hant": ["zh-Hant"],
         es: ["es"],
+        it: ["it"],
+        de: ["de"],
+        fr: ["fr"],
       };
 
       const targetCodes = languageCodes[
@@ -301,7 +310,10 @@ export function getPokemonName(
       (language === "ja" ||
         language === "zh-Hans" ||
         language === "zh-Hant" ||
-        language === "es") &&
+        language === "es" ||
+        language === "it" ||
+        language === "de" ||
+        language === "fr") &&
       pokemon.species?.names
     ) {
       // Map language codes for PokeAPI
@@ -310,6 +322,9 @@ export function getPokemonName(
         "zh-Hans": ["zh-Hans"],
         "zh-Hant": ["zh-Hant"],
         es: ["es"],
+        it: ["it"],
+        de: ["de"],
+        fr: ["fr"],
       };
 
       const targetCodes = languageCodes[
@@ -412,7 +427,10 @@ export function getPokemonName(
     (language === "ja" ||
       language === "zh-Hans" ||
       language === "zh-Hant" ||
-      language === "es") &&
+      language === "es" ||
+      language === "it" ||
+      language === "de" ||
+      language === "fr") &&
     pokemon.species?.names
   ) {
     // Map language codes for PokeAPI
@@ -421,6 +439,9 @@ export function getPokemonName(
       "zh-Hans": ["zh-Hans"],
       "zh-Hant": ["zh-Hant"],
       es: ["es"],
+      it: ["it"],
+      de: ["de"],
+      fr: ["fr"],
     };
 
     const targetCodes = languageCodes[
@@ -460,7 +481,10 @@ export function getEvolutionPokemonName(
       (language === "ja" ||
         language === "zh-Hans" ||
         language === "zh-Hant" ||
-        language === "es") &&
+        language === "es" ||
+        language === "it" ||
+        language === "de" ||
+        language === "fr") &&
       evolutionDetail.species?.names
     ) {
       // Map language codes for PokeAPI
@@ -469,6 +493,9 @@ export function getEvolutionPokemonName(
         "zh-Hans": ["zh-Hans"],
         "zh-Hant": ["zh-Hant"],
         es: ["es"],
+        it: ["it"],
+        de: ["de"],
+        fr: ["fr"],
       };
 
       const targetCodes = languageCodes[
@@ -530,7 +557,10 @@ export function getEvolutionPokemonName(
     (language === "ja" ||
       language === "zh-Hans" ||
       language === "zh-Hant" ||
-      language === "es") &&
+      language === "es" ||
+      language === "it" ||
+      language === "de" ||
+      language === "fr") &&
     evolutionDetail.species?.names
   ) {
     // Map language codes for PokeAPI
@@ -539,6 +569,9 @@ export function getEvolutionPokemonName(
       "zh-Hans": ["zh-Hans"],
       "zh-Hant": ["zh-Hant"],
       es: ["es"],
+      it: ["it"],
+      de: ["de"],
+      fr: ["fr"],
     };
 
     const targetCodes = languageCodes[
@@ -578,6 +611,9 @@ export function getPokemonDescription(
     "zh-Hans": ["zh-Hans"],
     "zh-Hant": ["zh-Hant"],
     es: ["es"],
+    it: ["it"],
+    de: ["de"],
+    fr: ["fr"],
   };
 
   const targetCodes = languageMap[language] || ["en"];
@@ -619,6 +655,9 @@ function getGenusFallback(language: Locale): string {
     "zh-Hans": "宝可梦",
     "zh-Hant": "寶可夢",
     es: "Pokémon",
+    it: "Pokémon",
+    de: "Pokémon",
+    fr: "Pokémon",
   };
 
   return fallbackTexts[language] || "Pokémon";
@@ -641,6 +680,9 @@ export function getPokemonGenus(pokemon: Pokemon, language: Locale): string {
     "zh-Hans": ["zh-Hans"],
     "zh-Hant": ["zh-Hant"],
     es: ["es"],
+    it: ["it"],
+    de: ["de"],
+    fr: ["fr"],
   };
 
   const targetCodes = languageMap[language] || ["en"];
@@ -719,6 +761,9 @@ export function getAbilityName(
       "zh-Hant": ["zh-Hant"],
       "zh-Hans": ["zh-Hans"],
       es: ["es"],
+      it: ["it"],
+      de: ["de"],
+      fr: ["fr"],
     };
     const targetLanguage = languageMap[language] || ["en"];
 
@@ -939,6 +984,9 @@ export function getMoveName(move: Move, language: Locale): string {
       "zh-Hant": ["zh-Hant"],
       "zh-Hans": ["zh-Hans"],
       es: ["es"],
+      it: ["it"],
+      de: ["de"],
+      fr: ["fr"],
     };
     const targetLanguage = languageMap[language] || ["en"];
 
@@ -1135,6 +1183,9 @@ export function getMoveFlavorText(move: Move, language: Locale): string {
     "zh-Hans": ["zh-Hans"],
     "zh-Hant": ["zh-Hant"],
     es: ["es"],
+    it: ["it"],
+    de: ["de"],
+    fr: ["fr"],
   };
 
   const targetCodes = languageMap[language] || ["en"];
@@ -1187,6 +1238,9 @@ export function getMoveDamageClassName(
       "zh-Hant": ["zh-Hant"],
       "zh-Hans": ["zh-Hans"],
       es: ["es"],
+      it: ["it"],
+      de: ["de"],
+      fr: ["fr"],
     };
     const targetLanguage = languageMap[language] || ["en"];
 
@@ -1231,6 +1285,9 @@ export function getMoveTargetName(
       "zh-Hant": ["zh-Hant"],
       "zh-Hans": ["zh-Hans"],
       es: ["es"],
+      it: ["it"],
+      de: ["de"],
+      fr: ["fr"],
     };
     const targetLanguage = languageMap[language] || ["en"];
 

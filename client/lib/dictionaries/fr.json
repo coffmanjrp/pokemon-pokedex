@@ -71,10 +71,18 @@
       "tryAgain": "Réessayer",
       "pokemonNotFound": "Pokémon introuvable",
       "goHome": "Aller à l'accueil",
-      "unknown": "Inconnu"
+      "unknown": "Inconnu",
+      "evolutionChainError": "Erreur lors du chargement des données d'évolution",
+      "movesError": "Erreur lors du chargement des données des attaques",
+      "genericError": "Une erreur s'est produite",
+      "networkError": "Erreur réseau survenue",
+      "serverError": "Erreur serveur survenue",
+      "notFoundError": "Ressource introuvable",
+      "validationError": "Données invalides fournies"
     },
     "common": {
-      "loading": "Chargement"
+      "loading": "Chargement",
+      "tagline": "Base de données Pokémon non officielle créée par des fans"
     },
     "notFound": {
       "title": "Pokémon non trouvé",
@@ -93,6 +101,7 @@
       "gameHistory": "Historique des jeux",
       "sprites": "Sprites et Illustrations",
       "evolutionChain": "Chaîne d'évolution",
+      "evolutionOptions": "Options d'évolution",
       "type": "Type :",
       "category": "Catégorie :",
       "power": "Puissance :",
@@ -221,15 +230,15 @@
       "toggle": "Changer le thème"
     },
     "language": {
-      "english": "Anglais",
-      "japanese": "Japonais",
+      "english": "English",
+      "japanese": "日本語",
       "french": "Français",
-      "traditionalChinese": "Chinois traditionnel",
-      "simplifiedChinese": "Chinois simplifié",
-      "spanish": "Espagnol",
-      "korean": "Coréen",
+      "traditionalChinese": "繁體中文",
+      "simplifiedChinese": "简体中文",
+      "spanish": "Español",
+      "korean": "한국어",
       "italian": "Italiano",
-      "german": "Allemand",
+      "german": "Deutsch",
       "toggle": "Changer la langue"
     },
     "sandbox": {
@@ -247,6 +256,7 @@
       "games": "Aucune donnée de jeu disponible",
       "sprites": "Aucun sprite disponible",
       "evolution": "Aucune donnée d'évolution disponible",
+      "evolutionSoon": "Les données d'évolution seront bientôt disponibles",
       "abilities": "Aucun talent disponible",
       "general": "Aucune donnée disponible"
     },
@@ -445,6 +455,7 @@
     "description": "Découvrez et explorez le merveilleux monde des Pokémon. Recherchez, filtrez et apprenez tout sur vos créatures préférées !",
     "homeTitle": "Pokédex Pokémon | Base de données complète multi-générations",
     "homeDescription": "Base de données complète de Pokémon comprenant plus de 1302 Pokémon avec statistiques détaillées, illustrations officielles, efficacité des types, chaînes d'évolution et sets d'attaques. Couverture complète de la Génération 1 à 9 avec recherche avancée et capacités de filtrage.",
+    "listDescription": "Parcourez tous les Pokémon de la région {{region}}. Filtrez par type, recherchez par nom et explorez des informations détaillées pour chaque Pokémon, y compris les statistiques, les chaînes d'évolution et les attaques.",
     "pokemonTitle": "{{name}} (#{{id}}) - Pokémon {{type}} | Pokédex",
     "pokemonDescription": "{{name}} est un Pokémon de type {{type}} avec {{hp}} PV, {{attack}} d'Attaque et {{defense}} de Défense. {{description}}",
     "pokemonDescriptionShort": "{{name}} - Pokémon de type {{type}} de la Génération {{generation}}. Taille : {{height}}m, Poids : {{weight}}kg.",
@@ -453,5 +464,11 @@
     "pokemonImageAlt": "{{name}} - Pokédex Pokémon",
     "fallbackImageAlt": "Pokédex Pokémon - Base de données complète de Pokémon",
     "locale": "fr_FR"
+  },
+  "footer": {
+    "copyright": "Pokémon © 1995-{{currentYear}} Nintendo/Creatures Inc./GAME FREAK inc.",
+    "trademark": "Pokémon et les noms de personnages Pokémon sont des marques de Nintendo.",
+    "disclaimer": "Ceci est un site de fans non officiel et non commercial, non affilié à Nintendo, Creatures Inc., ou GAME FREAK inc.",
+    "dataSource": "Source de données :"
   }
 }
