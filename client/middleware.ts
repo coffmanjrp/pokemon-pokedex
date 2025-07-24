@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getLanguageFromCookie } from "@/lib/languageStorage";
 
-const locales = ["en", "ja", "zh-Hans", "zh-Hant", "es"];
+const locales = ["en", "ja", "zh-Hans", "zh-Hant", "es", "it", "de", "fr"];
 const defaultLocale = "en";
 
 // Check User-Agent for language indicators
@@ -97,6 +97,76 @@ function getUserAgentLanguage(request: NextRequest): string | null {
   for (const indicator of spanishIndicators) {
     if (userAgentLower.includes(indicator.toLowerCase())) {
       return "es";
+    }
+  }
+
+  // Check for Italian language indicators
+  const italianIndicators = [
+    "it",
+    "it-it",
+    "italian",
+    "italiano",
+    "italy",
+    "italia",
+    "rome",
+    "roma",
+    "milan",
+    "milano",
+  ];
+
+  for (const indicator of italianIndicators) {
+    if (userAgentLower.includes(indicator.toLowerCase())) {
+      return "it";
+    }
+  }
+
+  // Check for German language indicators
+  const germanIndicators = [
+    "de",
+    "de-de",
+    "de-at",
+    "de-ch",
+    "german",
+    "deutsch",
+    "germany",
+    "deutschland",
+    "austria",
+    "österreich",
+    "switzerland",
+    "schweiz",
+    "berlin",
+    "munich",
+    "münchen",
+  ];
+
+  for (const indicator of germanIndicators) {
+    if (userAgentLower.includes(indicator.toLowerCase())) {
+      return "de";
+    }
+  }
+
+  // Check for French language indicators
+  const frenchIndicators = [
+    "fr",
+    "fr-fr",
+    "fr-ca",
+    "fr-be",
+    "fr-ch",
+    "french",
+    "français",
+    "france",
+    "paris",
+    "canada",
+    "québec",
+    "quebec",
+    "belgique",
+    "belgium",
+    "suisse",
+  ];
+
+  for (const indicator of frenchIndicators) {
+    if (userAgentLower.includes(indicator.toLowerCase())) {
+      return "fr";
     }
   }
 

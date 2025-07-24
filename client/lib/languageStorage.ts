@@ -19,7 +19,10 @@ export function getStoredLanguage(): Locale | null {
         stored === "ja" ||
         stored === "zh-Hans" ||
         stored === "zh-Hant" ||
-        stored === "es")
+        stored === "es" ||
+        stored === "it" ||
+        stored === "de" ||
+        stored === "fr")
     ) {
       return stored as Locale;
     }
@@ -86,7 +89,10 @@ export function getLanguageFromCookie(cookieString: string): Locale | null {
       value === "ja" ||
       value === "zh-Hans" ||
       value === "zh-Hant" ||
-      value === "es"
+      value === "es" ||
+      value === "it" ||
+      value === "de" ||
+      value === "fr"
     ) {
       return value as Locale;
     }

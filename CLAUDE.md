@@ -138,6 +138,9 @@ pokemon-pokedex/
 - Traditional Chinese (zh-Hant)
 - Simplified Chinese (zh-Hans)
 - Spanish (es)
+- Italian (it)
+- German (de)
+- French (fr)
 
 
 
@@ -271,6 +274,7 @@ For more solutions, see documentation in `/docs`
 38. ✅ Added User-Agent detection for Chinese browsers
 39. ✅ Updated Pokemon data functions to support Chinese localization
 40. ✅ Created comprehensive language implementation documentation
+41. ✅ Added Italian, German, and French language support
 
 ### Next Steps & TODOs
 
