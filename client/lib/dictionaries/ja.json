@@ -1,11 +1,14 @@
 {
   "ui": {
     "search": {
-      "placeholder": "ポケモンの名前やIDで検索...",
+      "placeholder": "ポケモンの名前や図鑑番号で検索...",
       "noResults": "ポケモンが見つかりません",
       "noResultsDescription": "検索条件やフィルターを調整してください",
       "noFilterResults": "フィルター条件に一致するポケモンが見つかりません",
-      "clearSearch": "検索をクリア"
+      "clearSearch": "検索をクリア",
+      "currentGeneration": "現在の世代",
+      "allGenerations": "すべての世代",
+      "searchScope": "検索範囲:"
     },
     "filters": {
       "title": "フィルター",

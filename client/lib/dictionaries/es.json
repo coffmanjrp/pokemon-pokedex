@@ -1,11 +1,14 @@
 {
   "ui": {
     "search": {
-      "placeholder": "Buscar Pokémon por nombre o ID...",
+      "placeholder": "Buscar Pokémon por nombre o número de pokédex...",
       "noResults": "No se encontraron Pokémon",
       "noResultsDescription": "Intenta ajustar tus términos de búsqueda o filtros",
       "noFilterResults": "Ningún Pokémon coincide con los filtros actuales",
-      "clearSearch": "Borrar búsqueda"
+      "clearSearch": "Borrar búsqueda",
+      "currentGeneration": "Generación Actual",
+      "allGenerations": "Todas las Generaciones",
+      "searchScope": "Buscar en:"
     },
     "filters": {
       "title": "Filtros",

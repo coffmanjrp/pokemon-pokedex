@@ -152,7 +152,7 @@ export function TypeFilter({
           ${isTypeFilterOpen ? "mt-3" : ""} lg:mt-0
         `}
       >
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 py-1">
           <span className="hidden lg:inline text-sm font-medium text-gray-700 mr-2">
             {dictionary.ui.filters?.filterByType || "Filter by type:"}
           </span>

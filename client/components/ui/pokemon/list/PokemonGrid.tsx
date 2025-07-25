@@ -263,3 +263,7 @@ export const PokemonGrid = forwardRef<PokemonGridHandle, PokemonGridProps>(
 );
 
 PokemonGrid.displayName = "PokemonGrid";
+
+// Export PokemonCard as a static property for external use
+(PokemonGrid as unknown as { PokemonCard: typeof PokemonCard }).PokemonCard =
+  PokemonCard;

@@ -17,6 +17,9 @@ export interface Dictionary {
       noResultsDescription: string;
       noFilterResults: string;
       clearSearch: string;
+      currentGeneration: string;
+      allGenerations: string;
+      searchScope: string;
     };
     filters: {
       title: string;
