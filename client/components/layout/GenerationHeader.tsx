@@ -7,6 +7,7 @@ import { TypeFilter } from "./TypeFilter";
 import { useState, useEffect, useRef } from "react";
 import { SearchIcon } from "@/components/ui/icons";
 import { gsap } from "gsap";
+import { SearchScope } from "@/types/search";
 
 interface GenerationHeaderProps {
   currentGeneration: number;
@@ -24,6 +25,9 @@ interface GenerationHeaderProps {
   onTypeFilter?: (types: string[]) => void;
   isShrinked?: boolean;
   onMouseEnter?: () => void;
+  searchScope?: SearchScope;
+  onSearchScopeChange?: (scope: SearchScope) => void;
+  showSearchScopeToggle?: boolean;
 }
 
 export function GenerationHeader({
@@ -42,6 +46,9 @@ export function GenerationHeader({
   onTypeFilter,
   isShrinked = false,
   onMouseEnter,
+  searchScope = SearchScope.CURRENT_GENERATION,
+  onSearchScopeChange,
+  showSearchScopeToggle = false,
 }: GenerationHeaderProps) {
   const [searchQuery, setSearchQuery] = useState(externalSearchQuery);
   const [isMounted, setIsMounted] = useState(false);
@@ -352,6 +359,11 @@ export function GenerationHeader({
               suggestions={searchSuggestions}
               className="w-full"
               activeTypeFilters={selectedTypes || []}
+              searchScope={searchScope}
+              {...(onSearchScopeChange && {
+                onScopeChange: onSearchScopeChange,
+              })}
+              showScopeToggle={showSearchScopeToggle}
             />
           </div>
         )}
@@ -399,6 +411,11 @@ export function GenerationHeader({
                 suggestions={searchSuggestions}
                 className="w-full"
                 activeTypeFilters={selectedTypes || []}
+                searchScope={searchScope}
+                {...(onSearchScopeChange && {
+                  onScopeChange: onSearchScopeChange,
+                })}
+                showScopeToggle={showSearchScopeToggle}
               />
             </div>
           )}

@@ -4,7 +4,9 @@ import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/hooks";
 import { Dictionary } from "@/lib/dictionaries";
 import { useState, useRef, useEffect, useCallback } from "react";
-import { HiMagnifyingGlass, HiXMark } from "react-icons/hi2";
+import { HiMagnifyingGlass, HiXMark, HiGlobeAlt } from "react-icons/hi2";
+import { MdCatchingPokemon } from "react-icons/md";
+import { SearchScope } from "@/types/search";
 
 interface SearchBarProps {
   value: string;
@@ -17,6 +19,9 @@ interface SearchBarProps {
   suggestions?: string[];
   loading?: boolean;
   activeTypeFilters?: string[];
+  searchScope?: SearchScope;
+  onScopeChange?: (scope: SearchScope) => void;
+  showScopeToggle?: boolean;
 }
 
 export function SearchBar({
@@ -28,6 +33,9 @@ export function SearchBar({
   dictionary,
   loading = false,
   activeTypeFilters = [],
+  searchScope = SearchScope.CURRENT_GENERATION,
+  onScopeChange,
+  showScopeToggle = false,
 }: SearchBarProps) {
   const { dictionary: reduxDictionary } = useAppSelector((state) => state.ui);
   const [isFocused, setIsFocused] = useState(false);
@@ -87,8 +95,55 @@ export function SearchBar({
     setIsFocused(false);
   };
 
+  const handleScopeToggle = useCallback(() => {
+    if (onScopeChange) {
+      const newScope =
+        searchScope === SearchScope.CURRENT_GENERATION
+          ? SearchScope.ALL_GENERATIONS
+          : SearchScope.CURRENT_GENERATION;
+      onScopeChange(newScope);
+    }
+  }, [searchScope, onScopeChange]);
+
   return (
     <div className={cn("relative", className)}>
+      {/* Search Scope Toggle */}
+      {showScopeToggle && onScopeChange && (
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-xs text-gray-500">
+            {currentDictionary?.ui.search?.searchScope || "Search in:"}
+          </span>
+          <button
+            type="button"
+            onClick={handleScopeToggle}
+            className={cn(
+              "flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all",
+              searchScope === SearchScope.ALL_GENERATIONS
+                ? "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200",
+            )}
+          >
+            {searchScope === SearchScope.ALL_GENERATIONS ? (
+              <>
+                <HiGlobeAlt className="w-4 h-4" />
+                <span>
+                  {currentDictionary?.ui.search?.allGenerations ||
+                    "All Generations"}
+                </span>
+              </>
+            ) : (
+              <>
+                <MdCatchingPokemon className="w-4 h-4" />
+                <span>
+                  {currentDictionary?.ui.search?.currentGeneration ||
+                    "Current Generation"}
+                </span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="relative">
         {/* Search Icon */}
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

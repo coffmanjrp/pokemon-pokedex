@@ -87,16 +87,34 @@ const PokemonCard = memo(function PokemonCard({
     const linkElement = linkRef.current;
     if (!linkElement) return;
 
-    // Find the grid container for border echo effects
-    const gridContainer = linkElement.closest(".grid") as HTMLElement;
+    // Find the grid container - try both standard grid and virtual grid containers
+    let gridContainer = linkElement.closest(".grid") as HTMLElement;
+
+    // If not found, look for the virtual grid container (react-window)
+    if (!gridContainer) {
+      // Look for the react-window Grid container by traversing up the DOM
+      let parent = linkElement.parentElement;
+      while (parent && parent !== document.body) {
+        // Check if this is the react-window container (has specific data attributes or styles)
+        if (parent.style.position === "relative" && parent.style.overflow) {
+          gridContainer = parent;
+          break;
+        }
+        parent = parent.parentElement;
+      }
+    }
+
+    // If still not found, use the closest positioned parent as fallback
+    if (!gridContainer) {
+      gridContainer = linkElement.closest(
+        '[style*="position: relative"]',
+      ) as HTMLElement;
+    }
 
     if (!gridContainer) {
       console.warn("Grid container not found for particle echo combo effect");
       return;
     }
-
-    // Use actual click position for particle burst
-    // No need to modify the click event - use it as is
 
     const animationConfig: AnimationConfig = {
       pokemon,

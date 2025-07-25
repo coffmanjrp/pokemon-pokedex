@@ -119,7 +119,7 @@ pokemon-pokedex/
 
 - **Pokemon Display**: SSG detail pages, CSR list pages with virtual scrolling
 - **Navigation**: 9 generations + forms, seamless switching with cache, scroll position restoration
-- **Search**: Multi-language with Japanese support, type filtering
+- **Search**: Multi-language with Japanese support, type filtering, cross-generation search
 - **Animations**: 26 GSAP effects with classification-based triggers
 - **Performance**: localStorage + CDN caching, parallel builds, optimized images
 - **SEO**: Structured data, sitemaps, Open Graph, multi-language support
@@ -156,6 +156,8 @@ pokemon-pokedex/
 **Game History Tab**: Currently unavailable (gameIndices not yet synced to Supabase)  
 **Redux Errors**: Wrap all useEffects with try-catch, avoid dispatching undefined actions  
 **TypeScript Strict**: Use conditional assignment for optional properties with exactOptionalPropertyTypes  
+**Virtual Scroll Animations**: Account for scroll offset when calculating animation positions  
+**Hover Animations**: Disabled for special Pokemon (Baby, Legendary, Mythical)  
 
 For more solutions, see documentation in `/docs`
 
@@ -275,6 +277,11 @@ For more solutions, see documentation in `/docs`
 39. ✅ Updated Pokemon data functions to support Chinese localization
 40. ✅ Created comprehensive language implementation documentation
 41. ✅ Added Italian, German, and French language support
+42. ✅ Implemented cross-generation search with scope toggle
+43. ✅ Fixed Japanese search in all generations mode
+44. ✅ Updated search placeholder text to use "図鑑番号" (dex number)
+45. ✅ Disabled hover animations for special Pokemon
+46. ✅ Fixed particle-echo-combo animation issues with virtual scrolling
 
 ### Next Steps & TODOs
 

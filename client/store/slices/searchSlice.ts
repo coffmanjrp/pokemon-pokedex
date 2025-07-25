@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Pokemon, PokemonTypeName } from "@/types/pokemon";
+import { SearchScope } from "@/types/search";
 
 export interface SearchFilters {
   types: PokemonTypeName[];
@@ -12,6 +13,7 @@ export interface SearchResult {
   pokemon: Pokemon;
   matchType: "name" | "id" | "type" | "ability";
   matchedValue: string;
+  generation?: number; // Added for cross-generation search
 }
 
 export interface SearchState {
@@ -26,6 +28,15 @@ export interface SearchState {
   totalResults: number;
   hasNextPage: boolean;
   endCursor: string | null;
+  searchScope: SearchScope; // Added for cross-generation search
+  allGenerationsData:
+    | {
+        // Cache for all generations search
+        query: string;
+        results: SearchResult[];
+        timestamp: number;
+      }
+    | undefined;
 }
 
 const initialState: SearchState = {
@@ -43,6 +54,8 @@ const initialState: SearchState = {
   totalResults: 0,
   hasNextPage: false,
   endCursor: null,
+  searchScope: SearchScope.CURRENT_GENERATION,
+  allGenerationsData: undefined,
 };
 
 const searchSlice = createSlice({
@@ -124,6 +137,28 @@ const searchSlice = createSlice({
       state.endCursor = null;
     },
 
+    setSearchScope: (state, action: PayloadAction<SearchScope>) => {
+      state.searchScope = action.payload;
+      // Clear cached all generations data when switching scope
+      if (action.payload === SearchScope.CURRENT_GENERATION) {
+        state.allGenerationsData = undefined;
+      }
+    },
+
+    setCachedAllGenerationsData: (
+      state,
+      action: PayloadAction<{
+        query: string;
+        results: SearchResult[];
+      }>,
+    ) => {
+      state.allGenerationsData = {
+        query: action.payload.query,
+        results: action.payload.results,
+        timestamp: Date.now(),
+      };
+    },
+
     clearFilters: (state) => {
       state.filters = {
         types: [],
@@ -174,6 +209,8 @@ export const {
   setHasNextPage,
   setEndCursor,
   clearSearch,
+  setSearchScope,
+  setCachedAllGenerationsData,
   clearFilters,
   addTypeFilter,
   removeTypeFilter,

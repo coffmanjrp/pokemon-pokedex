@@ -101,8 +101,6 @@ function transformSupabasePokemon(
 // Get Pokemon by generation with minimal data for list view
 export async function getPokemonByGeneration(generation: number) {
   try {
-    console.log(`Fetching Pokemon for generation ${generation}...`);
-
     // Query with minimal fields plus localized names from species_data
     // For now, fetch minimal data and species_data separately to avoid parsing issues
     const { data, error } = await supabase
@@ -117,9 +115,6 @@ export async function getPokemonByGeneration(generation: number) {
       throw new Error(handleSupabaseError(error));
     }
 
-    console.log(
-      `Successfully fetched ${data?.length || 0} Pokemon for generation ${generation}`,
-    );
     return data?.map(transformSupabasePokemon) || [];
   } catch (error) {
     console.error("Error in getPokemonByGeneration:", error);
@@ -274,11 +269,134 @@ export async function searchPokemon(query: string, _language: Locale = "en") {
   }
 }
 
+// Search Pokemon across all generations
+export async function searchAllGenerationsPokemon(
+  query: string,
+  filters?: { types?: string[] },
+  offset = 0,
+  limit = 50,
+) {
+  try {
+    // For Japanese/other language searches, we need to fetch all and filter client-side
+    // This is a temporary solution until we implement a proper server-side search
+    const isNumericQuery = !isNaN(parseInt(query));
+
+    if (!isNumericQuery && query.trim().length > 0) {
+      // Fetch all Pokemon (excluding forms) for client-side filtering
+      let queryBuilder = supabase
+        .from("pokemon")
+        .select("id, name, types, sprites, species_data")
+        .lt("id", 10000)
+        .order("id");
+
+      // Apply type filters if present
+      if (filters?.types && filters.types.length > 0) {
+        const typeConditions = filters.types
+          .map(
+            (type) =>
+              `types->0->type->name.eq.${type},types->1->type->name.eq.${type}`,
+          )
+          .join(",");
+        queryBuilder = queryBuilder.or(typeConditions);
+      }
+
+      const { data, error } = await queryBuilder;
+
+      if (error) {
+        console.error("Error fetching Pokemon for search:", error);
+        throw new Error(handleSupabaseError(error));
+      }
+
+      // Filter on client side for name matches (including localized names)
+      const searchLower = query.toLowerCase();
+      const filteredData =
+        data?.filter((pokemon) => {
+          // Check English name
+          if (pokemon.name.toLowerCase().includes(searchLower)) {
+            return true;
+          }
+
+          // Check localized names in species_data
+          if (
+            pokemon.species_data &&
+            typeof pokemon.species_data === "object"
+          ) {
+            const speciesData = pokemon.species_data as Record<string, unknown>;
+            if (speciesData.names && Array.isArray(speciesData.names)) {
+              return speciesData.names.some(
+                (nameObj: { name?: string }) =>
+                  nameObj.name &&
+                  nameObj.name.toLowerCase().includes(searchLower),
+              );
+            }
+          }
+
+          return false;
+        }) || [];
+
+      // Apply pagination to filtered results
+      const paginatedData = filteredData.slice(offset, offset + limit);
+
+      return {
+        pokemon: paginatedData.map(transformSupabasePokemon),
+        totalCount: filteredData.length,
+        hasNextPage: filteredData.length > offset + limit,
+      };
+    } else {
+      // Original logic for numeric queries or empty queries
+      let queryBuilder = supabase
+        .from("pokemon")
+        .select("id, name, types, sprites, species_data", { count: "exact" });
+
+      // Exclude Generation 0 forms (ID >= 10000)
+      queryBuilder = queryBuilder.lt("id", 10000);
+
+      // Apply search query
+      if (query.trim()) {
+        const numericQuery = parseInt(query);
+        if (!isNaN(numericQuery)) {
+          queryBuilder = queryBuilder.eq("id", numericQuery);
+        } else {
+          queryBuilder = queryBuilder.ilike("name", `%${query}%`);
+        }
+      }
+
+      // Apply type filters
+      if (filters?.types && filters.types.length > 0) {
+        const typeConditions = filters.types
+          .map(
+            (type) =>
+              `types->0->type->name.eq.${type},types->1->type->name.eq.${type}`,
+          )
+          .join(",");
+        queryBuilder = queryBuilder.or(typeConditions);
+      }
+
+      // Apply pagination
+      queryBuilder = queryBuilder.range(offset, offset + limit - 1).order("id");
+
+      const { data, error, count } = await queryBuilder;
+
+      if (error) {
+        console.error("Error searching Pokemon across generations:", error);
+        throw new Error(handleSupabaseError(error));
+      }
+
+      return {
+        pokemon: data?.map(transformSupabasePokemon) || [],
+        totalCount: count || 0,
+        hasNextPage: (count || 0) > offset + limit,
+      };
+    }
+  } catch (error) {
+    console.error("Error in searchAllGenerationsPokemon:", error);
+    throw error;
+  }
+}
+
 // Get Pokemon forms from pokemon_forms table
 export async function getPokemonForms() {
   try {
-    console.log("Fetching Pokemon forms from pokemon_forms table...");
-
     // Fetch forms from pokemon_forms table with their base Pokemon data
     const { data, error } = await supabase
       .from("pokemon_forms")
@@ -305,8 +423,6 @@ export async function getPokemonForms() {
       console.error("Error fetching Pokemon forms:", error);
       throw new Error(handleSupabaseError(error));
     }
-
-    console.log(`Successfully fetched ${data?.length || 0} Pokemon forms`);
 
     // Transform form data to match Pokemon type
     const transformedPokemon = data?.map((form) => {

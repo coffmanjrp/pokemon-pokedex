@@ -14,12 +14,17 @@ import {
   clearFilters,
   SearchResult,
   SearchFilters,
+  setSearchScope,
+  setCachedAllGenerationsData,
 } from "@/store/slices/searchSlice";
 import { useCallback, useEffect, useMemo } from "react";
 import { useDebounce } from "./useDebounce";
 import { getPokemonName } from "@/lib/pokemonUtils";
 import { japaneseMatch } from "@/lib/utils/japaneseUtils";
 import { POKEMON_TYPES, type PokemonTypeName } from "@/lib/data/index";
+import { SearchScope } from "@/types/search";
+import { searchAllGenerationsPokemon } from "@/lib/supabase/pokemon";
+import { getGenerationByPokemonId } from "@/lib/data/generations";
 
 interface UsePokemonSearchOptions {
   enableSuggestions?: boolean;
@@ -40,6 +45,8 @@ export function usePokemonSearch({
     searchHistory,
     isSearchMode,
     error,
+    searchScope,
+    allGenerationsData,
   } = useAppSelector((state) => state.search);
 
   const { pokemons } = useAppSelector((state) => state.pokemon);
@@ -279,17 +286,92 @@ export function usePokemonSearch({
   // Re-run search when Pokemon list updates (for dynamic filtering)
   // Using pokemons.length as dependency to avoid deep comparison issues
   useEffect(() => {
-    // Only re-run if we're in search mode and have a query or active filters
-    if (isSearchMode && (query.trim().length > 0 || filters.types.length > 0)) {
+    // Only re-run if we're in search mode, current generation scope, and have a query or active filters
+    if (
+      isSearchMode &&
+      searchScope === SearchScope.CURRENT_GENERATION &&
+      (query.trim().length > 0 || filters.types.length > 0)
+    ) {
       // Perform search with current query and filters
       const updatedResults = performSearch(query, filters);
       dispatch(setResults(updatedResults));
     }
-  }, [pokemons.length, isSearchMode, query, filters, performSearch, dispatch]);
+  }, [
+    pokemons.length,
+    isSearchMode,
+    query,
+    filters,
+    performSearch,
+    dispatch,
+    searchScope,
+  ]);
+
+  // Perform search across all generations
+  const performAllGenerationsSearch = useCallback(
+    async (searchQuery: string, searchFilters?: Partial<SearchFilters>) => {
+      dispatch(setIsSearching(true));
+      dispatch(setError(null));
+
+      try {
+        // Check cache first
+        if (
+          allGenerationsData &&
+          allGenerationsData.query === searchQuery &&
+          Date.now() - allGenerationsData.timestamp < 300000 // 5 minutes cache
+        ) {
+          dispatch(setResults(allGenerationsData.results));
+          dispatch(setIsSearchMode(true));
+          return;
+        }
+
+        // Fetch from Supabase
+        const response = await searchAllGenerationsPokemon(
+          searchQuery,
+          { types: searchFilters?.types || [] },
+          0,
+          50,
+        );
+
+        // Transform results to include generation info
+        const searchResults: SearchResult[] = response.pokemon.map(
+          (pokemon) => {
+            const generation = getGenerationByPokemonId(parseInt(pokemon.id));
+            return {
+              pokemon,
+              matchType: "name" as const,
+              matchedValue: getPokemonName(pokemon, language),
+              ...(generation && { generation: generation.id }),
+            };
+          },
+        );
+
+        dispatch(setResults(searchResults));
+        dispatch(
+          setCachedAllGenerationsData({
+            query: searchQuery,
+            results: searchResults,
+          }),
+        );
+        dispatch(setIsSearchMode(true));
+
+        // Add to search history
+        if (searchQuery.trim()) {
+          dispatch(addToSearchHistory(searchQuery));
+        }
+      } catch (err) {
+        dispatch(
+          setError(err instanceof Error ? err.message : "Search failed"),
+        );
+      } finally {
+        dispatch(setIsSearching(false));
+      }
+    },
+    [dispatch, language, allGenerationsData],
+  );
 
   // Search function to be called from components
   const search = useCallback(
-    (searchQuery: string, searchFilters?: Partial<SearchFilters>) => {
+    async (searchQuery: string, searchFilters?: Partial<SearchFilters>) => {
       const hasQuery = searchQuery.trim().length > 0;
       const hasFilters =
         searchFilters &&
@@ -304,6 +386,13 @@ export function usePokemonSearch({
         return;
       }
 
+      // Use all generations search if scope is set to ALL_GENERATIONS
+      if (searchScope === SearchScope.ALL_GENERATIONS) {
+        await performAllGenerationsSearch(searchQuery, searchFilters);
+        return;
+      }
+
+      // Otherwise use current generation search
       dispatch(setIsSearching(true));
       dispatch(setError(null));
 
@@ -325,7 +414,7 @@ export function usePokemonSearch({
         dispatch(setIsSearching(false));
       }
     },
-    [dispatch, performSearch],
+    [dispatch, performSearch, performAllGenerationsSearch, searchScope],
   );
 
   // Update query
@@ -359,6 +448,18 @@ export function usePokemonSearch({
     dispatch(clearFilters());
   }, [dispatch]);
 
+  // Update search scope
+  const updateSearchScope = useCallback(
+    (newScope: SearchScope) => {
+      dispatch(setSearchScope(newScope));
+      // Re-run search with new scope if there's an active query
+      if (query.trim() || filters.types.length > 0) {
+        search(query, filters);
+      }
+    },
+    [dispatch, query, filters, search],
+  );
+
   return {
     // State
     query,
@@ -370,6 +471,7 @@ export function usePokemonSearch({
     isSearchMode,
     error,
     hasResults: results.length > 0,
+    searchScope,
 
     // Actions
     search,
@@ -378,6 +480,7 @@ export function usePokemonSearch({
     clearSearchResults,
     clearAllFilters,
     exitSearchMode,
+    updateSearchScope,
 
     // Utils
     generateSuggestions,

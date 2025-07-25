@@ -102,6 +102,8 @@ function PokemonListContent({
     updateFilters,
     clearAllFilters,
     filters,
+    searchScope,
+    updateSearchScope,
   } = usePokemonSearch();
 
   const [showLoadingScreen, setShowLoadingScreen] = useState(
@@ -553,6 +555,9 @@ function PokemonListContent({
             onTypeFilter={handleTypeFilter}
             isShrinked={headerState === "shrink"}
             onMouseEnter={() => setHeaderState("visible")}
+            searchScope={searchScope}
+            onSearchScopeChange={updateSearchScope}
+            showSearchScopeToggle={true}
           />
 
           {/* Pokemon Grid */}

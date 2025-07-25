@@ -44,8 +44,12 @@ export function createParticleEchoCombo(config: AnimationConfig) {
     POKEMON_TYPE_COLORS[primaryType as PokemonTypeName] || "#68A090";
 
   // Calculate card position relative to grid container (shared for all elements)
-  const cardRelativeX = rect.left - containerRect.left;
-  const cardRelativeY = rect.top - containerRect.top;
+  // For virtual scroll containers, we need to account for scroll position
+  const scrollLeft = gridContainer.scrollLeft || 0;
+  const scrollTop = gridContainer.scrollTop || 0;
+
+  const cardRelativeX = rect.left - containerRect.left + scrollLeft;
+  const cardRelativeY = rect.top - containerRect.top + scrollTop;
 
   // Create particle burst directly here for consistent positioning
   const particles =
@@ -234,6 +238,10 @@ export function createUltimateEchoCombo(config: AnimationConfig) {
   const primaryColor =
     POKEMON_TYPE_COLORS[primaryType as PokemonTypeName] || "#68A090";
 
+  // Account for virtual scroll container's scroll position
+  const scrollLeft = gridContainer.scrollLeft || 0;
+  const scrollTop = gridContainer.scrollTop || 0;
+
   const particles =
     TYPE_EFFECTS[primaryType as keyof typeof TYPE_EFFECTS] ||
     TYPE_EFFECTS.normal;
@@ -299,8 +307,8 @@ export function createUltimateEchoCombo(config: AnimationConfig) {
 
     echo.style.cssText = `
       position: absolute;
-      left: ${rect.left - containerRect.left}px;
-      top: ${rect.top - containerRect.top}px;
+      left: ${rect.left - containerRect.left + scrollLeft}px;
+      top: ${rect.top - containerRect.top + scrollTop}px;
       width: ${rect.width}px;
       height: ${rect.height}px;
       opacity: ${0.4 - i * 0.1};
@@ -328,8 +336,8 @@ export function createUltimateEchoCombo(config: AnimationConfig) {
 
     borderEcho.style.cssText = `
       position: absolute;
-      left: ${rect.left - containerRect.left}px;
-      top: ${rect.top - containerRect.top}px;
+      left: ${rect.left - containerRect.left + scrollLeft}px;
+      top: ${rect.top - containerRect.top + scrollTop}px;
       width: ${rect.width}px;
       height: ${rect.height}px;
       opacity: ${0.7 - i * 0.15};
@@ -615,6 +623,10 @@ export function createMegaEvolutionEffect(config: AnimationConfig) {
   const primaryColor =
     POKEMON_TYPE_COLORS[primaryType as PokemonTypeName] || "#68A090";
 
+  // Account for virtual scroll container's scroll position
+  const scrollLeft = gridContainer.scrollLeft || 0;
+  const scrollTop = gridContainer.scrollTop || 0;
+
   // Create energy rings
   const energyRings: HTMLElement[] = [];
   for (let i = 0; i < 5; i++) {
@@ -669,8 +681,8 @@ export function createMegaEvolutionEffect(config: AnimationConfig) {
   const flash = document.createElement("div");
   flash.style.cssText = `
     position: absolute;
-    left: ${rect.left - containerRect.left}px;
-    top: ${rect.top - containerRect.top}px;
+    left: ${rect.left - containerRect.left + scrollLeft}px;
+    top: ${rect.top - containerRect.top + scrollTop}px;
     width: ${rect.width}px;
     height: ${rect.height}px;
     background: radial-gradient(circle, ${primaryColor}80, transparent 70%);
