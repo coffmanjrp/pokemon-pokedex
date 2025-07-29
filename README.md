@@ -1,20 +1,28 @@
 # Pokemon Pokedex
 
-Pokemon Pokedex application built with Next.js 15, TypeScript, and GraphQL.
+A modern, multilingual Pokemon encyclopedia built with Next.js 15, TypeScript, and Supabase.
 
 ## ✨ Features
 
-- **Complete Pokemon Database**: All 1025+ Pokemon across 9 generations
-- **Detailed Information**: Stats, abilities, evolution chains, moves, sprites
+- **Complete Pokemon Database**: All 1025+ Pokemon across 9 generations plus special forms
+- **Multilingual Support**: 8 languages (English, Japanese, Chinese (Simplified/Traditional), Spanish, Italian, German, French)
+- **Advanced Search**: Cross-generation search with type filtering and Japanese support
+- **Rich Animations**: 26 GSAP-powered animation effects with classification-based triggers
+- **Evolution Visualization**: Card-style layout for branch evolutions
+- **Performance Optimized**: SSG with ~3m 45s build time, virtual scrolling, and intelligent caching
+- **Detailed Information**: Stats, abilities, evolution chains, moves, sprites, and localized descriptions
+- **Responsive Design**: Ruby/Sapphire-inspired UI optimized for all devices
 
 ## 🛠 Tech Stack
 
 | Category | Technologies |
 |----------|-------------|
-| **Frontend** | Next.js 15, TypeScript, TailwindCSS |
-| **State** | Redux Toolkit, Apollo Client |
-| **Backend** | Apollo Server, Express |
-| **Data** | PokeAPI, GraphQL |
+| **Frontend** | Next.js 15, React 19, TypeScript, TailwindCSS |
+| **State** | Redux Toolkit |
+| **Database** | Supabase (PostgreSQL) |
+| **Data Source** | PokeAPI |
+| **Animations** | GSAP |
+| **Deployment** | Vercel (Frontend) + Railway (Data Sync Server) |
 
 ## 🚀 Quick Start
 
@@ -26,8 +34,16 @@ cd pokemon-pokedex
 # Install dependencies
 npm run install:all
 
-# Setup environment variables
-# Create server/.env and client/.env.local files
+# Setup Supabase
+# 1. Create a Supabase project at https://supabase.com
+# 2. Run database schema setup (see docs/SUPABASE_SETUP.md)
+# 3. Create environment files as shown above
+
+# Initial data sync (one-time setup)
+cd server
+npm run sync:test  # Test with Pikachu
+npm run sync:gen 1 # Sync Generation 1 (or use sync:all for everything)
+cd ..
 
 # Start development servers
 npm run dev
@@ -35,75 +51,81 @@ npm run dev
 
 ## ⚙️ Environment Variables
 
-### Server Configuration
-
-Create `server/.env`:
-
-```bash
-# Redis Configuration (Removed - using localStorage and CDN caching instead)
-# REDIS_URL=redis://localhost:6379
-
-# Server Configuration
-PORT=4000
-NODE_ENV=production
-# For development: NODE_ENV=development
-
-# CORS Configuration - Supports wildcard patterns for dynamic URLs
-# For deployments with dynamic preview URLs
-CORS_ORIGIN=https://*.your-hosting-provider.app,https://your-production-domain.com
-# For development
-# CORS_ORIGIN=http://localhost:3000
-```
-
 ### Client Configuration
 
 Create `client/.env.local`:
 
 ```bash
-# GraphQL Server Configuration
-# Production
-NEXT_PUBLIC_GRAPHQL_URL=https://your-graphql-server.your-hosting-provider.app/graphql
-# Development
-# NEXT_PUBLIC_GRAPHQL_URL=http://localhost:4000/graphql
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 
-# Server Mode Configuration
-NEXT_PUBLIC_SERVER_MODE=production
-# For development: NEXT_PUBLIC_SERVER_MODE=development
-
-# Build Mode Configuration (for selective data loading)
-# Set to 'ssg' during SSG build time, 'runtime' for client browsing
-NEXT_PUBLIC_BUILD_MODE=runtime
-BUILD_MODE=runtime
+# Feature Flags (all enabled by default after migration)
+NEXT_PUBLIC_USE_SUPABASE_FOR_LIST=true
+NEXT_PUBLIC_USE_SUPABASE_FOR_DETAIL=true
+NEXT_PUBLIC_USE_SUPABASE_FOR_SSG=true
 
 # App Configuration
 NEXT_PUBLIC_APP_NAME=Pokemon Pokedex
 NEXT_PUBLIC_APP_VERSION=1.0.0
 ```
 
-### Production Deployment URLs
+### Server Configuration (Data Sync)
+
+Create `server/.env`:
+
+```bash
+# Supabase Configuration (for data sync)
+SUPABASE_URL=your-supabase-project-url
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# Server Configuration
+PORT=4000
+NODE_ENV=production
+# For development: NODE_ENV=development
+```
+
+### Production Deployment
 
 ```bash
 # Example production configuration
-# Frontend: https://your-app-name.your-hosting-provider.app
-# Backend: https://your-backend-name.your-hosting-provider.app
-# GraphQL: https://your-backend-name.your-hosting-provider.app/graphql
+# Frontend: https://pokemon-pokedex-client.vercel.app
+# Data Sync Server: https://pokemon-pokedex-server.railway.app
+# Database: Supabase (managed service)
 ```
 
 ## 📝 Scripts
 
+### Development
 ```bash
-# Development
 npm run dev              # Start both client and server
-npm run dev:client       # Client only
-npm run dev:server       # Server only
+npm run dev:client       # Client only (port 3000)
+npm run dev:server       # Server only (port 4000)
+```
 
-# Production
+### Production
+```bash
 npm run build           # Build for production
+npm run build:fast      # Optimized parallel build (~3m 45s)
 npm run start           # Start production servers
+```
 
-# Quality
+### Code Quality
+```bash
 npm run lint            # ESLint
 npm run type-check      # TypeScript checks
+npm run test            # Run tests
+```
+
+### Data Sync (Server)
+```bash
+cd server
+npm run sync:test              # Test sync with Pikachu
+npm run sync:pokemon [id]      # Sync specific Pokemon
+npm run sync:gen [1-9]         # Sync specific generation
+npm run sync:forms             # Sync special forms
+npm run sync:all               # Full sync (2-3 hours)
+npm run sync:evolution:enriched # Sync evolution chains
 ```
 
 ## 📚 Documentation
@@ -113,6 +135,9 @@ npm run type-check      # TypeScript checks
 - [**Development**](docs/DEVELOPMENT.md) - Setup and workflows
 - [**Features**](docs/FEATURES.md) - Feature documentation
 - [**Deployment**](docs/DEPLOYMENT.md) - Deployment strategies
+- [**Supabase Setup**](docs/SUPABASE_SETUP.md) - Database setup guide
+- [**Data Sync**](docs/DATA_SYNC.md) - Pokemon data synchronization
+- [**Language Implementation**](docs/LANGUAGE_IMPLEMENTATION.md) - Adding new languages
 - [**Migration**](docs/MIGRATION.md) - Database migration plans
 
 ## 📄 License
@@ -124,8 +149,11 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - [**PokeAPI**](https://pokeapi.co/) - Pokemon data source
 - [**Pokemon Company**](https://www.pokemon.com/) - Official artwork and data
 - [**Next.js**](https://nextjs.org/) - React framework
-- [**Apollo GraphQL**](https://www.apollographql.com/) - Data layer
+- [**Supabase**](https://supabase.com/) - Database and backend infrastructure
+- [**GSAP**](https://greensock.com/gsap/) - Animation library
+- [**Vercel**](https://vercel.com/) - Frontend hosting
+- [**Railway**](https://railway.app/) - Data sync server hosting
 
 ---
 
-**Built with ❤️ for Pokemon fans**
+**Built with ❤️ for Pokemon fans worldwide**
