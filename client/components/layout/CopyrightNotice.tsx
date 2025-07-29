@@ -16,7 +16,7 @@ export function CopyrightNotice({ dictionary }: CopyrightNoticeProps) {
           })}
         </p>
         <p>{dictionary.footer.disclaimer}</p>
-        {/* <p>
+        <p>
           {dictionary.footer.dataSource}{" "}
           <a
             href="https://pokeapi.co"
@@ -26,7 +26,7 @@ export function CopyrightNotice({ dictionary }: CopyrightNoticeProps) {
           >
             PokeAPI
           </a>
-        </p> */}
+        </p>
       </div>
     </div>
   );

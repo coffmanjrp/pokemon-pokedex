@@ -25,7 +25,7 @@ export function DetailPageFooter({ dictionary }: DetailPageFooterProps) {
           <p className="text-xs">{dictionary.footer.disclaimer}</p>
 
           {/* PokeAPI Credit */}
-          {/* <p className="text-xs">
+          <p className="text-xs">
             {dictionary.footer.dataSource}{" "}
             <a
               href="https://pokeapi.co"
@@ -35,7 +35,7 @@ export function DetailPageFooter({ dictionary }: DetailPageFooterProps) {
             >
               PokeAPI
             </a>
-          </p> */}
+          </p>
         </div>
       </div>
     </footer>
