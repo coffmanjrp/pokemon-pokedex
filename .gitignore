@@ -104,3 +104,6 @@ storybook-static/
 # Backup files
 *.bak
 *.backup
+
+# Claude specific files
+.claude
