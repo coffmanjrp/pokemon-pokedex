@@ -186,7 +186,19 @@ export function CardEvolutionChain({
             nextEvolutionId={
               hasMiddleEvolution ? middleEvolution?.id || "middle" : "branch"
             }
-            showCondition={false}
+            condition={
+              hasMiddleEvolution && middleEvolution?.evolutionDetails?.[0]
+                ? renderEvolutionCondition(
+                    middleEvolution.evolutionDetails[0],
+                    lang,
+                    dictionary,
+                    fallback,
+                  )
+                : undefined
+            }
+            showCondition={
+              hasMiddleEvolution && !!middleEvolution?.evolutionDetails?.[0]
+            }
             variant="horizontal"
           />
 
@@ -340,7 +352,19 @@ export function CardEvolutionChain({
               nextEvolutionId={
                 hasMiddleEvolution ? middleEvolution?.id || "middle" : "branch"
               }
-              showCondition={false}
+              condition={
+                hasMiddleEvolution && middleEvolution?.evolutionDetails?.[0]
+                  ? renderEvolutionCondition(
+                      middleEvolution.evolutionDetails[0],
+                      lang,
+                      dictionary,
+                      fallback,
+                    )
+                  : undefined
+              }
+              showCondition={
+                hasMiddleEvolution && !!middleEvolution?.evolutionDetails?.[0]
+              }
               variant="vertical"
             />
           </div>
