@@ -282,6 +282,7 @@ For more solutions, see documentation in `/docs`
 44. ✅ Updated search placeholder text to use "図鑑番号" (dex number)
 45. ✅ Disabled hover animations for special Pokemon
 46. ✅ Fixed particle-echo-combo animation issues with virtual scrolling
+47. ✅ Fixed missing evolution conditions for middle stage in branch evolutions
 
 ### Next Steps & TODOs
 
