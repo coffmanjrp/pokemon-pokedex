@@ -182,25 +182,25 @@ export function CardEvolutionChain({
           </div>
 
           {/* Arrow */}
-          <EvolutionArrow
-            nextEvolutionId={
-              hasMiddleEvolution ? middleEvolution?.id || "middle" : "branch"
-            }
-            condition={
-              hasMiddleEvolution && middleEvolution?.evolutionDetails?.[0]
-                ? renderEvolutionCondition(
-                    middleEvolution.evolutionDetails[0],
-                    lang,
-                    dictionary,
-                    fallback,
-                  )
-                : undefined
-            }
-            showCondition={
-              hasMiddleEvolution && !!middleEvolution?.evolutionDetails?.[0]
-            }
-            variant="horizontal"
-          />
+          {hasMiddleEvolution && middleEvolution?.evolutionDetails?.[0] ? (
+            <EvolutionArrow
+              nextEvolutionId={middleEvolution?.id || "middle"}
+              condition={renderEvolutionCondition(
+                middleEvolution.evolutionDetails[0],
+                lang,
+                dictionary,
+                fallback,
+              )}
+              showCondition={true}
+              variant="horizontal"
+            />
+          ) : (
+            <EvolutionArrow
+              nextEvolutionId={hasMiddleEvolution ? "middle" : "branch"}
+              showCondition={false}
+              variant="horizontal"
+            />
+          )}
 
           {/* Middle Evolution (if exists) */}
           {hasMiddleEvolution && middleEvolution && (
@@ -348,25 +348,25 @@ export function CardEvolutionChain({
 
           {/* Arrow */}
           <div className="flex justify-center">
-            <EvolutionArrow
-              nextEvolutionId={
-                hasMiddleEvolution ? middleEvolution?.id || "middle" : "branch"
-              }
-              condition={
-                hasMiddleEvolution && middleEvolution?.evolutionDetails?.[0]
-                  ? renderEvolutionCondition(
-                      middleEvolution.evolutionDetails[0],
-                      lang,
-                      dictionary,
-                      fallback,
-                    )
-                  : undefined
-              }
-              showCondition={
-                hasMiddleEvolution && !!middleEvolution?.evolutionDetails?.[0]
-              }
-              variant="vertical"
-            />
+            {hasMiddleEvolution && middleEvolution?.evolutionDetails?.[0] ? (
+              <EvolutionArrow
+                nextEvolutionId={middleEvolution?.id || "middle"}
+                condition={renderEvolutionCondition(
+                  middleEvolution.evolutionDetails[0],
+                  lang,
+                  dictionary,
+                  fallback,
+                )}
+                showCondition={true}
+                variant="vertical"
+              />
+            ) : (
+              <EvolutionArrow
+                nextEvolutionId={hasMiddleEvolution ? "middle" : "branch"}
+                showCondition={false}
+                variant="vertical"
+              />
+            )}
           </div>
 
           {/* Middle Evolution (if exists) */}
